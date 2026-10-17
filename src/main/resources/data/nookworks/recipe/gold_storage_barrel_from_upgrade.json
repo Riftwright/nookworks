@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_transmute",
+  "category": "misc",
+  "group": "gold_storage_barrel",
+  "input": "nookworks:iron_storage_barrel",
+  "material": "nookworks:gold_storage_upgrade",
+  "result": {
+    "id": "nookworks:gold_storage_barrel"
+  }
+}

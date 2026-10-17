@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IRI",
+    "GUG",
+    "IBI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "G": "minecraft:glass",
+    "U": "minecraft:bucket",
+    "B": "#c:ingots/brass"
+  },
+  "result": {
+    "id": "nookworks:stirring_tank"
+  }
+}

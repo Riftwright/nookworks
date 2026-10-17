@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "nookworks:fine_paper",
+    "nookworks:fine_paper",
+    "nookworks:fine_paper",
+    "minecraft:leather"
+  ],
+  "result": {
+    "id": "minecraft:book"
+  }
+}

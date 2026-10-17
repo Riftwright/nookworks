@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "D": "nookworks:duct",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "IDI",
+    "IRI",
+    "IDI"
+  ],
+  "result": {
+    "id": "nookworks:ventilation_fan"
+  }
+}

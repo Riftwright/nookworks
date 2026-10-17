@@ -1,0 +1,304 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/experience_tap",
+    "tap": "nookworks:block/experience_tap"
+  },
+  "elements": [
+    {
+      "from": [
+        5.5,
+        2,
+        -0.5
+      ],
+      "to": [
+        10.5,
+        8,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            7.0,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3.5,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3.5,
+            9
+          ]
+        },
+        "up": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            0,
+            7.0,
+            1.5
+          ]
+        },
+        "down": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            14.5,
+            7.0,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        4,
+        -3
+      ],
+      "to": [
+        9.5,
+        7,
+        -0.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            5.0,
+            6
+          ]
+        },
+        "east": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            4.5,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            4.5,
+            6
+          ]
+        },
+        "up": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            0,
+            5.0,
+            2.5
+          ]
+        },
+        "down": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            13.5,
+            5.0,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        2,
+        -3
+      ],
+      "to": [
+        9.5,
+        4,
+        -1.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tap",
+          "uv": [
+            6,
+            2,
+            9,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            2,
+            4,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            2,
+            4,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#tap",
+          "uv": [
+            6,
+            2,
+            9,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#tap",
+          "uv": [
+            6,
+            6,
+            9,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        7,
+        -2
+      ],
+      "to": [
+        8.5,
+        9,
+        -1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3.0,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3,
+            5
+          ]
+        },
+        "south": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3.0,
+            5
+          ]
+        },
+        "west": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        9,
+        -2
+      ],
+      "to": [
+        11,
+        10,
+        -1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            8,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            8,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            3,
+            3,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            0,
+            8,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#tap",
+          "uv": [
+            2,
+            15,
+            8,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

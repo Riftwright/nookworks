@@ -1,0 +1,43 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "criteria": {
+    "gear": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:gold_sorter_gear",
+              "nookworks:diamond_sorter_gear",
+              "nookworks:netherite_sorter_gear",
+              "nookworks:velarium_sorter_gear"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:gold_sorter_gear"
+    },
+    "title": {
+      "translate": "advancements.nookworks.sorter_gear.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.sorter_gear.description"
+    }
+  },
+  "requirements": [
+    [
+      "gear"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:item_sorter"
+}

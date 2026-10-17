@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/vegetable_oil_still",
+    "oil": "nookworks:block/vegetable_oil_still"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        1.6,
+        2
+      ],
+      "to": [
+        14,
+        1.6,
+        14
+      ],
+      "shade_direction_override": "up",
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

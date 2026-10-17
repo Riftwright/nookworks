@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": "minecraft:bricks"
+  },
+  "pattern": [
+    "B B",
+    "B B"
+  ],
+  "result": {
+    "id": "nookworks:chimney",
+    "count": 4
+  }
+}

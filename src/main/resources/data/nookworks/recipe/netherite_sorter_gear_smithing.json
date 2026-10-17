@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:netherite_ingot",
+  "base": "nookworks:diamond_sorter_gear",
+  "result": {
+    "id": "nookworks:netherite_sorter_gear"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}

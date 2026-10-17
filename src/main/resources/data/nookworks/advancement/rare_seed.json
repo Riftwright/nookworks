@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "seed": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:rare_seed"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:rare_seed"
+    },
+    "title": {
+      "translate": "advancements.nookworks.rare_seed.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.rare_seed.description"
+    }
+  },
+  "requirements": [
+    [
+      "seed"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:sifter"
+}

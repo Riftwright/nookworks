@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "mob_bottle"
+    }
+  ],
+  "criteria": {
+    "bottled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:mob_bottle"
+    },
+    "title": {
+      "translate": "advancements.nookworks.mob_bottle.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.mob_bottle.description"
+    }
+  },
+  "requirements": [
+    [
+      "bottled"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

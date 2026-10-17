@@ -1,0 +1,102 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "soot": "nookworks:block/lantern_soot",
+    "particle": "minecraft:block/lantern"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        1,
+        4.99
+      ],
+      "to": [
+        11,
+        8,
+        4.99
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            2,
+            6,
+            9
+          ],
+          "texture": "#soot"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        1,
+        11.01
+      ],
+      "to": [
+        11,
+        8,
+        11.01
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            2,
+            6,
+            9
+          ],
+          "texture": "#soot"
+        }
+      }
+    },
+    {
+      "from": [
+        4.99,
+        1,
+        5
+      ],
+      "to": [
+        4.99,
+        8,
+        11
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            0,
+            2,
+            6,
+            9
+          ],
+          "texture": "#soot"
+        }
+      }
+    },
+    {
+      "from": [
+        11.01,
+        1,
+        5
+      ],
+      "to": [
+        11.01,
+        8,
+        11
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            2,
+            6,
+            9
+          ],
+          "texture": "#soot"
+        }
+      }
+    }
+  ]
+}

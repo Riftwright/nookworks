@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "liquid_experience"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "A": "minecraft:anvil",
+    "E": "nookworks:experience_tank",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "IAI",
+    "RER",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:repair_box"
+  }
+}

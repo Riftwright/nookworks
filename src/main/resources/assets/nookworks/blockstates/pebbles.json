@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "pebbles=1": [
+      {
+        "model": "nookworks:block/pebbles_1"
+      },
+      {
+        "model": "nookworks:block/pebbles_1",
+        "y": 90
+      },
+      {
+        "model": "nookworks:block/pebbles_1",
+        "y": 180
+      },
+      {
+        "model": "nookworks:block/pebbles_1",
+        "y": 270
+      }
+    ],
+    "pebbles=2": [
+      {
+        "model": "nookworks:block/pebbles_2"
+      },
+      {
+        "model": "nookworks:block/pebbles_2",
+        "y": 90
+      },
+      {
+        "model": "nookworks:block/pebbles_2",
+        "y": 180
+      },
+      {
+        "model": "nookworks:block/pebbles_2",
+        "y": 270
+      }
+    ],
+    "pebbles=3": [
+      {
+        "model": "nookworks:block/pebbles_3"
+      },
+      {
+        "model": "nookworks:block/pebbles_3",
+        "y": 90
+      },
+      {
+        "model": "nookworks:block/pebbles_3",
+        "y": 180
+      },
+      {
+        "model": "nookworks:block/pebbles_3",
+        "y": 270
+      }
+    ],
+    "pebbles=4": [
+      {
+        "model": "nookworks:block/pebbles_4"
+      },
+      {
+        "model": "nookworks:block/pebbles_4",
+        "y": 90
+      },
+      {
+        "model": "nookworks:block/pebbles_4",
+        "y": 180
+      },
+      {
+        "model": "nookworks:block/pebbles_4",
+        "y": 270
+      }
+    ]
+  }
+}

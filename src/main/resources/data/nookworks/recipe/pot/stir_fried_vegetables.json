@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:carrot"
+    },
+    {
+      "ingredient": "minecraft:potato"
+    },
+    {
+      "ingredient": "#c:dusts/salt"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 25,
+  "time": 100,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:stir_fried_vegetables",
+    "count": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "#c:cobblestones/normal"
+  ],
+  "result": {
+    "count": 4,
+    "id": "nookworks:pebbles"
+  }
+}

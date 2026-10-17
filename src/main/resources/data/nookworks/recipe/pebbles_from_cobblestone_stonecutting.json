@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "#c:cobblestones/normal",
+  "result": {
+    "count": 4,
+    "id": "nookworks:pebbles"
+  }
+}

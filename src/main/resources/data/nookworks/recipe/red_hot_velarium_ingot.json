@@ -1,0 +1,13 @@
+{
+  "type": "nookworks:heating",
+  "category": "misc",
+  "ingredient": [
+    "nookworks:velarium_ingot",
+    "nookworks:red_hot_velarium_ingot"
+  ],
+  "result": {
+    "id": "nookworks:red_hot_velarium_ingot"
+  },
+  "experience": 0.0,
+  "cookingtime": 200
+}

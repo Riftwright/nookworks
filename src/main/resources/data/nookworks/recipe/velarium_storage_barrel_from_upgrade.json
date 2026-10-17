@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_transmute",
+  "category": "misc",
+  "group": "velarium_storage_barrel",
+  "input": "nookworks:netherite_storage_barrel",
+  "material": "nookworks:velarium_storage_upgrade",
+  "result": {
+    "id": "nookworks:velarium_storage_barrel"
+  }
+}

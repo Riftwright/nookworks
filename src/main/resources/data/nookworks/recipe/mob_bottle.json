@@ -1,0 +1,18 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "mob_bottle"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:lead",
+    "minecraft:slime_ball"
+  ],
+  "result": {
+    "id": "nookworks:mob_bottle"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "values": {
+    "#c:foods/raw_meat": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "#c:foods/raw_beef": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "#c:foods/raw_mutton": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "#c:foods/raw_rabbit": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "#c:foods/raw_pork": {
+      "chance": 0.5,
+      "illness": "severe"
+    },
+    "#c:foods/raw_chicken": {
+      "chance": 1.0,
+      "illness": "severe"
+    },
+    "#c:foods/raw_cod": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "#c:foods/raw_salmon": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "#c:foods/raw_fish": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "minecraft:beef": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "minecraft:mutton": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "minecraft:rabbit": {
+      "chance": 0.25,
+      "illness": "mild"
+    },
+    "minecraft:porkchop": {
+      "chance": 0.5,
+      "illness": "severe"
+    },
+    "minecraft:chicken": {
+      "chance": 1.0,
+      "illness": "severe"
+    },
+    "minecraft:cod": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "minecraft:salmon": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "minecraft:tropical_fish": {
+      "chance": 0.05,
+      "illness": "parasite"
+    },
+    "minecraft:pufferfish": {
+      "chance": 0.05,
+      "illness": "parasite"
+    }
+  }
+}

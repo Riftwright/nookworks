@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "nookworks:block/horizontal_item_warp_receiver"
+  }
+}

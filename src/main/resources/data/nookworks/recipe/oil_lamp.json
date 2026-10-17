@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:brick",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "nookworks:oil_lamp",
+    "count": 1
+  }
+}

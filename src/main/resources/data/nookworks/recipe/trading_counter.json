@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "trading_counter"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:book",
+    "S": "#minecraft:wooden_slabs",
+    "I": "#c:ingots/brass",
+    "P": "#minecraft:planks",
+    "C": "#c:chests/wooden"
+  },
+  "pattern": [
+    "BSI",
+    "PCP",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:trading_counter"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_base"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_base",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_base",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_base",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "oil": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_oil_1"
+      }
+    },
+    {
+      "when": {
+        "oil": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/oil_press_oil_2"
+      }
+    }
+  ]
+}

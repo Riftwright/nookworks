@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#c:flours/wheat",
+    "#c:flours/wheat",
+    "#c:eggs",
+    "minecraft:sugar",
+    "minecraft:milk_bucket"
+  ],
+  "result": {
+    "id": "nookworks:pancake_batter",
+    "count": 4
+  }
+}

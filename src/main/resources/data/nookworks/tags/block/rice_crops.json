@@ -1,0 +1,9 @@
+{
+  "values": [
+    "nookworks:rice",
+    {
+      "id": "farmersdelight:rice",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:porkchop",
+    "#c:flours/wheat",
+    "#c:eggs",
+    "nookworks:breadcrumbs"
+  ],
+  "result": {
+    "id": "nookworks:breaded_pork",
+    "count": 2
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "nookworks:corn"
+  ],
+  "result": {
+    "id": "nookworks:corn_kernels",
+    "count": 4
+  }
+}

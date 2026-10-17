@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/water_pump"
+      }
+    },
+    {
+      "when": {
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/water_pump_lamp"
+      }
+    }
+  ]
+}

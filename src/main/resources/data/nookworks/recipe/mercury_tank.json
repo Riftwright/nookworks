@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glass"
+  },
+  "pattern": [
+    "IGI",
+    "I I",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:mercury_tank"
+  }
+}

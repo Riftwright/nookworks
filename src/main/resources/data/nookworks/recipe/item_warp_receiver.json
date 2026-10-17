@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "warps"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BAB",
+    "BEB",
+    "BDB"
+  ],
+  "key": {
+    "B": "minecraft:polished_blackstone",
+    "A": "minecraft:amethyst_shard",
+    "E": "minecraft:ender_pearl",
+    "D": "minecraft:dropper"
+  },
+  "result": {
+    "id": "nookworks:item_warp_receiver"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "spawner_control"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "E": "minecraft:ender_pearl",
+    "R": "minecraft:redstone",
+    "B": "minecraft:polished_blackstone"
+  },
+  "pattern": [
+    "BEB",
+    "RIR",
+    "BBB"
+  ],
+  "result": {
+    "id": "nookworks:spawner_link_sender"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "magnets"
+    }
+  ],
+  "criteria": {
+    "magnet": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:magnet",
+              "nookworks:advanced_magnet"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:magnet"
+    },
+    "title": {
+      "translate": "advancements.nookworks.magnet.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.magnet.description"
+    }
+  },
+  "requirements": [
+    [
+      "magnet"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

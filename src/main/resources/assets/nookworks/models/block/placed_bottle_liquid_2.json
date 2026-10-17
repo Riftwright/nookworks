@@ -1,0 +1,95 @@
+{
+  "render_type": "minecraft:translucent",
+  "ambientocclusion": false,
+  "textures": {
+    "glass": "nookworks:block/bottle_glass",
+    "liquid": "nookworks:block/bottle_liquid",
+    "cork": "nookworks:block/bottle_cork",
+    "particle": "nookworks:block/bottle_glass"
+  },
+  "elements": [
+    {
+      "from": [
+        3.25,
+        0.25,
+        9.75
+      ],
+      "to": [
+        5.75,
+        2.5,
+        12.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.25
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.25
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.25
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.25
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        },
+        "up": {
+          "uv": [
+            0,
+            1,
+            2.5,
+            3.5
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        },
+        "down": {
+          "uv": [
+            0,
+            1,
+            2.5,
+            3.5
+          ],
+          "texture": "#liquid",
+          "tintindex": 2
+        }
+      },
+      "rotation": {
+        "origin": [
+          4.5,
+          0,
+          11.0
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    }
+  ]
+}

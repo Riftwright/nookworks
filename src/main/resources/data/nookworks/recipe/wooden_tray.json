@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "#c:rods/wooden",
+    "L": "#minecraft:wooden_slabs"
+  },
+  "pattern": [
+    "S S",
+    "LLL"
+  ],
+  "result": {
+    "id": "nookworks:wooden_tray",
+    "count": 2
+  }
+}

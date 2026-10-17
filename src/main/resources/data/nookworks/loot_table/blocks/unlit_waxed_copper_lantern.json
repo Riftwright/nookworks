@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/unlit_waxed_copper_lantern",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:unlit_waxed_copper_lantern"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

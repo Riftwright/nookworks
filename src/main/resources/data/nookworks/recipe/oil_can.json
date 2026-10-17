@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:sulfur_dust"
+  ],
+  "result": {
+    "id": "nookworks:oil_can",
+    "count": 1
+  }
+}

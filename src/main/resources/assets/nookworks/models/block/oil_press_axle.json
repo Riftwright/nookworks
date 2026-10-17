@@ -1,0 +1,76 @@
+{
+  "textures": {
+    "particle": "minecraft:block/spruce_planks",
+    "planks": "minecraft:block/spruce_planks",
+    "post": "minecraft:block/stripped_spruce_log",
+    "iron": "nookworks:block/black_iron",
+    "basin": "nookworks:block/oil_press_basin",
+    "screw": "nookworks:block/oil_press_screw"
+  },
+  "elements": [
+    {
+      "from": [
+        6.5,
+        6.5,
+        0
+      ],
+      "to": [
+        9.5,
+        9.5,
+        6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron"
+        },
+        "south": {
+          "texture": "#iron"
+        },
+        "east": {
+          "texture": "#iron"
+        },
+        "west": {
+          "texture": "#iron"
+        },
+        "up": {
+          "texture": "#iron"
+        },
+        "down": {
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#screw"
+        },
+        "south": {
+          "texture": "#screw"
+        },
+        "east": {
+          "texture": "#screw"
+        },
+        "west": {
+          "texture": "#screw"
+        },
+        "up": {
+          "texture": "#screw"
+        },
+        "down": {
+          "texture": "#screw"
+        }
+      }
+    }
+  ]
+}

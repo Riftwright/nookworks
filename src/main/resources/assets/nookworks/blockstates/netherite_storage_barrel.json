@@ -1,0 +1,108 @@
+{
+  "variants": {
+    "facing=north,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90
+    },
+    "facing=north,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90
+    },
+    "facing=north,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90
+    },
+    "facing=north,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90
+    },
+    "facing=east,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 90
+    },
+    "facing=south,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 90,
+      "y": 270
+    },
+    "facing=up,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel"
+    },
+    "facing=up,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open"
+    },
+    "facing=up,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel"
+    },
+    "facing=up,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open"
+    },
+    "facing=down,locked=false,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 180
+    },
+    "facing=down,locked=false,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 180
+    },
+    "facing=down,locked=true,open=false": {
+      "model": "nookworks:block/netherite_storage_barrel",
+      "x": 180
+    },
+    "facing=down,locked=true,open=true": {
+      "model": "nookworks:block/netherite_storage_barrel_open",
+      "x": 180
+    }
+  }
+}

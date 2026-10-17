@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/oil_lamp",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:oil_lamp",
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "nookworks:oil_lamp",
+            "properties": [
+              "oil",
+              "burnt"
+            ],
+            "condition": {
+              "type": "minecraft:inverted",
+              "term": {
+                "type": "minecraft:match_block",
+                "blocks": "nookworks:oil_lamp",
+                "state": {
+                  "oil": "0"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

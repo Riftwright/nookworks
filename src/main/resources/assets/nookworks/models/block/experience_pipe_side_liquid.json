@@ -1,0 +1,64 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "nookworks:block/experience_pipe",
+    "glass": "nookworks:block/experience_pipe",
+    "liquid": "nookworks:block/liquid_experience_still",
+    "collar": "nookworks:block/experience_pipe_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        6,
+        0
+      ],
+      "to": [
+        10,
+        10,
+        6
+      ],
+      "faces": {
+        "east": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            6,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            6,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ]
+        }
+      },
+      "shade_direction_override": "up",
+      "light_emission": 12
+    }
+  ]
+}

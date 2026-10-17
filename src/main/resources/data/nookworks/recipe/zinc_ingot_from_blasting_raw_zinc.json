@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "experience": 0.7,
+  "cookingtime": 200,
+  "group": "zinc_ingot",
+  "ingredient": "nookworks:raw_zinc",
+  "result": {
+    "id": "nookworks:zinc_ingot"
+  }
+}

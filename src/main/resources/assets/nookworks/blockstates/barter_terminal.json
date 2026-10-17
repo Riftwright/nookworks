@@ -1,0 +1,78 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal_on"
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/barter_terminal_on",
+        "y": 270
+      }
+    }
+  ]
+}

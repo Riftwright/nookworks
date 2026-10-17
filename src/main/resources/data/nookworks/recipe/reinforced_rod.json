@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:breeze_rod",
+    "#c:ingots/brass",
+    "#c:ingots/brass"
+  ],
+  "result": {
+    "id": "nookworks:reinforced_rod"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "spawner_control"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:comparator",
+    "D": "minecraft:diamond",
+    "R": "minecraft:redstone_block"
+  },
+  "pattern": [
+    "ICI",
+    "DRD",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:spawner_controller"
+  }
+}

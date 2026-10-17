@@ -1,0 +1,287 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "nookworks:block/glazed_flower_pot",
+    "flowerpot": "minecraft:block/flower_pot",
+    "dirt": "minecraft:block/dirt",
+    "bamboo": "minecraft:block/bamboo_stalk",
+    "leaf": "minecraft:block/bamboo_singleleaf",
+    "glazed": "nookworks:block/glazed_flower_pot",
+    "glazed_top": "nookworks:block/glazed_flower_pot_top"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        1,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        0,
+        4.5
+      ],
+      "to": [
+        11.5,
+        5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            4.5,
+            11.5,
+            11.5
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        5,
+        4
+      ],
+      "to": [
+        12,
+        7,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#glazed_top",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            13,
+            0,
+            15,
+            2
+          ],
+          "texture": "#bamboo",
+          "cullface": "up"
+        },
+        "north": {
+          "uv": [
+            6,
+            0,
+            8,
+            16
+          ],
+          "texture": "#bamboo"
+        },
+        "south": {
+          "uv": [
+            6,
+            0,
+            8,
+            16
+          ],
+          "texture": "#bamboo"
+        },
+        "west": {
+          "uv": [
+            6,
+            0,
+            8,
+            16
+          ],
+          "texture": "#bamboo"
+        },
+        "east": {
+          "uv": [
+            6,
+            0,
+            8,
+            16
+          ],
+          "texture": "#bamboo"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        2,
+        8
+      ],
+      "to": [
+        16,
+        18,
+        8
+      ],
+      "shade_direction_override": "up",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#leaf"
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            0,
+            16
+          ],
+          "texture": "#leaf"
+        }
+      }
+    }
+  ],
+  "ambientocclusion": false
+}

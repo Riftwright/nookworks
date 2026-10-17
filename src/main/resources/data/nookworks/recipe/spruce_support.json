@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "support",
+  "key": {
+    "L": "minecraft:stripped_spruce_log"
+  },
+  "pattern": [
+    "LLL",
+    " L "
+  ],
+  "result": {
+    "count": 6,
+    "id": "nookworks:spruce_support"
+  }
+}

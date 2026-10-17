@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/electrolytic_cell",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:electrolytic_cell",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "source": "block_entity",
+            "include": [
+              "nookworks:held_fluids",
+              "nookworks:held_energy",
+              "minecraft:max_stack_size"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

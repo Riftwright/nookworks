@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "dust": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:sulfur_dust"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:sulfur_dust"
+    },
+    "title": {
+      "translate": "advancements.nookworks.sulfur_dust.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.sulfur_dust.description"
+    }
+  },
+  "requirements": [
+    [
+      "dust"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:cinnabar"
+}

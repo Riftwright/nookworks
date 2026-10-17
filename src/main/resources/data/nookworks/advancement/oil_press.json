@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "oil": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:vegetable_oil_bottle",
+              "nookworks:vegetable_oil_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:vegetable_oil_bottle"
+    },
+    "title": {
+      "translate": "advancements.nookworks.oil_press.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.oil_press.description"
+    }
+  },
+  "requirements": [
+    [
+      "oil"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

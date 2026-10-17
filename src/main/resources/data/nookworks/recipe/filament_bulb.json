@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": "minecraft:copper_nugget",
+    "G": "minecraft:glass_pane",
+    "T": "minecraft:torch"
+  },
+  "pattern": [
+    "N",
+    "G",
+    "T"
+  ],
+  "result": {
+    "id": "nookworks:filament_bulb",
+    "count": 2
+  }
+}

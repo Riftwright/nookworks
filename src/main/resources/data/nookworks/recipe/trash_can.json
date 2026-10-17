@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "L": "minecraft:lava_bucket"
+  },
+  "pattern": [
+    "I I",
+    "ILI",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:trash_can"
+  }
+}

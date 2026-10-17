@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "support",
+  "key": {
+    "L": "nookworks:stripped_dawnwood_log"
+  },
+  "pattern": [
+    "LLL",
+    " L "
+  ],
+  "result": {
+    "count": 6,
+    "id": "nookworks:dawnwood_support"
+  }
+}

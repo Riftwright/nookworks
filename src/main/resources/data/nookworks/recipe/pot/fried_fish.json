@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:cod"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 50,
+  "time": 200,
+  "result": {
+    "id": "nookworks:fried_fish",
+    "count": 1
+  }
+}

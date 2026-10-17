@@ -1,0 +1,167 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "panel": "nookworks:block/destination_panel",
+    "screen": "nookworks:block/destination_panel_screen",
+    "particle": "nookworks:block/destination_panel"
+  },
+  "elements": [
+    {
+      "name": "plate",
+      "from": [
+        3,
+        2,
+        14
+      ],
+      "to": [
+        13,
+        14,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            3,
+            2,
+            13,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            3,
+            2,
+            13,
+            14
+          ],
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            0,
+            2,
+            2,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            0,
+            2,
+            2,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            3,
+            0,
+            13,
+            2
+          ]
+        },
+        "down": {
+          "texture": "#panel",
+          "uv": [
+            3,
+            0,
+            13,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "knob",
+      "from": [
+        7,
+        3,
+        13
+      ],
+      "to": [
+        9,
+        5,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            14,
+            0,
+            16,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            14,
+            0,
+            15,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            15,
+            0,
+            16,
+            2
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            14,
+            0,
+            16,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#panel",
+          "uv": [
+            14,
+            1,
+            16,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "screen",
+      "from": [
+        5,
+        7,
+        13.98
+      ],
+      "to": [
+        11,
+        12,
+        13.98
+      ],
+      "light_emission": 15,
+      "shade_direction_override": "up",
+      "faces": {
+        "north": {
+          "texture": "#screen",
+          "uv": [
+            5,
+            4,
+            11,
+            9
+          ]
+        }
+      }
+    }
+  ]
+}

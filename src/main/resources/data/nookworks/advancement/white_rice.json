@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "criteria": {
+    "rice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:white_rice"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:white_rice"
+    },
+    "title": {
+      "translate": "advancements.nookworks.white_rice.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.white_rice.description"
+    }
+  },
+  "requirements": [
+    [
+      "rice"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:rice"
+}

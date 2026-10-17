@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "furnace": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:electric_furnace"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:electric_furnace"
+    },
+    "title": {
+      "translate": "advancements.nookworks.electric_furnace.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.electric_furnace.description"
+    }
+  },
+  "requirements": [
+    [
+      "furnace"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:generator"
+}

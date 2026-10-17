@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:wooden_fences"
+  ],
+  "remove": [
+    "minecraft:crimson_fence",
+    "minecraft:warped_fence"
+  ]
+}

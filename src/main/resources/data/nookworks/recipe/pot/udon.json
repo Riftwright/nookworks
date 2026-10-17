@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "nookworks:raw_udon",
+      "count": 2
+    },
+    {
+      "ingredient": "minecraft:dried_kelp"
+    }
+  ],
+  "liquid": "water",
+  "amount": 500,
+  "time": 300,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:udon",
+    "count": 2
+  }
+}

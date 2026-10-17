@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "salt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:salt"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:salt"
+    },
+    "title": {
+      "translate": "advancements.nookworks.salt.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.salt.description"
+    }
+  },
+  "requirements": [
+    [
+      "salt"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:crude_salt"
+}

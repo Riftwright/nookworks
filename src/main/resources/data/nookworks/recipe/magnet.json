@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "magnets"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "L": "minecraft:lapis_lazuli"
+  },
+  "pattern": [
+    "R L",
+    "I I",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:magnet"
+  }
+}

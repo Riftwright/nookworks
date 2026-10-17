@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/dawnwood_stool",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:dawnwood_stool"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

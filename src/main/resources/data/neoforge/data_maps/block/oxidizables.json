@@ -1,0 +1,13 @@
+{
+  "values": {
+    "nookworks:unlit_copper_lantern": {
+      "next_oxidation_stage": "nookworks:unlit_exposed_copper_lantern"
+    },
+    "nookworks:unlit_exposed_copper_lantern": {
+      "next_oxidation_stage": "nookworks:unlit_weathered_copper_lantern"
+    },
+    "nookworks:unlit_weathered_copper_lantern": {
+      "next_oxidation_stage": "nookworks:unlit_oxidized_copper_lantern"
+    }
+  }
+}

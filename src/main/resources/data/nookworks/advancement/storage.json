@@ -1,0 +1,44 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "criteria": {
+    "storage": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:iron_storage_barrel",
+              "nookworks:gold_storage_barrel",
+              "nookworks:diamond_storage_barrel",
+              "nookworks:netherite_storage_barrel",
+              "nookworks:velarium_storage_barrel"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:iron_storage_barrel"
+    },
+    "title": {
+      "translate": "advancements.nookworks.storage.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.storage.description"
+    }
+  },
+  "requirements": [
+    [
+      "storage"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

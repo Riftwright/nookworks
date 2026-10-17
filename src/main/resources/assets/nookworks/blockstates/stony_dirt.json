@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "nookworks:block/stony_dirt"
+      },
+      {
+        "model": "nookworks:block/stony_dirt",
+        "y": 90
+      },
+      {
+        "model": "nookworks:block/stony_dirt",
+        "y": 180
+      },
+      {
+        "model": "nookworks:block/stony_dirt",
+        "y": 270
+      }
+    ]
+  }
+}

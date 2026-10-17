@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "#c:ingots/brass",
+    "G": "#c:glass_blocks/colorless",
+    "L": "minecraft:leather",
+    "S": "#minecraft:stone_buttons"
+  },
+  "pattern": [
+    "BBS",
+    "LGL",
+    "BBB"
+  ],
+  "result": {
+    "id": "nookworks:camera"
+  }
+}

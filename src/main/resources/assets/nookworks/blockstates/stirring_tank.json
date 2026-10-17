@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/stirring_tank"
+      }
+    },
+    {
+      "when": {
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stirring_tank_lamp"
+      }
+    }
+  ]
+}

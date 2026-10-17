@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lamp": "nookworks:block/machine_lamp",
+    "particle": "nookworks:block/planter_front"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        13,
+        -0.05
+      ],
+      "to": [
+        7,
+        14,
+        -0.05
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "cullface": "north"
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    }
+  ]
+}

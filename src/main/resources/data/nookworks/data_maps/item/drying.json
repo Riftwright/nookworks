@@ -1,0 +1,15 @@
+{
+  "values": {
+    "minecraft:kelp": {
+      "result": "minecraft:dried_kelp",
+      "ticks": 6000
+    },
+    "#c:foods/raw_fish": {
+      "result": "nookworks:dried_fish",
+      "ticks": 12000
+    }
+  },
+  "remove": [
+    "minecraft:pufferfish"
+  ]
+}

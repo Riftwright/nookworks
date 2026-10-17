@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "nookworks:item/dawnwood_chest_boat",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 12767180
+      }
+    ]
+  }
+}

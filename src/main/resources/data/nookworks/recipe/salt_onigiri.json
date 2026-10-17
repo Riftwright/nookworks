@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "nookworks:cooked_rice",
+    "#c:dusts/salt",
+    "minecraft:dried_kelp"
+  ],
+  "result": {
+    "id": "nookworks:salt_onigiri",
+    "count": 2
+  }
+}

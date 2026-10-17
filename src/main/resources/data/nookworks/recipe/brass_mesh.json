@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "#c:ingots/brass",
+    "S": "minecraft:string"
+  },
+  "pattern": [
+    "BSB",
+    "SSS",
+    "BSB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:brass_mesh"
+  }
+}

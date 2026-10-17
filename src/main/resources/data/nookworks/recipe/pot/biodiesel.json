@@ -1,0 +1,20 @@
+{
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "nookworks:methanol",
+      "count": 4
+    },
+    {
+      "ingredient": "nookworks:caustic_soda"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 1000,
+  "time": 300,
+  "container": "minecraft:glass_bottle",
+  "result": {
+    "id": "nookworks:biodiesel_bottle",
+    "count": 4
+  }
+}

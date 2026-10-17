@@ -1,0 +1,18 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:diamond_block",
+    "minecraft:diamond_block"
+  ],
+  "result": {
+    "id": "nookworks:diamond_storage_upgrade",
+    "count": 2
+  }
+}

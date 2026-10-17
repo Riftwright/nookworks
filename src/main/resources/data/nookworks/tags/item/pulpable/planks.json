@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:planks"
+  ],
+  "remove": [
+    "minecraft:crimson_planks",
+    "minecraft:warped_planks"
+  ]
+}

@@ -1,0 +1,291 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "anchored": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_anchored"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "8"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "9"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "10"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "11"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "12"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "13"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "14"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "15"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_1"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_2"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_3"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_4"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_5"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_6"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_7"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "8"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_8"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "9"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_9"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "10"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_10"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "11"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_11"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "12"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_12"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "13"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_13"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "14"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_14"
+      }
+    },
+    {
+      "when": {
+        "anchored": "true",
+        "tie": "15"
+      },
+      "apply": {
+        "model": "nookworks:block/thin_rope_fitting_15"
+      }
+    }
+  ]
+}

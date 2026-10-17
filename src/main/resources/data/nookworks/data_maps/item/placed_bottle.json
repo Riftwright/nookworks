@@ -1,0 +1,35 @@
+{
+  "values": {
+    "minecraft:glass_bottle": {},
+    "minecraft:potion": {},
+    "minecraft:splash_potion": {},
+    "minecraft:lingering_potion": {},
+    "minecraft:honey_bottle": {
+      "color": "#f0a42c"
+    },
+    "minecraft:experience_bottle": {
+      "color": "#78e0a0"
+    },
+    "minecraft:dragon_breath": {
+      "color": "#e086d8"
+    },
+    "minecraft:ominous_bottle": {
+      "color": "#5a3c7a"
+    },
+    "nookworks:vegetable_oil_bottle": {
+      "color": "#e8c044"
+    },
+    "nookworks:biodiesel_bottle": {
+      "color": "#d09028"
+    },
+    "nookworks:methanol": {
+      "color": "#e6f0f2"
+    },
+    "nookworks:wood_vinegar": {
+      "color": "#7c3e18"
+    },
+    "nookworks:liquid_experience_bottle": {
+      "color": "#a4f05c"
+    }
+  }
+}

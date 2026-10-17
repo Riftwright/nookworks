@@ -1,0 +1,23 @@
+{
+  "criteria": {
+    "in_village": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "structures": "#minecraft:village"
+            }
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "in_village"
+    ]
+  ]
+}

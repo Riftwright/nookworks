@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "ingredient": "nookworks:pancake_batter",
+  "result": {
+    "id": "nookworks:pancake"
+  }
+}

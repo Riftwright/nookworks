@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:chicken"
+    },
+    {
+      "ingredient": "#c:flours/wheat"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 50,
+  "time": 200,
+  "result": {
+    "id": "nookworks:karaage",
+    "count": 2
+  }
+}

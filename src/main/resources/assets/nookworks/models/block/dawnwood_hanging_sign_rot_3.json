@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_hanging_sign_rot_3",
+  "textures": {
+    "all": "nookworks:block/dawnwood_hanging_sign",
+    "particle": "nookworks:block/stripped_dawnwood_log"
+  }
+}

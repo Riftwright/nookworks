@@ -1,0 +1,36 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "hanging": "false"
+      },
+      "apply": {
+        "model": "minecraft:block/weathered_copper_lantern"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true"
+      },
+      "apply": {
+        "model": "minecraft:block/weathered_copper_lantern_hanging"
+      }
+    },
+    {
+      "when": {
+        "hanging": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/lantern_soot"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/lantern_soot_hanging"
+      }
+    }
+  ]
+}

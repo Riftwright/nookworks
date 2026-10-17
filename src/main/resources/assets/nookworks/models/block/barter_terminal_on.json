@@ -1,0 +1,62 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "screen": "nookworks:block/barter_terminal_screen",
+    "lamp": "nookworks:block/machine_lamp",
+    "particle": "nookworks:block/barter_terminal_front"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        6,
+        15.05
+      ],
+      "to": [
+        12,
+        12,
+        15.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#screen",
+          "uv": [
+            4,
+            4,
+            12,
+            10
+          ]
+        }
+      },
+      "name": "screen",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        11,
+        3,
+        15.05
+      ],
+      "to": [
+        13,
+        4,
+        15.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    }
+  ]
+}

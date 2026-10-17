@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "#c:eggs",
+      "count": 3
+    },
+    {
+      "ingredient": "minecraft:sugar"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 25,
+  "time": 200,
+  "result": {
+    "id": "nookworks:tamagoyaki",
+    "count": 3
+  }
+}

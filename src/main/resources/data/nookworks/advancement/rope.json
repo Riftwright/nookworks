@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "rope": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:rope",
+              "nookworks:thin_rope"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:rope"
+    },
+    "title": {
+      "translate": "advancements.nookworks.rope.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.rope.description"
+    }
+  },
+  "requirements": [
+    [
+      "rope"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

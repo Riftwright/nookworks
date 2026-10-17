@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "mob_bottle"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:brewing_stand",
+    "E": "minecraft:ender_eye",
+    "D": "minecraft:diamond",
+    "O": "minecraft:obsidian"
+  },
+  "pattern": [
+    " E ",
+    "DBD",
+    "OOO"
+  ],
+  "result": {
+    "id": "nookworks:spawn_egg_brewer"
+  }
+}

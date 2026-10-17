@@ -1,0 +1,72 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/mercury_pipe",
+    "barrel": "nookworks:block/mercury_pipe",
+    "bore": "nookworks:block/mercury_pipe_end"
+  },
+  "elements": [
+    {
+      "name": "bore",
+      "from": [
+        3,
+        3,
+        2
+      ],
+      "to": [
+        13,
+        13,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#barrel",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ],
+          "rotation": 90
+        },
+        "west": {
+          "texture": "#barrel",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ],
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#barrel",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#barrel",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ]
+        }
+      }
+    }
+  ]
+}

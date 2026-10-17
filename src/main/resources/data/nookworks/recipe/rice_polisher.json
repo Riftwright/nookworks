@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": "minecraft:hopper",
+    "S": "#c:rods/wooden",
+    "P": "#minecraft:planks",
+    "G": "minecraft:grindstone"
+  },
+  "pattern": [
+    " H ",
+    "SGP",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:rice_polisher",
+    "count": 1
+  }
+}

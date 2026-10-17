@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "facing=north,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=north,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=south,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=south,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=east,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=east,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=west,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=west,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=up,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=up,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=down,turning=false": {
+      "model": "nookworks:block/drive_wheel_block"
+    },
+    "facing=down,turning=true": {
+      "model": "nookworks:block/drive_wheel_block"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "values": [
+    "minecraft:glass_bottle",
+    "minecraft:potion",
+    "minecraft:splash_potion",
+    "minecraft:lingering_potion",
+    "minecraft:honey_bottle",
+    "minecraft:experience_bottle",
+    "minecraft:dragon_breath",
+    "minecraft:ominous_bottle",
+    "nookworks:mob_bottle",
+    "nookworks:liquid_experience_bottle",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:biodiesel_bottle",
+    "#c:foods/raw_fish",
+    "#c:foods/cooked_fish",
+    "nookworks:dried_fish",
+    "minecraft:kelp",
+    "minecraft:dried_kelp",
+    "#minecraft:small_flowers",
+    "minecraft:wheat",
+    "minecraft:sweet_berries",
+    "minecraft:glow_berries",
+    "nookworks:corn",
+    "nookworks:onion",
+    "#nookworks:hangs_solid",
+    "#nookworks:hangs_as_lantern",
+    "#minecraft:banners"
+  ]
+}

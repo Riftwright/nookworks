@@ -1,0 +1,39 @@
+{
+  "criteria": {
+    "shorn": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "item": {
+          "items": "nookworks:wool_shears"
+        },
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:type_specific/sheep": {
+              "sheared": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wool_shears"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wool_shears.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wool_shears.description"
+    }
+  },
+  "requirements": [
+    [
+      "shorn"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

@@ -1,0 +1,250 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:has_component",
+    "component": "minecraft:lodestone_tracker",
+    "on_true": {
+      "type": "minecraft:range_dispatch",
+      "property": "minecraft:compass",
+      "target": "lodestone",
+      "scale": 32.0,
+      "entries": [
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_16"
+          },
+          "threshold": 0.0
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_17"
+          },
+          "threshold": 0.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_18"
+          },
+          "threshold": 1.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_19"
+          },
+          "threshold": 2.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_20"
+          },
+          "threshold": 3.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_21"
+          },
+          "threshold": 4.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_22"
+          },
+          "threshold": 5.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_23"
+          },
+          "threshold": 6.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_24"
+          },
+          "threshold": 7.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_25"
+          },
+          "threshold": 8.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_26"
+          },
+          "threshold": 9.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_27"
+          },
+          "threshold": 10.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_28"
+          },
+          "threshold": 11.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_29"
+          },
+          "threshold": 12.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_30"
+          },
+          "threshold": 13.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_31"
+          },
+          "threshold": 14.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_00"
+          },
+          "threshold": 15.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_01"
+          },
+          "threshold": 16.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_02"
+          },
+          "threshold": 17.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_03"
+          },
+          "threshold": 18.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_04"
+          },
+          "threshold": 19.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_05"
+          },
+          "threshold": 20.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_06"
+          },
+          "threshold": 21.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_07"
+          },
+          "threshold": 22.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_08"
+          },
+          "threshold": 23.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_09"
+          },
+          "threshold": 24.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_10"
+          },
+          "threshold": 25.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_11"
+          },
+          "threshold": 26.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_12"
+          },
+          "threshold": 27.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_13"
+          },
+          "threshold": 28.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_14"
+          },
+          "threshold": 29.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_15"
+          },
+          "threshold": 30.5
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "nookworks:item/nook_dowsing_rod_16"
+          },
+          "threshold": 31.5
+        }
+      ]
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "nookworks:item/nook_dowsing_rod"
+    }
+  }
+}

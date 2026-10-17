@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "daemon_door"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "Z": "#c:ingots/zinc",
+    "W": "nookworks:dawnwood_planks",
+    "G": "minecraft:glass_pane",
+    "C": "minecraft:compass"
+  },
+  "pattern": [
+    "WGW",
+    "ZCZ"
+  ],
+  "result": {
+    "id": "nookworks:destination_panel"
+  }
+}

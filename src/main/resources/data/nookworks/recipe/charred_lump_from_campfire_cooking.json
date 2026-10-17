@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "experience": 0.1,
+  "cookingtime": 600,
+  "group": "charred_lump",
+  "ingredient": "#nookworks:burns_to_char",
+  "result": {
+    "id": "nookworks:charred_lump"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "NOOKWORKS_SHADING_EYES",
+      "constructor": "(ZZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "dev/nookworks/client/SquintPose",
+        "field": "SHADING"
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "velarium_ingot",
+  "ingredients": [
+    "nookworks:velarium_block"
+  ],
+  "result": {
+    "id": "nookworks:velarium_ingot",
+    "count": 9
+  }
+}

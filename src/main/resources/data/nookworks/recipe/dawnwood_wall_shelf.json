@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "wall_shelf",
+  "ingredients": [
+    "nookworks:dawnwood_trapdoor",
+    "minecraft:iron_nugget",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:dawnwood_wall_shelf"
+  }
+}

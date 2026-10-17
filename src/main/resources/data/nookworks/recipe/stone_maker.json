@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IWI",
+    "PXP",
+    "ILI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "W": "minecraft:water_bucket",
+    "P": "minecraft:piston",
+    "X": "nookworks:machine_chassis",
+    "L": "minecraft:lava_bucket"
+  },
+  "result": {
+    "id": "nookworks:stone_maker"
+  }
+}

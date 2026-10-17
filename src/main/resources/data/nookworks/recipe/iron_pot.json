@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "#c:rods/wooden",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "S S",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:iron_pot",
+    "count": 1
+  }
+}

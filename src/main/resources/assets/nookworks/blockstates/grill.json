@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "over_fire=true": {
+      "model": "nookworks:block/grill"
+    },
+    "over_fire=false": {
+      "model": "nookworks:block/grill_standing"
+    }
+  }
+}

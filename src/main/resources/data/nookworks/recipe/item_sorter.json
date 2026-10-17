@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "H": "minecraft:hopper",
+    "C": "minecraft:comparator"
+  },
+  "pattern": [
+    "IHI",
+    "ICI",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:item_sorter"
+  }
+}

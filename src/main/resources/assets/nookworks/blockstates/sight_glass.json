@@ -1,0 +1,774 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "z"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "water",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "oil",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "biodiesel",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "other",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "x"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "water",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_water_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "oil",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_oil_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "biodiesel",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_biodiesel_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "other",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_other_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "water",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_water_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "oil",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_oil_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "biodiesel",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_biodiesel_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "other",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_other_6"
+      }
+    }
+  ]
+}

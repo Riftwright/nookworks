@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": "#c:cobblestones/normal",
+    "D": "minecraft:dirt"
+  },
+  "pattern": [
+    "DC",
+    "CD"
+  ],
+  "result": {
+    "count": 4,
+    "id": "nookworks:stony_dirt"
+  }
+}

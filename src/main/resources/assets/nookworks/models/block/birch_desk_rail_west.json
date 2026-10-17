@@ -1,0 +1,8 @@
+{
+  "parent": "nookworks:block/template_desk_rail_west",
+  "textures": {
+    "particle": "minecraft:block/birch_planks",
+    "planks": "minecraft:block/birch_planks",
+    "post": "minecraft:block/stripped_birch_log"
+  }
+}

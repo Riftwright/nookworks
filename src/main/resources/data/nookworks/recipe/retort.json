@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BIB",
+    "BXB",
+    "BFB"
+  ],
+  "key": {
+    "B": "minecraft:bricks",
+    "I": "minecraft:iron_ingot",
+    "X": "nookworks:machine_chassis",
+    "F": "minecraft:blast_furnace"
+  },
+  "result": {
+    "id": "nookworks:retort"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "nugget": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:velarium_nugget"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:velarium_nugget"
+    },
+    "title": {
+      "translate": "advancements.nookworks.velarium_nugget.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.velarium_nugget.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "nugget"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:distilled"
+}

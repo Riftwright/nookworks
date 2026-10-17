@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "#c:eggs"
+    }
+  ],
+  "liquid": "water",
+  "amount": 50,
+  "time": 300,
+  "result": {
+    "id": "nookworks:boiled_egg",
+    "count": 1
+  }
+}

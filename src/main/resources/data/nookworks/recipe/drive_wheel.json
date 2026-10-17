@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": "minecraft:iron_nugget",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    " N ",
+    "NIN",
+    " N "
+  ],
+  "result": {
+    "id": "nookworks:drive_wheel",
+    "count": 2
+  }
+}

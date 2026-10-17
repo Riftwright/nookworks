@@ -1,0 +1,390 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_0"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_1"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_2"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_3"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_4"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_5"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_6"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_0",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_6",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_0",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_gauge_6",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_tank_tap_open",
+        "y": 270
+      }
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "textures": {
+    "particle": "nookworks:block/black_iron",
+    "iron": "nookworks:block/black_iron",
+    "board": "minecraft:block/spruce_planks",
+    "roller": "minecraft:block/iron_block",
+    "chute": "minecraft:block/hopper_outside",
+    "chute_in": "minecraft:block/hopper_inside",
+    "grip": "minecraft:block/stripped_spruce_log",
+    "slot": "minecraft:block/black_concrete"
+  },
+  "elements": [
+    {
+      "from": [
+        13,
+        6,
+        7
+      ],
+      "to": [
+        14,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron"
+        },
+        "south": {
+          "texture": "#iron"
+        },
+        "east": {
+          "texture": "#iron"
+        },
+        "west": {
+          "texture": "#iron"
+        },
+        "up": {
+          "texture": "#iron"
+        },
+        "down": {
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        6,
+        7
+      ],
+      "to": [
+        15,
+        13,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron"
+        },
+        "south": {
+          "texture": "#iron"
+        },
+        "east": {
+          "texture": "#iron"
+        },
+        "west": {
+          "texture": "#iron"
+        },
+        "up": {
+          "texture": "#iron"
+        },
+        "down": {
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "from": [
+        15,
+        11,
+        7.5
+      ],
+      "to": [
+        16,
+        13,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grip"
+        },
+        "south": {
+          "texture": "#grip"
+        },
+        "east": {
+          "texture": "#grip"
+        },
+        "west": {
+          "texture": "#grip"
+        },
+        "up": {
+          "texture": "#grip"
+        },
+        "down": {
+          "texture": "#grip"
+        }
+      }
+    }
+  ]
+}

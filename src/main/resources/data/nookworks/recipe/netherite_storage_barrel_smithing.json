@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:netherite_block",
+  "base": "nookworks:diamond_storage_barrel",
+  "result": {
+    "id": "nookworks:netherite_storage_barrel"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}

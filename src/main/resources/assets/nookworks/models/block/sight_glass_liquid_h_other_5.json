@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/water_still",
+    "liquid": "minecraft:block/water_still"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4.05,
+        4.05
+      ],
+      "to": [
+        12,
+        10.950000000000001,
+        11.95
+      ],
+      "faces": {
+        "north": {
+          "texture": "#liquid"
+        },
+        "south": {
+          "texture": "#liquid"
+        },
+        "west": {
+          "texture": "#liquid"
+        },
+        "east": {
+          "texture": "#liquid"
+        },
+        "up": {
+          "texture": "#liquid"
+        },
+        "down": {
+          "texture": "#liquid"
+        }
+      },
+      "name": "liquid"
+    }
+  ]
+}

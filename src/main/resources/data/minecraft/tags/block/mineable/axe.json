@@ -1,0 +1,23 @@
+{
+  "values": [
+    "nookworks:crate",
+    "nookworks:planter",
+    "#nookworks:supports",
+    "#nookworks:chairs",
+    "#nookworks:stools",
+    "#nookworks:wall_shelves",
+    "#nookworks:desks",
+    "nookworks:oil_press",
+    "nookworks:rice_polisher",
+    "nookworks:nukadoko",
+    "nookworks:iron_storage_barrel",
+    "nookworks:gold_storage_barrel",
+    "nookworks:diamond_storage_barrel",
+    "nookworks:netherite_storage_barrel",
+    "nookworks:velarium_storage_barrel",
+    "nookworks:wooden_tray",
+    "nookworks:if_mirror",
+    "nookworks:daemon_door",
+    "nookworks:trading_counter"
+  ]
+}

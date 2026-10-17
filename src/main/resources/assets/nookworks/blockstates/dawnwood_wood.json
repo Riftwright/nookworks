@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "nookworks:block/dawnwood_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "nookworks:block/dawnwood_wood"
+    },
+    "axis=z": {
+      "model": "nookworks:block/dawnwood_wood",
+      "x": 90
+    }
+  }
+}

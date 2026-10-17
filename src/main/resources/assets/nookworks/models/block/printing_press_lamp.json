@@ -1,0 +1,113 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lamp": "nookworks:block/machine_lamp",
+    "particle": "nookworks:block/printing_press_side"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        9,
+        0.95
+      ],
+      "to": [
+        5,
+        10,
+        0.95
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        11,
+        9,
+        15.05
+      ],
+      "to": [
+        13,
+        10,
+        15.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        0.95,
+        9,
+        11
+      ],
+      "to": [
+        0.95,
+        10,
+        13
+      ],
+      "faces": {
+        "west": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        15.05,
+        9,
+        3
+      ],
+      "to": [
+        15.05,
+        10,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    }
+  ]
+}

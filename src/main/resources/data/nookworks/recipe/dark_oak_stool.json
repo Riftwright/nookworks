@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "stool",
+  "key": {
+    "P": "minecraft:dark_oak_planks",
+    "S": "#c:rods/wooden"
+  },
+  "pattern": [
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:dark_oak_stool"
+  }
+}

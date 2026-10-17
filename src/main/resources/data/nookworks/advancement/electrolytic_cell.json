@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "cell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:electrolytic_cell"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:electrolytic_cell"
+    },
+    "title": {
+      "translate": "advancements.nookworks.electrolytic_cell.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.electrolytic_cell.description"
+    }
+  },
+  "requirements": [
+    [
+      "cell"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

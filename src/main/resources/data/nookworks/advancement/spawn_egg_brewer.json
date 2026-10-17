@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "mob_bottle"
+    }
+  ],
+  "criteria": {
+    "brewer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:spawn_egg_brewer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:spawn_egg_brewer"
+    },
+    "title": {
+      "translate": "advancements.nookworks.spawn_egg_brewer.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.spawn_egg_brewer.description"
+    }
+  },
+  "requirements": [
+    [
+      "brewer"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:mob_bottle"
+}

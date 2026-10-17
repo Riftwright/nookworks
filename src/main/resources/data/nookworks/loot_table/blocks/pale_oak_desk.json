@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/pale_oak_desk",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:pale_oak_desk"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

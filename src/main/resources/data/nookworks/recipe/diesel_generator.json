@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "T": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "items": "nookworks:copper_tank",
+      "components": {
+        "!nookworks:fluid_contents": {}
+      }
+    },
+    "B": "#c:ingots/brass",
+    "G": "nookworks:generator",
+    "K": "minecraft:iron_block"
+  },
+  "pattern": [
+    "ITI",
+    "BGB",
+    "IKI"
+  ],
+  "result": {
+    "id": "nookworks:diesel_generator",
+    "count": 1
+  }
+}

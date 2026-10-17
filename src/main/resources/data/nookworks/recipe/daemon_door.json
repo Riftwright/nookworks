@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "daemon_door"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "Z": "#c:ingots/zinc",
+    "G": "minecraft:glass_pane",
+    "P": "minecraft:ender_pearl",
+    "D": "nookworks:dawnwood_door",
+    "E": "minecraft:ender_eye"
+  },
+  "pattern": [
+    "ZGZ",
+    "PDP",
+    "ZEZ"
+  ],
+  "result": {
+    "id": "nookworks:daemon_door"
+  }
+}

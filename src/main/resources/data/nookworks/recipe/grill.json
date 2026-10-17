@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:iron_bars",
+    "N": "minecraft:iron_nugget"
+  },
+  "pattern": [
+    "BBB",
+    "N N"
+  ],
+  "result": {
+    "id": "nookworks:grill",
+    "count": 1
+  }
+}

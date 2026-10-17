@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "D": "nookworks:duct"
+  },
+  "pattern": [
+    " D ",
+    "C C",
+    "CCC"
+  ],
+  "result": {
+    "id": "nookworks:range_hood"
+  }
+}

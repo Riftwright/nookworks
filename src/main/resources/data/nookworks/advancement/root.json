@@ -1,0 +1,100 @@
+{
+  "criteria": {
+    "log": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#minecraft:logs"
+          }
+        ]
+      }
+    },
+    "crafting_table": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:crafting_table"
+          }
+        ]
+      }
+    },
+    "rope": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:rope"
+          }
+        ]
+      }
+    },
+    "sconce": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:sconce"
+          }
+        ]
+      }
+    },
+    "crate": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:crate"
+          }
+        ]
+      }
+    },
+    "sifter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:sifter"
+          }
+        ]
+      }
+    },
+    "stone_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:stone_hammer"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:sconce"
+    },
+    "title": {
+      "translate": "advancements.nookworks.root.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.root.description"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "requirements": [
+    [
+      "log",
+      "crafting_table",
+      "rope",
+      "sconce",
+      "crate",
+      "sifter",
+      "stone_hammer"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

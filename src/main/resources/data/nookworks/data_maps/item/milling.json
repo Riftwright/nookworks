@@ -1,0 +1,13 @@
+{
+  "values": {
+    "minecraft:wheat": {
+      "result": "nookworks:flour",
+      "turns": 3
+    },
+    "minecraft:bread": {
+      "result": "nookworks:breadcrumbs",
+      "count": 2,
+      "turns": 2
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ICI",
+    "CBC",
+    "ICI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "#minecraft:coals",
+    "B": "minecraft:iron_block"
+  },
+  "result": {
+    "id": "nookworks:machine_chassis"
+  }
+}

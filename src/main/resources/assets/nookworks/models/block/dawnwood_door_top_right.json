@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right",
+  "textures": {
+    "bottom": "nookworks:block/dawnwood_door_bottom",
+    "top": "nookworks:block/dawnwood_door_top"
+  }
+}

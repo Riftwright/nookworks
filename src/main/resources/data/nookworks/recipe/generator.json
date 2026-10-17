@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IFI",
+    "IXI",
+    "IRI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "F": "minecraft:furnace",
+    "X": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "nookworks:generator"
+  }
+}

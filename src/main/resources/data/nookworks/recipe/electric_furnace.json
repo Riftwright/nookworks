@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": "minecraft:furnace",
+    "C": "minecraft:copper_ingot",
+    "M": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "CFC",
+    "CMC",
+    "CRC"
+  ],
+  "result": {
+    "id": "nookworks:electric_furnace"
+  }
+}

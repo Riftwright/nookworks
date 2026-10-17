@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/biodiesel_still",
+    "liquid": "nookworks:block/biodiesel_still"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4.05,
+        4
+      ],
+      "to": [
+        12,
+        8.950000000000001,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#liquid"
+        },
+        "south": {
+          "texture": "#liquid"
+        },
+        "west": {
+          "texture": "#liquid"
+        },
+        "east": {
+          "texture": "#liquid"
+        },
+        "up": {
+          "texture": "#liquid"
+        },
+        "down": {
+          "texture": "#liquid"
+        }
+      },
+      "name": "liquid"
+    }
+  ]
+}

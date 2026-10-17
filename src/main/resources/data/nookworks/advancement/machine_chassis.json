@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "machine_chassis": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:machine_chassis"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:machine_chassis"
+    },
+    "title": {
+      "translate": "advancements.nookworks.machine_chassis.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.machine_chassis.description"
+    }
+  },
+  "requirements": [
+    [
+      "machine_chassis"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

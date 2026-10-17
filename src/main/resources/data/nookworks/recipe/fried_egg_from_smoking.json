@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 100,
+  "experience": 0.35,
+  "ingredient": "#c:eggs",
+  "result": {
+    "id": "nookworks:fried_egg"
+  }
+}

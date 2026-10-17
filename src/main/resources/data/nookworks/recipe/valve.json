@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "#c:ingots/brass",
+    "L": "minecraft:lever",
+    "P": "nookworks:copper_pipe"
+  },
+  "pattern": [
+    " L ",
+    "BPB"
+  ],
+  "result": {
+    "id": "nookworks:valve",
+    "count": 1
+  }
+}

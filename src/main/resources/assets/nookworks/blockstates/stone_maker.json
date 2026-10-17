@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/stone_maker"
+      }
+    },
+    {
+      "when": {
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_maker_lamp"
+      }
+    }
+  ]
+}

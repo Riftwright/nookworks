@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:potato",
+      "count": 2
+    },
+    {
+      "ingredient": "#c:dusts/salt"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 50,
+  "time": 200,
+  "result": {
+    "id": "nookworks:french_fries",
+    "count": 2
+  }
+}

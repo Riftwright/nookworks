@@ -1,0 +1,232 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "nookworks:block/absorption_pad",
+    "glass": "nookworks:block/experience_pipe",
+    "liquid": "nookworks:block/liquid_experience_still",
+    "collar": "nookworks:block/experience_pipe_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        2,
+        5
+      ],
+      "to": [
+        11,
+        16,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            6,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            6,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            6,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            6,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        2,
+        6
+      ],
+      "to": [
+        10,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#liquid",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        }
+      },
+      "shade_direction_override": "up",
+      "light_emission": 12
+    },
+    {
+      "from": [
+        4,
+        1,
+        4
+      ],
+      "to": [
+        12,
+        2,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            7
+          ]
+        },
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            7
+          ]
+        },
+        "south": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            7
+          ]
+        },
+        "west": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        14,
+        4
+      ],
+      "to": [
+        12,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            8
+          ]
+        },
+        "south": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            6,
+            12,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    }
+  ]
+}

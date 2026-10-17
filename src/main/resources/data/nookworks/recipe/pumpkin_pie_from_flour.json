@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:setting",
+      "setting": "flour_bakery",
+      "is": true
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:pumpkin",
+    "minecraft:sugar",
+    "#c:eggs",
+    "#c:flours/wheat"
+  ],
+  "result": {
+    "id": "minecraft:pumpkin_pie"
+  }
+}

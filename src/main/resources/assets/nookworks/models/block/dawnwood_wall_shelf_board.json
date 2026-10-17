@@ -1,0 +1,7 @@
+{
+  "parent": "nookworks:block/template_wall_shelf_board",
+  "textures": {
+    "particle": "nookworks:block/dawnwood_planks",
+    "planks": "nookworks:block/dawnwood_planks"
+  }
+}

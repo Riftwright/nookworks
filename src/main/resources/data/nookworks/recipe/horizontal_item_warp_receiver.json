@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "warps"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "nookworks:item_warp_receiver",
+    "minecraft:ender_pearl"
+  ],
+  "result": {
+    "id": "nookworks:horizontal_item_warp_receiver"
+  }
+}

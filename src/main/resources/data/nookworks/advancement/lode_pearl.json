@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "lode_pearl"
+    }
+  ],
+  "criteria": {
+    "pearl": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:lode_pearl"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:lode_pearl"
+    },
+    "title": {
+      "translate": "advancements.nookworks.lode_pearl.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.lode_pearl.description"
+    }
+  },
+  "requirements": [
+    [
+      "pearl"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

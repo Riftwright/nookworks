@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "BGB",
+    "IGI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glass",
+    "B": "#c:ingots/brass"
+  },
+  "result": {
+    "id": "nookworks:distillation_column",
+    "count": 2
+  }
+}

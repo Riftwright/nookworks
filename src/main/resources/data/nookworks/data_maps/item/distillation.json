@@ -1,0 +1,37 @@
+{
+  "values": {
+    "nookworks:iron_amalgam": {
+      "result": "minecraft:iron_nugget",
+      "count": 10,
+      "bonus_chance": 0.25,
+      "bonus": 2,
+      "velarium_chance": 0.001,
+      "mercury_returned": 90
+    },
+    "nookworks:gold_amalgam": {
+      "result": "minecraft:gold_nugget",
+      "count": 20,
+      "bonus_chance": 0.25,
+      "bonus": 5,
+      "velarium_chance": 0.001,
+      "mercury_returned": 90
+    },
+    "nookworks:copper_amalgam": {
+      "result": "minecraft:copper_nugget",
+      "count": 13,
+      "bonus_chance": 0.25,
+      "bonus": 4,
+      "velarium_chance": 0.001,
+      "mercury_returned": 90
+    },
+    "nookworks:mixed_amalgam": {
+      "loot_table": "nookworks:distillation/mixed_amalgam",
+      "velarium_chance": 0.002,
+      "mercury_returned": 45
+    },
+    "nookworks:wood_vinegar": {
+      "result": "nookworks:methanol",
+      "mercury_returned": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "values": [
+    "#minecraft:lanterns",
+    "nookworks:unlit_lantern",
+    "nookworks:unlit_soul_lantern",
+    "nookworks:unlit_copper_lantern",
+    "nookworks:unlit_exposed_copper_lantern",
+    "nookworks:unlit_weathered_copper_lantern",
+    "nookworks:unlit_oxidized_copper_lantern",
+    "nookworks:unlit_waxed_copper_lantern",
+    "nookworks:unlit_waxed_exposed_copper_lantern",
+    "nookworks:unlit_waxed_weathered_copper_lantern",
+    "nookworks:unlit_waxed_oxidized_copper_lantern"
+  ]
+}

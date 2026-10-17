@@ -1,0 +1,36 @@
+{
+  "criteria": {
+    "seat": {
+      "trigger": "minecraft:started_riding",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:vehicle": {
+              "minecraft:entity_type": "nookworks:seat"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:oak_chair"
+    },
+    "title": {
+      "translate": "advancements.nookworks.seat.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.seat.description"
+    }
+  },
+  "requirements": [
+    [
+      "seat"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/stripped_mangrove_log",
+    "side": "minecraft:block/stripped_mangrove_log",
+    "end": "minecraft:block/stripped_mangrove_log_top"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        11,
+        0
+      ],
+      "to": [
+        11,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#end"
+        },
+        "south": {
+          "texture": "#end"
+        },
+        "east": {
+          "texture": "#side",
+          "rotation": 90
+        },
+        "west": {
+          "texture": "#side",
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#side"
+        },
+        "down": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

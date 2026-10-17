@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:wooden_shelves"
+  ],
+  "remove": [
+    "minecraft:crimson_shelf",
+    "minecraft:warped_shelf"
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_core"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_cap",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "filled": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/experience_pipe_side_liquid",
+        "x": 90
+      }
+    }
+  ]
+}

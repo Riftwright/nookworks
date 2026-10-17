@@ -1,0 +1,279 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "plant": "minecraft:block/dark_oak_sapling",
+    "particle": "nookworks:block/glazed_flower_pot",
+    "flowerpot": "minecraft:block/flower_pot",
+    "dirt": "minecraft:block/dirt",
+    "glazed": "nookworks:block/glazed_flower_pot",
+    "glazed_top": "nookworks:block/glazed_flower_pot_top"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        1,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            5,
+            15,
+            11,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        0,
+        4.5
+      ],
+      "to": [
+        11.5,
+        5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            10,
+            11.5,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#glazed",
+          "uv": [
+            4.5,
+            4.5,
+            11.5,
+            11.5
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        5,
+        4
+      ],
+      "to": [
+        12,
+        7,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            8,
+            12,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#glazed_top",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#glazed",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2.6,
+        4,
+        8
+      ],
+      "to": [
+        13.4,
+        16,
+        8
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "y",
+        "angle": 45,
+        "rescale": true
+      },
+      "shade_direction_override": "up",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#plant"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#plant"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        4,
+        2.6
+      ],
+      "to": [
+        8,
+        16,
+        13.4
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "y",
+        "angle": 45,
+        "rescale": true
+      },
+      "shade_direction_override": "up",
+      "faces": {
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#plant"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#plant"
+        }
+      }
+    }
+  ],
+  "ambientocclusion": false
+}

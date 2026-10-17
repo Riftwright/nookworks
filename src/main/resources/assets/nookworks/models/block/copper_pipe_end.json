@@ -1,0 +1,9 @@
+{
+  "parent": "nookworks:block/mercury_pipe_end",
+  "textures": {
+    "particle": "nookworks:block/copper_pipe",
+    "barrel": "nookworks:block/copper_pipe",
+    "collar": "nookworks:block/copper_pipe_collar",
+    "bore": "nookworks:block/copper_pipe_end"
+  }
+}

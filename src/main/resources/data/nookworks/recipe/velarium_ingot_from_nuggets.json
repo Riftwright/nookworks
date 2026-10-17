@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "velarium_ingot",
+  "key": {
+    "N": "nookworks:velarium_nugget"
+  },
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "result": {
+    "id": "nookworks:velarium_ingot"
+  }
+}

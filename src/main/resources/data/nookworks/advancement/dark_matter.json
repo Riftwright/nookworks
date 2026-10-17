@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "dark_matter"
+    }
+  ],
+  "criteria": {
+    "dark": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "nookworks:dark_matter"
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:dark_matter"
+    },
+    "title": {
+      "translate": "advancements.nookworks.dark_matter.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.dark_matter.description"
+    }
+  },
+  "requirements": [
+    [
+      "dark"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "barter_terminal"
+    }
+  ],
+  "criteria": {
+    "terminal": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:barter_terminal"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:barter_terminal"
+    },
+    "title": {
+      "translate": "advancements.nookworks.barter_terminal.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.barter_terminal.description"
+    }
+  },
+  "requirements": [
+    [
+      "terminal"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:generator"
+}

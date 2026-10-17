@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "building_wand"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": "#c:rods/wooden",
+    "D": "minecraft:diamond",
+    "G": "minecraft:gold_ingot"
+  },
+  "pattern": [
+    " DG",
+    " GS",
+    "S  "
+  ],
+  "result": {
+    "id": "nookworks:building_wand"
+  }
+}

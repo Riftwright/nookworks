@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bucket",
+    "nookworks:biodiesel_bottle",
+    "nookworks:biodiesel_bottle",
+    "nookworks:biodiesel_bottle",
+    "nookworks:biodiesel_bottle"
+  ],
+  "result": {
+    "id": "nookworks:biodiesel_bucket",
+    "count": 1
+  }
+}

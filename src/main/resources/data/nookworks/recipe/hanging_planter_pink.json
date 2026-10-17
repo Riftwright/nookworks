@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "hanging_planter",
+  "ingredients": [
+    "nookworks:glazed_flower_pot",
+    "nookworks:thin_rope",
+    "minecraft:pink_petals"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:hanging_planter_pink"
+  }
+}

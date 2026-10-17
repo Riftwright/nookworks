@@ -1,0 +1,62 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "z",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/valve"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/valve_shut"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/valve",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/valve_shut",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "open": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/valve",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "open": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/valve_shut",
+        "x": 90
+      }
+    }
+  ]
+}

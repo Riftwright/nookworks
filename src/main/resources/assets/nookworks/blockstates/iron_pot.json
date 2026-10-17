@@ -1,0 +1,270 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "empty",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "empty",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "empty",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "empty",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "empty",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_on_grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "empty",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_on_grill",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "empty",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_on_grill",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "empty",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_on_grill",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "water",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "water",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "water",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "water",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "water",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water_on_grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "water",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water_on_grill",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "water",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water_on_grill",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "water",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_water_on_grill",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "oil",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "oil",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "oil",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "oil",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "liquid": "oil",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil_on_grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "liquid": "oil",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil_on_grill",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "liquid": "oil",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil_on_grill",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "liquid": "oil",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/iron_pot_oil_on_grill",
+        "y": 270
+      }
+    }
+  ]
+}

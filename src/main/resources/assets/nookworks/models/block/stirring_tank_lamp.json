@@ -1,0 +1,117 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lamp": "nookworks:block/machine_lamp",
+    "particle": "nookworks:block/stirring_tank_side"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        1,
+        -0.05
+      ],
+      "to": [
+        5,
+        2,
+        -0.05
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "cullface": "north"
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        11,
+        1,
+        16.05
+      ],
+      "to": [
+        13,
+        2,
+        16.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "cullface": "south"
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        -0.05,
+        1,
+        11
+      ],
+      "to": [
+        -0.05,
+        2,
+        13
+      ],
+      "faces": {
+        "west": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "cullface": "west"
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        16.05,
+        1,
+        3
+      ],
+      "to": [
+        16.05,
+        2,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "cullface": "east"
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    }
+  ]
+}

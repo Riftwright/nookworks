@@ -1,0 +1,635 @@
+{
+  "values": {
+    "#minecraft:logs_that_burn": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:cobblestone": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:gravel": {
+      "result": "minecraft:sand"
+    },
+    "minecraft:stone": {
+      "result": "minecraft:cobblestone"
+    },
+    "minecraft:cobbled_deepslate": {
+      "result": "nookworks:deepslate_gravel"
+    },
+    "minecraft:sandstone": {
+      "result": "minecraft:sand",
+      "count": 2
+    },
+    "minecraft:red_sandstone": {
+      "result": "minecraft:red_sand",
+      "count": 2
+    },
+    "minecraft:sulfur": {
+      "result": "nookworks:sulfur_dust",
+      "count": 4
+    },
+    "minecraft:glowstone": {
+      "result": "minecraft:glowstone_dust",
+      "count": 4
+    },
+    "minecraft:quartz_block": {
+      "result": "minecraft:quartz",
+      "count": 4
+    },
+    "minecraft:amethyst_block": {
+      "result": "minecraft:amethyst_shard",
+      "count": 4
+    },
+    "minecraft:prismarine": {
+      "result": "minecraft:prismarine_shard",
+      "count": 4
+    },
+    "minecraft:bone_block": {
+      "result": "minecraft:bone_meal",
+      "count": 9
+    },
+    "minecraft:bone": {
+      "result": "minecraft:bone_meal",
+      "count": 4
+    },
+    "minecraft:deepslate": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:blackstone": {
+      "result": "minecraft:gravel"
+    },
+    "#c:ores/iron": {
+      "result": "#c:dusts/iron",
+      "count": 2
+    },
+    "#c:raw_materials/iron": {
+      "result": "#c:dusts/iron",
+      "count": 2
+    },
+    "minecraft:iron_ingot": {
+      "result": "#c:dusts/iron"
+    },
+    "#c:ores/gold": {
+      "result": "#c:dusts/gold",
+      "count": 2
+    },
+    "#c:raw_materials/gold": {
+      "result": "#c:dusts/gold",
+      "count": 2
+    },
+    "minecraft:gold_ingot": {
+      "result": "#c:dusts/gold"
+    },
+    "#c:ores/copper": {
+      "result": "#c:dusts/copper",
+      "count": 2
+    },
+    "#c:raw_materials/copper": {
+      "result": "#c:dusts/copper",
+      "count": 2
+    },
+    "minecraft:copper_ingot": {
+      "result": "#c:dusts/copper"
+    },
+    "minecraft:coal": {
+      "result": "minecraft:black_dye"
+    },
+    "minecraft:charcoal": {
+      "result": "minecraft:black_dye"
+    },
+    "minecraft:lapis_lazuli": {
+      "result": "minecraft:blue_dye"
+    },
+    "minecraft:blaze_rod": {
+      "result": "minecraft:blaze_powder",
+      "count": 2
+    },
+    "#minecraft:wool": {
+      "result": "minecraft:string",
+      "count": 4
+    },
+    "minecraft:sugar_cane": {
+      "result": "minecraft:sugar",
+      "count": 2
+    },
+    "minecraft:granite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:diorite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:andesite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:tuff": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:basalt": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:smooth_basalt": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:coal_block": {
+      "result": "minecraft:coal",
+      "count": 9
+    },
+    "minecraft:lapis_block": {
+      "result": "minecraft:lapis_lazuli",
+      "count": 9
+    },
+    "minecraft:redstone_block": {
+      "result": "minecraft:redstone",
+      "count": 9
+    },
+    "minecraft:hay_block": {
+      "result": "minecraft:wheat",
+      "count": 9
+    },
+    "minecraft:dried_kelp_block": {
+      "result": "minecraft:dried_kelp",
+      "count": 9
+    },
+    "minecraft:honeycomb_block": {
+      "result": "minecraft:honeycomb",
+      "count": 4
+    },
+    "minecraft:nether_wart_block": {
+      "result": "minecraft:nether_wart",
+      "count": 9
+    },
+    "minecraft:clay": {
+      "result": "minecraft:clay_ball",
+      "count": 4
+    },
+    "minecraft:snow_block": {
+      "result": "minecraft:snowball",
+      "count": 4
+    },
+    "#c:storage_blocks/iron": {
+      "result": "#c:dusts/iron",
+      "count": 9
+    },
+    "#c:storage_blocks/gold": {
+      "result": "#c:dusts/gold",
+      "count": 9
+    },
+    "#c:storage_blocks/copper": {
+      "result": "#c:dusts/copper",
+      "count": 9
+    },
+    "minecraft:calcite": {
+      "result": "minecraft:bone_meal",
+      "count": 4
+    },
+    "minecraft:dripstone_block": {
+      "result": "minecraft:bone_meal",
+      "count": 4
+    },
+    "#nookworks:pulpable/planks": {
+      "result": "nookworks:wood_chips"
+    },
+    "#nookworks:pulpable/doors": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "#nookworks:pulpable/trapdoors": {
+      "result": "nookworks:wood_chips",
+      "count": 3
+    },
+    "#nookworks:pulpable/stairs": {
+      "result": "nookworks:wood_chips"
+    },
+    "#nookworks:pulpable/fences": {
+      "result": "nookworks:wood_chips"
+    },
+    "#nookworks:pulpable/fence_gates": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "#nookworks:pulpable/buttons": {
+      "result": "nookworks:wood_chips"
+    },
+    "#nookworks:pulpable/pressure_plates": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "#nookworks:pulpable/signs": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "#nookworks:pulpable/hanging_signs": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "#nookworks:pulpable/boats": {
+      "result": "nookworks:wood_chips",
+      "count": 5
+    },
+    "minecraft:crafting_table": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:chest": {
+      "result": "nookworks:wood_chips",
+      "count": 8
+    },
+    "minecraft:trapped_chest": {
+      "result": "nookworks:wood_chips",
+      "count": 8
+    },
+    "minecraft:barrel": {
+      "result": "nookworks:wood_chips",
+      "count": 7
+    },
+    "minecraft:bookshelf": {
+      "result": "nookworks:wood_chips",
+      "count": 6
+    },
+    "minecraft:composter": {
+      "result": "nookworks:wood_chips",
+      "count": 3
+    },
+    "minecraft:lectern": {
+      "result": "nookworks:wood_chips",
+      "count": 8
+    },
+    "minecraft:loom": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "minecraft:cartography_table": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:fletching_table": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:smithing_table": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:note_block": {
+      "result": "nookworks:wood_chips",
+      "count": 8
+    },
+    "minecraft:jukebox": {
+      "result": "nookworks:wood_chips",
+      "count": 8
+    },
+    "minecraft:ladder": {
+      "result": "nookworks:wood_chips"
+    },
+    "minecraft:bow": {
+      "result": "nookworks:wood_chips"
+    },
+    "minecraft:bamboo_block": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "minecraft:bamboo_mosaic": {
+      "result": "nookworks:wood_chips"
+    },
+    "minecraft:wooden_sword": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "minecraft:wooden_pickaxe": {
+      "result": "nookworks:wood_chips",
+      "count": 3
+    },
+    "minecraft:wooden_axe": {
+      "result": "nookworks:wood_chips",
+      "count": 3
+    },
+    "minecraft:wooden_shovel": {
+      "result": "nookworks:wood_chips"
+    },
+    "minecraft:wooden_hoe": {
+      "result": "nookworks:wood_chips",
+      "count": 2
+    },
+    "minecraft:wooden_spear": {
+      "result": "nookworks:wood_chips"
+    },
+    "minecraft:pointed_dripstone": {
+      "result": "minecraft:bone_meal"
+    },
+    "minecraft:polished_granite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_diorite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_andesite": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:stone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:mossy_stone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:cracked_stone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:chiseled_stone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:smooth_stone": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_blackstone": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_blackstone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:cracked_polished_blackstone_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:chiseled_polished_blackstone": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_tuff": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:tuff_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:chiseled_tuff": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:chiseled_tuff_bricks": {
+      "result": "minecraft:gravel"
+    },
+    "minecraft:polished_deepslate": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:deepslate_bricks": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:deepslate_tiles": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:cracked_deepslate_bricks": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:cracked_deepslate_tiles": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:chiseled_deepslate": {
+      "result": "minecraft:cobbled_deepslate"
+    },
+    "minecraft:cut_sandstone": {
+      "result": "minecraft:sand",
+      "count": 2
+    },
+    "minecraft:chiseled_sandstone": {
+      "result": "minecraft:sand",
+      "count": 2
+    },
+    "minecraft:smooth_sandstone": {
+      "result": "minecraft:sand",
+      "count": 2
+    },
+    "minecraft:cut_red_sandstone": {
+      "result": "minecraft:red_sand",
+      "count": 2
+    },
+    "minecraft:chiseled_red_sandstone": {
+      "result": "minecraft:red_sand",
+      "count": 2
+    },
+    "minecraft:smooth_red_sandstone": {
+      "result": "minecraft:red_sand",
+      "count": 2
+    },
+    "minecraft:smooth_quartz": {
+      "result": "minecraft:quartz",
+      "count": 4
+    },
+    "minecraft:quartz_bricks": {
+      "result": "minecraft:quartz",
+      "count": 4
+    },
+    "minecraft:quartz_pillar": {
+      "result": "minecraft:quartz",
+      "count": 4
+    },
+    "minecraft:chiseled_quartz_block": {
+      "result": "minecraft:quartz",
+      "count": 4
+    },
+    "minecraft:prismarine_bricks": {
+      "result": "minecraft:prismarine_shard",
+      "count": 4
+    },
+    "minecraft:dark_prismarine": {
+      "result": "minecraft:prismarine_shard",
+      "count": 4
+    },
+    "minecraft:polished_sulfur": {
+      "result": "nookworks:sulfur_dust",
+      "count": 4
+    },
+    "minecraft:sulfur_bricks": {
+      "result": "nookworks:sulfur_dust",
+      "count": 4
+    },
+    "minecraft:chiseled_sulfur": {
+      "result": "nookworks:sulfur_dust",
+      "count": 4
+    },
+    "minecraft:polished_cinnabar": {
+      "result": "minecraft:cinnabar"
+    },
+    "minecraft:cinnabar_bricks": {
+      "result": "minecraft:cinnabar"
+    },
+    "minecraft:chiseled_cinnabar": {
+      "result": "minecraft:cinnabar"
+    },
+    "minecraft:gilded_blackstone": {
+      "result": "minecraft:gold_nugget",
+      "count": 6
+    },
+    "minecraft:copper_sword": {
+      "result": "#c:dusts/copper",
+      "count": 2
+    },
+    "minecraft:copper_pickaxe": {
+      "result": "#c:dusts/copper",
+      "count": 3
+    },
+    "minecraft:copper_axe": {
+      "result": "#c:dusts/copper",
+      "count": 3
+    },
+    "minecraft:copper_shovel": {
+      "result": "#c:dusts/copper"
+    },
+    "minecraft:copper_hoe": {
+      "result": "#c:dusts/copper",
+      "count": 2
+    },
+    "minecraft:copper_helmet": {
+      "result": "#c:dusts/copper",
+      "count": 5
+    },
+    "minecraft:copper_chestplate": {
+      "result": "#c:dusts/copper",
+      "count": 8
+    },
+    "minecraft:copper_leggings": {
+      "result": "#c:dusts/copper",
+      "count": 7
+    },
+    "minecraft:copper_boots": {
+      "result": "#c:dusts/copper",
+      "count": 4
+    },
+    "minecraft:copper_spear": {
+      "result": "#c:dusts/copper"
+    },
+    "minecraft:iron_sword": {
+      "result": "#c:dusts/iron",
+      "count": 2
+    },
+    "minecraft:iron_pickaxe": {
+      "result": "#c:dusts/iron",
+      "count": 3
+    },
+    "minecraft:iron_axe": {
+      "result": "#c:dusts/iron",
+      "count": 3
+    },
+    "minecraft:iron_shovel": {
+      "result": "#c:dusts/iron"
+    },
+    "minecraft:iron_hoe": {
+      "result": "#c:dusts/iron",
+      "count": 2
+    },
+    "minecraft:iron_helmet": {
+      "result": "#c:dusts/iron",
+      "count": 5
+    },
+    "minecraft:iron_chestplate": {
+      "result": "#c:dusts/iron",
+      "count": 8
+    },
+    "minecraft:iron_leggings": {
+      "result": "#c:dusts/iron",
+      "count": 7
+    },
+    "minecraft:iron_boots": {
+      "result": "#c:dusts/iron",
+      "count": 4
+    },
+    "minecraft:iron_spear": {
+      "result": "#c:dusts/iron"
+    },
+    "minecraft:golden_sword": {
+      "result": "#c:dusts/gold",
+      "count": 2
+    },
+    "minecraft:golden_pickaxe": {
+      "result": "#c:dusts/gold",
+      "count": 3
+    },
+    "minecraft:golden_axe": {
+      "result": "#c:dusts/gold",
+      "count": 3
+    },
+    "minecraft:golden_shovel": {
+      "result": "#c:dusts/gold"
+    },
+    "minecraft:golden_hoe": {
+      "result": "#c:dusts/gold",
+      "count": 2
+    },
+    "minecraft:golden_helmet": {
+      "result": "#c:dusts/gold",
+      "count": 5
+    },
+    "minecraft:golden_chestplate": {
+      "result": "#c:dusts/gold",
+      "count": 8
+    },
+    "minecraft:golden_leggings": {
+      "result": "#c:dusts/gold",
+      "count": 7
+    },
+    "minecraft:golden_boots": {
+      "result": "#c:dusts/gold",
+      "count": 4
+    },
+    "minecraft:golden_spear": {
+      "result": "#c:dusts/gold"
+    },
+    "minecraft:diamond_sword": {
+      "result": "minecraft:diamond",
+      "count": 2
+    },
+    "minecraft:diamond_pickaxe": {
+      "result": "minecraft:diamond",
+      "count": 3
+    },
+    "minecraft:diamond_axe": {
+      "result": "minecraft:diamond",
+      "count": 3
+    },
+    "minecraft:diamond_shovel": {
+      "result": "minecraft:diamond"
+    },
+    "minecraft:diamond_hoe": {
+      "result": "minecraft:diamond",
+      "count": 2
+    },
+    "minecraft:diamond_helmet": {
+      "result": "minecraft:diamond",
+      "count": 5
+    },
+    "minecraft:diamond_chestplate": {
+      "result": "minecraft:diamond",
+      "count": 8
+    },
+    "minecraft:diamond_leggings": {
+      "result": "minecraft:diamond",
+      "count": 7
+    },
+    "minecraft:diamond_boots": {
+      "result": "minecraft:diamond",
+      "count": 4
+    },
+    "minecraft:diamond_spear": {
+      "result": "minecraft:diamond"
+    },
+    "#nookworks:pulpable/shelves": {
+      "result": "nookworks:wood_chips",
+      "count": 4
+    },
+    "minecraft:netherrack": {
+      "result": "nookworks:nether_grit"
+    },
+    "minecraft:end_stone": {
+      "result": "nookworks:end_gravel"
+    },
+    "minecraft:wheat": {
+      "result": "nookworks:flour"
+    },
+    "minecraft:bread": {
+      "result": "nookworks:breadcrumbs",
+      "count": 2
+    },
+    "nookworks:charred_lump": {
+      "result": "minecraft:black_dye"
+    },
+    "nookworks:dark_matter": {
+      "result": "minecraft:black_dye",
+      "count": 10
+    }
+  }
+}

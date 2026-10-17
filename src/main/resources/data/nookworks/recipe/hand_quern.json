@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "#c:rods/wooden",
+    "T": "minecraft:smooth_stone_slab"
+  },
+  "pattern": [
+    "S",
+    "T",
+    "T"
+  ],
+  "result": {
+    "id": "nookworks:hand_quern"
+  }
+}

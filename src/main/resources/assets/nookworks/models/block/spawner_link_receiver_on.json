@@ -1,0 +1,251 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "nookworks:block/spawner_link_receiver_front",
+    "down": "nookworks:block/spawner_link_receiver_bottom",
+    "up": "nookworks:block/spawner_link_receiver_top",
+    "north": "nookworks:block/spawner_link_receiver_side",
+    "south": "nookworks:block/spawner_link_receiver_front",
+    "west": "nookworks:block/spawner_link_receiver_side",
+    "east": "nookworks:block/spawner_link_receiver_side",
+    "down_glow": "nookworks:block/spawner_link_receiver_bottom_glow",
+    "up_glow": "nookworks:block/spawner_link_receiver_top_glow",
+    "north_glow": "nookworks:block/spawner_link_receiver_side_glow",
+    "south_glow": "nookworks:block/spawner_link_receiver_front_glow",
+    "west_glow": "nookworks:block/spawner_link_receiver_side_glow",
+    "east_glow": "nookworks:block/spawner_link_receiver_side_glow"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#down",
+          "cullface": "down"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#up",
+          "cullface": "up"
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#north",
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#south",
+          "cullface": "south"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#west",
+          "cullface": "west"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#east",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        -0.02,
+        0
+      ],
+      "to": [
+        16,
+        -0.02,
+        16
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#down_glow",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16.02,
+        0
+      ],
+      "to": [
+        16,
+        16.02,
+        16
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#up_glow",
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        -0.02
+      ],
+      "to": [
+        16,
+        16,
+        -0.02
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#north_glow",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        16.02
+      ],
+      "to": [
+        16,
+        16,
+        16.02
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#south_glow",
+          "cullface": "south"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.02,
+        0,
+        0
+      ],
+      "to": [
+        -0.02,
+        16,
+        16
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#west_glow",
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "from": [
+        16.02,
+        0,
+        0
+      ],
+      "to": [
+        16.02,
+        16,
+        16
+      ],
+      "light_emission": 12,
+      "name": "glow",
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#east_glow",
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}

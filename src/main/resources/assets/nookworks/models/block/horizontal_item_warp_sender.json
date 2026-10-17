@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "nookworks:block/warp_stone",
+    "north": "nookworks:block/warp_portal",
+    "south": "nookworks:block/warp_stone",
+    "east": "nookworks:block/warp_stone",
+    "west": "nookworks:block/warp_stone",
+    "up": "nookworks:block/horizontal_item_warp_sender_top",
+    "down": "nookworks:block/warp_stone"
+  }
+}

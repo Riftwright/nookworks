@@ -1,0 +1,349 @@
+{
+  "block.generator.run": {
+    "subtitle": "subtitles.nookworks.block.generator.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.furnace.fire_crackle",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 1.0
+      }
+    ]
+  },
+  "block.diesel_generator.run": {
+    "subtitle": "subtitles.nookworks.block.diesel_generator.run",
+    "sounds": [
+      {
+        "name": "minecraft:entity.minecart.riding",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 0.55
+      }
+    ]
+  },
+  "block.crusher.run": {
+    "subtitle": "subtitles.nookworks.block.crusher.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.grindstone.use",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.75
+      }
+    ]
+  },
+  "block.stone_maker.run": {
+    "subtitle": "subtitles.nookworks.block.stone_maker.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.lava.extinguish",
+        "type": "event",
+        "volume": 0.12,
+        "pitch": 1.5
+      }
+    ]
+  },
+  "block.electric_furnace.run": {
+    "subtitle": "subtitles.nookworks.block.electric_furnace.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 1.4
+      }
+    ]
+  },
+  "block.laser.run": {
+    "subtitle": "subtitles.nookworks.block.laser.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "block.retort.run": {
+    "subtitle": "subtitles.nookworks.block.retort.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.furnace.fire_crackle",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:block.brewing_stand.brew",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.8
+      },
+      {
+        "name": "minecraft:block.brewing_stand.brew",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.stirring_tank.run": {
+    "subtitle": "subtitles.nookworks.block.stirring_tank.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.bubble_column.whirlpool_ambient",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 1.0
+      }
+    ]
+  },
+  "block.distiller.run": {
+    "subtitle": "subtitles.nookworks.block.distiller.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.brewing_stand.brew",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.9
+      }
+    ]
+  },
+  "block.electrolytic_cell.run": {
+    "subtitle": "subtitles.nookworks.block.electrolytic_cell.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.bubble_column.bubble_pop",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 1.2
+      }
+    ]
+  },
+  "block.water_pump.run": {
+    "subtitle": "subtitles.nookworks.block.water_pump.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.water.ambient",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "block.printing_press.run": {
+    "subtitle": "subtitles.nookworks.block.printing_press.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.crafter.craft",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.barter_terminal.run": {
+    "subtitle": "subtitles.nookworks.block.barter_terminal.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.ambient",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.9
+      }
+    ]
+  },
+  "block.repair_box.done": {
+    "subtitle": "subtitles.nookworks.block.repair_box.done",
+    "sounds": [
+      {
+        "name": "minecraft:block.anvil.use",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "block.repair_box.mend": {
+    "subtitle": "subtitles.nookworks.block.repair_box.mend",
+    "sounds": [
+      {
+        "name": "minecraft:block.smithing_table.use",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.0
+      }
+    ]
+  },
+  "block.rice_polisher.turn": {
+    "subtitle": "subtitles.nookworks.block.rice_polisher.turn",
+    "sounds": [
+      {
+        "name": "minecraft:block.sand.step",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 1.15
+      }
+    ]
+  },
+  "block.ventilation_fan.run": {
+    "subtitle": "subtitles.nookworks.block.ventilation_fan.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "volume": 0.12,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "entity.thin_chain.tie": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.tie",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.place",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.thin_chain.untie": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.untie",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.break",
+        "type": "event",
+        "volume": 0.7,
+        "pitch": 1.25
+      }
+    ]
+  },
+  "entity.thin_chain.break": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.break",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.fall",
+        "type": "event",
+        "volume": 0.9,
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.thin_chain.rattle": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.rattle",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.step",
+        "type": "event",
+        "volume": 0.55,
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:block.chain.hit",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "block.absorption_pad.drain": {
+    "subtitle": "subtitles.nookworks.block.absorption_pad.drain",
+    "sounds": [
+      {
+        "name": "minecraft:entity.experience_orb.pickup",
+        "type": "event",
+        "volume": 0.15
+      }
+    ]
+  },
+  "item.camera.raise": {
+    "subtitle": "subtitles.nookworks.item.camera.raise",
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_leather",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "item.camera.lower": {
+    "subtitle": "subtitles.nookworks.item.camera.lower",
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_leather",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.6
+      }
+    ]
+  },
+  "item.camera.shutter": {
+    "subtitle": "subtitles.nookworks.item.camera.shutter",
+    "sounds": [
+      {
+        "name": "minecraft:block.lever.click",
+        "type": "event",
+        "volume": 0.7,
+        "pitch": 1.7
+      }
+    ]
+  },
+  "block.motor.run": {
+    "subtitle": "subtitles.nookworks.block.motor.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/motor_run",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.drive_wheel.turn": {
+    "subtitle": "subtitles.nookworks.block.drive_wheel.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/drive_wheel_turn",
+        "volume": 0.3
+      }
+    ]
+  },
+  "block.spawner_controller.run": {
+    "subtitle": "subtitles.nookworks.block.spawner_controller.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/spawner_controller_run",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.trash_can.swallow": {
+    "subtitle": "subtitles.nookworks.block.trash_can.swallow",
+    "sounds": [
+      {
+        "name": "nookworks:block/trash_can_swallow",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.trash_can.burn": {
+    "subtitle": "subtitles.nookworks.block.trash_can.swallow",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.burn",
+        "type": "event",
+        "volume": 0.2
+      }
+    ]
+  },
+  "block.dice.roll": {
+    "subtitle": "subtitles.nookworks.block.dice.roll",
+    "sounds": [
+      {
+        "name": "minecraft:block.bone_block.hit",
+        "type": "event"
+      }
+    ]
+  }
+}

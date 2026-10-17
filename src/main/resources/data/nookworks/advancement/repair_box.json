@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "liquid_experience"
+    }
+  ],
+  "criteria": {
+    "box": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:repair_box"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:repair_box"
+    },
+    "title": {
+      "translate": "advancements.nookworks.repair_box.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.repair_box.description"
+    }
+  },
+  "requirements": [
+    [
+      "box"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:experience"
+}

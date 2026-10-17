@@ -1,0 +1,16 @@
+{
+  "values": [
+    "minecraft:gravel",
+    "minecraft:sand",
+    "minecraft:red_sand",
+    "minecraft:soul_sand",
+    "nookworks:crude_salt",
+    "minecraft:dirt",
+    "minecraft:coarse_dirt",
+    "minecraft:rooted_dirt",
+    "minecraft:mud",
+    "nookworks:deepslate_gravel",
+    "nookworks:nether_grit",
+    "nookworks:end_gravel"
+  ]
+}

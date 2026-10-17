@@ -1,0 +1,113 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lamp": "nookworks:block/machine_lamp",
+    "particle": "nookworks:block/crusher_side"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        7,
+        0.95
+      ],
+      "to": [
+        5,
+        8,
+        0.95
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        11,
+        7,
+        15.05
+      ],
+      "to": [
+        13,
+        8,
+        15.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        0.95,
+        7,
+        11
+      ],
+      "to": [
+        0.95,
+        8,
+        13
+      ],
+      "faces": {
+        "west": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    },
+    {
+      "from": [
+        15.05,
+        7,
+        3
+      ],
+      "to": [
+        15.05,
+        8,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#lamp",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        }
+      },
+      "name": "lamp",
+      "light_emission": 15,
+      "shade_direction_override": "up"
+    }
+  ]
+}

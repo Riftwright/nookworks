@@ -1,0 +1,44 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "criteria": {
+    "upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:iron_storage_upgrade",
+              "nookworks:gold_storage_upgrade",
+              "nookworks:diamond_storage_upgrade",
+              "nookworks:netherite_storage_upgrade",
+              "nookworks:velarium_storage_upgrade"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:iron_storage_upgrade"
+    },
+    "title": {
+      "translate": "advancements.nookworks.storage_upgrade.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.storage_upgrade.description"
+    }
+  },
+  "requirements": [
+    [
+      "upgrade"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:storage"
+}

@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "if_world"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": "nookworks:dawnwood_planks",
+    "D": "nookworks:dice",
+    "G": "minecraft:glass_pane",
+    "M": "nookworks:mercury_bucket"
+  },
+  "pattern": [
+    "PDP",
+    "PGP",
+    "PMP"
+  ],
+  "result": {
+    "id": "nookworks:if_mirror"
+  }
+}

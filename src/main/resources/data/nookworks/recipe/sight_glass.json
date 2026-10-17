@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "#c:ingots/brass",
+    "G": "minecraft:glass_pane",
+    "P": "nookworks:copper_pipe"
+  },
+  "pattern": [
+    " B ",
+    "GPG",
+    " B "
+  ],
+  "result": {
+    "id": "nookworks:sight_glass",
+    "count": 1
+  }
+}

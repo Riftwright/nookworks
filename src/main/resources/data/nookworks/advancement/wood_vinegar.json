@@ -1,0 +1,25 @@
+{
+  "criteria": {
+    "vinegar": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wood_vinegar"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wood_vinegar.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wood_vinegar.description"
+    }
+  },
+  "requirements": [
+    [
+      "vinegar"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:retort"
+}

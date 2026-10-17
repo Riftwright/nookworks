@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "particle": "nookworks:block/item_warp_sender_side",
+    "side": "nookworks:block/item_warp_sender_side",
+    "top": "nookworks:block/warp_portal",
+    "bottom": "nookworks:block/warp_stone"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "spawner_control"
+    }
+  ],
+  "criteria": {
+    "controller": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:spawner_controller"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:spawner_controller"
+    },
+    "title": {
+      "translate": "advancements.nookworks.spawner_controller.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.spawner_controller.description"
+    }
+  },
+  "requirements": [
+    [
+      "controller"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:generator"
+}

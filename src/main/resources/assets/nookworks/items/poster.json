@@ -1,0 +1,507 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "nookworks:poster",
+    "cases": [
+      {
+        "when": "nookworks:alpine_cottage",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/alpine_cottage"
+        }
+      },
+      {
+        "when": "nookworks:beer",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/beer"
+        }
+      },
+      {
+        "when": "nookworks:black_cat",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/black_cat"
+        }
+      },
+      {
+        "when": "nookworks:bloodstain",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/bloodstain"
+        }
+      },
+      {
+        "when": "nookworks:blue_study",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/blue_study"
+        }
+      },
+      {
+        "when": "nookworks:blue_whale",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/blue_whale"
+        }
+      },
+      {
+        "when": "nookworks:botanical",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/botanical"
+        }
+      },
+      {
+        "when": "nookworks:burning_town",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/burning_town"
+        }
+      },
+      {
+        "when": "nookworks:candlelight",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/candlelight"
+        }
+      },
+      {
+        "when": "nookworks:carrot",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/carrot"
+        }
+      },
+      {
+        "when": "nookworks:chestnut_horse",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/chestnut_horse"
+        }
+      },
+      {
+        "when": "nookworks:circus",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/circus"
+        }
+      },
+      {
+        "when": "nookworks:composition",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/composition"
+        }
+      },
+      {
+        "when": "nookworks:crimson_hill",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/crimson_hill"
+        }
+      },
+      {
+        "when": "nookworks:dancer",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/dancer"
+        }
+      },
+      {
+        "when": "nookworks:daydream",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/daydream"
+        }
+      },
+      {
+        "when": "nookworks:desert_cactus",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/desert_cactus"
+        }
+      },
+      {
+        "when": "nookworks:dialogue",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/dialogue"
+        }
+      },
+      {
+        "when": "nookworks:dice",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/dice"
+        }
+      },
+      {
+        "when": "nookworks:do_not_enter",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/do_not_enter"
+        }
+      },
+      {
+        "when": "nookworks:dusk_peaks",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/dusk_peaks"
+        }
+      },
+      {
+        "when": "nookworks:embers",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/embers"
+        }
+      },
+      {
+        "when": "nookworks:evening_valley",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/evening_valley"
+        }
+      },
+      {
+        "when": "nookworks:floating_island",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/floating_island"
+        }
+      },
+      {
+        "when": "nookworks:flower_hat",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/flower_hat"
+        }
+      },
+      {
+        "when": "nookworks:fox",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/fox"
+        }
+      },
+      {
+        "when": "nookworks:frosted_leaves",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/frosted_leaves"
+        }
+      },
+      {
+        "when": "nookworks:fruit_and_wine",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/fruit_and_wine"
+        }
+      },
+      {
+        "when": "nookworks:golden_plain",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/golden_plain"
+        }
+      },
+      {
+        "when": "nookworks:great_wave",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/great_wave"
+        }
+      },
+      {
+        "when": "nookworks:harbour_town",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/harbour_town"
+        }
+      },
+      {
+        "when": "nookworks:hazard_stripes",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/hazard_stripes"
+        }
+      },
+      {
+        "when": "nookworks:infected_area",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/infected_area"
+        }
+      },
+      {
+        "when": "nookworks:koi",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/koi"
+        }
+      },
+      {
+        "when": "nookworks:lighthouse",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/lighthouse"
+        }
+      },
+      {
+        "when": "nookworks:little_witch",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/little_witch"
+        }
+      },
+      {
+        "when": "nookworks:moonlit_tower",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/moonlit_tower"
+        }
+      },
+      {
+        "when": "nookworks:mossy_forest",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/mossy_forest"
+        }
+      },
+      {
+        "when": "nookworks:patchwork",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/patchwork"
+        }
+      },
+      {
+        "when": "nookworks:pigeon_icon",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/pigeon_icon"
+        }
+      },
+      {
+        "when": "nookworks:portrait_in_red",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/portrait_in_red"
+        }
+      },
+      {
+        "when": "nookworks:potato",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/potato"
+        }
+      },
+      {
+        "when": "nookworks:prayer",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/prayer"
+        }
+      },
+      {
+        "when": "nookworks:radish",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/radish"
+        }
+      },
+      {
+        "when": "nookworks:red_sun",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/red_sun"
+        }
+      },
+      {
+        "when": "nookworks:rose_garden",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/rose_garden"
+        }
+      },
+      {
+        "when": "nookworks:ruined_column",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/ruined_column"
+        }
+      },
+      {
+        "when": "nookworks:ruins",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/ruins"
+        }
+      },
+      {
+        "when": "nookworks:safety_cross",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/safety_cross"
+        }
+      },
+      {
+        "when": "nookworks:safety_first",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/safety_first"
+        }
+      },
+      {
+        "when": "nookworks:seaside_town",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/seaside_town"
+        }
+      },
+      {
+        "when": "nookworks:shallows",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/shallows"
+        }
+      },
+      {
+        "when": "nookworks:sky_whale",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/sky_whale"
+        }
+      },
+      {
+        "when": "nookworks:snowman",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/snowman"
+        }
+      },
+      {
+        "when": "nookworks:splash",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/splash"
+        }
+      },
+      {
+        "when": "nookworks:still_life",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/still_life"
+        }
+      },
+      {
+        "when": "nookworks:sunflowers",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/sunflowers"
+        }
+      },
+      {
+        "when": "nookworks:the_infected",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/the_infected"
+        }
+      },
+      {
+        "when": "nookworks:the_king",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/the_king"
+        }
+      },
+      {
+        "when": "nookworks:tiger",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/tiger"
+        }
+      },
+      {
+        "when": "nookworks:tyrant",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/tyrant"
+        }
+      },
+      {
+        "when": "nookworks:undergrowth",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/undergrowth"
+        }
+      },
+      {
+        "when": "nookworks:wanted",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/wanted"
+        }
+      },
+      {
+        "when": "nookworks:water_dream",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/water_dream"
+        }
+      },
+      {
+        "when": "nookworks:waterside",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/waterside"
+        }
+      },
+      {
+        "when": "nookworks:winter_lake",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/winter_lake"
+        }
+      },
+      {
+        "when": "nookworks:workshop",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/workshop"
+        }
+      },
+      {
+        "when": "nookworks:yellow_flowers",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/yellow_flowers"
+        }
+      },
+      {
+        "when": "nookworks:zombie",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/zombie"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:condition",
+      "property": "nookworks:photo",
+      "on_true": {
+        "type": "minecraft:special",
+        "base": "nookworks:item/poster",
+        "model": {
+          "type": "nookworks:photo"
+        }
+      },
+      "on_false": {
+        "type": "minecraft:model",
+        "model": "nookworks:item/poster"
+      }
+    }
+  }
+}

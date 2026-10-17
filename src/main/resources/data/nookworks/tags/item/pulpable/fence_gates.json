@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:fence_gates"
+  ],
+  "remove": [
+    "minecraft:crimson_fence_gate",
+    "minecraft:warped_fence_gate"
+  ]
+}

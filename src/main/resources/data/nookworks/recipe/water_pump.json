@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "P": "minecraft:piston",
+    "B": "minecraft:bucket",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "CPC",
+    "CBC",
+    "CRC"
+  ],
+  "result": {
+    "id": "nookworks:water_pump",
+    "count": 1
+  }
+}

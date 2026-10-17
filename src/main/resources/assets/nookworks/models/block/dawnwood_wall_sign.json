@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_wall_sign",
+  "textures": {
+    "all": "nookworks:block/dawnwood_sign",
+    "particle": "nookworks:block/dawnwood_planks"
+  }
+}

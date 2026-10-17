@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": "#c:ingots/brass",
+    "T": "minecraft:crafting_table",
+    "B": "minecraft:dark_oak_slab"
+  },
+  "pattern": [
+    "MMM",
+    "MTM",
+    "B B"
+  ],
+  "result": {
+    "id": "nookworks:brass_workbench"
+  }
+}

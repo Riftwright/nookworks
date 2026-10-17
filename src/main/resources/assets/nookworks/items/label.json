@@ -1,0 +1,35 @@
+{
+  "model": {
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "nookworks:item/label"
+      },
+      {
+        "type": "minecraft:select",
+        "property": "minecraft:display_context",
+        "cases": [
+          {
+            "when": "gui",
+            "model": {
+              "type": "minecraft:special",
+              "base": "nookworks:item/label",
+              "model": {
+                "type": "nookworks:label",
+                "gui": true
+              }
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:special",
+          "base": "nookworks:item/label",
+          "model": {
+            "type": "nookworks:label"
+          }
+        }
+      }
+    ]
+  }
+}

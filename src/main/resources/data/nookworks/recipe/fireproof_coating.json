@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:magma_cream",
+    "minecraft:honeycomb",
+    "minecraft:clay_ball",
+    "minecraft:glass_bottle"
+  ],
+  "result": {
+    "id": "nookworks:fireproof_coating"
+  }
+}

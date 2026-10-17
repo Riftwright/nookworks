@@ -1,0 +1,18 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:gold_block",
+    "minecraft:gold_block"
+  ],
+  "result": {
+    "id": "nookworks:gold_storage_upgrade",
+    "count": 2
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "barter_terminal"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NPN",
+    "GMG",
+    "NRN"
+  ],
+  "key": {
+    "N": "minecraft:netherrack",
+    "P": "minecraft:glass_pane",
+    "G": "minecraft:gold_ingot",
+    "M": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "nookworks:barter_terminal"
+  }
+}

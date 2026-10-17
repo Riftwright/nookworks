@@ -1,0 +1,51 @@
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+iconFile="nookworks.png"
+# an arm pose of our own (the hand raised to the brow while squinting), added to vanilla's
+enumExtensions="META-INF/enumextensions.json"
+authors="${mod_authors}"
+credits="Made with AI under the author's direction: the code and most textures by Claude (Anthropic), the poster pictures with an image AI. A few hand-finished textures are the author's own work."
+displayURL="https://www.curseforge.com/minecraft/mc-mods/nookworks"
+description='''
+Small vanilla-friendly additions for the nooks and crannies of your builds - ropes, sconces, furniture, crates, storage barrels, sorters, tree felling and vein mining - and behind them a modest workshop: FE machines, a mercury chemistry chain, liquid experience and a paper mill, and a kitchen with rice, corn and onions from sifted soil.
+'''
+
+[[mixins]]
+config="nookworks.mixins.json"
+
+# Hooks into other mods (Sodium, Iris), added only when they are installed.
+[[mixins]]
+config="nookworks.compat.mixins.json"
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},26.4)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="[${jei_version_floor},)"
+    ordering="NONE"
+    side="BOTH"
+
+
+[[dependencies.${mod_id}]]
+    modId="jade"
+    type="optional"
+    versionRange="[${jade_version_floor},)"
+    ordering="NONE"
+    side="BOTH"

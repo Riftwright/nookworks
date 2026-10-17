@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_transmute",
+  "category": "misc",
+  "group": "diamond_storage_barrel",
+  "input": "nookworks:gold_storage_barrel",
+  "material": "minecraft:diamond_block",
+  "result": {
+    "id": "nookworks:diamond_storage_barrel"
+  }
+}

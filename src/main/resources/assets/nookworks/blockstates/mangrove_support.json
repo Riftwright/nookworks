@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "facing=north,shape=post": {
+      "model": "nookworks:block/mangrove_support_post"
+    },
+    "facing=north,shape=beam": {
+      "model": "nookworks:block/mangrove_support_beam"
+    },
+    "facing=north,shape=bracket": {
+      "model": "nookworks:block/mangrove_support_bracket"
+    },
+    "facing=east,shape=post": {
+      "model": "nookworks:block/mangrove_support_post",
+      "y": 90
+    },
+    "facing=east,shape=beam": {
+      "model": "nookworks:block/mangrove_support_beam",
+      "y": 90
+    },
+    "facing=east,shape=bracket": {
+      "model": "nookworks:block/mangrove_support_bracket",
+      "y": 90
+    },
+    "facing=south,shape=post": {
+      "model": "nookworks:block/mangrove_support_post",
+      "y": 180
+    },
+    "facing=south,shape=beam": {
+      "model": "nookworks:block/mangrove_support_beam",
+      "y": 180
+    },
+    "facing=south,shape=bracket": {
+      "model": "nookworks:block/mangrove_support_bracket",
+      "y": 180
+    },
+    "facing=west,shape=post": {
+      "model": "nookworks:block/mangrove_support_post",
+      "y": 270
+    },
+    "facing=west,shape=beam": {
+      "model": "nookworks:block/mangrove_support_beam",
+      "y": 270
+    },
+    "facing=west,shape=bracket": {
+      "model": "nookworks:block/mangrove_support_bracket",
+      "y": 270
+    }
+  }
+}

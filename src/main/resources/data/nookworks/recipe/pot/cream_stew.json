@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:milk_bucket"
+    },
+    {
+      "ingredient": "#c:flours/wheat"
+    },
+    {
+      "ingredient": "#c:crops/onion"
+    },
+    {
+      "ingredient": "minecraft:potato"
+    },
+    {
+      "ingredient": "minecraft:carrot"
+    },
+    {
+      "ingredient": "minecraft:chicken"
+    }
+  ],
+  "liquid": "water",
+  "amount": 250,
+  "time": 400,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:cream_stew",
+    "count": 3
+  }
+}

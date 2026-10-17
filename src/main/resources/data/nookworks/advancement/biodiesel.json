@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "biodiesel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:biodiesel_bottle",
+              "nookworks:biodiesel_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:biodiesel_bucket"
+    },
+    "title": {
+      "translate": "advancements.nookworks.biodiesel.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.biodiesel.description"
+    }
+  },
+  "requirements": [
+    [
+      "biodiesel"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:caustic_soda"
+}

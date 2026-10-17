@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "trading_counter"
+    }
+  ],
+  "criteria": {
+    "counter": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "nookworks:trading_counter"
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:trading_counter"
+    },
+    "title": {
+      "translate": "advancements.nookworks.trading_counter.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.trading_counter.description"
+    }
+  },
+  "requirements": [
+    [
+      "counter"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

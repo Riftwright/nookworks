@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "#c:rods/wooden",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    " I ",
+    "ISI",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:noodle_maker"
+  }
+}

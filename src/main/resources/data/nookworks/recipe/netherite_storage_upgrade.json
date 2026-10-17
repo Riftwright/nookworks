@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:netherite_upgrade_smithing_template",
+    "minecraft:netherite_block"
+  ],
+  "result": {
+    "id": "nookworks:netherite_storage_upgrade"
+  }
+}

@@ -1,0 +1,399 @@
+{
+  "values": {
+    "#c:dusts/salt": {
+      "result": "nookworks:caustic_soda",
+      "water": 250,
+      "mercury": 5,
+      "needs_mercury": true
+    },
+    "#c:raw_materials/zinc": {
+      "result": "nookworks:zinc_ingot",
+      "bonus_chance": 0.5,
+      "water": 250
+    },
+    "minecraft:exposed_chiseled_copper": {
+      "result": "minecraft:chiseled_copper",
+      "water": 50
+    },
+    "minecraft:exposed_copper": {
+      "result": "minecraft:copper_block",
+      "water": 50
+    },
+    "minecraft:exposed_copper_bars": {
+      "result": "minecraft:copper_bars",
+      "water": 50
+    },
+    "minecraft:exposed_copper_bulb": {
+      "result": "minecraft:copper_bulb",
+      "water": 50
+    },
+    "minecraft:exposed_copper_chain": {
+      "result": "minecraft:copper_chain",
+      "water": 50
+    },
+    "minecraft:exposed_copper_chest": {
+      "result": "minecraft:copper_chest",
+      "water": 50
+    },
+    "minecraft:exposed_copper_door": {
+      "result": "minecraft:copper_door",
+      "water": 50
+    },
+    "minecraft:exposed_copper_grate": {
+      "result": "minecraft:copper_grate",
+      "water": 50
+    },
+    "minecraft:exposed_copper_lantern": {
+      "result": "minecraft:copper_lantern",
+      "water": 50
+    },
+    "minecraft:exposed_copper_trapdoor": {
+      "result": "minecraft:copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:exposed_cut_copper": {
+      "result": "minecraft:cut_copper",
+      "water": 50
+    },
+    "minecraft:exposed_cut_copper_slab": {
+      "result": "minecraft:cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:exposed_cut_copper_stairs": {
+      "result": "minecraft:cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:exposed_lightning_rod": {
+      "result": "minecraft:lightning_rod",
+      "water": 50
+    },
+    "minecraft:oxidized_chiseled_copper": {
+      "result": "minecraft:chiseled_copper",
+      "water": 50
+    },
+    "minecraft:oxidized_copper": {
+      "result": "minecraft:copper_block",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_bars": {
+      "result": "minecraft:copper_bars",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_bulb": {
+      "result": "minecraft:copper_bulb",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_chain": {
+      "result": "minecraft:copper_chain",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_chest": {
+      "result": "minecraft:copper_chest",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_door": {
+      "result": "minecraft:copper_door",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_grate": {
+      "result": "minecraft:copper_grate",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_lantern": {
+      "result": "minecraft:copper_lantern",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_trapdoor": {
+      "result": "minecraft:copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:oxidized_cut_copper": {
+      "result": "minecraft:cut_copper",
+      "water": 50
+    },
+    "minecraft:oxidized_cut_copper_slab": {
+      "result": "minecraft:cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:oxidized_cut_copper_stairs": {
+      "result": "minecraft:cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:oxidized_lightning_rod": {
+      "result": "minecraft:lightning_rod",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_chiseled_copper": {
+      "result": "minecraft:waxed_chiseled_copper",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper": {
+      "result": "minecraft:waxed_copper_block",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_bars": {
+      "result": "minecraft:waxed_copper_bars",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_bulb": {
+      "result": "minecraft:waxed_copper_bulb",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_chain": {
+      "result": "minecraft:waxed_copper_chain",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_chest": {
+      "result": "minecraft:waxed_copper_chest",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_door": {
+      "result": "minecraft:waxed_copper_door",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_grate": {
+      "result": "minecraft:waxed_copper_grate",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_lantern": {
+      "result": "minecraft:waxed_copper_lantern",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_trapdoor": {
+      "result": "minecraft:waxed_copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_cut_copper": {
+      "result": "minecraft:waxed_cut_copper",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_cut_copper_slab": {
+      "result": "minecraft:waxed_cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_cut_copper_stairs": {
+      "result": "minecraft:waxed_cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_lightning_rod": {
+      "result": "minecraft:waxed_lightning_rod",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_chiseled_copper": {
+      "result": "minecraft:waxed_chiseled_copper",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper": {
+      "result": "minecraft:waxed_copper_block",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_bars": {
+      "result": "minecraft:waxed_copper_bars",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_bulb": {
+      "result": "minecraft:waxed_copper_bulb",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_chain": {
+      "result": "minecraft:waxed_copper_chain",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_chest": {
+      "result": "minecraft:waxed_copper_chest",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_door": {
+      "result": "minecraft:waxed_copper_door",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_grate": {
+      "result": "minecraft:waxed_copper_grate",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_lantern": {
+      "result": "minecraft:waxed_copper_lantern",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_trapdoor": {
+      "result": "minecraft:waxed_copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_cut_copper": {
+      "result": "minecraft:waxed_cut_copper",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_cut_copper_slab": {
+      "result": "minecraft:waxed_cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_cut_copper_stairs": {
+      "result": "minecraft:waxed_cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_lightning_rod": {
+      "result": "minecraft:waxed_lightning_rod",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_chiseled_copper": {
+      "result": "minecraft:waxed_chiseled_copper",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper": {
+      "result": "minecraft:waxed_copper_block",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_bars": {
+      "result": "minecraft:waxed_copper_bars",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_bulb": {
+      "result": "minecraft:waxed_copper_bulb",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_chain": {
+      "result": "minecraft:waxed_copper_chain",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_chest": {
+      "result": "minecraft:waxed_copper_chest",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_door": {
+      "result": "minecraft:waxed_copper_door",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_grate": {
+      "result": "minecraft:waxed_copper_grate",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_lantern": {
+      "result": "minecraft:waxed_copper_lantern",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_trapdoor": {
+      "result": "minecraft:waxed_copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_cut_copper": {
+      "result": "minecraft:waxed_cut_copper",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_cut_copper_slab": {
+      "result": "minecraft:waxed_cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_cut_copper_stairs": {
+      "result": "minecraft:waxed_cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_lightning_rod": {
+      "result": "minecraft:waxed_lightning_rod",
+      "water": 50
+    },
+    "minecraft:weathered_chiseled_copper": {
+      "result": "minecraft:chiseled_copper",
+      "water": 50
+    },
+    "minecraft:weathered_copper": {
+      "result": "minecraft:copper_block",
+      "water": 50
+    },
+    "minecraft:weathered_copper_bars": {
+      "result": "minecraft:copper_bars",
+      "water": 50
+    },
+    "minecraft:weathered_copper_bulb": {
+      "result": "minecraft:copper_bulb",
+      "water": 50
+    },
+    "minecraft:weathered_copper_chain": {
+      "result": "minecraft:copper_chain",
+      "water": 50
+    },
+    "minecraft:weathered_copper_chest": {
+      "result": "minecraft:copper_chest",
+      "water": 50
+    },
+    "minecraft:weathered_copper_door": {
+      "result": "minecraft:copper_door",
+      "water": 50
+    },
+    "minecraft:weathered_copper_grate": {
+      "result": "minecraft:copper_grate",
+      "water": 50
+    },
+    "minecraft:weathered_copper_lantern": {
+      "result": "minecraft:copper_lantern",
+      "water": 50
+    },
+    "minecraft:weathered_copper_trapdoor": {
+      "result": "minecraft:copper_trapdoor",
+      "water": 50
+    },
+    "minecraft:weathered_cut_copper": {
+      "result": "minecraft:cut_copper",
+      "water": 50
+    },
+    "minecraft:weathered_cut_copper_slab": {
+      "result": "minecraft:cut_copper_slab",
+      "water": 50
+    },
+    "minecraft:weathered_cut_copper_stairs": {
+      "result": "minecraft:cut_copper_stairs",
+      "water": 50
+    },
+    "minecraft:weathered_lightning_rod": {
+      "result": "minecraft:lightning_rod",
+      "water": 50
+    },
+    "minecraft:exposed_copper_golem_statue": {
+      "result": "minecraft:copper_golem_statue",
+      "water": 50
+    },
+    "minecraft:weathered_copper_golem_statue": {
+      "result": "minecraft:copper_golem_statue",
+      "water": 50
+    },
+    "minecraft:oxidized_copper_golem_statue": {
+      "result": "minecraft:copper_golem_statue",
+      "water": 50
+    },
+    "minecraft:waxed_exposed_copper_golem_statue": {
+      "result": "minecraft:waxed_copper_golem_statue",
+      "water": 50
+    },
+    "minecraft:waxed_weathered_copper_golem_statue": {
+      "result": "minecraft:waxed_copper_golem_statue",
+      "water": 50
+    },
+    "minecraft:waxed_oxidized_copper_golem_statue": {
+      "result": "minecraft:waxed_copper_golem_statue",
+      "water": 50
+    },
+    "nookworks:unlit_exposed_copper_lantern": {
+      "result": "nookworks:unlit_copper_lantern",
+      "water": 50
+    },
+    "nookworks:unlit_weathered_copper_lantern": {
+      "result": "nookworks:unlit_copper_lantern",
+      "water": 50
+    },
+    "nookworks:unlit_oxidized_copper_lantern": {
+      "result": "nookworks:unlit_copper_lantern",
+      "water": 50
+    },
+    "nookworks:unlit_waxed_exposed_copper_lantern": {
+      "result": "nookworks:unlit_waxed_copper_lantern",
+      "water": 50
+    },
+    "nookworks:unlit_waxed_weathered_copper_lantern": {
+      "result": "nookworks:unlit_waxed_copper_lantern",
+      "water": 50
+    },
+    "nookworks:unlit_waxed_oxidized_copper_lantern": {
+      "result": "nookworks:unlit_waxed_copper_lantern",
+      "water": 50
+    }
+  }
+}

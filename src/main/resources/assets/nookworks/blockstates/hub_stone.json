@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "power=0": {
+      "model": "nookworks:block/hub_stone_off"
+    },
+    "power=1": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=2": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=3": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=4": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=5": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=6": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=7": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=8": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=9": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=10": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=11": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=12": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=13": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=14": {
+      "model": "nookworks:block/hub_stone_on"
+    },
+    "power=15": {
+      "model": "nookworks:block/hub_stone_on"
+    }
+  }
+}

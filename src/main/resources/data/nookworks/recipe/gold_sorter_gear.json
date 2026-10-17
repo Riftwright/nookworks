@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "N": "minecraft:gold_nugget",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "NGN",
+    "GRG",
+    "NGN"
+  ],
+  "result": {
+    "id": "nookworks:gold_sorter_gear"
+  }
+}

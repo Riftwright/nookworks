@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "wall_shelf",
+  "ingredients": [
+    "minecraft:jungle_trapdoor",
+    "minecraft:iron_nugget",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:jungle_wall_shelf"
+  }
+}

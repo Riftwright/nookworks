@@ -1,0 +1,154 @@
+{
+  "variants": {
+    "facing=south,lit=false,oil=0": {
+      "model": "nookworks:block/oil_lamp_0"
+    },
+    "facing=south,lit=true,oil=0": {
+      "model": "nookworks:block/oil_lamp_0"
+    },
+    "facing=south,lit=false,oil=1": {
+      "model": "nookworks:block/oil_lamp_1"
+    },
+    "facing=south,lit=true,oil=1": {
+      "model": "nookworks:block/oil_lamp_1_lit"
+    },
+    "facing=south,lit=false,oil=2": {
+      "model": "nookworks:block/oil_lamp_2"
+    },
+    "facing=south,lit=true,oil=2": {
+      "model": "nookworks:block/oil_lamp_2_lit"
+    },
+    "facing=south,lit=false,oil=3": {
+      "model": "nookworks:block/oil_lamp_3"
+    },
+    "facing=south,lit=true,oil=3": {
+      "model": "nookworks:block/oil_lamp_3_lit"
+    },
+    "facing=south,lit=false,oil=4": {
+      "model": "nookworks:block/oil_lamp_4"
+    },
+    "facing=south,lit=true,oil=4": {
+      "model": "nookworks:block/oil_lamp_4_lit"
+    },
+    "facing=west,lit=false,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 90
+    },
+    "facing=west,lit=true,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 90
+    },
+    "facing=west,lit=false,oil=1": {
+      "model": "nookworks:block/oil_lamp_1",
+      "y": 90
+    },
+    "facing=west,lit=true,oil=1": {
+      "model": "nookworks:block/oil_lamp_1_lit",
+      "y": 90
+    },
+    "facing=west,lit=false,oil=2": {
+      "model": "nookworks:block/oil_lamp_2",
+      "y": 90
+    },
+    "facing=west,lit=true,oil=2": {
+      "model": "nookworks:block/oil_lamp_2_lit",
+      "y": 90
+    },
+    "facing=west,lit=false,oil=3": {
+      "model": "nookworks:block/oil_lamp_3",
+      "y": 90
+    },
+    "facing=west,lit=true,oil=3": {
+      "model": "nookworks:block/oil_lamp_3_lit",
+      "y": 90
+    },
+    "facing=west,lit=false,oil=4": {
+      "model": "nookworks:block/oil_lamp_4",
+      "y": 90
+    },
+    "facing=west,lit=true,oil=4": {
+      "model": "nookworks:block/oil_lamp_4_lit",
+      "y": 90
+    },
+    "facing=north,lit=false,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 180
+    },
+    "facing=north,lit=true,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 180
+    },
+    "facing=north,lit=false,oil=1": {
+      "model": "nookworks:block/oil_lamp_1",
+      "y": 180
+    },
+    "facing=north,lit=true,oil=1": {
+      "model": "nookworks:block/oil_lamp_1_lit",
+      "y": 180
+    },
+    "facing=north,lit=false,oil=2": {
+      "model": "nookworks:block/oil_lamp_2",
+      "y": 180
+    },
+    "facing=north,lit=true,oil=2": {
+      "model": "nookworks:block/oil_lamp_2_lit",
+      "y": 180
+    },
+    "facing=north,lit=false,oil=3": {
+      "model": "nookworks:block/oil_lamp_3",
+      "y": 180
+    },
+    "facing=north,lit=true,oil=3": {
+      "model": "nookworks:block/oil_lamp_3_lit",
+      "y": 180
+    },
+    "facing=north,lit=false,oil=4": {
+      "model": "nookworks:block/oil_lamp_4",
+      "y": 180
+    },
+    "facing=north,lit=true,oil=4": {
+      "model": "nookworks:block/oil_lamp_4_lit",
+      "y": 180
+    },
+    "facing=east,lit=false,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 270
+    },
+    "facing=east,lit=true,oil=0": {
+      "model": "nookworks:block/oil_lamp_0",
+      "y": 270
+    },
+    "facing=east,lit=false,oil=1": {
+      "model": "nookworks:block/oil_lamp_1",
+      "y": 270
+    },
+    "facing=east,lit=true,oil=1": {
+      "model": "nookworks:block/oil_lamp_1_lit",
+      "y": 270
+    },
+    "facing=east,lit=false,oil=2": {
+      "model": "nookworks:block/oil_lamp_2",
+      "y": 270
+    },
+    "facing=east,lit=true,oil=2": {
+      "model": "nookworks:block/oil_lamp_2_lit",
+      "y": 270
+    },
+    "facing=east,lit=false,oil=3": {
+      "model": "nookworks:block/oil_lamp_3",
+      "y": 270
+    },
+    "facing=east,lit=true,oil=3": {
+      "model": "nookworks:block/oil_lamp_3_lit",
+      "y": 270
+    },
+    "facing=east,lit=false,oil=4": {
+      "model": "nookworks:block/oil_lamp_4",
+      "y": 270
+    },
+    "facing=east,lit=true,oil=4": {
+      "model": "nookworks:block/oil_lamp_4_lit",
+      "y": 270
+    }
+  }
+}

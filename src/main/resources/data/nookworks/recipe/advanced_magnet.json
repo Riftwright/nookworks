@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "magnets"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": "nookworks:magnet",
+    "D": "minecraft:diamond",
+    "E": "minecraft:ender_pearl"
+  },
+  "pattern": [
+    " E ",
+    "DMD",
+    " D "
+  ],
+  "result": {
+    "id": "nookworks:advanced_magnet"
+  }
+}

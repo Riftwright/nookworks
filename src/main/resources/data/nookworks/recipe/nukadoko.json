@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "nookworks:rice_bran",
+    "S": "#c:dusts/salt",
+    "W": "minecraft:water_bucket",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "BSB",
+    "PWP",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:nukadoko",
+    "count": 1
+  }
+}

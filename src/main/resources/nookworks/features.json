@@ -1,0 +1,55 @@
+{
+  "_comment": "The parts of Nookworks a modpack can switch off (nookworks-startup.toml, [features]), and a world can leave out when it is made (<world>/serverconfig/nookworks-features.json): each name, and the items that are its. Switched off, a part's items are made by no recipe, sit in no creative tab, are hidden in JEI, come out of no sifting or trade, and its advancements are not loaded. Read by the mod (dev.nookworks.feature.Features) and by tools/gen_feature_conditions.py and tools/gen_advancements.py, which write the recipe and advancement conditions.",
+  "_needs": {
+    "_comment": "A part, or a single item, that needs another part on as well: with that part off it goes too. The Barter Terminal's piglin goes in by a Mob Bottle; the Absorption Pad is made with a Magnet.",
+    "barter_terminal": ["mob_bottle"],
+    "nookworks:absorption_pad": ["magnets"]
+  },
+  "kitchen": [
+    "nookworks:rice_polisher", "nookworks:hand_quern", "nookworks:noodle_maker", "nookworks:grill", "nookworks:iron_pot",
+    "nookworks:nukadoko", "nookworks:wooden_tray", "nookworks:range_hood",
+    "nookworks:chimney", "nookworks:rice_bale", "nookworks:brown_rice", "nookworks:white_rice", "nookworks:rice_bran",
+    "nookworks:corn_kernels", "nookworks:corn", "nookworks:onion", "nookworks:flour", "nookworks:breadcrumbs", "nookworks:breaded_pork", "nookworks:bread_dough",
+    "nookworks:risen_dough", "nookworks:udon_dough", "nookworks:raw_udon", "nookworks:pancake_batter", "nookworks:cooked_rice",
+    "nookworks:salt_onigiri", "nookworks:salmon_onigiri", "nookworks:vegetable_soup", "nookworks:fried_rice",
+    "nookworks:stir_fried_vegetables", "nookworks:french_fries", "nookworks:karaage", "nookworks:fried_fish", "nookworks:tonkatsu",
+    "nookworks:udon", "nookworks:cream_stew", "nookworks:corn_potage", "nookworks:grilled_corn", "nookworks:donut",
+    "nookworks:pancake", "nookworks:carrot_nukazuke", "nookworks:beetroot_nukazuke", "nookworks:fried_egg",
+    "nookworks:boiled_egg", "nookworks:tamagoyaki"
+  ],
+  "storage": [
+    "nookworks:iron_storage_barrel", "nookworks:gold_storage_barrel", "nookworks:diamond_storage_barrel",
+    "nookworks:netherite_storage_barrel", "nookworks:velarium_storage_barrel", "nookworks:iron_storage_upgrade",
+    "nookworks:gold_storage_upgrade", "nookworks:diamond_storage_upgrade", "nookworks:netherite_storage_upgrade",
+    "nookworks:velarium_storage_upgrade"
+  ],
+  "sorting": [
+    "nookworks:item_sorter", "nookworks:precision_sorter", "nookworks:gold_sorter_gear", "nookworks:diamond_sorter_gear",
+    "nookworks:netherite_sorter_gear", "nookworks:velarium_sorter_gear"
+  ],
+  "warps": [
+    "nookworks:item_warp_sender", "nookworks:item_warp_receiver", "nookworks:horizontal_item_warp_sender",
+    "nookworks:horizontal_item_warp_receiver"
+  ],
+  "elevator": ["nookworks:elevator"],
+  "magnets": ["nookworks:magnet", "nookworks:advanced_magnet", "nookworks:magnet_chest"],
+  "hammers": [
+    "nookworks:stone_hammer", "nookworks:copper_hammer", "nookworks:iron_hammer", "nookworks:golden_hammer",
+    "nookworks:diamond_hammer", "nookworks:netherite_hammer", "nookworks:velarium_hammer"
+  ],
+  "building_wand": ["nookworks:building_wand"],
+  "spawner_control": ["nookworks:spawner_link_sender", "nookworks:spawner_link_receiver", "nookworks:spawner_controller"],
+  "mob_bottle": ["nookworks:mob_bottle", "nookworks:spawn_egg_brewer"],
+  "laser": ["nookworks:laser"],
+  "liquid_experience": [
+    "nookworks:experience_pipe", "nookworks:experience_tank", "nookworks:absorption_pad", "nookworks:repair_box",
+    "nookworks:experience_bucket", "nookworks:liquid_experience_bottle"
+  ],
+  "printing": ["nookworks:printing_press", "nookworks:poster", "nookworks:label"],
+  "dark_matter": ["nookworks:dark_matter"],
+  "lode_pearl": ["nookworks:lode_pearl"],
+  "daemon_door": ["nookworks:daemon_door", "nookworks:destination_panel"],
+  "if_world": ["nookworks:if_mirror"],
+  "barter_terminal": ["nookworks:barter_terminal"],
+  "trading_counter": ["nookworks:trading_counter"]
+}

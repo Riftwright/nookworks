@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/iron_workbench"
+    },
+    "facing=east": {
+      "model": "nookworks:block/iron_workbench",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/iron_workbench",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/iron_workbench",
+      "y": 270
+    }
+  }
+}

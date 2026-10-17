@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/crusher"
+      }
+    },
+    {
+      "when": {
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/crusher_lamp"
+      }
+    }
+  ]
+}

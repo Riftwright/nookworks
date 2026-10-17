@@ -1,0 +1,154 @@
+{
+  "variants": {
+    "facing=north,gear=none,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold"
+    },
+    "facing=north,gear=gold,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold"
+    },
+    "facing=north,gear=diamond,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold"
+    },
+    "facing=north,gear=netherite,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold"
+    },
+    "facing=north,gear=velarium,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold"
+    },
+    "facing=north,gear=none,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold"
+    },
+    "facing=north,gear=gold,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold"
+    },
+    "facing=north,gear=diamond,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold"
+    },
+    "facing=north,gear=netherite,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold"
+    },
+    "facing=north,gear=velarium,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold"
+    },
+    "facing=east,gear=none,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 90
+    },
+    "facing=east,gear=gold,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 90
+    },
+    "facing=east,gear=diamond,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 90
+    },
+    "facing=east,gear=netherite,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 90
+    },
+    "facing=east,gear=velarium,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 90
+    },
+    "facing=east,gear=none,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 90
+    },
+    "facing=east,gear=gold,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 90
+    },
+    "facing=east,gear=diamond,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 90
+    },
+    "facing=east,gear=netherite,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 90
+    },
+    "facing=east,gear=velarium,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 90
+    },
+    "facing=south,gear=none,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 180
+    },
+    "facing=south,gear=gold,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 180
+    },
+    "facing=south,gear=diamond,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 180
+    },
+    "facing=south,gear=netherite,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 180
+    },
+    "facing=south,gear=velarium,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 180
+    },
+    "facing=south,gear=none,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 180
+    },
+    "facing=south,gear=gold,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 180
+    },
+    "facing=south,gear=diamond,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 180
+    },
+    "facing=south,gear=netherite,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 180
+    },
+    "facing=south,gear=velarium,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 180
+    },
+    "facing=west,gear=none,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 270
+    },
+    "facing=west,gear=gold,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 270
+    },
+    "facing=west,gear=diamond,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 270
+    },
+    "facing=west,gear=netherite,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 270
+    },
+    "facing=west,gear=velarium,swapped=false": {
+      "model": "nookworks:block/item_sorter_gold",
+      "y": 270
+    },
+    "facing=west,gear=none,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 270
+    },
+    "facing=west,gear=gold,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 270
+    },
+    "facing=west,gear=diamond,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 270
+    },
+    "facing=west,gear=netherite,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 270
+    },
+    "facing=west,gear=velarium,swapped=true": {
+      "model": "nookworks:block/item_sorter_swapped_gold",
+      "y": 270
+    }
+  }
+}

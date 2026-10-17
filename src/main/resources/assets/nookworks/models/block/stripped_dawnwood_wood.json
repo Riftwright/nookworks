@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "nookworks:block/stripped_dawnwood_log",
+    "side": "nookworks:block/stripped_dawnwood_log"
+  }
+}

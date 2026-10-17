@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/hook",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:hook"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sweet_berries"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "nookworks:hook",
+        "state": {
+          "sprig": "sweet_berries"
+        }
+      }
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:glow_berries"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "nookworks:hook",
+        "state": {
+          "sprig": "glow_berries"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "criteria": {
+    "amalgam": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:gold_amalgam",
+              "nookworks:iron_amalgam",
+              "nookworks:copper_amalgam",
+              "nookworks:mixed_amalgam"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:gold_amalgam"
+    },
+    "title": {
+      "translate": "advancements.nookworks.amalgam.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.amalgam.description"
+    }
+  },
+  "requirements": [
+    [
+      "amalgam"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:mercury"
+}

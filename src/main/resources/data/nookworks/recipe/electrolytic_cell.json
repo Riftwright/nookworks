@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "#c:ingots/brass",
+    "G": "minecraft:glass",
+    "C": "minecraft:copper_ingot",
+    "M": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "BGB",
+    "CMC",
+    "BRB"
+  ],
+  "result": {
+    "id": "nookworks:electrolytic_cell"
+  }
+}

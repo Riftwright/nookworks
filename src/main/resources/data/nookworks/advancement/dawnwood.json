@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "log": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:dawnwood_log"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:dawnwood_log"
+    },
+    "title": {
+      "translate": "advancements.nookworks.dawnwood.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.dawnwood.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "log"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:rare_seed"
+}

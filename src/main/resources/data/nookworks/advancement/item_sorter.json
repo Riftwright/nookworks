@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "criteria": {
+    "sorter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:item_sorter",
+              "nookworks:precision_sorter"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:item_sorter"
+    },
+    "title": {
+      "translate": "advancements.nookworks.item_sorter.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.item_sorter.description"
+    }
+  },
+  "requirements": [
+    [
+      "sorter"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "liquid_experience"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": "minecraft:glass",
+    "I": "minecraft:iron_nugget"
+  },
+  "pattern": [
+    "IGI"
+  ],
+  "result": {
+    "id": "nookworks:experience_pipe",
+    "count": 6
+  }
+}

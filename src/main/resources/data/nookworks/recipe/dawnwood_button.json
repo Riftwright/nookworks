@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    "nookworks:dawnwood_planks"
+  ],
+  "result": {
+    "id": "nookworks:dawnwood_button"
+  }
+}

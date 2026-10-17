@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "sifter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:sifter"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:sifter"
+    },
+    "title": {
+      "translate": "advancements.nookworks.sifter.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.sifter.description"
+    }
+  },
+  "requirements": [
+    [
+      "sifter"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

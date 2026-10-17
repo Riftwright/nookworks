@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "dev.nookworks.mixin.compat",
+  "plugin": "dev.nookworks.mixin.compat.CompatMixins",
+  "compatibilityLevel": "JAVA_25",
+  "client": [],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "paper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:fine_paper"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:fine_paper"
+    },
+    "title": {
+      "translate": "advancements.nookworks.fine_paper.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.fine_paper.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "paper"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:wood_pulp"
+}

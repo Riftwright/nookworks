@@ -1,0 +1,46 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "hammers"
+    }
+  ],
+  "criteria": {
+    "hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:stone_hammer",
+              "nookworks:copper_hammer",
+              "nookworks:iron_hammer",
+              "nookworks:golden_hammer",
+              "nookworks:diamond_hammer",
+              "nookworks:netherite_hammer",
+              "nookworks:velarium_hammer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:iron_hammer"
+    },
+    "title": {
+      "translate": "advancements.nookworks.hammer.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.hammer.description"
+    }
+  },
+  "requirements": [
+    [
+      "hammer"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

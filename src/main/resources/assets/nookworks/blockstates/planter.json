@@ -1,0 +1,78 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "nookworks:block/planter"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/planter_lamp"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "nookworks:block/planter",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/planter_lamp",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "nookworks:block/planter",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/planter_lamp",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "nookworks:block/planter",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/planter_lamp",
+        "y": 270
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "values": {
+    "minecraft:carrot": {
+      "result": "nookworks:carrot_nukazuke",
+      "time": 12000
+    },
+    "minecraft:beetroot": {
+      "result": "nookworks:beetroot_nukazuke",
+      "time": 12000
+    }
+  }
+}

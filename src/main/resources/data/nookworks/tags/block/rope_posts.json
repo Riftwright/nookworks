@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#minecraft:fences",
+    "#minecraft:bars",
+    "#minecraft:lightning_rods",
+    "minecraft:end_rod",
+    "nookworks:hook",
+    "#nookworks:supports"
+  ]
+}

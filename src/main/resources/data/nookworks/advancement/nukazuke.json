@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "criteria": {
+    "pickle": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:carrot_nukazuke",
+              "nookworks:beetroot_nukazuke"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:carrot_nukazuke"
+    },
+    "title": {
+      "translate": "advancements.nookworks.nukazuke.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.nukazuke.description"
+    }
+  },
+  "requirements": [
+    [
+      "pickle"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:salt"
+}

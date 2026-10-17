@@ -1,0 +1,17 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "nookworks:rice_bale"
+  ],
+  "result": {
+    "id": "nookworks:brown_rice",
+    "count": 9
+  }
+}

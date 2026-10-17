@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "I": "minecraft:iron_ingot",
+    "M": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "CIC",
+    "CMC",
+    "CRC"
+  ],
+  "result": {
+    "id": "nookworks:motor",
+    "count": 1
+  }
+}

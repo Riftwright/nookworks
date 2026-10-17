@@ -1,0 +1,44 @@
+{
+  "criteria": {
+    "gear": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:velarium_sword",
+              "nookworks:velarium_pickaxe",
+              "nookworks:velarium_axe",
+              "nookworks:velarium_shovel",
+              "nookworks:velarium_hoe",
+              "nookworks:velarium_hammer",
+              "nookworks:velarium_helmet",
+              "nookworks:velarium_chestplate",
+              "nookworks:velarium_leggings",
+              "nookworks:velarium_boots"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:velarium_chestplate"
+    },
+    "title": {
+      "translate": "advancements.nookworks.velarium_gear.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.velarium_gear.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "gear"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:tempered"
+}

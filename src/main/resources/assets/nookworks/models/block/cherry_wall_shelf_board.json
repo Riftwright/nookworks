@@ -1,0 +1,7 @@
+{
+  "parent": "nookworks:block/template_wall_shelf_board",
+  "textures": {
+    "particle": "minecraft:block/cherry_planks",
+    "planks": "minecraft:block/cherry_planks"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": "minecraft:iron_ingot",
+    "T": "minecraft:crafting_table",
+    "B": "minecraft:iron_bars"
+  },
+  "pattern": [
+    "MMM",
+    "MTM",
+    "B B"
+  ],
+  "result": {
+    "id": "nookworks:iron_workbench"
+  }
+}

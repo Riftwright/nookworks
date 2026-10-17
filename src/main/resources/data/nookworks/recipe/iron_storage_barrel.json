@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "storage"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "iron_storage_barrel",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:barrel"
+  },
+  "pattern": [
+    "III",
+    "ICI",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:iron_storage_barrel"
+  }
+}

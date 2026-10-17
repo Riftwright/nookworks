@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "#c:flours/wheat",
+      "count": 2
+    },
+    {
+      "ingredient": "minecraft:sugar"
+    },
+    {
+      "ingredient": "#c:eggs"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 100,
+  "time": 200,
+  "result": {
+    "id": "nookworks:donut",
+    "count": 4
+  }
+}

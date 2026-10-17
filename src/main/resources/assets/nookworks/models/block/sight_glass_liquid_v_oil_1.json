@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/vegetable_oil_still",
+    "liquid": "nookworks:block/vegetable_oil_still"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4.05,
+        4
+      ],
+      "to": [
+        12,
+        4.95,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#liquid"
+        },
+        "south": {
+          "texture": "#liquid"
+        },
+        "west": {
+          "texture": "#liquid"
+        },
+        "east": {
+          "texture": "#liquid"
+        },
+        "up": {
+          "texture": "#liquid"
+        },
+        "down": {
+          "texture": "#liquid"
+        }
+      },
+      "name": "liquid"
+    }
+  ]
+}

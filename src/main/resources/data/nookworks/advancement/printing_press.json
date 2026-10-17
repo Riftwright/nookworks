@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "printing"
+    }
+  ],
+  "criteria": {
+    "press": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:printing_press"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:printing_press"
+    },
+    "title": {
+      "translate": "advancements.nookworks.printing_press.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.printing_press.description"
+    }
+  },
+  "requirements": [
+    [
+      "press"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:poster"
+}

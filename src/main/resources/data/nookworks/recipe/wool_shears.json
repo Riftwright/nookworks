@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "#c:ingots/brass"
+  },
+  "pattern": [
+    " B",
+    "B "
+  ],
+  "result": {
+    "id": "nookworks:wool_shears"
+  }
+}

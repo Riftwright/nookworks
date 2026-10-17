@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/ventilation_fan"
+    },
+    "facing=east": {
+      "model": "nookworks:block/ventilation_fan",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/ventilation_fan",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/ventilation_fan",
+      "y": 270
+    }
+  }
+}

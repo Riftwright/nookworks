@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:flower_pot",
+    "minecraft:white_dye"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:glazed_flower_pot"
+  }
+}

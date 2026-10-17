@@ -1,0 +1,129 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/rope"
+      }
+    },
+    {
+      "when": {
+        "tie": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_1"
+      }
+    },
+    {
+      "when": {
+        "tie": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_2"
+      }
+    },
+    {
+      "when": {
+        "tie": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_3"
+      }
+    },
+    {
+      "when": {
+        "tie": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_4"
+      }
+    },
+    {
+      "when": {
+        "tie": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_5"
+      }
+    },
+    {
+      "when": {
+        "tie": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_6"
+      }
+    },
+    {
+      "when": {
+        "tie": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_7"
+      }
+    },
+    {
+      "when": {
+        "tie": "8"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_8"
+      }
+    },
+    {
+      "when": {
+        "tie": "9"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_9"
+      }
+    },
+    {
+      "when": {
+        "tie": "10"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_10"
+      }
+    },
+    {
+      "when": {
+        "tie": "11"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_11"
+      }
+    },
+    {
+      "when": {
+        "tie": "12"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_12"
+      }
+    },
+    {
+      "when": {
+        "tie": "13"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_13"
+      }
+    },
+    {
+      "when": {
+        "tie": "14"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_14"
+      }
+    },
+    {
+      "when": {
+        "tie": "15"
+      },
+      "apply": {
+        "model": "nookworks:block/rope_tie_15"
+      }
+    }
+  ]
+}

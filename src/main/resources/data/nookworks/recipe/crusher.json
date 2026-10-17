@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "IXI",
+    "IRI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:grindstone",
+    "X": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "nookworks:crusher"
+  }
+}

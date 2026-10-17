@@ -1,0 +1,97 @@
+{
+  "values": {
+    "minecraft:dandelion": {
+      "weight": 10
+    },
+    "minecraft:poppy": {
+      "weight": 10
+    },
+    "minecraft:blue_orchid": {
+      "weight": 10
+    },
+    "minecraft:allium": {
+      "weight": 10
+    },
+    "minecraft:azure_bluet": {
+      "weight": 10
+    },
+    "minecraft:red_tulip": {
+      "weight": 10
+    },
+    "minecraft:orange_tulip": {
+      "weight": 10
+    },
+    "minecraft:white_tulip": {
+      "weight": 10
+    },
+    "minecraft:pink_tulip": {
+      "weight": 10
+    },
+    "minecraft:oxeye_daisy": {
+      "weight": 10
+    },
+    "minecraft:cornflower": {
+      "weight": 10
+    },
+    "minecraft:lily_of_the_valley": {
+      "weight": 10
+    },
+    "minecraft:fern": {
+      "weight": 10
+    },
+    "minecraft:closed_eyeblossom": {
+      "weight": 6
+    },
+    "minecraft:sunflower": {
+      "weight": 4
+    },
+    "minecraft:lilac": {
+      "weight": 4
+    },
+    "minecraft:rose_bush": {
+      "weight": 4
+    },
+    "minecraft:peony": {
+      "weight": 4
+    },
+    "minecraft:pitcher_plant": {
+      "weight": 4
+    },
+    "minecraft:large_fern": {
+      "weight": 4
+    },
+    "minecraft:pink_petals": {
+      "weight": 4,
+      "properties": {
+        "flower_amount": "4"
+      }
+    },
+    "minecraft:wildflowers": {
+      "weight": 4,
+      "properties": {
+        "flower_amount": "4"
+      }
+    },
+    "minecraft:sweet_berry_bush": {
+      "weight": 4,
+      "properties": {
+        "age": "2"
+      }
+    },
+    "minecraft:bamboo": {
+      "weight": 4,
+      "properties": {
+        "leaves": "small"
+      }
+    },
+    "nookworks:corn": {
+      "weight": 4,
+      "properties": {
+        "age": "5"
+      }
+    },
+    "minecraft:wither_rose": {
+      "weight": 1
+    }
+  }
+}

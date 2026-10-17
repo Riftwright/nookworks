@@ -1,0 +1,184 @@
+{
+  "variants": {
+    "facing=south,interval=0,powered=false": {
+      "model": "nookworks:block/nested_timer_0"
+    },
+    "facing=south,interval=0,powered=true": {
+      "model": "nookworks:block/nested_timer_0_on"
+    },
+    "facing=south,interval=1,powered=false": {
+      "model": "nookworks:block/nested_timer_1"
+    },
+    "facing=south,interval=1,powered=true": {
+      "model": "nookworks:block/nested_timer_1_on"
+    },
+    "facing=south,interval=2,powered=false": {
+      "model": "nookworks:block/nested_timer_2"
+    },
+    "facing=south,interval=2,powered=true": {
+      "model": "nookworks:block/nested_timer_2_on"
+    },
+    "facing=south,interval=3,powered=false": {
+      "model": "nookworks:block/nested_timer_3"
+    },
+    "facing=south,interval=3,powered=true": {
+      "model": "nookworks:block/nested_timer_3_on"
+    },
+    "facing=south,interval=4,powered=false": {
+      "model": "nookworks:block/nested_timer_4"
+    },
+    "facing=south,interval=4,powered=true": {
+      "model": "nookworks:block/nested_timer_4_on"
+    },
+    "facing=south,interval=5,powered=false": {
+      "model": "nookworks:block/nested_timer_5"
+    },
+    "facing=south,interval=5,powered=true": {
+      "model": "nookworks:block/nested_timer_5_on"
+    },
+    "facing=west,interval=0,powered=false": {
+      "model": "nookworks:block/nested_timer_0",
+      "y": 90
+    },
+    "facing=west,interval=0,powered=true": {
+      "model": "nookworks:block/nested_timer_0_on",
+      "y": 90
+    },
+    "facing=west,interval=1,powered=false": {
+      "model": "nookworks:block/nested_timer_1",
+      "y": 90
+    },
+    "facing=west,interval=1,powered=true": {
+      "model": "nookworks:block/nested_timer_1_on",
+      "y": 90
+    },
+    "facing=west,interval=2,powered=false": {
+      "model": "nookworks:block/nested_timer_2",
+      "y": 90
+    },
+    "facing=west,interval=2,powered=true": {
+      "model": "nookworks:block/nested_timer_2_on",
+      "y": 90
+    },
+    "facing=west,interval=3,powered=false": {
+      "model": "nookworks:block/nested_timer_3",
+      "y": 90
+    },
+    "facing=west,interval=3,powered=true": {
+      "model": "nookworks:block/nested_timer_3_on",
+      "y": 90
+    },
+    "facing=west,interval=4,powered=false": {
+      "model": "nookworks:block/nested_timer_4",
+      "y": 90
+    },
+    "facing=west,interval=4,powered=true": {
+      "model": "nookworks:block/nested_timer_4_on",
+      "y": 90
+    },
+    "facing=west,interval=5,powered=false": {
+      "model": "nookworks:block/nested_timer_5",
+      "y": 90
+    },
+    "facing=west,interval=5,powered=true": {
+      "model": "nookworks:block/nested_timer_5_on",
+      "y": 90
+    },
+    "facing=north,interval=0,powered=false": {
+      "model": "nookworks:block/nested_timer_0",
+      "y": 180
+    },
+    "facing=north,interval=0,powered=true": {
+      "model": "nookworks:block/nested_timer_0_on",
+      "y": 180
+    },
+    "facing=north,interval=1,powered=false": {
+      "model": "nookworks:block/nested_timer_1",
+      "y": 180
+    },
+    "facing=north,interval=1,powered=true": {
+      "model": "nookworks:block/nested_timer_1_on",
+      "y": 180
+    },
+    "facing=north,interval=2,powered=false": {
+      "model": "nookworks:block/nested_timer_2",
+      "y": 180
+    },
+    "facing=north,interval=2,powered=true": {
+      "model": "nookworks:block/nested_timer_2_on",
+      "y": 180
+    },
+    "facing=north,interval=3,powered=false": {
+      "model": "nookworks:block/nested_timer_3",
+      "y": 180
+    },
+    "facing=north,interval=3,powered=true": {
+      "model": "nookworks:block/nested_timer_3_on",
+      "y": 180
+    },
+    "facing=north,interval=4,powered=false": {
+      "model": "nookworks:block/nested_timer_4",
+      "y": 180
+    },
+    "facing=north,interval=4,powered=true": {
+      "model": "nookworks:block/nested_timer_4_on",
+      "y": 180
+    },
+    "facing=north,interval=5,powered=false": {
+      "model": "nookworks:block/nested_timer_5",
+      "y": 180
+    },
+    "facing=north,interval=5,powered=true": {
+      "model": "nookworks:block/nested_timer_5_on",
+      "y": 180
+    },
+    "facing=east,interval=0,powered=false": {
+      "model": "nookworks:block/nested_timer_0",
+      "y": 270
+    },
+    "facing=east,interval=0,powered=true": {
+      "model": "nookworks:block/nested_timer_0_on",
+      "y": 270
+    },
+    "facing=east,interval=1,powered=false": {
+      "model": "nookworks:block/nested_timer_1",
+      "y": 270
+    },
+    "facing=east,interval=1,powered=true": {
+      "model": "nookworks:block/nested_timer_1_on",
+      "y": 270
+    },
+    "facing=east,interval=2,powered=false": {
+      "model": "nookworks:block/nested_timer_2",
+      "y": 270
+    },
+    "facing=east,interval=2,powered=true": {
+      "model": "nookworks:block/nested_timer_2_on",
+      "y": 270
+    },
+    "facing=east,interval=3,powered=false": {
+      "model": "nookworks:block/nested_timer_3",
+      "y": 270
+    },
+    "facing=east,interval=3,powered=true": {
+      "model": "nookworks:block/nested_timer_3_on",
+      "y": 270
+    },
+    "facing=east,interval=4,powered=false": {
+      "model": "nookworks:block/nested_timer_4",
+      "y": 270
+    },
+    "facing=east,interval=4,powered=true": {
+      "model": "nookworks:block/nested_timer_4_on",
+      "y": 270
+    },
+    "facing=east,interval=5,powered=false": {
+      "model": "nookworks:block/nested_timer_5",
+      "y": 270
+    },
+    "facing=east,interval=5,powered=true": {
+      "model": "nookworks:block/nested_timer_5_on",
+      "y": 270
+    }
+  }
+}

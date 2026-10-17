@@ -1,0 +1,243 @@
+{
+  "render_type": "minecraft:translucent",
+  "ambientocclusion": false,
+  "textures": {
+    "glass": "nookworks:block/bottle_glass",
+    "liquid": "nookworks:block/bottle_liquid",
+    "cork": "nookworks:block/bottle_cork",
+    "particle": "nookworks:block/bottle_glass"
+  },
+  "elements": [
+    {
+      "from": [
+        3.0,
+        0,
+        9.5
+      ],
+      "to": [
+        6.0,
+        3,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#glass"
+        }
+      },
+      "rotation": {
+        "origin": [
+          4.5,
+          0,
+          11.0
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        4.0,
+        3,
+        10.5
+      ],
+      "to": [
+        5.0,
+        4.5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#glass"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#glass"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#glass"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#glass"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#glass"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#glass"
+        }
+      },
+      "rotation": {
+        "origin": [
+          4.5,
+          0,
+          11.0
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        3.9,
+        4.5,
+        10.4
+      ],
+      "to": [
+        5.1,
+        5.25,
+        11.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.2,
+            0.75
+          ],
+          "texture": "#cork"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.2,
+            0.75
+          ],
+          "texture": "#cork"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.2,
+            0.75
+          ],
+          "texture": "#cork"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.2,
+            0.75
+          ],
+          "texture": "#cork"
+        },
+        "up": {
+          "uv": [
+            0,
+            1,
+            1.2,
+            2.2
+          ],
+          "texture": "#cork"
+        },
+        "down": {
+          "uv": [
+            0,
+            1,
+            1.2,
+            2.2
+          ],
+          "texture": "#cork"
+        }
+      },
+      "rotation": {
+        "origin": [
+          4.5,
+          0,
+          11.0
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    }
+  ]
+}

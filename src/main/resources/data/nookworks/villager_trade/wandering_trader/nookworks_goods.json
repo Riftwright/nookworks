@@ -1,0 +1,56 @@
+{
+  "gives": {
+    "id": "nookworks:dice"
+  },
+  "given_item_modifier": {
+    "type": "nookworks:pick_one",
+    "choices": [
+      {
+        "item": "nookworks:dice",
+        "count": 1,
+        "extra_cost": 2
+      },
+      {
+        "item": "nookworks:brown_rice",
+        "count": 4,
+        "extra_cost": 1
+      },
+      {
+        "item": "nookworks:corn_kernels",
+        "count": 4,
+        "extra_cost": 1
+      },
+      {
+        "item": "nookworks:onion",
+        "count": 2,
+        "extra_cost": 1
+      },
+      {
+        "item": "nookworks:sconce",
+        "count": 1,
+        "extra_cost": 2
+      },
+      {
+        "item": "nookworks:oil_lamp",
+        "count": 1,
+        "extra_cost": 2
+      },
+      {
+        "item": "nookworks:rare_seed",
+        "count": 1,
+        "extra_cost": 6
+      },
+      {
+        "item": "nookworks:glazed_flower_pot",
+        "count": 1,
+        "extra_cost": 2
+      }
+    ]
+  },
+  "max_uses": 5,
+  "reputation_discount": 0.05,
+  "wants": {
+    "count": 1,
+    "id": "minecraft:emerald"
+  }
+}

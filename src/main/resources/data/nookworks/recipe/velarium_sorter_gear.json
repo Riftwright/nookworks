@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "sorting"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "V": "nookworks:velarium_ingot",
+    "H": "nookworks:hub_stone",
+    "N": "nookworks:netherite_sorter_gear"
+  },
+  "pattern": [
+    " V ",
+    "HNH",
+    " V "
+  ],
+  "result": {
+    "id": "nookworks:velarium_sorter_gear"
+  }
+}

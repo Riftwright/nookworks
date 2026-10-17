@@ -1,0 +1,156 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/experience_tank_gauge",
+    "gauge": "nookworks:block/experience_tank_gauge"
+  },
+  "elements": [
+    {
+      "from": [
+        15.02,
+        5,
+        6
+      ],
+      "to": [
+        15.02,
+        9,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#gauge",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        }
+      },
+      "name": "sight glass",
+      "light_emission": 10
+    },
+    {
+      "from": [
+        15.02,
+        9,
+        6
+      ],
+      "to": [
+        15.02,
+        11,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#gauge",
+          "uv": [
+            4,
+            0,
+            8,
+            2
+          ]
+        }
+      },
+      "name": "sight glass"
+    },
+    {
+      "from": [
+        6,
+        5,
+        15.02
+      ],
+      "to": [
+        10,
+        9,
+        15.02
+      ],
+      "faces": {
+        "south": {
+          "texture": "#gauge",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        }
+      },
+      "name": "sight glass",
+      "light_emission": 10
+    },
+    {
+      "from": [
+        6,
+        9,
+        15.02
+      ],
+      "to": [
+        10,
+        11,
+        15.02
+      ],
+      "faces": {
+        "south": {
+          "texture": "#gauge",
+          "uv": [
+            4,
+            0,
+            8,
+            2
+          ]
+        }
+      },
+      "name": "sight glass"
+    },
+    {
+      "from": [
+        0.98,
+        5,
+        6
+      ],
+      "to": [
+        0.98,
+        9,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#gauge",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        }
+      },
+      "name": "sight glass",
+      "light_emission": 10
+    },
+    {
+      "from": [
+        0.98,
+        9,
+        6
+      ],
+      "to": [
+        0.98,
+        11,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#gauge",
+          "uv": [
+            4,
+            0,
+            8,
+            2
+          ]
+        }
+      },
+      "name": "sight glass"
+    }
+  ]
+}

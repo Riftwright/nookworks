@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "nookworks:block/dawnwood_planks",
+    "side": "nookworks:block/dawnwood_planks",
+    "top": "nookworks:block/dawnwood_planks"
+  }
+}

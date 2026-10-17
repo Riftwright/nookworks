@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "CCC"
+  ],
+  "result": {
+    "id": "nookworks:copper_pipe",
+    "count": 6
+  }
+}

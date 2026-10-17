@@ -1,0 +1,15 @@
+{
+  "values": [
+    "#minecraft:fire",
+    "minecraft:magma_block",
+    "minecraft:lava",
+    "minecraft:furnace",
+    "minecraft:smoker",
+    "minecraft:blast_furnace",
+    "nookworks:generator",
+    {
+      "id": "farmersdelight:stove",
+      "required": false
+    }
+  ]
+}

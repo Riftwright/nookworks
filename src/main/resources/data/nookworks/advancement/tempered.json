@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "tempered": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:tempered_velarium_ingot"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:tempered_velarium_ingot"
+    },
+    "title": {
+      "translate": "advancements.nookworks.tempered.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.tempered.description"
+    }
+  },
+  "requirements": [
+    [
+      "tempered"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:velarium_ingot"
+}

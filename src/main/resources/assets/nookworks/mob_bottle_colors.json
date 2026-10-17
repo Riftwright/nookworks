@@ -1,0 +1,354 @@
+{
+  "minecraft:allay": [
+    "#63e8fa",
+    "#3093c9"
+  ],
+  "minecraft:armadillo": [
+    "#805355",
+    "#bb756d"
+  ],
+  "minecraft:axolotl": [
+    "#f2acd5",
+    "#c8558d"
+  ],
+  "minecraft:bat": [
+    "#251f1b",
+    "#735370"
+  ],
+  "minecraft:bee": [
+    "#e1ae44",
+    "#5f3322"
+  ],
+  "minecraft:blaze": [
+    "#f9c734",
+    "#7f2703"
+  ],
+  "minecraft:bogged": [
+    "#747b55",
+    "#f32020"
+  ],
+  "minecraft:breeze": [
+    "#6f79ad",
+    "#d3cce1"
+  ],
+  "minecraft:camel": [
+    "#cf9b46",
+    "#fed08b"
+  ],
+  "minecraft:camel_husk": [
+    "#383026",
+    "#5b4f3d"
+  ],
+  "minecraft:cat": [
+    "#5e5b5d",
+    "#c8c5c5"
+  ],
+  "minecraft:cave_spider": [
+    "#142d29",
+    "#847a6f"
+  ],
+  "minecraft:chicken": [
+    "#c6beb0",
+    "#e01212"
+  ],
+  "minecraft:cod": [
+    "#8a6e54",
+    "#879fad"
+  ],
+  "minecraft:copper_golem": [
+    "#984e35",
+    "#d77c62"
+  ],
+  "minecraft:cow": [
+    "#40362b",
+    "#a6a6a6"
+  ],
+  "minecraft:creaking": [
+    "#69625f",
+    "#ee8f29"
+  ],
+  "minecraft:creeper": [
+    "#4baa4c",
+    "#13300f"
+  ],
+  "minecraft:dolphin": [
+    "#7485a2",
+    "#bad3e8"
+  ],
+  "minecraft:donkey": [
+    "#6f6052",
+    "#c1bcb3"
+  ],
+  "minecraft:drowned": [
+    "#4a9565",
+    "#5f432f"
+  ],
+  "minecraft:elder_guardian": [
+    "#948d7d",
+    "#3d5b87"
+  ],
+  "minecraft:ender_dragon": [
+    "#1e1d1f",
+    "#ae07d4"
+  ],
+  "minecraft:enderman": [
+    "#282229",
+    "#c834ef"
+  ],
+  "minecraft:endermite": [
+    "#3a2749",
+    "#b61cdf"
+  ],
+  "minecraft:evoker": [
+    "#929384",
+    "#3b3e3d"
+  ],
+  "minecraft:fox": [
+    "#d47125",
+    "#c9b7ab"
+  ],
+  "minecraft:frog": [
+    "#c87c4e",
+    "#7e4528"
+  ],
+  "minecraft:ghast": [
+    "#e8e3e3",
+    "#b3aaaa"
+  ],
+  "minecraft:glow_squid": [
+    "#257985",
+    "#58d09b"
+  ],
+  "minecraft:goat": [
+    "#d8cfbf",
+    "#544d49"
+  ],
+  "minecraft:guardian": [
+    "#4d7671",
+    "#cc4f21"
+  ],
+  "minecraft:happy_ghast": [
+    "#e7e2e2",
+    "#b0a8a8"
+  ],
+  "minecraft:hoglin": [
+    "#b87b5f",
+    "#f1eba1"
+  ],
+  "minecraft:horse": [
+    "#633f18",
+    "#e7d5c6"
+  ],
+  "minecraft:husk": [
+    "#706249",
+    "#c9af75"
+  ],
+  "minecraft:iron_golem": [
+    "#a39184",
+    "#849424"
+  ],
+  "minecraft:llama": [
+    "#f5e2ba",
+    "#bea376"
+  ],
+  "minecraft:magma_cube": [
+    "#380706",
+    "#c8651e"
+  ],
+  "minecraft:mooshroom": [
+    "#949494",
+    "#911316"
+  ],
+  "minecraft:mule": [
+    "#45281a",
+    "#87725d"
+  ],
+  "minecraft:nautilus": [
+    "#a74d37",
+    "#a0a9aa"
+  ],
+  "minecraft:ocelot": [
+    "#e5bb6e",
+    "#fff4d6"
+  ],
+  "minecraft:panda": [
+    "#c6c6c6",
+    "#1b1b21"
+  ],
+  "minecraft:parched": [
+    "#696558",
+    "#bfa979"
+  ],
+  "minecraft:parrot": [
+    "#c14617",
+    "#055df0"
+  ],
+  "minecraft:phantom": [
+    "#3b4a76",
+    "#aca38f"
+  ],
+  "minecraft:pig": [
+    "#d76966",
+    "#f29c97"
+  ],
+  "minecraft:piglin": [
+    "#d4976f",
+    "#80452d"
+  ],
+  "minecraft:piglin_brute": [
+    "#d4986d",
+    "#7b432f"
+  ],
+  "minecraft:pillager": [
+    "#413e3f",
+    "#8c9595"
+  ],
+  "minecraft:polar_bear": [
+    "#e3e1dc",
+    "#434247"
+  ],
+  "minecraft:pufferfish": [
+    "#e4ac45",
+    "#577f94"
+  ],
+  "minecraft:rabbit": [
+    "#a97f5e",
+    "#6c472d"
+  ],
+  "minecraft:ravager": [
+    "#444442",
+    "#809692"
+  ],
+  "minecraft:salmon": [
+    "#77888f",
+    "#934730"
+  ],
+  "minecraft:sheep": [
+    "#dfdfdf",
+    "#b38d78"
+  ],
+  "minecraft:shulker": [
+    "#875f87",
+    "#ccce8f"
+  ],
+  "minecraft:silverfish": [
+    "#76797a",
+    "#2a2a2b"
+  ],
+  "minecraft:skeleton": [
+    "#bfbfbf",
+    "#878686"
+  ],
+  "minecraft:skeleton_horse": [
+    "#cfcfcf",
+    "#929191"
+  ],
+  "minecraft:slime": [
+    "#6db25a",
+    "#467836"
+  ],
+  "minecraft:sniffer": [
+    "#2e3e2c",
+    "#c67e21"
+  ],
+  "minecraft:snow_golem": [
+    "#b16b17",
+    "#b9c4c4"
+  ],
+  "minecraft:spider": [
+    "#3b332c",
+    "#847a6f"
+  ],
+  "minecraft:squid": [
+    "#4c6a81",
+    "#801111"
+  ],
+  "minecraft:stray": [
+    "#495e5f",
+    "#a0b1b3"
+  ],
+  "minecraft:strider": [
+    "#9b3c3b",
+    "#514545"
+  ],
+  "minecraft:sulfur_cube": [
+    "#e5e997",
+    "#dbcab0"
+  ],
+  "minecraft:tadpole": [
+    "#48311f",
+    "#478ab9"
+  ],
+  "minecraft:trader_llama": [
+    "#d0b07f",
+    "#324b75"
+  ],
+  "minecraft:tropical_fish": [
+    "#949aa5",
+    "#b84f0d"
+  ],
+  "minecraft:turtle": [
+    "#3e9c42",
+    "#738254"
+  ],
+  "minecraft:vex": [
+    "#9bb1c5",
+    "#4b6073"
+  ],
+  "minecraft:villager": [
+    "#a87458",
+    "#5f3d34"
+  ],
+  "minecraft:vindicator": [
+    "#3a4242",
+    "#8b9190"
+  ],
+  "minecraft:wandering_trader": [
+    "#8f4a28",
+    "#2f3942"
+  ],
+  "minecraft:warden": [
+    "#0e2c35",
+    "#66a89f"
+  ],
+  "minecraft:witch": [
+    "#816d56",
+    "#231332"
+  ],
+  "minecraft:wither": [
+    "#333434",
+    "#929292"
+  ],
+  "minecraft:wither_skeleton": [
+    "#353737",
+    "#1b1b1b"
+  ],
+  "minecraft:wolf": [
+    "#c2bbb9",
+    "#736a62"
+  ],
+  "minecraft:zoglin": [
+    "#da7a76",
+    "#8e9483"
+  ],
+  "minecraft:zombie": [
+    "#45855f",
+    "#373b8e"
+  ],
+  "minecraft:zombie_horse": [
+    "#23301e",
+    "#4c6230"
+  ],
+  "minecraft:zombie_nautilus": [
+    "#4b5d3a",
+    "#b5c5af"
+  ],
+  "minecraft:zombie_villager": [
+    "#43432e",
+    "#5f7f3b"
+  ],
+  "minecraft:zombified_piglin": [
+    "#835745",
+    "#d1b3ae"
+  ]
+}

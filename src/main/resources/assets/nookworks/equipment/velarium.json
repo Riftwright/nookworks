@@ -1,0 +1,19 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "nookworks:velarium"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "nookworks:velarium"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "nookworks:velarium"
+      }
+    ]
+  }
+}

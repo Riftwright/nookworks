@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "T": "minecraft:redstone_torch",
+    "C": "minecraft:clock",
+    "S": "minecraft:stone"
+  },
+  "pattern": [
+    "TCT",
+    "SSS"
+  ],
+  "result": {
+    "id": "nookworks:nested_timer",
+    "count": 1
+  }
+}

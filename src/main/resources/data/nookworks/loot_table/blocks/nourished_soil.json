@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:nourished_soil",
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "nookworks:nourished_soil",
+            "properties": [
+              "richness"
+            ],
+            "condition": {
+              "type": "minecraft:inverted",
+              "term": {
+                "type": "minecraft:match_block",
+                "blocks": "nookworks:nourished_soil",
+                "state": {
+                  "richness": "3"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "nookworks:blocks/nourished_soil"
+}

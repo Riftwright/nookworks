@@ -1,0 +1,269 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/copper_tank"
+      }
+    },
+    {
+      "when": {
+        "content": "empty"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_1"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_2"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_3"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_4"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_5"
+      }
+    },
+    {
+      "when": {
+        "content": "water",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_water_6"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_1"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_2"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_3"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_4"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_5"
+      }
+    },
+    {
+      "when": {
+        "content": "oil",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_oil_6"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_1"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_2"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_3"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_4"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_5"
+      }
+    },
+    {
+      "when": {
+        "content": "biodiesel",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_biodiesel_6"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_1"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_2"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_3"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_4"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_5"
+      }
+    },
+    {
+      "when": {
+        "content": "other",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_other_6"
+      }
+    }
+  ]
+}

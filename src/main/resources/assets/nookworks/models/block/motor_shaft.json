@@ -1,0 +1,41 @@
+{
+  "textures": {
+    "particle": "nookworks:block/black_iron",
+    "shaft": "nookworks:block/black_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        6.5,
+        6.5,
+        0
+      ],
+      "to": [
+        9.5,
+        9.5,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shaft",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#shaft"
+        },
+        "east": {
+          "texture": "#shaft"
+        },
+        "west": {
+          "texture": "#shaft"
+        },
+        "up": {
+          "texture": "#shaft"
+        },
+        "down": {
+          "texture": "#shaft"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=south,lit=false": {
+      "model": "nookworks:block/electrolytic_cell"
+    },
+    "facing=west,lit=false": {
+      "model": "nookworks:block/electrolytic_cell",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "nookworks:block/electrolytic_cell",
+      "y": 180
+    },
+    "facing=east,lit=false": {
+      "model": "nookworks:block/electrolytic_cell",
+      "y": 270
+    },
+    "facing=south,lit=true": {
+      "model": "nookworks:block/electrolytic_cell_lit"
+    },
+    "facing=west,lit=true": {
+      "model": "nookworks:block/electrolytic_cell_lit",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "nookworks:block/electrolytic_cell_lit",
+      "y": 180
+    },
+    "facing=east,lit=true": {
+      "model": "nookworks:block/electrolytic_cell_lit",
+      "y": 270
+    }
+  }
+}

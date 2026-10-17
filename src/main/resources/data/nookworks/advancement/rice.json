@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "kitchen"
+    }
+  ],
+  "criteria": {
+    "rice": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": {
+          "type": "minecraft:location_check",
+          "predicate": {
+            "block": {
+              "blocks": "#nookworks:rice_crops"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:brown_rice"
+    },
+    "title": {
+      "translate": "advancements.nookworks.rice.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.rice.description"
+    }
+  },
+  "requirements": [
+    [
+      "rice"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:sifter"
+}

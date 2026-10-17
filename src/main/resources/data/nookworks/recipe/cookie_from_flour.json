@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:setting",
+      "setting": "flour_bakery",
+      "is": true
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#c:flours/wheat",
+    "#c:flours/wheat",
+    "minecraft:sugar",
+    "minecraft:cocoa_beans",
+    "#c:eggs"
+  ],
+  "result": {
+    "id": "minecraft:cookie",
+    "count": 8
+  }
+}

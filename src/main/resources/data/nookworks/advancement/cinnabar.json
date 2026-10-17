@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "cinnabar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:cinnabar"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:cinnabar"
+    },
+    "title": {
+      "translate": "advancements.nookworks.cinnabar.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.cinnabar.description"
+    }
+  },
+  "requirements": [
+    [
+      "cinnabar"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:retort"
+}

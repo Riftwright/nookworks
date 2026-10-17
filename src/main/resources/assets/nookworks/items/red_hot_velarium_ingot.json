@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "nookworks:still_hot",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "nookworks:item/red_hot_velarium_ingot"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "nookworks:item/velarium_ingot"
+    }
+  }
+}

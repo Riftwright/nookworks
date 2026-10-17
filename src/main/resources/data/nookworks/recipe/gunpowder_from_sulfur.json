@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "nookworks:sulfur_dust",
+    "C": "#minecraft:coals",
+    "B": "minecraft:bone_meal"
+  },
+  "pattern": [
+    "BBB",
+    "BCB",
+    "BSB"
+  ],
+  "result": {
+    "id": "minecraft:gunpowder",
+    "count": 3
+  }
+}

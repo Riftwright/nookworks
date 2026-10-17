@@ -1,0 +1,43 @@
+{
+  "values": {
+    "minecraft:cinnabar": {
+      "mercury": 250,
+      "byproduct": "nookworks:sulfur_dust",
+      "count": 1,
+      "experience": 0.7
+    },
+    "minecraft:water_bucket": {
+      "byproduct": "nookworks:crude_salt",
+      "count": 2,
+      "remainder": "minecraft:bucket",
+      "experience": 0.1
+    },
+    "nookworks:wood_chips": {
+      "byproduct": "nookworks:wood_pulp",
+      "count": 1,
+      "reagents": [
+        "nookworks:caustic_soda",
+        "nookworks:sulfur_dust"
+      ],
+      "experience": 0.2
+    },
+    "minecraft:copper_ingot": {
+      "byproduct": "nookworks:brass_ingot",
+      "count": 3,
+      "reagents": [
+        "minecraft:copper_ingot",
+        "#c:ingots/zinc"
+      ],
+      "experience": 0.5
+    },
+    "#minecraft:logs_that_burn": {
+      "byproduct": "nookworks:wood_vinegar",
+      "count": 1,
+      "remainder": "minecraft:charcoal",
+      "reagents": [
+        "minecraft:glass_bottle"
+      ],
+      "experience": 0.15
+    }
+  }
+}
