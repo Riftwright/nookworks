@@ -79,6 +79,7 @@ public class PlacedBottlesBlockEntity extends BlockEntity {
             for (ItemStack bottle : this.bottles) {
                 Containers.dropItemStack(this.level, pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5, bottle.copy());
             }
+            this.bottles.clear(); // dropped, so gone from here (the dupe audit's hardening note)
         }
     }
 

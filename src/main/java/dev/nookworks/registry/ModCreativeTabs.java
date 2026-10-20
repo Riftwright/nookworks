@@ -55,6 +55,7 @@ public final class ModCreativeTabs {
                         });
                         output.accept(ModItems.SCONCE.get());
                         output.accept(ModItems.OIL_LAMP.get());
+                        output.accept(ModItems.BOOKEND.get());
                         output.accept(ModItems.UNLIT_LANTERN.get());
                         output.accept(ModItems.UNLIT_SOUL_LANTERN.get());
                         ModItems.UNLIT_COPPER_LANTERNS.values().forEach(lantern -> output.accept(lantern.get()));
@@ -74,7 +75,7 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> KITCHEN = CREATIVE_MODE_TABS.register("kitchen",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.nookworks.kitchen"))
-                    .withTabsBefore(BUILDING.getKey())
+                    .withTabsBefore(BUILDING.key())
                     // a bowl of rice, or with the kitchen switched off (features), what the tab still holds
                     .icon(() -> (Features.enabled("kitchen") ? ModCooking.COOKED_RICE.get() : ModOil.OIL_PRESS_ITEM.get())
                             .getDefaultInstance())
@@ -146,7 +147,7 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WORKSHOP = CREATIVE_MODE_TABS.register("workshop",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.nookworks.workshop"))
-                    .withTabsBefore(KITCHEN.getKey())
+                    .withTabsBefore(KITCHEN.key())
                     .icon(() -> ModItems.GENERATOR.get().getDefaultInstance())
                     .displayItems(Features.shown((parameters, output) -> {
                         // tools and gear
@@ -185,6 +186,12 @@ public final class ModCreativeTabs {
                         output.accept(ModOil.MOTOR_ITEM.get());
                         output.accept(ModOil.DRIVE_WHEEL_ITEM.get());
                         output.accept(ModItems.CRUSHER.get());
+                        output.accept(ModRecycling.COMPRESSOR_ITEM.get());
+                        output.accept(ModRecycling.BALER.get());
+                        output.accept(ModRecycling.RECYCLER_ITEM.get());
+                        output.accept(ModRecycling.SCRAP.get());
+                        ModRecycling.BUILDING_ITEMS.values().forEach(item -> output.accept(item.get()));
+                        output.accept(ModRecycling.PATCHED_SHEET_METAL_ITEM.get());
                         output.accept(ModItems.SIFTER.get());
                         output.accept(ModItems.BRASS_MESH.get());
                         output.accept(ModItems.STONE_MAKER.get());
@@ -277,7 +284,7 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> POSTERS = CREATIVE_MODE_TABS.register("posters",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.nookworks.posters"))
-                    .withTabsBefore(WORKSHOP.getKey())
+                    .withTabsBefore(WORKSHOP.key())
                     .icon(() -> {
                         ItemStack poster = new ItemStack(ModItems.POSTER.get());
                         poster.set(ModDataComponents.POSTER.get(), Nookworks.id("safety_cross"));

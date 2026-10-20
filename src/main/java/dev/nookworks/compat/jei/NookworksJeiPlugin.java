@@ -14,6 +14,7 @@ import dev.nookworks.registry.ModCooking;
 import dev.nookworks.registry.ModCrops;
 import dev.nookworks.registry.ModDataComponents;
 import dev.nookworks.registry.ModItems;
+import dev.nookworks.registry.ModRecycling;
 import dev.nookworks.registry.ModKitchen;
 import dev.nookworks.registry.ModOil;
 import dev.nookworks.registry.ModRope;
@@ -53,7 +54,7 @@ public class NookworksJeiPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IGuiHelper gui = registration.getJeiHelpers().getGuiHelper();
-        registration.addRecipeCategories(new CrushingCategory(gui), new ElectrolysisCategory(gui), new SiftingCategory(gui), new SpawnEggBrewingCategory(gui),
+        registration.addRecipeCategories(new CrushingCategory(gui), new RecyclingCategory(gui), new ElectrolysisCategory(gui), new SiftingCategory(gui), new SpawnEggBrewingCategory(gui),
                 new MercuryCategories.RetortCategory(gui), new MercuryCategories.AmalgamCategory(gui), new MercuryCategories.DistilCategory(gui),
                 new MercuryCategories.MudCategory(gui),
                 new KitchenCategories.PotCategory(gui), new KitchenCategories.PressingCategory(gui), new KitchenCategories.PicklingCategory(gui),
@@ -82,6 +83,7 @@ public class NookworksJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(CrushingCategory.TYPE, crushingRecipes());
+        registration.addRecipes(RecyclingCategory.TYPE, RecyclingCategory.recipes());
         registration.addRecipes(ElectrolysisCategory.TYPE, ElectrolysisCategory.recipes());
         registration.addRecipes(SiftingCategory.TYPE, SiftingCategory.recipes());
         registration.addRecipes(SpawnEggBrewingCategory.TYPE, on("mob_bottle", brewingRecipes()));
@@ -130,6 +132,7 @@ public class NookworksJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         station(registration, CrushingCategory.TYPE, ModItems.CRUSHER.get());
+        station(registration, RecyclingCategory.TYPE, ModRecycling.RECYCLER_ITEM.get());
         station(registration, ElectrolysisCategory.TYPE, ModItems.ELECTROLYTIC_CELL.get());
         station(registration, RecipeTypes.CRAFTING, ModItems.IRON_WORKBENCH.get(), ModItems.BRASS_WORKBENCH.get());
         station(registration, RecipeTypes.SMELTING, ModItems.ELECTRIC_FURNACE.get());

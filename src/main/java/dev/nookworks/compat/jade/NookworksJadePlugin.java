@@ -11,6 +11,8 @@ import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.machine.Readout;
 import dev.nookworks.mercury.MercuryMachineBlockEntity;
 import dev.nookworks.pearl.LodestoneNames;
+import dev.nookworks.recycling.RecyclerBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -22,6 +24,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -53,6 +57,20 @@ public final class NookworksJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(Client.INSTANCE, Block.class);
         // nothing of Jade's in the viewfinder, nor in the photo taken through it (review r12: its panel was in the prints)
         registration.addRayTraceCallback((hit, accessor, original) -> CameraView.looking() ? null : accessor);
+        // the Recycler's intake is the body's: looked at, it reads as the body below, where its work and status are
+        registration.addRayTraceCallback((hit, accessor, original) -> {
+            if (accessor instanceof BlockAccessor block && block.getBlockState().getBlock() instanceof RecyclerBlock
+                    && block.getBlockState().getValue(RecyclerBlock.HALF) == DoubleBlockHalf.UPPER) {
+                BlockPos below = block.getPosition().below();
+                BlockState body = block.getLevel().getBlockState(below);
+                if (body.getBlock() instanceof RecyclerBlock) {
+                    return registration.blockAccessor().from(block).blockState(body)
+                            .blockEntity(() -> block.getLevel().getBlockEntity(below))
+                            .hit(block.getHitResult().withPosition(below)).build();
+                }
+            }
+            return accessor;
+        });
         // the Creative Generator's endless power is no bar (r15: "9.22EFE / 9.22EFE"); its own line says it
         registration.addTooltipCollectedCallback((box, accessor) -> {
             if (accessor instanceof snownee.jade.api.BlockAccessor block && block.getBlockEntity() instanceof dev.nookworks.machine.CreativeGeneratorBlockEntity) {
@@ -106,6 +124,8 @@ public final class NookworksJadePlugin implements IWailaPlugin {
         int max = machine.guiProgressMax();
         Component line = status == MachineStatus.RUNNING && max > 0 && machine.layout().gauge() == MachineLayout.Gauge.ARROW
                 ? Component.translatable("gui.nookworks.machine.running_percent", machine.guiProgress() * 100 / max)
+                // an incomplete tower says what it lacks, as its screen's tooltip does
+                : status == MachineStatus.INCOMPLETE ? Component.translatable("nookworks.machine.distiller.incomplete")
                 : Component.translatable(status.translationKey());
         return line.copy().withColor(switch (status.tone()) {
             case GOOD -> 0x7EDC7E;

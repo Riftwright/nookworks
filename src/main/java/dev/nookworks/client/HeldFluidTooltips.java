@@ -41,6 +41,11 @@ public final class HeldFluidTooltips {
             event.getToolTip().add(Math.min(at++, event.getToolTip().size()),
                     Component.translatable("tooltip.nookworks.catalyst_left", batches).withStyle(ChatFormatting.GRAY));
         }
+        Integer brews = stack.get(ModDataComponents.BREWS_LEFT.get());
+        if (brews != null && brews > 0) {
+            event.getToolTip().add(Math.min(at++, event.getToolTip().size()),
+                    Component.translatable("tooltip.nookworks.brews_left", brews).withStyle(ChatFormatting.GRAY));
+        }
         var held = stack.get(ModDataComponents.HELD_FLUIDS.get());
         if (held == null) {
             return;

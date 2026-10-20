@@ -10,6 +10,8 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
+import dev.nookworks.recycling.RecyclerBlock;
+import dev.nookworks.recycling.RecyclerBlockEntity;
 
 /**
  * Exposes Nookworks inventories and energy to hoppers, pipes and cables from any mod.
@@ -94,6 +96,16 @@ public final class ModCapabilities {
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.REPAIR_BOX.get(), WorldlyContainerWrapper::new);
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.TRASH_CAN.get(), (be, side) -> be.itemHandler());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.REPAIR_BOX.get(), (be, side) -> be.energy());
+
+        // Recycling: the Recycler's intake (its upper block) is the body's too
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModRecycling.COMPRESSOR_ENTITY.get(), WorldlyContainerWrapper::new);
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, ModRecycling.COMPRESSOR_ENTITY.get(), (be, side) -> be.energy());
+        event.registerBlock(Capabilities.Item.BLOCK, (level, pos, state, be, side) ->
+                level.getBlockEntity(RecyclerBlock.lower(state, pos)) instanceof RecyclerBlockEntity body
+                        ? new WorldlyContainerWrapper(body, side) : null, ModRecycling.RECYCLER.get());
+        event.registerBlock(Capabilities.Energy.BLOCK, (level, pos, state, be, side) ->
+                level.getBlockEntity(RecyclerBlock.lower(state, pos)) instanceof RecyclerBlockEntity body
+                        ? body.energy() : null, ModRecycling.RECYCLER.get());
 
         // Mercury is deliberately not exposed as a fluid capability (see MercuryHandler).
         event.registerBlock(Capabilities.Energy.BLOCK,

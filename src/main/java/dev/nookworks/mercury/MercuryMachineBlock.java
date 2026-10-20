@@ -79,6 +79,11 @@ public class MercuryMachineBlock extends MachineBlock {
         };
     }
 
+    @Override
+    protected boolean holdsMercury() {
+        return true;
+    }
+
     /**
      * A bucket on the Stirring Tank pours water or vegetable oil into its tanks, and an empty one takes its biodiesel
      * out, as on a Copper Tank; anything else goes into its charge slot or opens its screen, as on any machine.
@@ -86,6 +91,13 @@ public class MercuryMachineBlock extends MachineBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
+        if (stack.getItem() instanceof MercuryBucketItem) {
+            // said where it goes: the click opened the screen and said nothing, as if missed (play-test, 2026-10-19)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.mercury_bucket.into_tank"));
+            }
+            return Clicks.REFUSED;
+        }
         if (this.kind == Kind.STIRRING_TANK && level.getBlockEntity(pos) instanceof StirringTankBlockEntity tank
                 && ItemAccess.forPlayerInteraction(player, hand).getCapability(Capabilities.Fluid.ITEM) != null) {
             // The client does not know what the tanks hold: the click ends here and the server decides, as at a Copper

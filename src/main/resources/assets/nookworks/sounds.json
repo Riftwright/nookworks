@@ -345,5 +345,33 @@
         "type": "event"
       }
     ]
+  },
+  "block.compressor.run": {
+    "subtitle": "subtitles.nookworks.block.compressor.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.piston.extend",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "block.recycler.run": {
+    "subtitle": "subtitles.nookworks.block.recycler.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.anvil.land",
+        "type": "event",
+        "volume": 0.15,
+        "pitch": 1.6
+      },
+      {
+        "name": "minecraft:block.grindstone.use",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.6
+      }
+    ]
   }
 }

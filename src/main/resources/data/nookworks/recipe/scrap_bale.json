@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": "nookworks:scrap"
+  },
+  "pattern": [
+    "SSS",
+    "SSS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:scrap_bale"
+  }
+}

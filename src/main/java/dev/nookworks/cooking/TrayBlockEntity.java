@@ -139,6 +139,22 @@ public class TrayBlockEntity extends BlockEntity implements Readout {
         }
     }
 
+    /**
+     * To Jade, only what is still rising: Jade shows the tray's things itself, with their pictures, and they were listed
+     * twice (the kitchen play-test, 2026-10-19).
+     */
+    @Override
+    public void jade(Consumer<Component> lines) {
+        long now = this.level == null ? 0 : this.level.getGameTime();
+        for (int slot = 0; slot < SLOTS; slot++) {
+            ItemStack stack = this.items.get(slot);
+            long left = this.risesAt[slot] - now;
+            if (!stack.isEmpty() && left > 0) {
+                lines.accept(Component.translatable("nookworks.tray.rising", stack.getHoverName(), (left + 1_199) / 1_200));
+            }
+        }
+    }
+
     /** Whether {@code stack} goes on a tray. */
     public static boolean fits(ItemStack stack) {
         return !stack.isEmpty() && (stack.has(DataComponents.FOOD) || stack.is(GOES_ON_TRAYS));
@@ -222,6 +238,7 @@ public class TrayBlockEntity extends BlockEntity implements Readout {
             for (ItemStack stack : this.items) {
                 Containers.dropItemStack(this.level, pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5, stack.copy());
             }
+            this.items.clear(); // dropped, so gone from here (the dupe audit's hardening note)
         }
     }
 

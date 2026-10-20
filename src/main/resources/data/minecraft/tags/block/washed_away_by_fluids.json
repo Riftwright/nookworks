@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "nookworks:biodiesel",
+    "nookworks:book_row",
+    "nookworks:bookend",
     "nookworks:corn",
     "nookworks:destination_panel",
     "nookworks:dice",
@@ -63,6 +65,7 @@
     "nookworks:sunflower_crop",
     "nookworks:vegetable_oil",
     "nookworks:wall_sconce",
-    "nookworks:placed_bottles"
+    "nookworks:placed_bottles",
+    "nookworks:placed_books"
   ]
 }

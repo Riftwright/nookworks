@@ -236,7 +236,7 @@ public final class KitchenCategories {
                 builder.addInputSlot(1 + (i % 3) * 18, 1 + (i / 3) * 18).setStandardSlotBackground()
                         .addItemStacks(part.ingredient().items().map(h -> new ItemStack(h, part.count())).toList());
             }
-            builder.addInputSlot(1, 40).setStandardSlotBackground().addFluidStack(recipe.liquid().fluid(), recipe.amount())
+            builder.addInputSlot(1, 40).setStandardSlotBackground().add(recipe.liquid().fluid(), recipe.amount())
                     .setFluidRenderer(Math.max(1, recipe.amount()), false, 16, 16); // the slot full: how much is in the text beside it
             recipe.container().ifPresent(item -> builder.addInputSlot(64, 40).setStandardSlotBackground().add(new ItemStack(item)));
             builder.addOutputSlot(110, 10).setOutputSlotBackground()
@@ -260,7 +260,7 @@ public final class KitchenCategories {
         @Override
         public void setRecipe(IRecipeLayoutBuilder builder, Pressing r, IFocusGroup focuses) {
             builder.addInputSlot(1, 5).setStandardSlotBackground().add(r.input());
-            builder.addOutputSlot(61, 5).setOutputSlotBackground().addFluidStack(OilFluids.SOURCE.get(), r.recipe().oil())
+            builder.addOutputSlot(61, 5).setOutputSlotBackground().add(OilFluids.SOURCE.get(), r.recipe().oil())
                     .setFluidRenderer(Math.max(1, r.recipe().oil()), false, 16, 16);
             if (r.recipe().cake() > 0) {
                 String chance = String.format(Locale.ROOT, "%.0f%%", r.recipe().cake() * 100);

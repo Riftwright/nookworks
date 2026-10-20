@@ -1,16 +1,48 @@
 {
   "values": {
     "nookworks:unlit_copper_lantern": {
-      "waxed": "nookworks:unlit_waxed_copper_lantern"
+      "waxed": "nookworks:unlit_waxed_copper_lantern",
+      "generate_block_transform": false
     },
     "nookworks:unlit_exposed_copper_lantern": {
-      "waxed": "nookworks:unlit_waxed_exposed_copper_lantern"
+      "waxed": "nookworks:unlit_waxed_exposed_copper_lantern",
+      "generate_block_transform": false
     },
     "nookworks:unlit_weathered_copper_lantern": {
-      "waxed": "nookworks:unlit_waxed_weathered_copper_lantern"
+      "waxed": "nookworks:unlit_waxed_weathered_copper_lantern",
+      "generate_block_transform": false
     },
     "nookworks:unlit_oxidized_copper_lantern": {
-      "waxed": "nookworks:unlit_waxed_oxidized_copper_lantern"
+      "waxed": "nookworks:unlit_waxed_oxidized_copper_lantern",
+      "generate_block_transform": false
+    },
+    "nookworks:scrap_bale": {
+      "waxed": "nookworks:waxed_scrap_bale"
+    },
+    "nookworks:exposed_scrap_bale": {
+      "waxed": "nookworks:waxed_exposed_scrap_bale"
+    },
+    "nookworks:weathered_scrap_bale": {
+      "waxed": "nookworks:waxed_weathered_scrap_bale"
+    },
+    "nookworks:oxidized_scrap_bale": {
+      "waxed": "nookworks:waxed_oxidized_scrap_bale"
+    },
+    "nookworks:corrugated_sheet": {
+      "waxed": "nookworks:waxed_corrugated_sheet",
+      "generate_block_transform": false
+    },
+    "nookworks:exposed_corrugated_sheet": {
+      "waxed": "nookworks:waxed_exposed_corrugated_sheet",
+      "generate_block_transform": false
+    },
+    "nookworks:weathered_corrugated_sheet": {
+      "waxed": "nookworks:waxed_weathered_corrugated_sheet",
+      "generate_block_transform": false
+    },
+    "nookworks:oxidized_corrugated_sheet": {
+      "waxed": "nookworks:waxed_oxidized_corrugated_sheet",
+      "generate_block_transform": false
     }
   }
 }

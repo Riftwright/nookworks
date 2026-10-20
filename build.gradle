@@ -112,6 +112,15 @@ neoForge {
             }
             // Development-only input bridge (dev.nookworks.client.dev.AgentInput); never set for real play.
             systemProperty 'nookworks.agentInput', 'true'
+            // The window stays hidden (no window, no taskbar button: the game never takes the user's focus or mouse,
+            // and cannot be minimised by mistake); the bridge drives it and takes its shots from the game's own frame.
+            // -PagentVisible shows it as a normal window, for watching or for a person to play in it; a hidden one
+            // can also be shown for a while with `mcwin.ps1 show` (a window capture, filming, needs it shown).
+            if (!project.hasProperty('agentVisible')) {
+                systemProperty 'nookworks.agentHidden', 'true'
+                // SDL shows a window without activating it, should it be shown (it is hidden as it is first shown)
+                environment 'SDL_WINDOW_ACTIVATE_WHEN_SHOWN', '0'
+            }
             // Several may run at once (reviewers each from their own worktree) beside the user's game: without a cap
             // each takes up to a quarter of the machine's memory.
             jvmArguments.add '-Xmx' + review.getProperty('heap', '4G')
@@ -269,6 +278,24 @@ publishing {
     repositories {
         maven {
             url = "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+// NeoForge's loading screen is a window of its own, up from the start, before any mod is loaded: a hidden agent
+// client turns it off in its fml.toml (FML reads no switch for it from the command line), a visible one has it back.
+def agentFmlConfig = project.file('run-agent/config/fml.toml')
+def agentLoadingScreen = project.hasProperty('agentVisible')
+tasks.matching { it.name == 'runAgentClient' }.configureEach {
+    doFirst {
+        def line = "earlyWindowControl = ${agentLoadingScreen}".toString()
+        def text = agentFmlConfig.exists() ? agentFmlConfig.getText('UTF-8') : ''
+        def setting = /(?m)^earlyWindowControl[ \t]*=[^\r\n]*/
+        def changed = text =~ setting ? text.replaceAll(setting, line)
+                : text + (text.isEmpty() || text.endsWith('\n') ? '' : '\n') + line + '\n'
+        if (changed != text) {
+            agentFmlConfig.parentFile.mkdirs()
+            agentFmlConfig.setText(changed, 'UTF-8')
         }
     }
 }

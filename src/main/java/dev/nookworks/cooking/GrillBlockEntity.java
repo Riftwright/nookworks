@@ -230,6 +230,7 @@ public class GrillBlockEntity extends BlockEntity implements Readout {
         for (ItemStack stack : this.items) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, stack.copy());
         }
+        this.items.clear(); // dropped, so gone from here (the dupe audit's hardening note)
     }
 
     @Override

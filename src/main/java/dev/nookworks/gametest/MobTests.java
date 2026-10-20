@@ -42,6 +42,8 @@ final class MobTests {
         test("mob_bottle_drops_the_lead", MobTests::bottleDropsTheLead);
         test("spawn_egg_brewer_makes_egg", MobTests::brewerMakesSpawnEgg);
         test("spawn_egg_brewer_hopper_sides", MobTests::brewerHopperSides);
+        test("spawn_egg_brewer_gives_back_what_the_mob_carried", MobTests::brewerGivesBackCarried);
+        test("spawn_egg_brewer_keeps_its_powder_when_moved", MobTests::brewerKeepsPowder);
         test("wool_shears_shear_a_sheep_and_leave_its_lead", MobTests::woolShearsKeepTheLead);
         test("wool_shears_give_a_wool_more_now_and_then", MobTests::woolShearsBonus);
         test("wool_shears_work_in_a_dispenser", 40, MobTests::woolShearsDispensed);
@@ -230,6 +232,72 @@ final class MobTests {
             SpawnEggBrewerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), brewer);
         }
         check(helper, brewer.progress() == 0, "an empty bottle brews nothing");
+        helper.succeed();
+    }
+
+    /**
+     * A bottled mob's own things fall on the brewer as the egg is made, as they would had it died: a zombie's picked-up
+     * helmet, an allay's item. The gear it was born with (a death's small chance) and its loot do not.
+     */
+    static void brewerGivesBackCarried(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        helper.setBlock(pos, ModBlocks.SPAWN_EGG_BREWER.get());
+        SpawnEggBrewerBlockEntity brewer = helper.getBlockEntity(pos, SpawnEggBrewerBlockEntity.class);
+        var zombie = helper.spawn(EntityTypes.ZOMBIE, new BlockPos(1, 2, 1));
+        zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
+        zombie.setGuaranteedDrop(net.minecraft.world.entity.EquipmentSlot.HEAD);
+        zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+        zombie.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.0F);
+        var allay = helper.spawn(EntityTypes.ALLAY, new BlockPos(5, 2, 1));
+        allay.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new ItemStack(Items.EMERALD, 3));
+        var piglin = helper.spawn(EntityTypes.PIGLIN, new BlockPos(1, 2, 5));
+        piglin.getInventory().addItem(new ItemStack(Items.GOLD_INGOT, 2));
+        java.util.List<ItemStack> bottles = java.util.List.of(MobBottleItem.filled(zombie), MobBottleItem.filled(allay),
+                MobBottleItem.filled(piglin));
+        zombie.discard();
+        allay.discard();
+        piglin.discard();
+        brewer.setItem(SpawnEggBrewerBlockEntity.EGG, new ItemStack(Items.EGG, 3));
+        brewer.setItem(SpawnEggBrewerBlockEntity.FUEL, new ItemStack(Items.BLAZE_POWDER));
+        for (ItemStack bottle : bottles) {
+            brewer.setItem(SpawnEggBrewerBlockEntity.BOTTLE, bottle);
+            brewer.setItem(SpawnEggBrewerBlockEntity.OUTPUT, ItemStack.EMPTY);
+            for (int i = 0; i < SpawnEggBrewerBlockEntity.BREW_TIME; i++) {
+                SpawnEggBrewerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), brewer);
+            }
+        }
+        var dropped = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                new AABB(helper.absolutePos(pos)).inflate(2.0), e -> true).stream().map(e -> e.getItem()).toList();
+        check(helper, dropped.stream().anyMatch(s -> s.is(Items.DIAMOND_HELMET)), "the zombie's picked-up helmet falls: " + dropped);
+        check(helper, dropped.stream().anyMatch(s -> s.is(Items.EMERALD) && s.getCount() == 3), "the allay's emeralds fall: " + dropped);
+        check(helper, dropped.stream().anyMatch(s -> s.is(Items.GOLD_INGOT) && s.getCount() == 2), "the piglin's pocketed gold falls: " + dropped);
+        check(helper, dropped.stream().noneMatch(s -> s.is(Items.IRON_SWORD) || s.is(Items.ROTTEN_FLESH)),
+                "not the gear it was born with, nor its loot: " + dropped);
+        helper.succeed();
+    }
+
+    /** Broken after a brew, a brewer keeps the blaze powder it took in, in its item, and has it again when set down. */
+    static void brewerKeepsPowder(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        helper.setBlock(pos, ModBlocks.SPAWN_EGG_BREWER.get());
+        SpawnEggBrewerBlockEntity brewer = helper.getBlockEntity(pos, SpawnEggBrewerBlockEntity.class);
+        brewer.setItem(SpawnEggBrewerBlockEntity.BOTTLE, MobBottleItem.filled(EntityTypes.PIG));
+        brewer.setItem(SpawnEggBrewerBlockEntity.EGG, new ItemStack(Items.EGG));
+        brewer.setItem(SpawnEggBrewerBlockEntity.FUEL, new ItemStack(Items.BLAZE_POWDER));
+        for (int i = 0; i < SpawnEggBrewerBlockEntity.BREW_TIME; i++) {
+            SpawnEggBrewerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), brewer);
+        }
+        int left = SpawnEggBrewerBlockEntity.BREWS_PER_FUEL - 1;
+        check(helper, brewer.fuel() == left, "one brew used of the powder's " + SpawnEggBrewerBlockEntity.BREWS_PER_FUEL);
+        var drops = net.minecraft.world.level.block.Block.getDrops(helper.getBlockState(pos), helper.getLevel(),
+                helper.absolutePos(pos), brewer);
+        check(helper, drops.size() == 1 && Integer.valueOf(left).equals(drops.get(0).get(dev.nookworks.registry.ModDataComponents.BREWS_LEFT.get())),
+                "its item keeps the brews left: " + drops);
+        BlockPos other = new BlockPos(5, 1, 3);
+        helper.setBlock(other, ModBlocks.SPAWN_EGG_BREWER.get());
+        SpawnEggBrewerBlockEntity again = helper.getBlockEntity(other, SpawnEggBrewerBlockEntity.class);
+        again.applyComponentsFromItemStack(drops.get(0));
+        check(helper, again.fuel() == left, "set down again, it has them: " + again.fuel());
         helper.succeed();
     }
 

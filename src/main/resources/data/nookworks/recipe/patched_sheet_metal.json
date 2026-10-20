@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": "nookworks:scrap"
+  },
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "result": {
+    "count": 4,
+    "id": "nookworks:patched_sheet_metal"
+  }
+}

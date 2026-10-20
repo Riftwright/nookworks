@@ -93,6 +93,7 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 /** Blocks for the home and the yard: rope, crates, sconces, coating, the Hub Stone, soil, furniture, dice, Dawnwood. */
 final class BlockTests {
     static void register() {
+        test("standing_things_are_no_way_through_for_mobs", BlockTests::noWayThrough);
         test("rope_extends_downwards", BlockTests::ropeExtendsDownwards);
         test("rope_pulls_up_bottom_segment", BlockTests::ropePullsUp);
         test("rope_unravels_without_support", BlockTests::ropeUnravels);
@@ -1252,12 +1253,16 @@ final class BlockTests {
         BlockPos abs = helper.absolutePos(pos);
         var hit = new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false);
         var seen = new ArrayList<SupportBlock.Shape>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             helper.getBlockState(pos).useItemOn(axe, helper.getLevel(), player, InteractionHand.MAIN_HAND, hit);
             seen.add(helper.getBlockState(pos).getValue(SupportBlock.SHAPE));
+            if (i == 0) {
+                var wall = helper.getBlockState(pos).getShape(helper.getLevel(), abs).bounds();
+                check(helper, wall.maxX == 0.25 && wall.maxY == 1.0, "the wall post stands against the wall, the block's height: " + wall);
+            }
         }
-        check(helper, seen.equals(List.of(SupportBlock.Shape.POST, SupportBlock.Shape.BEAM,
-                SupportBlock.Shape.BRACKET)), "an axe goes post, beam, bracket, got " + seen);
+        check(helper, seen.equals(List.of(SupportBlock.Shape.WALL_POST, SupportBlock.Shape.POST, SupportBlock.Shape.BEAM,
+                SupportBlock.Shape.BRACKET)), "an axe goes wall post, post, beam, bracket, got " + seen);
         check(helper, helper.getBlockState(pos).getValue(SupportBlock.FACING) == Direction.EAST,
                 "without turning it");
         var shape = helper.getBlockState(pos).getShape(helper.getLevel(), abs);
@@ -1267,4 +1272,31 @@ final class BlockTests {
     }
 
     private BlockTests() {}
+
+    /**
+     * What stands in a block's space without filling it - a pipe, a desk, a support, a standing grill, a range hood, a
+     * Copper Tank, a Laser - is no way through to mobs' pathfinding, or they took it for open air and walked into it
+     * (the user, 2026-10-18). What lies on the floor stays a way over: the Absorption Pad, a grill over a fire.
+     */
+    private static void noWayThrough(GameTestHelper helper) {
+        var land = net.minecraft.world.level.pathfinder.PathComputationType.LAND;
+        java.util.List<net.minecraft.world.level.block.Block> walls = new java.util.ArrayList<>(java.util.List.of(
+                dev.nookworks.registry.ModCooking.GRILL.get(), dev.nookworks.registry.ModVentilation.RANGE_HOOD.get(),
+                dev.nookworks.registry.ModVentilation.DUCT.get(), ModBlocks.ENERGY_CABLE.get(), ModBlocks.MERCURY_PIPE.get(),
+                ModBlocks.COPPER_PIPE.get(), ModBlocks.EXPERIENCE_PIPE.get(), ModBlocks.COPPER_TANK.get(), ModBlocks.LASER.get()));
+        dev.nookworks.registry.ModWoods.DESKS.values().forEach(desk -> walls.add(desk.get()));
+        dev.nookworks.registry.ModWoods.SUPPORTS.values().forEach(support -> walls.add(support.get()));
+        for (var block : walls) {
+            for (var state : block.getStateDefinition().getPossibleStates()) {
+                if (block == dev.nookworks.registry.ModCooking.GRILL.get() && state.getValue(dev.nookworks.cooking.GrillBlock.OVER_FIRE)) {
+                    continue;
+                }
+                check(helper, !state.isPathfindable(land), state + " should be no way through");
+            }
+        }
+        check(helper, dev.nookworks.registry.ModCooking.GRILL.get().defaultBlockState()
+                .setValue(dev.nookworks.cooking.GrillBlock.OVER_FIRE, true).isPathfindable(land), "a grill over a fire is walked over");
+        check(helper, ModBlocks.ABSORPTION_PAD.get().defaultBlockState().isPathfindable(land), "the Absorption Pad is walked over");
+        helper.succeed();
+    }
 }

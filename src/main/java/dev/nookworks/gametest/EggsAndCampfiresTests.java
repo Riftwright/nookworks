@@ -41,6 +41,37 @@ final class EggsAndCampfiresTests {
         NookworksGameTests.test("an_egg_fries_in_a_furnace_smoker_or_campfire", EggsAndCampfiresTests::eggFries);
         NookworksGameTests.test("the_iron_pot_boils_eggs_and_rolls_tamagoyaki", 900, EggsAndCampfiresTests::potEggs);
         NookworksGameTests.test("egg_dishes_fill_as_the_table_says", EggsAndCampfiresTests::eggDishValues);
+        NookworksGameTests.test("the_iron_pot_takes_no_other_bucket", EggsAndCampfiresTests::potRefusesOtherBuckets);
+    }
+
+    /**
+     * A lava, mercury or fish bucket used on an Iron Pot stays in the hand and nothing is poured out over the pot (lava on
+     * a pot over a fire burned the kitchen down: the kitchen play-test, 2026-10-19).
+     */
+    private static void potRefusesOtherBuckets(GameTestHelper helper) {
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        BlockPos pot = new BlockPos(2, 1, 2);
+        helper.setBlock(pot, dev.nookworks.registry.ModCooking.IRON_POT.get());
+        // standing by it, looking at its top, as a player who clicks it does: the bucket's own use aims the same way
+        Vec3 stand = helper.absoluteVec(new Vec3(2.5, 1, 0.5));
+        player.snapTo(stand.x, stand.y, stand.z);
+        player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(helper.absolutePos(pot)).add(0, -0.2, 0));
+        for (var bucket : java.util.List.of(Items.LAVA_BUCKET, dev.nookworks.registry.ModItems.MERCURY_BUCKET.get(), Items.COD_BUCKET)) {
+            ItemStack held = new ItemStack(bucket);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+            BlockPos at = helper.absolutePos(pot);
+            var onBlock = player.gameMode.useItemOn(player, helper.getLevel(), held, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(at).relative(Direction.UP, 0.4), Direction.UP, at, false));
+            var onItem = onBlock.consumesAction() ? null
+                    // passed on: the game then uses the item itself (a second packet), and a bucket pours where it is aimed
+                    : player.gameMode.useItem(player, helper.getLevel(), player.getMainHandItem(), InteractionHand.MAIN_HAND);
+            boolean poured = BlockPos.betweenClosedStream(helper.absolutePos(pot).offset(-1, -1, -1), helper.absolutePos(pot).offset(1, 1, 1))
+                    .anyMatch(p -> !helper.getLevel().getFluidState(p).isEmpty());
+            check(helper, !poured, bucket + ": nothing poured out by the pot (the item's own use: " + onItem + ")");
+            check(helper, player.getMainHandItem().is(bucket), bucket + " stays in the hand");
+            check(helper, helper.getBlockState(pot).is(dev.nookworks.registry.ModCooking.IRON_POT.get()), "the pot stays");
+        }
+        helper.succeed();
     }
 
     /** Right-clicks the top of {@code pos} holding {@code stack}, as the game makes a click (the item, then the block). */
@@ -80,9 +111,22 @@ final class EggsAndCampfiresTests {
                         new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false));
                 check(helper, helper.getBlockState(ground.above()).getValue(CampfireBlock.LIT), lighter.getItem() + " lights it");
             }
+            // the state a player's own game predicts as it places one is unlit already: put out only after, it showed
+            // burning for a few frames (the user, 2026-10-20)
+            BlockPos at = helper.absolutePos(new BlockPos(1, 1, 3));
+            helper.setBlock(new BlockPos(1, 1, 3), Blocks.STONE);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Blocks.CAMPFIRE));
+            var predicted = Blocks.CAMPFIRE.getStateForPlacement(new net.minecraft.world.item.context.BlockPlaceContext(player,
+                    InteractionHand.MAIN_HAND, player.getMainHandItem(), new BlockHitResult(Vec3.atCenterOf(at).add(0, 0.5, 0), Direction.UP, at, false)));
+            check(helper, predicted != null && !predicted.getValue(CampfireBlock.LIT), "the placing state itself unlit: " + predicted);
             BlockPos given = new BlockPos(5, 2, 1);
-            helper.setBlock(given, Blocks.CAMPFIRE.defaultBlockState());
-            check(helper, helper.getBlockState(given).getValue(CampfireBlock.LIT), "one set by a command or structure stays lit");
+            // by a real /setblock, as a player with commands would (helper.setBlock fires no placing event: it proved nothing)
+            BlockPos abs = helper.absolutePos(given);
+            helper.getLevel().getServer().getCommands().performPrefixedCommand(
+                    helper.getLevel().getServer().createCommandSourceStack().withSuppressedOutput().withLevel(helper.getLevel()),
+                    "setblock " + abs.getX() + " " + abs.getY() + " " + abs.getZ() + " minecraft:campfire");
+            check(helper, helper.getBlockState(given).is(Blocks.CAMPFIRE) && helper.getBlockState(given).getValue(CampfireBlock.LIT),
+                    "one set by a command stays lit: " + helper.getBlockState(given));
 
             BlockPos copied = new BlockPos(1, 1, 3);
             helper.setBlock(copied, Blocks.STONE);

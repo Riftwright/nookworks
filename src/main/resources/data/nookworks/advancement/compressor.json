@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "criteria": {
+    "compressor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:compressor"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:compressor"
+    },
+    "title": {
+      "translate": "advancements.nookworks.compressor.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.compressor.description"
+    }
+  },
+  "requirements": [
+    [
+      "compressor"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:generator"
+}

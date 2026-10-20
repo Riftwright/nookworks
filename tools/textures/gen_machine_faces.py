@@ -47,6 +47,8 @@ LAMPS = {
     "planter_front": (9, 2),         # in the iron frame of the seed window (tools/textures/gen_planter.py)
     "barter_terminal_front": (11, 12),  # beside its keys, under the screen
     "diesel_generator_front": (11, 13),  # under the radiator, beside the maker's plate
+    "compressor_side": (11, 7),      # beside the press bay
+    "recycler_side": (11, 4),        # over the sorting window
 }
 
 
@@ -642,6 +644,116 @@ def printing_press_roller():
     put(img, 0, 0, PALE_HI)
     put(img, 1, 1, BRASS)
     put(img, 2, 2, PALE_DK)
+    return img
+
+
+# ---------------------------------------------------------------- Compressor (2026-10-18)
+# Cabinet y 0..12 (rows 4..15), the ram's housing on it, y 12..16 (rows 0..3, 10 across: columns 3..12): a dark,
+# brass-banded block under a pale lid, the ram coming down out of it. In the cabinet's panel a bay where the press plate comes down on a cake of metal.
+
+
+def compressor_side():
+    img = blank()
+    # the ram housing: pale steel, a brass band, bolt heads
+    band_row(img, 0, 3, 12, (PALE_HI, PALE_HI, PALE, PALE_LO))  # the lid's edge
+    for y in (1, 3):
+        band_row(img, y, 3, 12, DARK4)
+    band_row(img, 2, 3, 12, BRASS4)
+    for x in (4, 7, 10):
+        put(img, x, 2, BOLT)
+    cabinet_elev(img, 4, 15)
+    # the press bay: the plate (pale, a row of shadow under it), the guide rods, and a pressed cake on the anvil
+    rect(img, 3, 7, 9, 12, BAR_SH)
+    hline(img, 3, 9, 7, PALE_HI)
+    hline(img, 3, 9, 8, PALE_LO)
+    vline(img, 3, 9, 12, DARK_HI)
+    vline(img, 9, 9, 12, DARK_HI)
+    rect(img, 5, 11, 7, 11, (196, 198, 204))  # the cake of metal, freshly pressed
+    hline(img, 5, 7, 12, (120, 124, 132))
+    hline(img, 3, 9, 13, DARK_HI)
+    return img
+
+
+def compressor_top():
+    img = blank()
+    plan_cabinet(img)
+    # the housing from above: a square with a bolted lid and the ram's rod in its middle
+    rect(img, 3, 3, 12, 12, PALE_LO)
+    hline(img, 3, 12, 3, PALE_HI)
+    vline(img, 3, 3, 12, PALE_HI)
+    hline(img, 3, 12, 12, PALE_DK)
+    vline(img, 12, 3, 12, PALE_DK)
+    for x, y in ((4, 4), (11, 4), (4, 11), (11, 11)):
+        put(img, x, y, BOLT)
+    round_plan(img, 6, lambda x, y, d: lit(d, BRASS_HI, BRASS, BRASS_LO), ring=lambda x, y, d: BRASS_DK if d > 0 else BRASS)
+    return img
+
+
+# ---------------------------------------------------------------- Recycler (2026-10-18)
+# Two blocks: the body below (a whole cabinet, a sorting window in it where the shredded bits fall past a magnet drum),
+# the intake above (a hopper of riveted plate, hazard-striped round its lip, the shredder's two toothed shafts in its
+# throat). SCRAP_BITS are the colours of what falls: steel, rust, copper, a fleck of gold.
+SCRAP_BITS = ((150, 154, 160), (176, 98, 52), (196, 112, 70), (120, 124, 132), (232, 196, 84))
+
+
+def recycler_side():
+    img = blank()
+    cabinet_elev(img, 0, 15)
+    # the sorting window: dark inside, bits falling, the magnet drum across the bottom holding the iron
+    rect(img, 3, 5, 9, 12, BAR_SH)
+    hline(img, 3, 9, 5, DARK_DK)
+    for (x, y), c in zip(((4, 6), (7, 7), (5, 9), (8, 10), (6, 8), (4, 11)), SCRAP_BITS + (SCRAP_BITS[0],)):
+        put(img, x, y, c)
+    hline(img, 3, 9, 12, PALE_LO)  # the drum
+    hline(img, 3, 9, 13, PALE_DK)
+    for x in (4, 6, 8):
+        put(img, x, 12, (150, 154, 160))  # iron held on it
+    # a maker's plate over the lamp
+    rect(img, 10, 9, 12, 12, BRASS_LO)
+    hline(img, 10, 12, 9, BRASS_HI)
+    put(img, 11, 11, BRASS_DK)
+    return img
+
+
+def recycler_top_side():
+    """
+    The intake's sides, as the Crusher's mouth is drawn: a pale rim with the hazard stripes (rows 0..2), then dark
+    plate between pale corner posts, bolted; the lip where the hopper steps in (row 6, y 10) a pale ledge. The neck
+    into the body (rows 12..15) is the same dark plate.
+    """
+    img = blank()
+    band_row(img, 0, 0, 15, (PALE_HI, PALE_HI, PALE, PALE_LO))
+    for x in range(16):
+        put(img, x, 1, HAZARD[0] if (x // 2) % 2 == 0 else HAZARD[1])
+    band_row(img, 2, 0, 15, (PALE, PALE_LO, PALE_DK, PALE_DK))
+    for y in range(3, 16):
+        band_row(img, y, 2, 13, DARK4)
+        for x, c in ((0, PALE_LO), (1, PALE_DK), (14, PALE_LO), (15, PALE_DK)):
+            put(img, x, y, c)
+    band_row(img, 6, 0, 15, (PALE, PALE_LO, PALE_DK, PALE_DK))  # the ledge where it steps in
+    hline(img, 2, 13, 7, DARK_DK)
+    for y in (4, 9, 13):
+        put(img, 1, y, BOLT)
+        put(img, 14, y, BOLT)
+    hline(img, 0, 15, 15, BAR_SH)
+    return img
+
+
+def recycler_top():
+    """The intake from above: its lip, and down its throat the shredder's two shafts, their teeth meshing."""
+    img = blank()
+    rect(img, 0, 0, 15, 15, PALE)
+    hline(img, 0, 15, 0, PALE_HI)
+    vline(img, 0, 0, 15, PALE_HI)
+    hline(img, 0, 15, 15, PALE_DK)
+    vline(img, 15, 0, 15, PALE_DK)
+    rect(img, 2, 2, 13, 13, BAR_SH)
+    for row, phase in ((5, 0), (6, 0), (9, 1), (10, 1)):
+        for x in range(3, 13):
+            on = (x + phase) % 2 == 0
+            put(img, x, row, (DARK_HI if row in (5, 9) else DARK) if on else DARK_DK)
+    hline(img, 3, 12, 7, DARK_LO)
+    hline(img, 3, 12, 8, DARK_LO)
     return img
 
 
@@ -1308,6 +1420,11 @@ def main():
     save(printing_press_top(), "printing_press_top", 182)
     save(printing_press_roller(), "printing_press_roller", 183)
     save(machine_chassis(), "machine_chassis", 191)
+    save(compressor_side(), "compressor_side", 192, keep=(BOLT,))
+    save(compressor_top(), "compressor_top", 193, keep=(BOLT,))
+    save(recycler_side(), "recycler_side", 194, keep=SCRAP_BITS)
+    save(recycler_top_side(), "recycler_top_side", 195, keep=HAZARD + (BOLT,))
+    save(recycler_top(), "recycler_top", 196)
     save(brewer_side(), "spawn_egg_brewer_side", 201, keep=EGG + (GLASS_EDGE,))
     save(brewer_top(), "spawn_egg_brewer_top", 202)
     save(copper_tank_side(), "copper_tank_side", 211, keep=(GLASS_DK,))

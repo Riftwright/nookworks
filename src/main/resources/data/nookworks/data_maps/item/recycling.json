@@ -1,0 +1,570 @@
+{
+  "values": {
+    "minecraft:iron_sword": {
+      "metal": 2
+    },
+    "minecraft:iron_pickaxe": {
+      "metal": 3
+    },
+    "minecraft:iron_axe": {
+      "metal": 3
+    },
+    "minecraft:iron_shovel": {
+      "metal": 1
+    },
+    "minecraft:iron_hoe": {
+      "metal": 2
+    },
+    "minecraft:iron_spear": {
+      "metal": 1
+    },
+    "minecraft:iron_helmet": {
+      "metal": 5
+    },
+    "minecraft:iron_chestplate": {
+      "metal": 8
+    },
+    "minecraft:iron_leggings": {
+      "metal": 7
+    },
+    "minecraft:iron_boots": {
+      "metal": 4
+    },
+    "minecraft:copper_sword": {
+      "metal": 2
+    },
+    "minecraft:copper_pickaxe": {
+      "metal": 3
+    },
+    "minecraft:copper_axe": {
+      "metal": 3
+    },
+    "minecraft:copper_shovel": {
+      "metal": 1
+    },
+    "minecraft:copper_hoe": {
+      "metal": 2
+    },
+    "minecraft:copper_spear": {
+      "metal": 1
+    },
+    "minecraft:copper_helmet": {
+      "metal": 5
+    },
+    "minecraft:copper_chestplate": {
+      "metal": 8
+    },
+    "minecraft:copper_leggings": {
+      "metal": 7
+    },
+    "minecraft:copper_boots": {
+      "metal": 4
+    },
+    "minecraft:golden_sword": {
+      "metal": 2,
+      "kind": "gold"
+    },
+    "minecraft:golden_pickaxe": {
+      "metal": 3,
+      "kind": "gold"
+    },
+    "minecraft:golden_axe": {
+      "metal": 3,
+      "kind": "gold"
+    },
+    "minecraft:golden_shovel": {
+      "metal": 1,
+      "kind": "gold"
+    },
+    "minecraft:golden_hoe": {
+      "metal": 2,
+      "kind": "gold"
+    },
+    "minecraft:golden_spear": {
+      "metal": 1,
+      "kind": "gold"
+    },
+    "minecraft:golden_helmet": {
+      "metal": 5,
+      "kind": "gold"
+    },
+    "minecraft:golden_chestplate": {
+      "metal": 8,
+      "kind": "gold"
+    },
+    "minecraft:golden_leggings": {
+      "metal": 7,
+      "kind": "gold"
+    },
+    "minecraft:golden_boots": {
+      "metal": 4,
+      "kind": "gold"
+    },
+    "minecraft:iron_bars": {
+      "metal": 0.375
+    },
+    "minecraft:iron_chain": {
+      "metal": 1.22
+    },
+    "minecraft:rail": {
+      "metal": 0.375
+    },
+    "minecraft:detector_rail": {
+      "metal": 1
+    },
+    "minecraft:activator_rail": {
+      "metal": 1
+    },
+    "minecraft:bucket": {
+      "metal": 3
+    },
+    "minecraft:water_bucket": {
+      "metal": 3
+    },
+    "minecraft:lava_bucket": {
+      "metal": 3
+    },
+    "minecraft:milk_bucket": {
+      "metal": 3
+    },
+    "minecraft:powder_snow_bucket": {
+      "metal": 3
+    },
+    "minecraft:minecart": {
+      "metal": 5
+    },
+    "minecraft:chest_minecart": {
+      "metal": 5
+    },
+    "minecraft:furnace_minecart": {
+      "metal": 5
+    },
+    "minecraft:tnt_minecart": {
+      "metal": 5
+    },
+    "minecraft:hopper_minecart": {
+      "metal": 10
+    },
+    "minecraft:hopper": {
+      "metal": 5
+    },
+    "minecraft:cauldron": {
+      "metal": 7
+    },
+    "minecraft:anvil": {
+      "metal": 31
+    },
+    "minecraft:chipped_anvil": {
+      "metal": 20
+    },
+    "minecraft:damaged_anvil": {
+      "metal": 10
+    },
+    "minecraft:iron_door": {
+      "metal": 2
+    },
+    "minecraft:iron_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:heavy_weighted_pressure_plate": {
+      "metal": 2
+    },
+    "minecraft:shears": {
+      "metal": 2
+    },
+    "minecraft:flint_and_steel": {
+      "metal": 1
+    },
+    "minecraft:compass": {
+      "metal": 4
+    },
+    "minecraft:lantern": {
+      "metal": 0.89
+    },
+    "minecraft:soul_lantern": {
+      "metal": 0.89
+    },
+    "minecraft:tripwire_hook": {
+      "metal": 0.5
+    },
+    "minecraft:crossbow": {
+      "metal": 1.5
+    },
+    "minecraft:piston": {
+      "metal": 1
+    },
+    "minecraft:sticky_piston": {
+      "metal": 1
+    },
+    "minecraft:smithing_table": {
+      "metal": 2
+    },
+    "minecraft:stonecutter": {
+      "metal": 1
+    },
+    "minecraft:blast_furnace": {
+      "metal": 5
+    },
+    "minecraft:shield": {
+      "metal": 1
+    },
+    "minecraft:crafter": {
+      "metal": 5
+    },
+    "minecraft:chainmail_helmet": {
+      "metal": 2
+    },
+    "minecraft:chainmail_chestplate": {
+      "metal": 4
+    },
+    "minecraft:chainmail_leggings": {
+      "metal": 3.5
+    },
+    "minecraft:chainmail_boots": {
+      "metal": 2
+    },
+    "minecraft:iron_horse_armor": {
+      "metal": 5
+    },
+    "minecraft:copper_horse_armor": {
+      "metal": 5
+    },
+    "minecraft:iron_nautilus_armor": {
+      "metal": 5
+    },
+    "minecraft:copper_nautilus_armor": {
+      "metal": 5
+    },
+    "minecraft:spyglass": {
+      "metal": 2
+    },
+    "minecraft:brush": {
+      "metal": 1
+    },
+    "minecraft:lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:exposed_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:weathered_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:oxidized_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:waxed_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:waxed_exposed_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:waxed_weathered_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:waxed_oxidized_lightning_rod": {
+      "metal": 3
+    },
+    "minecraft:copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:exposed_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:weathered_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:oxidized_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:waxed_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:waxed_exposed_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:waxed_weathered_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:waxed_oxidized_copper_bars": {
+      "metal": 0.375
+    },
+    "minecraft:copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:exposed_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:weathered_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:oxidized_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:waxed_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:waxed_exposed_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:waxed_weathered_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:waxed_oxidized_copper_chain": {
+      "metal": 1.22
+    },
+    "minecraft:copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:exposed_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:weathered_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:oxidized_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:waxed_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:waxed_exposed_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:waxed_weathered_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:waxed_oxidized_copper_lantern": {
+      "metal": 0.92
+    },
+    "minecraft:copper_door": {
+      "metal": 2
+    },
+    "minecraft:exposed_copper_door": {
+      "metal": 2
+    },
+    "minecraft:weathered_copper_door": {
+      "metal": 2
+    },
+    "minecraft:oxidized_copper_door": {
+      "metal": 2
+    },
+    "minecraft:waxed_copper_door": {
+      "metal": 2
+    },
+    "minecraft:waxed_exposed_copper_door": {
+      "metal": 2
+    },
+    "minecraft:waxed_weathered_copper_door": {
+      "metal": 2
+    },
+    "minecraft:waxed_oxidized_copper_door": {
+      "metal": 2
+    },
+    "minecraft:copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:exposed_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:weathered_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:oxidized_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:waxed_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:waxed_exposed_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:waxed_weathered_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:waxed_oxidized_copper_trapdoor": {
+      "metal": 4
+    },
+    "minecraft:copper_chest": {
+      "metal": 8
+    },
+    "minecraft:exposed_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:weathered_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:oxidized_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:waxed_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:waxed_exposed_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:waxed_weathered_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:waxed_oxidized_copper_chest": {
+      "metal": 8
+    },
+    "minecraft:powered_rail": {
+      "metal": 1,
+      "kind": "gold"
+    },
+    "minecraft:light_weighted_pressure_plate": {
+      "metal": 2,
+      "kind": "gold"
+    },
+    "minecraft:golden_horse_armor": {
+      "metal": 5,
+      "kind": "gold"
+    },
+    "minecraft:golden_nautilus_armor": {
+      "metal": 5,
+      "kind": "gold"
+    },
+    "nookworks:iron_hammer": {
+      "metal": 5
+    },
+    "nookworks:copper_hammer": {
+      "metal": 5
+    },
+    "nookworks:golden_hammer": {
+      "metal": 5,
+      "kind": "gold"
+    },
+    "nookworks:wrench": {
+      "metal": 4
+    },
+    "nookworks:iron_pot": {
+      "metal": 3
+    },
+    "nookworks:bookend": {
+      "metal": 0.17
+    },
+    "nookworks:hook": {
+      "metal": 0.11
+    },
+    "nookworks:sconce": {
+      "metal": 0.17
+    },
+    "nookworks:thin_chain": {
+      "metal": 0.17
+    },
+    "nookworks:drive_wheel": {
+      "metal": 0.72
+    },
+    "nookworks:grill": {
+      "metal": 1.35
+    },
+    "nookworks:copper_pipe": {
+      "metal": 0.5
+    },
+    "nookworks:energy_cable": {
+      "metal": 0.25
+    },
+    "nookworks:gold_sorter_gear": {
+      "metal": 4.44,
+      "kind": "gold"
+    },
+    "nookworks:gold_storage_upgrade": {
+      "metal": 9,
+      "kind": "gold"
+    },
+    "nookworks:iron_storage_upgrade": {
+      "metal": 8
+    },
+    "nookworks:iron_storage_barrel": {
+      "metal": 8
+    },
+    "nookworks:magnet": {
+      "metal": 5
+    },
+    "nookworks:magnet_chest": {
+      "metal": 12
+    },
+    "nookworks:trash_can": {
+      "metal": 7
+    },
+    "nookworks:iron_workbench": {
+      "metal": 5.75
+    },
+    "nookworks:item_sorter": {
+      "metal": 12
+    },
+    "nookworks:precision_sorter": {
+      "metal": 12
+    },
+    "nookworks:item_warp_sender": {
+      "metal": 5.75
+    },
+    "nookworks:item_warp_receiver": {
+      "metal": 0.75
+    },
+    "nookworks:horizontal_item_warp_sender": {
+      "metal": 6.5
+    },
+    "nookworks:horizontal_item_warp_receiver": {
+      "metal": 1.5
+    },
+    "nookworks:spawner_link_sender": {
+      "metal": 1.75
+    },
+    "nookworks:spawner_link_receiver": {
+      "metal": 1
+    },
+    "nookworks:absorption_pad": {
+      "metal": 9
+    },
+    "nookworks:machine_chassis": {
+      "metal": 13
+    },
+    "nookworks:generator": {
+      "metal": 19
+    },
+    "nookworks:crusher": {
+      "metal": 19
+    },
+    "nookworks:electric_furnace": {
+      "metal": 19
+    },
+    "nookworks:stone_maker": {
+      "metal": 19
+    },
+    "nookworks:sifter": {
+      "metal": 12.38
+    },
+    "nookworks:compressor": {
+      "metal": 20
+    },
+    "nookworks:baler": {
+      "metal": 7.75
+    },
+    "nookworks:recycler": {
+      "metal": 46.75
+    },
+    "nookworks:motor": {
+      "metal": 20
+    },
+    "nookworks:water_pump": {
+      "metal": 10
+    },
+    "nookworks:printing_press": {
+      "metal": 18
+    },
+    "nookworks:retort": {
+      "metal": 14
+    },
+    "nookworks:distiller": {
+      "metal": 6
+    },
+    "nookworks:condenser": {
+      "metal": 8
+    },
+    "nookworks:barter_terminal": {
+      "metal": 13
+    }
+  }
+}

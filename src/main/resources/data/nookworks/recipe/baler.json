@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "P": "minecraft:piston",
+    "B": "minecraft:iron_bars",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "IPI",
+    "BCB",
+    "IPI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:baler"
+  }
+}

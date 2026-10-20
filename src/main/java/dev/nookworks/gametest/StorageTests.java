@@ -810,6 +810,9 @@ final class StorageTests {
         ItemStack stirringTank = new ItemStack(ModItems.STIRRING_TANK.get());
         stirringTank.set(ModDataComponents.CATALYST_LEFT.get(), 3);
         sample.accept(ModDataComponents.CATALYST_LEFT.get(), stirringTank);
+        ItemStack brewer = new ItemStack(ModItems.SPAWN_EGG_BREWER.get());
+        brewer.set(ModDataComponents.BREWS_LEFT.get(), 7);
+        sample.accept(ModDataComponents.BREWS_LEFT.get(), brewer);
         ItemStack stampedReceiver = new ItemStack(ModItems.SPAWNER_LINK_RECEIVER.get());
         stampedReceiver.set(ModDataComponents.SPAWNER_LINK_STAMP.get(), 0x0123_4567_89AB_CDEFL);
         sample.accept(ModDataComponents.SPAWNER_LINK_STAMP.get(), stampedReceiver);

@@ -39,6 +39,11 @@ import net.minecraft.world.phys.BlockHitResult;
  * runs; a water bucket pours straight in.
  */
 public class ElectrolyticCellBlock extends MachineBlock {
+    @Override
+    protected boolean holdsMercury() {
+        return true;
+    }
+
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 

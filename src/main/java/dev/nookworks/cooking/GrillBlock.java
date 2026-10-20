@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -219,5 +220,11 @@ public class GrillBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.GRILL.get(), GrillBlockEntity::serverTick);
+    }
+
+    /** Standing, a little table of a grate mobs would walk into: no way through. Over a fire it is a plate, walked over. */
+    @Override
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return state.getValue(OVER_FIRE) && super.isPathfindable(state, type);
     }
 }

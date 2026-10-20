@@ -23,7 +23,8 @@ import net.neoforged.neoforge.event.level.BlockEvent;
  * 普通では？火打ち石とうちがねで着火したら火がつく): flint and steel, a fire charge or a burning arrow lights it, as
  * vanilla lights one that was put out. The {@code campfiresPlacedUnlit} setting turns this off.
  * <p>
- * It is done as the placement is reported, on both sides (the player's own game puts the block down too, before the
+ * The state placed is unlit already (CampfireBlockMixin, on both sides, so nothing shows burning for a moment);
+ * as a fallback for another mod's campfire that makes its own state, it is also done as the placement is reported, on both sides (the player's own game puts the block down too, before the
  * server says so, and would show it burning for a moment): the campfire just put down goes out before anything sees it
  * lit. Only what a player places - campfires in villages, or set by a command or a structure, are as they were - and
  * any block that is a vanilla campfire or another mod's built on it. A campfire item that names its lit state outright
@@ -32,6 +33,11 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class UnlitCampfires {
     private UnlitCampfires() {}
+
+    /** Whether campfires a player sets down start unlit (the setting, once the server's config is in). */
+    public static boolean active() {
+        return NookworksConfig.SPEC.isLoaded() && NookworksConfig.CAMPFIRES_PLACED_UNLIT.get();
+    }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     static void onPlace(BlockEvent.EntityPlaceEvent event) {

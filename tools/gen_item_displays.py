@@ -32,6 +32,8 @@ FIXED = {"scale": 0.5}
 LIFT = 1.4  # how much further than the middle vanilla lifts a thin block in first person (4.2 for a carpet's 3.0)
 # items whose models carry transforms set by hand, left as they are
 HAND_SET = {"sconce", "filament_bulb"}
+# models whose own generator sets how they are held in first person (the rest worked out here): the Bookend's L
+HELD_OWN = {"bookend"}
 
 
 def model_ref(node):
@@ -134,6 +136,8 @@ def main():
         if is_low:
             display = dict(own)
             display.update(displays(lo, hi))
+            if item.stem in HELD_OWN:
+                display.update({k: v for k, v in own.items() if k.startswith("firstperson")})
         elif rod_along_z(elements):
             display = dict(own)
             display["fixed"] = {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": round2([FIXED["scale"]] * 3)}

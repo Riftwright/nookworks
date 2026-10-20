@@ -416,6 +416,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         return out;
     }
 
+    /** Whether containers of the dish's kind wait in it, for an empty hand to serve into. */
+    private boolean freedContainers() {
+        return this.container != null && this.freed.stream().anyMatch(stack -> stack.is(this.container));
+    }
+
     /** As many servings as there are freed containers of the dish's kind, each into one of them. */
     public List<ItemStack> serveIntoFreed() {
         List<ItemStack> out = new ArrayList<>();
@@ -558,9 +563,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
     /** What the pot holds, for the player who looks in. */
     public Component describe() {
         if (!this.dish.isEmpty()) {
+            // with the bowls its rice came in still in it, an empty hand serves into them: it said "ladle it out with a
+            // bowl" and, under it, that the bowl in it comes out once the dish is served (the kitchen play-test)
             return this.container != null
-                    ? Component.translatable("nookworks.iron_pot.ready_serve", this.dish.getCount(), this.dish.getHoverName(),
-                            new ItemStack(this.container).getHoverName())
+                    ? Component.translatable(this.freedContainers() ? "nookworks.iron_pot.ready_serve_freed" : "nookworks.iron_pot.ready_serve",
+                            this.dish.getCount(), this.dish.getHoverName(), new ItemStack(this.container).getHoverName())
                     : Component.translatable("nookworks.iron_pot.ready", this.dish.getCount(), this.dish.getHoverName());
         }
         PotRecipe.Liquid held = this.liquid();
@@ -604,7 +611,8 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         // a hand takes them back - unless a dish waits for bowls, when a hand serves it first
         String freedKey = !this.dish.isEmpty() && this.container != null ? "nookworks.iron_pot.freed.after" : "nookworks.iron_pot.freed";
         for (ItemStack freed : this.freed) {
-            if (!freed.isEmpty()) {
+            // the dish's own containers are named in its line, as what an empty hand serves into
+            if (!freed.isEmpty() && !(this.container != null && !this.dish.isEmpty() && freed.is(this.container))) {
                 lines.accept(Component.translatable(freedKey, freed.getHoverName(), freed.getCount()).withColor(0xA3A9B2));
             }
         }
@@ -620,6 +628,9 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
             } else if (this.count() > 0) {
                 lines.accept(Component.translatable("nookworks.iron_pot.cold").withColor(0xA3A9B2));
             }
+        } else if (this.dish.isEmpty() && this.count() > 0 && this.liquid() == null) {
+            // over the fire with things in it and nothing to cook them in: it said nothing at all (the kitchen play-test)
+            lines.accept(Component.translatable("nookworks.iron_pot.dry").withColor(0xE0A548));
         }
     }
 

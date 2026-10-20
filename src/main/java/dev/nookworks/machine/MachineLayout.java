@@ -48,7 +48,12 @@ public enum MachineLayout {
     // Gold, and a piglin's Mob Bottle under it; the nine slots what the piglins throw is drawn into (and bottles come
     // back to); the Nether's air it keeps the room filled with, which goes through no pipe.
     BARTER_TERMINAL(Gauge.ARROW, 54, 36, -1, -1, concat(List.of(in(30, 27), in(30, 49)), grid(86, 20, 3, 3, true)),
-            List.of(tank(152, Flow.NONE)));
+            List.of(tank(152, Flow.NONE))),
+    // Nine of an item in, what they press into out.
+    // four inputs in a square (slot 0 and 2-4; slot 1, the output, where it was)
+    COMPRESSOR(Gauge.ARROW, 72, 36, 108, 56, List.of(in(30, 27), out(104, 36), in(48, 27), in(30, 45), in(48, 45)), List.of()),
+    // The junk in; scrap and gold nuggets out, side by side.
+    RECYCLER(Gauge.ARROW, 64, 36, 110, 56, List.of(in(40, 36), out(96, 36), out(114, 36)), List.of());
 
     /** What shows the machine's work. */
     public enum Gauge {

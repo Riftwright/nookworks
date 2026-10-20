@@ -12,6 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.sdl.SDLEvents;
+import org.lwjgl.sdl.SDLVideo;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.sdl.SDL_EventFilter;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
@@ -40,7 +44,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -55,6 +61,11 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
  * <p>
  * Active only when the JVM runs with {@code -Dnookworks.agentInput=true}, which only the {@code agentClient}
  * Gradle run sets. It is inert in normal play and in the released mod.
+ * <p>
+ * The window is hidden for its whole life when the run also sets {@code -Dnookworks.agentHidden=true} (the
+ * {@code agentClient} run's default; {@code -PagentVisible} leaves it out): no window, no taskbar button, nothing to
+ * take the user's focus or mouse or to be minimised by mistake. The game draws as before - {@code shot} reads its own
+ * frame - and {@code window show} brings the window up when someone wants to watch or film it.
  * <p>
  * Commands are appended to {@code <game dir>/agent_input.txt}, one per line, one line per client tick. Each one
  * run is written to {@code agent_output.txt} ({@code ok <command>}, or {@code failed <command>: <why>}), so a
@@ -76,7 +87,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
  *   click use|attack    a click of the use or attack button as the game counts them (the key's own click, which a
  *                       raised camera takes as its shutter), without a mouse
  *   wait N              skip N ticks
- *   state               log focus, mouse grab, open screen, jump/sneak key state
+ *   state               log focus, mouse grab, open screen, jump/sneak key state, frames a second, window hidden
  *   cmd COMMAND...      run a command as the player (no leading slash), without typing it into the chat
  *   close               close the open screen
  *   reload              reload resource packs (F3+T), after {@code processResources} has copied new textures
@@ -95,11 +106,19 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
  *                       (the cursor captured on a click, looking round with the mouse); off (the default) frees them
  *   lid X Y Z open|shut open or shut a chest's lid (a vanilla chest, a Repair Box) on this client only, as when someone
  *                       has it open, with no screen in front of it
+ *   window show|hide    show the hidden window (without taking the focus: to watch, or to film it with a window
+ *                       capture), or hide it again
  * </pre>
  */
 @EventBusSubscriber(modid = Nookworks.MODID, value = Dist.CLIENT)
 public final class AgentInput {
     private static final boolean ENABLED = Boolean.getBoolean("nookworks.agentInput");
+    /** Whether the window starts hidden (the agentClient run without -PagentVisible). */
+    private static final boolean START_HIDDEN = ENABLED && Boolean.getBoolean("nookworks.agentHidden");
+    /** Whether the window is to be kept hidden now: from the start when hidden, until {@code window show}. */
+    private static volatile boolean keepHidden = START_HIDDEN;
+    /** The SDL event watch that hides the window the moment it is first shown; held so it is not freed. */
+    private static @Nullable SDL_EventFilter hideOnShow;
     private static long readOffset = -1;
     /** Whether the output and ready files of an earlier game have been cleared yet. */
     private static boolean started;
@@ -133,6 +152,47 @@ public final class AgentInput {
     /** Whether the lines over the hotbar - the action bar and the held item's name - are kept off the screen
      *  (actionbar off): a video's captions go there. */
     private static boolean actionbarHidden;
+
+    /**
+     * Hides the window as the game first shows it. The game makes its window hidden and shows it once it is set up
+     * ({@code EarlyWindowHandoff}), all inside the {@code Minecraft} constructor, with no event for a mod in between;
+     * so an SDL event watch, set while the mods are built (before the window exists), hides it from inside that very
+     * show, before anything is drawn. The run also asks SDL not to activate a window it shows
+     * ({@code SDL_WINDOW_ACTIVATE_WHEN_SHOWN=0}), and turns NeoForge's loading-screen window off (its fml.toml), which
+     * would otherwise stand on the screen from the start. Should the watch miss, {@link #onFrame} hides it a moment later.
+     */
+    @SubscribeEvent
+    static void onConstruct(FMLConstructModEvent event) {
+        if (!START_HIDDEN) {
+            return;
+        }
+        hideOnShow = SDL_EventFilter.create((userdata, eventAddress) -> {
+            SDL_Event shown = SDL_Event.create(eventAddress);
+            if (keepHidden && shown.type() == SDLEvents.SDL_EVENT_WINDOW_SHOWN) {
+                long window = SDLVideo.SDL_GetWindowFromID(shown.window().windowID());
+                if (window != 0L) {
+                    SDLVideo.SDL_HideWindow(window);
+                    Nookworks.LOGGER.info("[agent-input] window hidden as it was shown");
+                }
+            }
+            return true;
+        });
+        if (!SDLEvents.SDL_AddEventWatch(hideOnShow, 0L)) {
+            Nookworks.LOGGER.warn("[agent-input] cannot watch the window being shown; it is hidden on the first frame");
+        }
+    }
+
+    /** Keeps the window as asked ({@code window show|hide}): hidden unless shown on purpose. */
+    @SubscribeEvent
+    static void onFrame(RenderFrameEvent.Pre event) {
+        if (keepHidden) {
+            long window = Minecraft.getInstance().getWindow().handle();
+            if ((SDLVideo.SDL_GetWindowFlags(window) & SDLVideo.SDL_WINDOW_HIDDEN) == 0) {
+                SDLVideo.SDL_HideWindow(window);
+                Nookworks.LOGGER.info("[agent-input] window hidden on a frame");
+            }
+        }
+    }
 
     @SubscribeEvent
     static void onClientTick(ClientTickEvent.Pre event) {
@@ -226,12 +286,26 @@ public final class AgentInput {
             }
             case "click" -> KeyMapping.click((a[1].equals("use") ? mc.options.keyUse : mc.options.keyAttack).getKey());
             case "wait" -> waitTicks = Integer.parseInt(a[1]);
-            case "state" -> Nookworks.LOGGER.info("[agent-input] state: focused={} grabbed={} screen={} jumpDown={} shiftDown={} onGround={}",
+            case "state" -> Nookworks.LOGGER.info("[agent-input] state: focused={} grabbed={} screen={} jumpDown={} shiftDown={} onGround={} fps={} windowHidden={}",
                     mc.getWindow().isFocused(), mc.mouseHandler.isMouseGrabbed(), mc.gui.screen(),
-                    mc.options.keyJump.isDown(), mc.options.keyShift.isDown(), mc.player != null && mc.player.onGround());
+                    mc.options.keyJump.isDown(), mc.options.keyShift.isDown(), mc.player != null && mc.player.onGround(),
+                    mc.getFps(), (SDLVideo.SDL_GetWindowFlags(handle) & SDLVideo.SDL_WINDOW_HIDDEN) != 0);
             // the field of view for the shots that follow (degrees, 30-110), as the slider sets it: fov <degrees>
             case "fov" -> mc.options.fov().set(Integer.parseInt(a[1]));
             case "player" -> playerHands = a[1].equals("on");
+            // the window shown (SDL does not activate it in a hidden run: no focus taken) or hidden again
+            case "window" -> {
+                keepHidden = switch (a[1]) {
+                    case "show" -> false;
+                    case "hide" -> true;
+                    default -> throw new IllegalArgumentException("window show or window hide");
+                };
+                if (keepHidden) {
+                    SDLVideo.SDL_HideWindow(handle);
+                } else {
+                    SDLVideo.SDL_ShowWindow(handle);
+                }
+            }
             // the lines over the hotbar (a machine's progress as it is worked, the name of an item taken in hand) kept off
             // the screen: actionbar off|on
             case "actionbar" -> actionbarHidden = a[1].equals("off");

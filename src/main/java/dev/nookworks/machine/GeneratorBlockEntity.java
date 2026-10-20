@@ -197,8 +197,9 @@ public class GeneratorBlockEntity extends MachineBlockEntity implements MachineI
 
     /** Whether {@code stack} burns here, on either side (a slot asks on the client too, where no fuel is reckoned). */
     private static boolean burns(ItemStack stack) {
+        // nor a chest or barrel picked up with its contents, burnt with them
         return stack.is(ModOil.VEGETABLE_OIL_BOTTLE.get()) || stack.is(ModOil.BIODIESEL_BOTTLE.get())
-                || stack.has(DataComponents.COOKING_FUEL);
+                || stack.has(DataComponents.COOKING_FUEL) && !dev.nookworks.recycling.RecyclingRecipe.holdsThings(stack);
     }
 
     /** A bottle's burn: a quarter of its bucket's (a bucket is 16,000, oil or biodiesel, as a furnace's fuel). */

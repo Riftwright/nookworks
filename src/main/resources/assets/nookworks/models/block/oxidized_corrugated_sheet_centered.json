@@ -1,0 +1,331 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "sheet": "nookworks:block/oxidized_corrugated_sheet",
+    "particle": "nookworks:block/oxidized_corrugated_sheet"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        8
+      ],
+      "to": [
+        16,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet"
+        },
+        "south": {
+          "texture": "#sheet"
+        },
+        "west": {
+          "texture": "#sheet"
+        },
+        "east": {
+          "texture": "#sheet"
+        },
+        "up": {
+          "texture": "#sheet"
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "plate"
+    },
+    {
+      "from": [
+        1,
+        0,
+        7
+      ],
+      "to": [
+        3,
+        16,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet"
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet"
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "ridge"
+    },
+    {
+      "from": [
+        5,
+        0,
+        7
+      ],
+      "to": [
+        7,
+        16,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet"
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet"
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "ridge"
+    },
+    {
+      "from": [
+        9,
+        0,
+        7
+      ],
+      "to": [
+        11,
+        16,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet"
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet"
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "ridge"
+    },
+    {
+      "from": [
+        13,
+        0,
+        7
+      ],
+      "to": [
+        15,
+        16,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet"
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            1,
+            0,
+            2,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet"
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "ridge"
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        25,
+        205,
+        0
+      ],
+      "translation": [
+        2.5,
+        0,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        7
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        -2
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -15,
+        200,
+        0
+      ],
+      "translation": [
+        1,
+        0.8,
+        2.9
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -15,
+        200,
+        0
+      ],
+      "translation": [
+        1,
+        0.8,
+        2.9
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        -2.5
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        -2.5
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

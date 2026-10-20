@@ -425,6 +425,12 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+        // loaded over what it held, not added to it (a /data merge or block data on an item: a slot not in the data kept
+        // its old stack - the dupe and loss audit)
+        this.input.clear();
+        this.filter.getItems().clear();
+        this.deny.getItems().clear();
+        this.gear.getItems().clear();
         ContainerHelper.loadAllItems(input, this.input);
         input.child("Filter").ifPresent(f -> ContainerHelper.loadAllItems(f, this.filter.getItems()));
         input.child("Deny").ifPresent(d -> ContainerHelper.loadAllItems(d, this.deny.getItems()));

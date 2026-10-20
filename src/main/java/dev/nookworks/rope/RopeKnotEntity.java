@@ -86,6 +86,10 @@ public class RopeKnotEntity extends BlockAttachedEntity {
     /** Whether its post took a signal when it last looked, and whether it has looked (or loaded what it last saw). */
     private boolean powered;
     private boolean signalKnown;
+    /** Looks at a changed signal that waited for its lines' lights to come in ({@link RopeSignals#linesLoaded}). */
+    private int signalWaited;
+    /** How many looks (five a second) a changed signal waits for them: then it switches what is in. */
+    private static final int SIGNAL_WAIT = 50;
     /** The bolt striking it now, which spares the rope it knocks loose; null otherwise. */
     private @Nullable UUID struckBy;
     /**
@@ -295,8 +299,14 @@ public class RopeKnotEntity extends BlockAttachedEntity {
             return;
         }
         if (now != this.powered) {
+            if (!RopeSignals.linesLoaded(level, this.pos) && this.signalWaited++ < SIGNAL_WAIT) {
+                return; // a line's lights not in yet: switched with the rest in a moment, not left behind
+            }
+            this.signalWaited = 0;
             this.powered = now;
             RopeSignals.switchLines(level, this.pos, now);
+        } else {
+            this.signalWaited = 0;
         }
     }
 

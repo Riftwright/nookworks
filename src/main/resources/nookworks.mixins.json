@@ -27,7 +27,8 @@
     "CraftingMenuMixin",
     "ResultSlotMixin",
     "DataFixTypesMixin",
-    "TeleportCommandMixin"
+    "TeleportCommandMixin",
+    "CampfireBlockMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin",

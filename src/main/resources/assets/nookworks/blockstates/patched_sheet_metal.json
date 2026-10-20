@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "nookworks:block/patched_sheet_metal_0",
+        "weight": 4
+      },
+      {
+        "model": "nookworks:block/patched_sheet_metal_1",
+        "weight": 4
+      },
+      {
+        "model": "nookworks:block/patched_sheet_metal_2",
+        "weight": 2
+      },
+      {
+        "model": "nookworks:block/patched_sheet_metal_3",
+        "weight": 2
+      },
+      {
+        "model": "nookworks:block/patched_sheet_metal_4",
+        "weight": 1
+      }
+    ]
+  }
+}

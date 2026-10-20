@@ -60,6 +60,7 @@ public final class ModItems {
             p -> new ThinRopeItem(ModBlocks.THIN_ROPE.get(), p), p -> p.useBlockDescriptionPrefix());
 
     public static final DeferredItem<BlockItem> OIL_LAMP = ITEMS.registerSimpleBlockItem(ModBlocks.OIL_LAMP);
+    public static final DeferredItem<BlockItem> BOOKEND = ITEMS.registerSimpleBlockItem(ModBlocks.BOOKEND);
     public static final DeferredItem<BlockItem> UNLIT_LANTERN = ITEMS.registerSimpleBlockItem(ModBlocks.UNLIT_LANTERN);
     public static final DeferredItem<BlockItem> UNLIT_SOUL_LANTERN = ITEMS.registerSimpleBlockItem(ModBlocks.UNLIT_SOUL_LANTERN);
     /** The unlit copper lanterns' items, by the lit one's id, in vanilla's order (four weathering, then four waxed). */

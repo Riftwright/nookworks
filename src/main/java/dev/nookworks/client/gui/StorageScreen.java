@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -206,14 +207,40 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
     }
 
     /**
+     * The kind of the drag under way, as vanilla takes it when the drag starts (its own is private): 0 shares out (left),
+     * 1 one each (right), 2 a stack each (middle, creative). The mouse handler's pressed flags cannot be read for it:
+     * they are not kept while a screen is open.
+     */
+    private int dragKind;
+
+    /**
      * Oversized stacks: draw the item ourselves with a shortened count. Anything longer than vanilla's two digits is
      * drawn smaller, in a font of its own: three characters at full size are wider than a slot and run into the count
-     * beside them.
+     * beside them. While a stack is dragged across slots to share it out, the slot shows what it would hold after, on
+     * the light ground vanilla gives a dragged-over slot - its count yellow where the barrel could take no more (review
+     * r5 A08: vanilla draws that preview in the slot drawing this replaces).
      */
     @Override
     protected void extractSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY) {
         if (slot instanceof StorageMenu.StorageSlot) {
             ItemStack stack = slot.getItem();
+            int colour = -1;
+            ItemStack carried = this.menu.getCarried();
+            if (this.isQuickCrafting && this.quickCraftSlots.size() > 1 && this.quickCraftSlots.contains(slot) && !carried.isEmpty()
+                    && AbstractContainerMenu.canItemQuickReplace(slot, carried, true) && this.menu.canDragTo(slot)) {
+                // the drag's kind, kept from the button that started it (dragKind): left shares out, right puts one in
+                // each, middle (creative) fills each; at most a stack, as the drop itself gives
+                int kind = this.dragKind;
+                int max = Math.min(carried.getMaxStackSize(), slot.getMaxStackSize(carried));
+                int count = AbstractContainerMenu.getQuickCraftPlaceCount(this.quickCraftSlots.size(), kind, carried)
+                        + (stack.isEmpty() ? 0 : stack.getCount());
+                if (count > max) {
+                    count = max;
+                    colour = 0xFFFFFF55; // vanilla's yellow for a slot that is full
+                }
+                stack = carried.copyWithCount(count);
+                graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, -2130706433);
+            }
             if (!stack.isEmpty()) {
                 graphics.item(stack, slot.x, slot.y);
                 graphics.itemDecorations(this.font, stack, slot.x, slot.y, ""); // bars and cooldowns, but not vanilla's count
@@ -226,9 +253,9 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
                         int width = this.font.width(text);
                         float scale = this.countScale(width);
                         graphics.pose().scale(scale, scale);
-                        graphics.text(this.font, text, -width, -8, -1, true);
+                        graphics.text(this.font, text, -width, -8, colour, true);
                     } else {
-                        graphics.text(this.font, count, -this.font.width(count), -8, -1, true);
+                        graphics.text(this.font, count, -this.font.width(count), -8, colour, true);
                     }
                     graphics.pose().popMatrix();
                 }
@@ -310,7 +337,13 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
             this.dragging = true;
             return true;
         }
-        return super.mouseClicked(event, doubleClick);
+        boolean wasDragging = this.isQuickCrafting;
+        boolean handled = super.mouseClicked(event, doubleClick);
+        if (this.isQuickCrafting && !wasDragging) { // a drag starts: its kind, as vanilla takes it (dragKind)
+            this.dragKind = event.button() == InputConstants.MOUSE_BUTTON_LEFT ? 0
+                    : event.button() == InputConstants.MOUSE_BUTTON_RIGHT ? 1 : 2;
+        }
+        return handled;
     }
 
     /**

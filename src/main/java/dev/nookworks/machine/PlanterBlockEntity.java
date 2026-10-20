@@ -94,7 +94,8 @@ public class PlanterBlockEntity extends BaseContainerBlockEntity implements Mach
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, PlanterBlockEntity planter) {
-        if (level.getGameTime() % MachineTuning.time(INTERVAL) == 0 && level instanceof ServerLevel server) {
+        // each on a beat of its own, not every Planter on the same tick
+        if (Math.floorMod(level.getGameTime() + pos.hashCode(), MachineTuning.time(INTERVAL)) == 0 && level instanceof ServerLevel server) {
             planter.work(server);
         }
     }

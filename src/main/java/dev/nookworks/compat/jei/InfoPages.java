@@ -15,6 +15,7 @@ import dev.nookworks.registry.ModCrops;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModKitchen;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModRecycling;
 import dev.nookworks.registry.ModRope;
 import dev.nookworks.registry.ModTrading;
 import dev.nookworks.registry.ModTravel;
@@ -64,6 +65,18 @@ public final class InfoPages {
         info(page, ModItems.REINFORCED_ROD.get(), "reinforced_rod");
         info(page, ModItems.BRASS_INGOT.get(), "brass");
         info(page, ModItems.MACHINE_CHASSIS.get(), "machine_chassis");
+        info(page, ModRecycling.COMPRESSOR_ITEM.get(), "compressor");
+        info(page, ModRecycling.RECYCLER_ITEM.get(), "recycler");
+        info(page, ModRecycling.BALER.get(), "baler");
+        info(page, ModRecycling.SCRAP.get(), "scrap");
+        ModRecycling.BUILDING_ITEMS.forEach((name, item) -> {
+            if (ModRecycling.SCRAP_BALES.containsKey(name) || ModRecycling.CORRUGATED_SHEETS.containsKey(name)) {
+                info(page, item.get(), "rusting_scrap");
+            }
+            if (name.endsWith("corrugated_sheet")) {
+                info(page, item.get(), "corrugated_sheet");
+            }
+        });
         info(page, ModItems.CAUSTIC_SODA.get(), "caustic_soda");
         info(page, ModItems.FINE_PAPER.get(), "fine_paper");
         info(page, ModItems.PRINTING_PRESS.get(), "printing_press");
@@ -168,6 +181,12 @@ public final class InfoPages {
         info(page, ModItems.VALVE.get(), "valve");
         info(page, ModItems.COPPER_TANK.get(), "copper_tank");
         info(page, ModItems.OIL_LAMP.get(), "oil_lamp");
+        info(page, ModItems.BOOKEND.get(), "bookend");
+        // books are laid down sneaking, which nothing in the game says (the bottles have their page): the r18 review
+        info(page, Items.BOOK, "placed_book");
+        info(page, Items.ENCHANTED_BOOK, "placed_book");
+        info(page, Items.WRITTEN_BOOK, "placed_book");
+        info(page, Items.WRITABLE_BOOK, "placed_book");
         info(page, ModItems.UNLIT_LANTERN.get(), "unlit_lantern");
         info(page, ModItems.UNLIT_SOUL_LANTERN.get(), "unlit_lantern");
         ModItems.UNLIT_COPPER_LANTERNS.values().forEach(lantern -> info(page, lantern.get(), "unlit_lantern"));
@@ -227,7 +246,7 @@ public final class InfoPages {
 
     /** The pages that give a machine's power or pace in figures. */
     private static final Set<String> TUNED_PAGES = Set.of("stone_maker", "generator", "diesel_generator", "laser", "planter",
-            "electric_furnace", "electrolytic_cell", "water_pump", "motor", "spawner_control");
+            "electric_furnace", "electrolytic_cell", "water_pump", "motor", "spawner_control", "compressor", "recycler");
 
     private static String factor(ModConfigSpec.DoubleValue value) {
         double f = MachineTuning.factor(value);

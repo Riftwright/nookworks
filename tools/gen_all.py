@@ -17,8 +17,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ["gen_machine_models.py", "gen_rope_ties.py", "gen_wood_data.py", "gen_fine_sifting.py", "gen_advancements.py",
-        "gen_recipe_unlocks.py", "gen_feature_conditions.py", "gen_test_structure.py", "gen_zh_hk.py"]
+# gen_recycling.py after the machine models: it builds the Recycler's item model from its two halves
+DATA = ["gen_machine_models.py", "gen_recycling.py", "gen_rope_ties.py", "gen_wood_data.py", "gen_fine_sifting.py",
+        "gen_advancements.py", "gen_recipe_unlocks.py", "gen_feature_conditions.py", "gen_test_structure.py",
+        "gen_lang_copies.py"]
 LAST = "gen_item_displays.py"
 
 

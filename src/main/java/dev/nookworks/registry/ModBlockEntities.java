@@ -155,6 +155,11 @@ public final class ModBlockEntities {
             "noodle_maker", () -> new BlockEntityType<>(NoodleMakerBlock.Entity::new, ModKitchen.NOODLE_MAKER.get()));
     public static final Supplier<BlockEntityType<DiceBlockEntity>> DICE = BLOCK_ENTITY_TYPES.register(
             "dice", () -> new BlockEntityType<>(DiceBlockEntity::new, ModBlocks.DICE.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.decor.PlacedBooksBlockEntity>> PLACED_BOOKS = BLOCK_ENTITY_TYPES.register(
+            "placed_books", () -> new BlockEntityType<>(dev.nookworks.decor.PlacedBooksBlockEntity::new, ModBlocks.PLACED_BOOKS.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.decor.BookendBlockEntity>> BOOKEND = BLOCK_ENTITY_TYPES.register(
+            "bookend", () -> new BlockEntityType<>(dev.nookworks.decor.BookendBlockEntity::new, ModBlocks.BOOKEND.get(),
+                    ModBlocks.BOOK_ROW.get()));
     public static final Supplier<BlockEntityType<PlacedBottlesBlockEntity>> PLACED_BOTTLES = BLOCK_ENTITY_TYPES.register(
             "placed_bottles", () -> new BlockEntityType<>(PlacedBottlesBlockEntity::new, ModBlocks.PLACED_BOTTLES.get()));
     public static final Supplier<BlockEntityType<TrayBlockEntity>> TRAY = BLOCK_ENTITY_TYPES.register(

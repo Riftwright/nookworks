@@ -9,7 +9,14 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "nookworks:spawn_egg_brewer"
+          "name": "nookworks:spawn_egg_brewer",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "source": "block_entity",
+            "include": [
+              "nookworks:brews_left"
+            ]
+          }
         }
       ],
       "rolls": 1

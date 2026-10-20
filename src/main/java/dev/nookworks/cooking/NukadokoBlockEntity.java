@@ -201,18 +201,30 @@ public class NukadokoBlockEntity extends BlockEntity implements Readout {
         lines.accept(this.describe());
     }
 
-    /** For the player who looks in: what is buried, and how far along each is. */
+    /**
+     * For the player who looks in: what is buried, and how far along each is - alike ones once, with how many: four
+     * carrots put in together said "Carrot (about 10 min left)" four times, past both edges of the screen (the kitchen
+     * play-test, 2026-10-19).
+     */
     public Component describe() {
-        MutableComponent line = null;
+        java.util.Map<String, Integer> counts = new java.util.LinkedHashMap<>();
+        java.util.Map<String, Component> parts = new java.util.HashMap<>();
         for (int slot = 0; slot < SLOTS; slot++) {
             ItemStack stack = this.items.get(slot);
             if (stack.isEmpty()) {
                 continue;
             }
             PicklingRecipe recipe = PicklingRecipe.of(stack);
-            Component part = recipe == null ? Component.translatable("nookworks.nukadoko.ready", stack.getHoverName())
-                    : Component.translatable("nookworks.nukadoko.pickling", stack.getHoverName(),
-                            Math.max(1, (recipe.time() - this.age[slot] + 1199) / 1200));
+            int minutes = recipe == null ? -1 : Math.max(1, (recipe.time() - this.age[slot] + 1199) / 1200);
+            String key = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()) + "/" + minutes;
+            counts.merge(key, 1, Integer::sum);
+            parts.computeIfAbsent(key, k -> recipe == null ? Component.translatable("nookworks.nukadoko.ready", stack.getHoverName())
+                    : Component.translatable("nookworks.nukadoko.pickling", stack.getHoverName(), minutes));
+        }
+        MutableComponent line = null;
+        for (var entry : counts.entrySet()) {
+            Component part = entry.getValue() > 1
+                    ? Component.literal(entry.getValue() + "× ").append(parts.get(entry.getKey())) : parts.get(entry.getKey());
             line = line == null ? part.copy() : line.append(Component.translatable("nookworks.list.separator")).append(part);
         }
         return line == null ? Component.translatable("nookworks.nukadoko.empty") : line;
@@ -256,6 +268,7 @@ public class NukadokoBlockEntity extends BlockEntity implements Readout {
             for (ItemStack stack : this.items) {
                 Containers.dropItemStack(this.level, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, stack.copy());
             }
+            this.items.clear(); // dropped, so gone from here (the dupe audit's hardening note)
         }
     }
 }

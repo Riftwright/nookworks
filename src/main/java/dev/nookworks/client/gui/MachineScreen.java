@@ -204,6 +204,18 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 return Component.translatable("gui.nookworks.machine.status.no_reagent.detail", needed);
             }
         }
+        if (this.menu.status() == MachineStatus.NO_POWER && this.menu.energyRate() > 0) {
+            // a broken cable or too few Generators: both read "Not enough power" (one Generator under a mercury line, the
+            // play-test of 2026-10-19, looked like a broken cable)
+            return Component.translatable("gui.nookworks.machine.status.no_power.detail", this.menu.energyRate());
+        }
+        if (this.menu.status() == MachineStatus.NO_POWER) {
+            return null; // its detail needs the rate, which this machine does not show
+        }
+        if (this.menu.status() == MachineStatus.INCOMPLETE) {
+            // what the tower lacks: "Tower incomplete" alone left a player who built it wrong guessing (play-test, 2026-10-19)
+            return Component.translatable("nookworks.machine.distiller.incomplete");
+        }
         if (this.menu.status() == MachineStatus.LOW_OIL) {
             // how much a batch takes, as the cell says how much mercury it wants
             return Component.translatable("gui.nookworks.machine.status.low_oil.detail", StirringTankBlockEntity.OIL_PER_BATCH);

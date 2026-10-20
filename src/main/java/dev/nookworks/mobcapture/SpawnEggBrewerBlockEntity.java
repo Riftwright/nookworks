@@ -96,6 +96,24 @@ public class SpawnEggBrewerBlockEntity extends BlockEntity implements WorldlyCon
         return this.progress;
     }
 
+    /** The blaze powder already taken in goes with its item when it is broken (ModDataComponents#BREWS_LEFT). */
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (this.fuel > 0) {
+            components.set(dev.nookworks.registry.ModDataComponents.BREWS_LEFT.get(), this.fuel);
+        }
+    }
+
+    @Override
+    protected void applyImplicitComponents(net.minecraft.core.component.DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        Integer left = components.get(dev.nookworks.registry.ModDataComponents.BREWS_LEFT.get());
+        if (left != null) {
+            this.fuel = Math.clamp(left, 0, BREWS_PER_FUEL);
+        }
+    }
+
     public int fuel() {
         return this.fuel;
     }
@@ -218,6 +236,10 @@ public class SpawnEggBrewerBlockEntity extends BlockEntity implements WorldlyCon
         }
         brewer.progress = 0;
         brewer.fuel--;
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            // the egg keeps the kind only: what the mob carried falls on top, as it would had it died
+            MobBottleItem.spillCarried(server, brewer.items.get(BOTTLE), net.minecraft.world.phys.Vec3.atBottomCenterOf(pos.above()));
+        }
         brewer.items.set(BOTTLE, new ItemStack(ModItems.MOB_BOTTLE.get()));
         brewer.items.get(EGG).shrink(1);
         ItemStack out = brewer.items.get(OUTPUT);

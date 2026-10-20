@@ -666,11 +666,46 @@ public class HungItemEntity extends Entity {
             level.setBlock(at, ModRope.HUNG_LIGHT.get().at(this.glow()), Block.UPDATE_ALL);
             this.litAt = at;
         }
+        // two lit things in one block, the light another put there: as bright as the brightest of them, whichever came
+        // first (a soul lantern's 10 kept a lantern hung beside it at 10; the r18 review); the one whose light it is
+        // keeps it at the brightest, up or down, as the others come and go
+        BlockPos shared = this.litAt != null ? this.litAt : there.is(ModRope.HUNG_LIGHT.get()) ? at : null;
+        if (shared != null) {
+            BlockState light = level.getBlockState(shared);
+            int brightest = this.litAt != null ? brightestAt(level, shared) : Math.max(this.glow(), light.getValue(LightBlock.LEVEL));
+            if (light.is(ModRope.HUNG_LIGHT.get()) && brightest > 0 && light.getValue(LightBlock.LEVEL) != brightest) {
+                level.setBlock(shared, light.setValue(LightBlock.LEVEL, brightest), Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    /** The brightest of the lit things hanging in the block at {@code pos}: what its light block shines at. */
+    private static int brightestAt(Level level, BlockPos pos) {
+        int brightest = 0;
+        for (HungItemEntity hung : level.getEntitiesOfClass(HungItemEntity.class, hangingOver(new AABB(pos)), h -> !h.isRemoved())) {
+            if (hung.blockPosition().equals(pos)) {
+                brightest = Math.max(brightest, hung.glow());
+            }
+            if (hung.vineLights(pos)) {
+                brightest = Math.max(brightest, GLOW_BERRY_LIGHT);
+            }
+        }
+        return brightest;
+    }
+
+    /**
+     * Where to look for what hangs in or over the block at {@code pos}: up to a vine's length above it. A vine stands at
+     * its top and reaches down; the game files an entity by where it stands and looks for one only a little below the
+     * box it is asked about, never above - a grown piece across a 16-block section's edge from the vine's top was not
+     * found, and its light went out every few seconds (the review of the 10-16 commits).
+     */
+    private static AABB hangingOver(AABB box) {
+        return box.expandTowards(0, VINE_MAX + 1, 0);
     }
 
     /** Whether a thing hanging in the block at {@code pos} gives light there: what keeps a {@link HungLightBlock} lit. */
     public static boolean lightsAt(Level level, BlockPos pos) {
-        return !level.getEntitiesOfClass(HungItemEntity.class, new AABB(pos), hung -> !hung.isRemoved() && (hung.glow() > 0
+        return !level.getEntitiesOfClass(HungItemEntity.class, hangingOver(new AABB(pos)), hung -> !hung.isRemoved() && (hung.glow() > 0
                 && hung.blockPosition().equals(pos) || hung.vineLights(pos))).isEmpty();
     }
 
@@ -925,6 +960,11 @@ public class HungItemEntity extends Entity {
 
     /** Whether piece {@code piece} has room: nothing but air (or a hung thing's light) there, and no other hung thing. */
     private boolean roomFor(Level level, int piece) {
+        return this.roomFor(level, piece, null);
+    }
+
+    /** As {@link #roomFor(Level, int)}, {@code leaving} not counted: the one this takes the place of, still in the level. */
+    private boolean roomFor(Level level, int piece, @Nullable HungItemEntity leaving) {
         AABB box = this.vinePiece(piece);
         if (level.isOutsideBuildHeight(Mth.floor(box.minY))) {
             return false;
@@ -935,7 +975,8 @@ public class HungItemEntity extends Entity {
                 return false;
             }
         }
-        return level.getEntitiesOfClass(HungItemEntity.class, box, o -> o != this && !o.isRemoved()).isEmpty();
+        return level.getEntitiesOfClass(HungItemEntity.class, hangingOver(box),
+                o -> o != this && o != leaving && !o.isRemoved() && o.getBoundingBox().intersects(box)).isEmpty();
     }
 
     /**
@@ -977,8 +1018,10 @@ public class HungItemEntity extends Entity {
         for (BlockPos at : wanted) {
             BlockState there = level.getBlockState(at);
             if (there.is(ModRope.HUNG_LIGHT.get())) {
-                if (there.getValue(LightBlock.LEVEL) < GLOW_BERRY_LIGHT) {
-                    level.setBlock(at, there.setValue(LightBlock.LEVEL, GLOW_BERRY_LIGHT), Block.UPDATE_ALL);
+                // as bright as the brightest lighting it, down again when a brighter one beside the berries goes
+                int brightest = Math.max(GLOW_BERRY_LIGHT, brightestAt(level, at));
+                if (there.getValue(LightBlock.LEVEL) != brightest) {
+                    level.setBlock(at, there.setValue(LightBlock.LEVEL, brightest), Block.UPDATE_ALL);
                 }
                 this.vineLit.add(at);
             } else if (there.isAir()) {
@@ -993,7 +1036,7 @@ public class HungItemEntity extends Entity {
         if (!level.getBlockState(at).is(ModRope.HUNG_LIGHT.get()) || at.equals(this.litAt)) {
             return;
         }
-        boolean other = !level.getEntitiesOfClass(HungItemEntity.class, new AABB(at), o -> o != this && !o.isRemoved()
+        boolean other = !level.getEntitiesOfClass(HungItemEntity.class, hangingOver(new AABB(at)), o -> o != this && !o.isRemoved()
                 && (o.glow() > 0 && o.blockPosition().equals(at) || o.vineLights(at))).isEmpty();
         if (!other) {
             level.removeBlock(at, false);
@@ -1023,7 +1066,9 @@ public class HungItemEntity extends Entity {
         this.vineAge = from.vineAge;
         this.setVine(from.vineLength(), from.berriesMask());
         int keep = 1;
-        while (keep < this.vineLength() && this.roomFor(level, keep)) {
+        // the vine it was is still hanging there until this one is in: its pieces are no hindrance (a grown vine was cut
+        // back to one piece every time its rope was let down a block - the review of the 10-16 commits)
+        while (keep < this.vineLength() && this.roomFor(level, keep, from)) {
             keep++;
         }
         for (int piece = keep; piece < this.vineLength(); piece++) {

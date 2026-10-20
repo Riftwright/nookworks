@@ -33,6 +33,7 @@ import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModKitchen;
 import dev.nookworks.registry.ModMenus;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModRecycling;
 import dev.nookworks.registry.ModRope;
 import dev.nookworks.registry.ModBarter;
 import dev.nookworks.registry.ModSounds;
@@ -66,6 +67,7 @@ public class Nookworks {
         ModVentilation.init();
         ModRope.init();
         ModOil.init();
+        ModRecycling.init();
         ModTravel.init();
         ModBarter.init();
         ModTrading.init();

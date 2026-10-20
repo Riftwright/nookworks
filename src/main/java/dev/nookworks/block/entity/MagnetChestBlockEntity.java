@@ -40,9 +40,25 @@ public class MagnetChestBlockEntity extends BaseContainerBlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MagnetChestBlockEntity chest) {
-        if (level.getGameTime() % INTERVAL == 0 && level instanceof ServerLevel server) {
+        // each chest on a beat of its own, not all on the same tick; a full one looks again only once something left it
+        if (Math.floorMod(level.getGameTime() + pos.hashCode(), INTERVAL) == 0 && level instanceof ServerLevel server
+                && !chest.full()) {
             chest.collect(server);
         }
+    }
+
+    /**
+     * Whether no slot has room for anything: every one holding a whole stack. A full chest by a farm tried every item lying
+     * about again every beat (the performance audit, 2026-10-19).
+     */
+    private boolean full() {
+        for (int i = 0; i < this.getContainerSize(); i++) {
+            ItemStack held = this.getItem(i);
+            if (held.isEmpty() || held.getCount() < Math.min(held.getMaxStackSize(), this.getMaxStackSize())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Pulls every reachable item that fits. Public for tests. */

@@ -75,8 +75,8 @@ public record CrushingRecipe(Result result, int count) {
 
     /** The recipe for this item, or null when there is none - including a tag recipe nothing fills. */
     public static @Nullable CrushingRecipe of(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return null;
+        if (stack.isEmpty() || dev.nookworks.recycling.RecyclingRecipe.holdsThings(stack)) {
+            return null; // nor a chest picked up with its contents, crushed with it
         }
         CrushingRecipe recipe = stack.typeHolder().getData(DATA_MAP);
         // nor one that makes a part's item when the part is off (flour, with the kitchen off)

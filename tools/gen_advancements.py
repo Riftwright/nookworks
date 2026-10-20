@@ -125,6 +125,8 @@ TREE = {
     "electric_furnace": ("generator", "electric_furnace", "task", {"furnace": has("electric_furnace")}),
     "crusher": ("generator", "crusher", "task", {"crusher": has("crusher")}),
     "wood_chips": ("crusher", "wood_chips", "task", {"chips": has("wood_chips")}),
+    "compressor": ("generator", "compressor", "task", {"compressor": has("compressor")}),
+    "recycler": ("crusher", "recycler", "task", {"recycler": has("recycler")}),
     "spawner_controller": ("generator", "spawner_controller", "task", {"controller": has("spawner_controller")}),
     "barter_terminal": ("generator", "barter_terminal", "task", {"terminal": has("barter_terminal")}),
     # the Sealed Retort (a powered machine), and what is made in it
@@ -184,6 +186,7 @@ FEATURE = {
     "if_world": "if_world",
     "barter_terminal": "barter_terminal",
     "trading_counter": "trading_counter",
+    "compressor": "recycling", "recycler": "recycling",
 }
 
 

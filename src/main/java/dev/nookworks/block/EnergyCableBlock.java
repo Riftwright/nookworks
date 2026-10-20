@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
@@ -51,7 +52,7 @@ public class EnergyCableBlock extends PipeBlock {
         BlockState state = this.defaultBlockState();
         for (Direction dir : Direction.values()) {
             BlockPos next = context.getClickedPos().relative(dir);
-            state = state.setValue(PROPERTY_BY_DIRECTION.get(dir), connectsTo(context.getLevel(), next, dir)
+            state = state.setValue(PROPERTY_BY_DIRECTION.get(dir), connectsTo(context.getLevel(), next, dir, false)
                     && PipeSides.mayJoin(state, context.getLevel(), context.getClickedPos(), dir));
         }
         return state;
@@ -78,14 +79,27 @@ public class EnergyCableBlock extends PipeBlock {
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
             Direction dir, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
-        return state.setValue(PROPERTY_BY_DIRECTION.get(dir), connectsTo(level, neighbourPos, dir) && PipeSides.mayJoin(state, level, pos, dir));
+        boolean was = state.getValue(PROPERTY_BY_DIRECTION.get(dir));
+        return state.setValue(PROPERTY_BY_DIRECTION.get(dir), connectsTo(level, neighbourPos, dir, was) && PipeSides.mayJoin(state, level, pos, dir));
     }
 
-    private static boolean connectsTo(LevelReader level, BlockPos neighbour, Direction dir) {
-        if (level.getBlockState(neighbour).getBlock() instanceof EnergyCableBlock) {
+    /**
+     * Whether a cable joins what is at {@code neighbour}. Capabilities are asked of a level only: where none can be
+     * asked - world generation, setting a structure's template down - the side stays as it was ({@code was}), so a
+     * working line saved in a template is set down working (Nook of the Dead's refuge, 2026-10-19: every side facing a
+     * machine came out unjoined, and nothing ran). Whatever stands there yet: a template cut at a chunk's edge sets its
+     * far part down later, and the machine there was still air when this side was asked (the review of 8bfc4544). A
+     * side kept toward something that never came is only drawn; the network asks for the capability as it walks.
+     */
+    private static boolean connectsTo(LevelReader level, BlockPos neighbour, Direction dir, boolean was) {
+        BlockState there = level.getBlockState(neighbour);
+        if (there.getBlock() instanceof EnergyCableBlock) {
             return true;
         }
-        return level instanceof Level world && world.getCapability(Capabilities.Energy.BLOCK, neighbour, dir.getOpposite()) != null;
+        if (!(level instanceof Level world)) {
+            return was;
+        }
+        return world.getCapability(Capabilities.Energy.BLOCK, neighbour, dir.getOpposite()) != null;
     }
 
     /**
@@ -170,12 +184,14 @@ public class EnergyCableBlock extends PipeBlock {
             private List<EnergyHandler> targets(boolean giving) {
                 List<MachineIO.Receiver> receivers = MachineIO.receivers(level, pos);
                 List<EnergyHandler> targets = new ArrayList<>(receivers.size());
+                // one store reached through two blocks (a Recycler cabled at its body and its intake) is one target
+                java.util.Set<EnergyHandler> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
                 int start = receivers.isEmpty() ? 0 : Math.floorMod(level.getGameTime() + pos.hashCode(), receivers.size());
                 for (int i = 0; i < receivers.size(); i++) {
                     MachineIO.Receiver r = receivers.get((start + i) % receivers.size());
                     if (!r.pos().equals(sender)) {
                         EnergyHandler target = giving ? MachineIO.handlerOf(level, r, pos, null) : MachineIO.handlerOf(level, r);
-                        if (target != null) {
+                        if (target != null && seen.add(target)) {
                             targets.add(target);
                         }
                     }
@@ -215,5 +231,11 @@ public class EnergyCableBlock extends PipeBlock {
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return PipeSides.turned(state, mirror::mirror);
+    }
+
+    /** A cable: no way through, as vanilla's chorus plant of the same make is not. */
+    @Override
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return false;
     }
 }

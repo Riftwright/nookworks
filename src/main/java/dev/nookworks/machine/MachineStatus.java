@@ -61,7 +61,9 @@ public enum MachineStatus {
      * A Stirring Tank set to make biodiesel, its methanol and caustic soda in, with less vegetable oil in its tank than a
      * batch takes (it said "idle", as if nothing were in it, r8).
      */
-    LOW_OIL(Tone.WARN);
+    LOW_OIL(Tone.WARN),
+    /** A Compressor with fewer than nine of a thing it packs: waiting for the rest (it said "idle, nothing in it"). */
+    NEEDS_NINE(Tone.QUIET);
 
     public enum Tone {
         GOOD, QUIET, WARN, BAD

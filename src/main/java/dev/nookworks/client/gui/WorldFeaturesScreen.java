@@ -9,6 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.feature.Features;
 import dev.nookworks.feature.WorldFeatures;
+import dev.nookworks.ifworld.NookOfTheDeadWarning;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -20,6 +21,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.SpacerElement;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.CommonComponents;
@@ -132,7 +134,11 @@ public final class WorldFeaturesScreen extends Screen {
 
     private Component tooltip(String part) {
         if (!WorldFeatures.offered(part)) {
-            return Component.translatable("nookworks.world_features.locked");
+            Component locked = Component.translatable("nookworks.world_features.locked");
+            // the If locked off by the start-up config, with Nook of the Dead installed: say what it costs
+            return part.equals(NookOfTheDeadWarning.PART) && NookOfTheDeadWarning.present()
+                    ? locked.copy().append("\n").append(Component.translatable("message.nookworks.notd_if_off"))
+                    : locked;
         }
         List<String> off = Features.NEEDS.getOrDefault(part, List.of()).stream()
                 .filter(need -> !Features.enabled(need, this::on)).toList();
@@ -160,12 +166,30 @@ public final class WorldFeaturesScreen extends Screen {
         this.layout.arrangeElements();
     }
 
-    /** With a change, the world's data packs load again with it; back on the Create World screen either way. */
+    /**
+     * With a change, the world's data packs load again with it; back on the Create World screen either way. With Nook of
+     * the Dead installed, switching the If off is asked first: that add-on reaches its world through the If.
+     */
     private void done() {
         if (this.chosen.equals(this.before)) {
             this.onClose();
             return;
         }
+        if (NookOfTheDeadWarning.present() && !this.shownOn(NookOfTheDeadWarning.PART)
+                && WorldFeatures.offered(NookOfTheDeadWarning.PART) && this.before.getOrDefault(NookOfTheDeadWarning.PART, true)) {
+            this.minecraft.gui.setScreen(new ConfirmScreen(yes -> {
+                if (yes) {
+                    this.apply();
+                } else {
+                    this.minecraft.gui.setScreen(this);
+                }
+            }, Component.translatable("nookworks.world_features.notd.title"), Component.translatable("nookworks.world_features.notd.message")));
+            return;
+        }
+        this.apply();
+    }
+
+    private void apply() {
         WorldFeatures.Choice was = WorldFeatures.current();
         WorldFeatures.choose(this.chosen);
         ((Host) this.parent).nookworks$reloadDataPacks(() -> WorldFeatures.restore(was));

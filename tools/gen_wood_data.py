@@ -183,11 +183,12 @@ def timber(frm, to, along, rotation=None):
 
 
 def support_models(wood):
-    """Three shapes, all facing north (the beam runs north-south, the bracket stands against a wall to the south):
+    """Four shapes, all facing north (the beam runs north-south, the bracket stands against a wall to the south):
 
     post     an upright timber
     beam     a timber lying along the top of the block, which is what a shelf or a floor rests on
     bracket  a wall bracket: an upright against the wall, the beam over it, and a brace between the two
+    wall_post the bracket's upright alone, the whole height of the block, against the wall (the user, 2026-10-18)
     """
     _, side, end = support_textures(wood)
     textures = {"particle": side, "side": side, "end": end}
@@ -195,8 +196,9 @@ def support_models(wood):
     beam = [timber([5, 11, 0], [11, 16, 16], "z")]
     brace = timber([6, 5.5, 3], [10, 8.5, 15], "z", {"origin": [8, 7, 9], "axis": "x", "angle": 45})
     bracket = [timber([5, 0, 12], [11, 11, 16], "y"), timber([5, 11, 0], [11, 16, 16], "z"), brace]
+    wall_post = [timber([5, 0, 12], [11, 16, 16], "y")]
     return {shape: {"parent": "minecraft:block/block", "textures": textures, "elements": elements}
-            for shape, elements in (("post", post), ("beam", beam), ("bracket", bracket))}
+            for shape, elements in (("post", post), ("beam", beam), ("bracket", bracket), ("wall_post", wall_post))}
 
 
 def supports():
@@ -208,7 +210,7 @@ def supports():
             write(ASSETS / f"models/block/{name}_{shape}.json", model)
         variants = {}
         for facing, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
-            for shape in ("post", "beam", "bracket"):
+            for shape in ("post", "beam", "bracket", "wall_post"):
                 variant = {"model": f"nookworks:block/{name}_{shape}"}
                 if y:
                     variant["y"] = y

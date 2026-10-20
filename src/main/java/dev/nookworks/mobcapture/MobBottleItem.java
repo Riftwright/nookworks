@@ -97,6 +97,53 @@ public class MobBottleItem extends Item {
         return stack;
     }
 
+    /** LivingEntity#dropEquipment: what a mob carries that falls when it dies, a donkey's chest and load, an allay's item. */
+    private static final java.lang.reflect.Method DROP_EQUIPMENT;
+
+    static {
+        try {
+            DROP_EQUIPMENT = LivingEntity.class.getDeclaredMethod("dropEquipment", ServerLevel.class);
+            DROP_EQUIPMENT.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * What the mob in {@code bottle} carried that would have fallen had it died, set down at {@code at}: gear it picked
+     * up or was given, a saddle, a horse's armour, a donkey's chest and its load, an allay's item. The Spawn Egg Brewer
+     * keeps only the mob's kind, and threw these away with it (the dupe and loss audit, 2026-10-19). Not its loot, and
+     * not the gear it was born with, which a death gives only now and then: nothing comes out that a death would not.
+     */
+    public static void spillCarried(ServerLevel level, ItemStack bottle, Vec3 at) {
+        EntityType<?> type = captured(bottle);
+        CompoundTag data = capturedData(bottle);
+        if (type == null || data == null || type.onlyOpCanSetNbt()) {
+            return;
+        }
+        Entity entity;
+        try (var reporter = new ProblemReporter.ScopedCollector(() -> "mob_bottle", LOGGER)) {
+            entity = EntityType.create(type, TagValueInput.create(reporter, level.registryAccess(), data),
+                    level, EntitySpawnReason.BUCKET).orElse(null);
+        }
+        if (!(entity instanceof LivingEntity living)) {
+            return;
+        }
+        living.snapTo(at.x, at.y, at.z, 0.0F, 0.0F); // never added to the level: only where its things fall
+        if (living instanceof Mob mob) {
+            mob.dropPreservedEquipment(level);
+        }
+        if (living instanceof net.minecraft.world.entity.monster.piglin.Piglin piglin) {
+            // a piglin lets its pocket fall in its death loot, not with its equipment: the gold it was bartering with
+            piglin.getInventory().removeAllItems().forEach(stack -> piglin.spawnAtLocation(level, stack));
+        }
+        try {
+            DROP_EQUIPMENT.invoke(living, level);
+        } catch (ReflectiveOperationException e) {
+            LOGGER.warn("Could not give back what a bottled {} carried", type, e);
+        }
+    }
+
     /** The saved mob in a filled bottle, or null when it holds only a kind (an old bottle, one shown in JEI). */
     public static @Nullable CompoundTag capturedData(ItemStack stack) {
         var data = stack.get(ModDataComponents.CAPTURED_DATA.get());

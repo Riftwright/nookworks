@@ -51,6 +51,7 @@ import net.minecraft.world.level.gamerules.GameRules;
  */
 final class IfTests {
     static void register() {
+        test("nook_of_the_dead_is_warned_of_the_if_off", IfTests::nookOfTheDeadWarning);
         test("if_number_makes_the_same_seed", IfTests::numberMakesSeed);
         test("if_weather_is_counted_once", 120, IfTests::weatherCountedOnce);
         test("if_is_made_from_its_number", 600, IfTests::madeFromNumber);
@@ -409,5 +410,20 @@ final class IfTests {
             }
         }
         return true;
+    }
+
+    /**
+     * Nook of the Dead reaches its world through the If: with it installed and the If off, an operator is told as they
+     * join. Without it installed (as here) nothing is said, whatever the If's switch; the words are there in English (the
+     * server's only language - check_lang.py checks the other seven).
+     */
+    private static void nookOfTheDeadWarning(GameTestHelper helper) {
+        check(helper, !dev.nookworks.ifworld.NookOfTheDeadWarning.present() && !dev.nookworks.ifworld.NookOfTheDeadWarning.stranded(),
+                "Nook of the Dead is not installed here, so nothing is said");
+        for (String key : java.util.List.of("message.nookworks.notd_if_off", "nookworks.world_features.notd.title",
+                "nookworks.world_features.notd.message")) {
+            check(helper, net.minecraft.locale.Language.getInstance().has(key), key + " is written");
+        }
+        helper.succeed();
     }
 }

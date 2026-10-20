@@ -403,6 +403,46 @@ def crusher():
     return model(round_textures("crusher"), parts)
 
 
+def compressor():
+    """A cabinet (y 0..12) with the ram's housing on it: a block 10 across, y 12..16, the ram's rod showing on top."""
+    parts = cabinet(top=12, recess_top=False)
+    parts.append(solid([3, 12, 3], [13, 16, 13], cull=("up",), name="housing"))
+    return model(round_textures("compressor"), parts)
+
+
+def recycler_lower():
+    """The Recycler's body: a whole cabinet, as the Stone Maker's (its top is under the intake)."""
+    return model(round_textures("recycler"), cabinet())
+
+
+def recycler_upper():
+    """
+    The intake: a hopper of plate on the body - a neck (12 across, y 0..4), then walls 2 px thick in two tiers stepping
+    out as a hopper flares (14 across y 4..10, the whole block y 10..16), open on top, the shredder's toothed bed down
+    in its throat (y 6).
+    """
+    tex = {"side": nw("recycler_top_side"), "up": nw("recycler_top"), "down": nw("recycler_top_side"),
+           "throat": nw("recycler_top"), "particle": nw("recycler_top_side")}
+    parts = [solid([2, 0, 2], [14, 4, 14], skip=("up",), name="neck")]
+    parts.append(box([3, 6, 3], [13, 6, 13], {"up": face("#throat", uv=[3, 3, 13, 13])}, name="shredder"))
+    for lo, hi, y0, y1 in ((1, 15, 4, 10), (0, 16, 10, 16)):
+        for side in SIDES:
+            frm, to = {"north": ([lo, y0, lo], [hi, y1, lo + 2]), "south": ([lo, y0, hi - 2], [hi, y1, hi]),
+                       "west": ([lo, y0, lo + 2], [lo + 2, y1, hi - 2]), "east": ([hi - 2, y0, lo + 2], [hi, y1, hi - 2])}[side]
+            faces = {f: face("#side", cull=f if hi == 16 and f in (side, "up") or f == "up" and y1 == 16 else None)
+                     for f in SIDES + ("up", "down")}
+            faces["up"] = face("#up", uv=default_uv(frm, to, "up"), cull="up" if y1 == 16 else None)
+            parts.append(box(frm, to, faces, name="wall"))
+    return model(tex, parts)
+
+
+def recycler_states():
+    """The body below with its lamp lit while it runs; the intake above."""
+    return {"multipart": [{"when": {"half": "lower"}, "apply": {"model": nw("recycler")}},
+                          {"when": {"half": "lower", "running": "true"}, "apply": {"model": nw("recycler_lamp")}},
+                          {"when": {"half": "upper"}, "apply": {"model": nw("recycler_upper")}}]}
+
+
 def open_frame(recess_rims=True):
     """
     The frame alone, every face of it drawn - it is seen through: four posts and the rims top and bottom. Each face
@@ -752,7 +792,7 @@ def planter_states():
 
 def write_lamps():
     for name, depth in (("crusher", 1), ("stirring_tank", 0), ("distiller", 1), ("stone_maker", 1), ("water_pump", 1),
-                        ("printing_press", 1)):
+                        ("printing_press", 1), ("compressor", 1)):
         write(name + "_lamp", lamp_model(name + "_side", depth))
         write_state(name, lamp_states(name))
     write("planter_lamp", lamp_model("planter_front", 0, sides=("north",)))
@@ -797,6 +837,11 @@ def main():
     write("barter_terminal_on", barter_terminal_on())
     write_state("barter_terminal", barter_terminal_states())
     write_line()
+    write("compressor", compressor())
+    write("recycler", recycler_lower())
+    write("recycler_upper", recycler_upper())
+    write("recycler_lamp", lamp_model("recycler_side", 1))
+    write_state("recycler", recycler_states())
     write_lamps()
     print("wrote the machine models")
 

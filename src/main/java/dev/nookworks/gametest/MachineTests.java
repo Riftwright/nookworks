@@ -51,6 +51,7 @@ import dev.nookworks.poster.PrintingPressBlockEntity;
 import dev.nookworks.registry.ModBarter;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
+import dev.nookworks.registry.ModRecycling;
 import dev.nookworks.sorter.SorterBlockEntity;
 import dev.nookworks.spawner.SpawnerControllerMenu;
 import dev.nookworks.spawner.SpawnerSettings;
@@ -99,6 +100,11 @@ final class MachineTests {
         test("generator_faces_the_player", MachineTests::generatorFacesThePlayer);
         test("fronted_cubes_face_the_player", MachineTests::frontedCubesFaceThePlayer);
         test("cables_connect_to_cables_and_machines", MachineTests::cablesConnect);
+        test("pipes_keep_template_sides_in_world_generation", MachineTests::pipesKeepTemplateSides);
+        test("repair_box_leaves_what_counts_its_uses", MachineTests::repairBoxLeavesCounters);
+        test("crusher_and_generator_refuse_a_full_chest", MachineTests::refuseFullChests);
+        test("a_mercury_bucket_on_a_machine_says_where_it_goes", MachineTests::mercuryBucketOnMachine);
+        test("a_full_magnet_chest_waits_for_room", 100, MachineTests::fullMagnetChest);
         test("generator_powers_crusher_over_cables", MachineTests::generatorPowersCrusher);
         test("crusher_powders_sulfur", MachineTests::crusherPowdersSulfur);
         test("metal_only_grinds_for_other_mods", MachineTests::metalOnlyGrindsForOtherMods);
@@ -247,6 +253,149 @@ final class MachineTests {
         check(helper, first.getValue(PipeBlock.EAST), "cable should connect to the next cable");
         check(helper, !first.getValue(PipeBlock.UP), "cable must not connect to air");
         helper.succeed();
+    }
+
+    /**
+     * World generation sets a structure's template down through a level that cannot be asked for capabilities (a
+     * WorldGenRegion) and works each block's sides out again there. A cable or pipe keeps the sides the template saved
+     * rather than dropping every one that faces a machine or tank (Nook of the Dead's refuge, 2026-10-19: its line was
+     * set down with no cable joined to a machine, and nothing ran); in a level it still asks, as before.
+     */
+    static void pipesKeepTemplateSides(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var blind = blindReader(level);
+        var random = level.getRandom();
+        record Case(net.minecraft.world.level.block.Block pipe, net.minecraft.world.level.block.Block other, int z) {}
+        for (Case c : List.of(new Case(ModBlocks.ENERGY_CABLE.get(), ModBlocks.GENERATOR.get(), 1),
+                new Case(ModBlocks.COPPER_PIPE.get(), ModBlocks.COPPER_TANK.get(), 3),
+                new Case(ModBlocks.EXPERIENCE_PIPE.get(), ModBlocks.EXPERIENCE_TANK.get(), 5),
+                new Case(ModBlocks.MERCURY_PIPE.get(), ModBlocks.MERCURY_TANK.get(), 7))) {
+            BlockPos pipe = helper.absolutePos(new BlockPos(2, 1, c.z()));
+            BlockPos other = pipe.west();
+            level.setBlock(other, c.other().defaultBlockState(), 3);
+            BlockState saved = c.pipe().defaultBlockState();
+            for (Direction dir : Direction.values()) {
+                saved = saved.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(dir), dir == Direction.WEST || dir == Direction.UP);
+            }
+            level.setBlock(pipe, saved, 2 | 16);
+            BlockState there = level.getBlockState(other);
+            String name = c.pipe().getName().getString();
+            check(helper, saved.updateShape(blind, level, pipe, Direction.WEST, other, there, random).getValue(PipeBlock.WEST),
+                    name + " keeps its saved side to the " + c.other().getName().getString() + " where nothing can be asked");
+            check(helper, saved.updateShape(blind, level, pipe, Direction.UP, pipe.above(), Blocks.AIR.defaultBlockState(), random)
+                    .getValue(PipeBlock.UP), name + " keeps a saved side to air there: the template's far part may come later");
+            check(helper, !saved.updateShape(level, level, pipe, Direction.UP, pipe.above(), Blocks.AIR.defaultBlockState(), random)
+                    .getValue(PipeBlock.UP), name + " lets a side to air go in a level");
+            BlockState unjoined = saved.setValue(PipeBlock.WEST, false);
+            check(helper, !unjoined.updateShape(blind, level, pipe, Direction.WEST, other, there, random).getValue(PipeBlock.WEST),
+                    name + " does not make up a side the template did not save");
+            check(helper, unjoined.updateShape(level, level, pipe, Direction.WEST, other, there, random).getValue(PipeBlock.WEST),
+                    name + " still joins the " + c.other().getName().getString() + " in a level, where it asks");
+        }
+        helper.succeed();
+    }
+
+    /**
+     * An item in #nookworks:not_repairable is not mended, nor let into the box's slots, though it wears: its durability
+     * counts uses (Nook of the Dead's Vandal Blood, a vial of sixteen). The tag is empty in Nookworks, so a worn iron
+     * pickaxe is put in it for the test and taken out again.
+     */
+    static void repairBoxLeavesCounters(GameTestHelper helper) {
+        ItemStack worn = new ItemStack(Items.IRON_PICKAXE);
+        worn.setDamageValue(100);
+        check(helper, RepairBoxBlockEntity.repairable(worn), "a worn pickaxe is mended");
+        var holder = Items.IRON_PICKAXE.builtInRegistryHolder();
+        var before = holder.tags().toList();
+        try {
+            var bind = net.minecraft.core.Holder.Reference.class.getDeclaredMethod("bindTags", java.util.Collection.class);
+            bind.setAccessible(true);
+            var with = new java.util.ArrayList<>(before);
+            with.add(RepairBoxBlockEntity.NOT_REPAIRABLE);
+            bind.invoke(holder, with);
+            try {
+                check(helper, !RepairBoxBlockEntity.repairable(worn), "one in #nookworks:not_repairable is not mended");
+                BlockPos pos = new BlockPos(1, 1, 1);
+                helper.setBlock(pos, ModBlocks.REPAIR_BOX.get());
+                check(helper, !helper.getBlockEntity(pos, RepairBoxBlockEntity.class).canPlaceItem(0, worn),
+                        "nor let into the box's slots");
+            } finally {
+                bind.invoke(holder, before);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+        check(helper, RepairBoxBlockEntity.repairable(worn), "out of the tag, it is mended again");
+        helper.succeed();
+    }
+
+    /** A chest picked up with its contents is neither crushed nor burnt with them; an empty one still is. */
+    static void refuseFullChests(GameTestHelper helper) {
+        ItemStack full = new ItemStack(Items.CHEST);
+        full.set(net.minecraft.core.component.DataComponents.CONTAINER,
+                net.minecraft.world.item.component.ItemContainerContents.fromItems(List.of(new ItemStack(Items.DIAMOND, 5))));
+        ItemStack empty = new ItemStack(Items.CHEST);
+        check(helper, CrushingRecipe.of(empty) != null, "an empty chest is crushed");
+        check(helper, CrushingRecipe.of(full) == null, "a full one is not");
+        BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, ModBlocks.GENERATOR.get());
+        var generator = helper.getBlockEntity(pos, GeneratorBlockEntity.class);
+        check(helper, generator.canPlaceItem(0, empty), "an empty chest burns in the Generator");
+        check(helper, !generator.canPlaceItem(0, full), "a full one does not");
+        helper.succeed();
+    }
+
+    /** A Mercury Bucket used on a mercury machine stays in the hand and opens nothing: a line says it goes in a tank. */
+    static void mercuryBucketOnMachine(GameTestHelper helper) {
+        var player = MockPlayers.inLevel(helper, net.minecraft.world.level.GameType.SURVIVAL);
+        for (var block : List.of(ModBlocks.RETORT.get(), ModBlocks.DISTILLER.get(), ModBlocks.STIRRING_TANK.get())) {
+            BlockPos pos = new BlockPos(1, 1, 1);
+            helper.setBlock(pos, block);
+            ItemStack bucket = new ItemStack(ModItems.MERCURY_BUCKET.get());
+            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, bucket);
+            BlockPos at = helper.absolutePos(pos);
+            // the whole click, as the game makes it: the item on the block, then (if that passes) the empty hand's screen
+            var result = player.gameMode.useItemOn(player, helper.getLevel(), bucket, net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(at), Direction.UP, at, false));
+            check(helper, player.getMainHandItem().is(ModItems.MERCURY_BUCKET.get())
+                    && !(player.containerMenu instanceof MachineMenu), block + ": the bucket stays and no screen opens, got " + result);
+        }
+        helper.succeed();
+    }
+
+    /** A full Magnet Chest leaves what lies about where it is; a slot freed, it pulls it in on its next beat. */
+    static void fullMagnetChest(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        helper.setBlock(pos, ModBlocks.MAGNET_CHEST.get());
+        var chest = helper.getBlockEntity(pos, MagnetChestBlockEntity.class);
+        for (int i = 0; i < chest.getContainerSize(); i++) {
+            chest.setItem(i, new ItemStack(Items.STONE, 64));
+        }
+        var dirt = helper.spawnItem(Items.DIRT, new Vec3(1.5, 1.5, 1.5));
+        dirt.setNoPickUpDelay();
+        helper.runAfterDelay(20, () -> {
+            check(helper, dirt.isAlive(), "a full chest leaves the dirt lying");
+            chest.setItem(0, ItemStack.EMPTY);
+            helper.succeedWhen(() -> {
+                check(helper, !dirt.isAlive(), "with a slot free it pulls the dirt in");
+                check(helper, chest.getItem(0).is(Items.DIRT), "into that slot: " + chest.getItem(0));
+            });
+        });
+    }
+
+    /** {@code level} seen as world generation sees it: not a Level, and no block entity made yet. */
+    private static net.minecraft.world.level.LevelReader blindReader(net.minecraft.server.level.ServerLevel level) {
+        return (net.minecraft.world.level.LevelReader) java.lang.reflect.Proxy.newProxyInstance(
+                net.minecraft.world.level.LevelReader.class.getClassLoader(), new Class<?>[] {net.minecraft.world.level.LevelReader.class},
+                (proxy, method, args) -> {
+                    if (method.getName().equals("getBlockEntity")) {
+                        return method.getReturnType() == java.util.Optional.class ? java.util.Optional.empty() : null;
+                    }
+                    try {
+                        return method.invoke(level, args);
+                    } catch (java.lang.reflect.InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                });
     }
 
     static void generatorPowersCrusher(GameTestHelper helper) {
@@ -407,7 +556,8 @@ final class MachineTests {
         List<Block> machines = List.of(ModBlocks.GENERATOR.get(), ModBlocks.DIESEL_GENERATOR.get(), ModBlocks.CRUSHER.get(),
                 ModBlocks.STONE_MAKER.get(), ModBlocks.LASER.get(), ModBlocks.PLANTER.get(), ModBlocks.SIFTER.get(),
                 ModBlocks.RETORT.get(), ModBlocks.STIRRING_TANK.get(), ModBlocks.DISTILLER.get(),
-                ModBlocks.ELECTRIC_FURNACE.get(), ModBlocks.ELECTROLYTIC_CELL.get(), ModBarter.BARTER_TERMINAL.get());
+                ModBlocks.ELECTRIC_FURNACE.get(), ModBlocks.ELECTROLYTIC_CELL.get(), ModBarter.BARTER_TERMINAL.get(),
+                ModRecycling.COMPRESSOR.get(), ModRecycling.RECYCLER.get());
         Set<MachineLayout> seen = EnumSet.noneOf(MachineLayout.class);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         for (int i = 0; i < machines.size(); i++) {

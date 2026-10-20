@@ -383,6 +383,16 @@ public class IronPotBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
+        if (stack.getItem() instanceof net.minecraft.world.item.BucketItem filledBucket
+                && filledBucket.getContent() != net.minecraft.world.level.material.Fluids.EMPTY
+                || stack.is(Items.POWDER_SNOW_BUCKET)) {
+            // any other bucket went on to be poured out over the pot: lava on a pot over a fire, and the kitchen burned
+            // (the kitchen play-test, 2026-10-19)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("nookworks.iron_pot.only_water_or_oil").withStyle(ChatFormatting.RED));
+            }
+            return Clicks.REFUSED;
+        }
         return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
     }
 

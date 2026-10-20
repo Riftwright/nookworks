@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "P": "minecraft:piston",
+    "X": "nookworks:machine_chassis",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "IPI",
+    "IXI",
+    "IRI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:compressor"
+  }
+}

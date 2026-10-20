@@ -220,6 +220,18 @@ public final class ModBlocks {
      * weather go on weathering as the lit ones do, and take wax (data maps neoforge:oxidizables and waxables).
      */
     public static final Map<String, DeferredBlock<LanternBlock>> UNLIT_COPPER_LANTERNS = unlitCopperLanterns();
+    /** Books laid down on a block, up to three in a pile (dev.nookworks.decor.PlacedBooksBlock). No item: books lay it. */
+    public static final DeferredBlock<dev.nookworks.decor.PlacedBooksBlock> PLACED_BOOKS = BLOCKS.registerBlock("placed_books",
+            dev.nookworks.decor.PlacedBooksBlock::new, p -> p.mapColor(MapColor.COLOR_BROWN).strength(0.2F)
+                    .sound(SoundType.CHISELED_BOOKSHELF).noOcclusion().forceSolidOff().pushReaction(PushReaction.POPPED));
+    /** A Bookend: books stand upright in it, spines out, up to five (dev.nookworks.decor.BookendBlock). */
+    public static final DeferredBlock<dev.nookworks.decor.BookendBlock> BOOKEND = BLOCKS.registerBlock("bookend",
+            dev.nookworks.decor.BookendBlock::new, p -> p.mapColor(MapColor.METAL).strength(0.8F)
+                    .sound(SoundType.LANTERN).noOcclusion().forceSolidOff().pushReaction(PushReaction.POPPED));
+    /** Books standing on in a row past a full Bookend, five to a block (dev.nookworks.decor.BookendBlock). No item. */
+    public static final DeferredBlock<dev.nookworks.decor.BookendBlock> BOOK_ROW = BLOCKS.registerBlock("book_row",
+            p -> new dev.nookworks.decor.BookendBlock(p, false), p -> p.mapColor(MapColor.COLOR_BROWN).strength(0.2F)
+                    .sound(SoundType.CHISELED_BOOKSHELF).noOcclusion().forceSolidOff().pushReaction(PushReaction.POPPED));
     /** Bottles set down on a block, up to four (dev.nookworks.decor.PlacedBottlesBlock); no item of its own. */
     public static final DeferredBlock<PlacedBottlesBlock> PLACED_BOTTLES = BLOCKS.registerBlock("placed_bottles",
             PlacedBottlesBlock::new, p -> p.mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS)

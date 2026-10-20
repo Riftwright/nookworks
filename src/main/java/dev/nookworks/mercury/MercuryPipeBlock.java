@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 
 /**
  * Mercury Pipe (iron: mercury does not amalgamate with iron). Connects to other Mercury Pipes and to Nookworks
@@ -52,8 +53,11 @@ public class MercuryPipeBlock extends PipeBlock {
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
             Direction dir, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
-        return state.setValue(PROPERTY_BY_DIRECTION.get(dir), connectsTo(level, neighbourPos)
-                && PipeSides.mayJoin(state, level, pos, dir));
+        boolean joins = connectsTo(level, neighbourPos)
+                // world generation may not have made the block entity there yet, or set that part of the template
+                // down at all (cut at a chunk's edge): the side stays as the template saved it (EnergyCableBlock)
+                || !(level instanceof Level) && state.getValue(PROPERTY_BY_DIRECTION.get(dir));
+        return state.setValue(PROPERTY_BY_DIRECTION.get(dir), joins && PipeSides.mayJoin(state, level, pos, dir));
     }
 
     /** Set down, or joined to something new: the mercury walks kept in the level are stale. */
@@ -82,5 +86,11 @@ public class MercuryPipeBlock extends PipeBlock {
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return PipeSides.turned(state, mirror::mirror);
+    }
+
+    /** A pipe: no way through, as vanilla's chorus plant of the same make is not. */
+    @Override
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return false;
     }
 }

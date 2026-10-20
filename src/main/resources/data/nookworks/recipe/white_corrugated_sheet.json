@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "painted_corrugated_sheet",
+  "key": {
+    "C": "#nookworks:bare_corrugated_sheets",
+    "D": "minecraft:white_dye"
+  },
+  "pattern": [
+    "CCC",
+    "CDC",
+    "CCC"
+  ],
+  "result": {
+    "count": 8,
+    "id": "nookworks:white_corrugated_sheet"
+  }
+}

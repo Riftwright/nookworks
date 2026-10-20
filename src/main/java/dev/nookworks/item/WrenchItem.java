@@ -6,6 +6,7 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.block.PipeSides;
 import dev.nookworks.fluid.FluidPipeBlockEntity;
 import dev.nookworks.feature.Permission;
@@ -44,7 +45,8 @@ import net.minecraft.world.level.block.state.properties.Property;
  * It asks the block to rotate itself first, which is what vanilla uses for structure blocks and what mods
  * implement for their own machines, so anything that can be rotated at all responds. Only when that changes
  * nothing does it fall back to stepping the block's own facing property, which covers the few blocks that
- * never bothered to implement rotation. Sneaking turns the other way, step for step. A facing that can point up or
+ * never bothered to implement rotation. Sneaking turns the other way, step for step - but on a Corrugated Sheet it
+ * moves the sheet between the face it is set on and the middle of its block, where a glass pane stands. A facing that can point up or
  * down (a log, a hopper, a piston) goes round every way: the sides clockwise, then down and up.
  * <p>
  * On vanilla's blocks and ours it works before the block's own right-click ({@code onItemUseFirst}), or a machine or a
@@ -95,6 +97,24 @@ public class WrenchItem extends Item {
                         case PULLING -> "message.nookworks.wrench.side_pull";
                         case JOINED -> "message.nookworks.wrench.side_on";
                     }, Component.translatable("direction.nookworks." + side.getSerializedName())));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Corrugated sheets: sneak-use moves one between the face it is set on and the middle of its block.
+        if (backwards && state.getBlock() instanceof CorrugatedSheetBlock && !state.is(IGNORES)) {
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel) {
+                BlockState moved = state.cycle(CorrugatedSheetBlock.CENTERED);
+                level.setBlock(pos, moved, Block.UPDATE_ALL);
+                level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.6F, 1.2F);
+                if (player != null) {
+                    player.sendOverlayMessage(Component.translatable(moved.getValue(CorrugatedSheetBlock.CENTERED)
+                            ? "message.nookworks.wrench.sheet_centered" : "message.nookworks.wrench.sheet_against"));
                     context.getItemInHand().hurtAndBreak(1, player, context.getHand());
                 }
             }

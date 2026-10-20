@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "axis=x,centered=false,facing=north": {
+      "model": "nookworks:block/corrugated_sheet"
+    },
+    "axis=x,centered=false,facing=east": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 90
+    },
+    "axis=x,centered=false,facing=south": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 180
+    },
+    "axis=x,centered=false,facing=west": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 270
+    },
+    "axis=x,centered=false,facing=up": {
+      "model": "nookworks:block/corrugated_sheet",
+      "x": 270,
+      "y": 90
+    },
+    "axis=x,centered=false,facing=down": {
+      "model": "nookworks:block/corrugated_sheet",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z,centered=false,facing=north": {
+      "model": "nookworks:block/corrugated_sheet"
+    },
+    "axis=z,centered=false,facing=east": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 90
+    },
+    "axis=z,centered=false,facing=south": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 180
+    },
+    "axis=z,centered=false,facing=west": {
+      "model": "nookworks:block/corrugated_sheet",
+      "y": 270
+    },
+    "axis=z,centered=false,facing=up": {
+      "model": "nookworks:block/corrugated_sheet",
+      "x": 270
+    },
+    "axis=z,centered=false,facing=down": {
+      "model": "nookworks:block/corrugated_sheet",
+      "x": 90
+    },
+    "axis=x,centered=true,facing=north": {
+      "model": "nookworks:block/corrugated_sheet_centered"
+    },
+    "axis=x,centered=true,facing=east": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 90
+    },
+    "axis=x,centered=true,facing=south": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 180
+    },
+    "axis=x,centered=true,facing=west": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 270
+    },
+    "axis=x,centered=true,facing=up": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "x": 270,
+      "y": 90
+    },
+    "axis=x,centered=true,facing=down": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z,centered=true,facing=north": {
+      "model": "nookworks:block/corrugated_sheet_centered"
+    },
+    "axis=z,centered=true,facing=east": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 90
+    },
+    "axis=z,centered=true,facing=south": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 180
+    },
+    "axis=z,centered=true,facing=west": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "y": 270
+    },
+    "axis=z,centered=true,facing=up": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "x": 270
+    },
+    "axis=z,centered=true,facing=down": {
+      "model": "nookworks:block/corrugated_sheet_centered",
+      "x": 90
+    }
+  }
+}

@@ -68,6 +68,7 @@ public final class NookworksGameTests {
         BulbSwitchTests.register();
         RopeSignalTests.register();
         FixTests.register();
+        R18FixTests.register();
         LineTests.register();
         FeatureTests.register();
         PlayTests.register();
@@ -80,6 +81,7 @@ public final class NookworksGameTests {
         TransportTests.register();
         SifterTests.register();
         MachineTests.register();
+        RecyclingTests.register();
         StorageTests.register();
         MobTests.register();
         MercuryTests.register();
@@ -175,6 +177,10 @@ public final class NookworksGameTests {
         needs(() -> Features.enabled("kitchen"), "an_egg_fries_in_a_furnace_smoker_or_campfire",
                 "the_iron_pot_boils_eggs_and_rolls_tamagoyaki", "egg_dishes_fill_as_the_table_says");
         needs(() -> Features.enabled("dark_matter"), "cooked_food_chars_into_dark_matter");
+        needs(() -> Features.enabled("recycling"), RecyclingTests.NEED_RECYCLING);
+        // the Crusher grinds wheat and bread into the kitchen's flour and breadcrumbs only with the kitchen on
+        needs(() -> Features.enabled("kitchen"), "sorting_tags_match_the_machines",
+                "compressor_takes_any_ninefold_recipe"); // brown rice packs into a Rice Bale, the kitchen's
         needs(() -> Features.enabled("lode_pearl"), "lode_pearls_bind_to_a_lodestone_and_stack");
         needs(() -> Features.enabled("lode_pearl"), "lode_pearl_lands_after_its_thrower_has_gone_far_off",
                 "lode_pearl_comes_back_to_the_feet_of_a_full_inventory");
@@ -234,7 +240,7 @@ public final class NookworksGameTests {
         List<String> onlyPrefixes = only.isBlank() ? List.of() : List.of(only.split(","));
         int repeats = Math.max(1, Integer.getInteger("nookworks.repeatTests", 1));
         FUNCTIONS.getEntries().forEach(fn -> {
-            ResourceKey<Consumer<GameTestHelper>> key = fn.getKey();
+            ResourceKey<Consumer<GameTestHelper>> key = fn.key();
             String name = key.identifier().getPath();
             if (!onlyPrefixes.isEmpty() && onlyPrefixes.stream().noneMatch(name::startsWith)) {
                 return;

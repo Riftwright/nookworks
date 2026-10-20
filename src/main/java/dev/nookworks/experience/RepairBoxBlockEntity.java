@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.logging.LogUtils;
 
+import dev.nookworks.Nookworks;
 import dev.nookworks.block.RepairBoxBlock;
 import dev.nookworks.feature.DrawRights;
 import dev.nookworks.fluid.OneTank;
@@ -22,6 +23,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -31,12 +33,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
@@ -448,8 +452,16 @@ public class RepairBoxBlockEntity extends MachineBlockEntity implements LidBlock
         }
     }
 
+    /**
+     * What the box will not mend though it wears: an item whose durability counts its uses rather than its wear - a
+     * vial of a few doses, a charm with so many charges - which mended would never run out (Nook of the Dead's Vandal
+     * Blood, the exploit audit of 2026-10-19). Empty here; a mod or a datapack adds its own.
+     */
+    public static final TagKey<Item> NOT_REPAIRABLE = TagKey.create(Registries.ITEM, Nookworks.id("not_repairable"));
+
     public static boolean repairable(ItemStack stack) {
-        return !stack.isEmpty() && stack.getCount() == 1 && stack.isDamageableItem() && stack.isDamaged();
+        return !stack.isEmpty() && stack.getCount() == 1 && stack.isDamageableItem() && stack.isDamaged()
+                && !stack.is(NOT_REPAIRABLE);
     }
 
     // ---- the lid ----

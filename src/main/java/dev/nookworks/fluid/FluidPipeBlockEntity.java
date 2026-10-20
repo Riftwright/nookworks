@@ -241,12 +241,22 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
         return DrawRights.mayMove(level, pos, this, next, there != null ? there : level.getBlockEntity(next));
     }
 
+    /** {@link #candidates()} as resources, made once: an empty pipe asked its neighbours with a new list every tick. */
+    private @Nullable List<FluidResource> candidateResources;
+
+    private List<FluidResource> candidateResources() {
+        if (this.candidateResources == null) {
+            this.candidateResources = this.candidates().stream().map(FluidResource::of).toList();
+        }
+        return this.candidateResources;
+    }
+
     /** Whether {@code handler} would take some of what this pipe holds (or, empty, of anything it may carry). */
     private boolean takes(@Nullable ResourceHandler<FluidResource> handler) {
         if (handler == null) {
             return false;
         }
-        List<FluidResource> tried = this.stored() > 0 ? List.of(this.resource()) : this.candidates().stream().map(FluidResource::of).toList();
+        List<FluidResource> tried = this.stored() > 0 ? List.of(this.resource()) : this.candidateResources();
         try (Transaction test = Transaction.openRoot()) {
             for (FluidResource resource : tried) {
                 if (handler.insert(resource, 1, test) > 0) {

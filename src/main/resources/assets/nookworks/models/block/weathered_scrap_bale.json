@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "nookworks:block/weathered_scrap_bale_side",
+    "top": "nookworks:block/weathered_scrap_bale_top",
+    "bottom": "nookworks:block/weathered_scrap_bale_top"
+  }
+}

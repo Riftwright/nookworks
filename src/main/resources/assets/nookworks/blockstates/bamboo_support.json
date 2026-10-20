@@ -9,6 +9,9 @@
     "facing=north,shape=bracket": {
       "model": "nookworks:block/bamboo_support_bracket"
     },
+    "facing=north,shape=wall_post": {
+      "model": "nookworks:block/bamboo_support_wall_post"
+    },
     "facing=east,shape=post": {
       "model": "nookworks:block/bamboo_support_post",
       "y": 90
@@ -19,6 +22,10 @@
     },
     "facing=east,shape=bracket": {
       "model": "nookworks:block/bamboo_support_bracket",
+      "y": 90
+    },
+    "facing=east,shape=wall_post": {
+      "model": "nookworks:block/bamboo_support_wall_post",
       "y": 90
     },
     "facing=south,shape=post": {
@@ -33,6 +40,10 @@
       "model": "nookworks:block/bamboo_support_bracket",
       "y": 180
     },
+    "facing=south,shape=wall_post": {
+      "model": "nookworks:block/bamboo_support_wall_post",
+      "y": 180
+    },
     "facing=west,shape=post": {
       "model": "nookworks:block/bamboo_support_post",
       "y": 270
@@ -43,6 +54,10 @@
     },
     "facing=west,shape=bracket": {
       "model": "nookworks:block/bamboo_support_bracket",
+      "y": 270
+    },
+    "facing=west,shape=wall_post": {
+      "model": "nookworks:block/bamboo_support_wall_post",
       "y": 270
     }
   }

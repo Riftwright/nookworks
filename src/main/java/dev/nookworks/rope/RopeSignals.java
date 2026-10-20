@@ -54,6 +54,24 @@ public final class RopeSignals {
         return null;
     }
 
+    /**
+     * Whether the things hung on the lines tied at {@code post} are all in: the entities of every chunk a line from it can
+     * reach. A world just opened, or a player come back, loads entities after blocks - a signal changed meanwhile (a
+     * daylight sensor) switched only the lights already in, and the rest stayed wrong until the next change (the review
+     * of the 10-16 commits).
+     */
+    public static boolean linesLoaded(ServerLevel level, BlockPos post) {
+        int reach = (int) Math.ceil(RopeSpans.MAX_LENGTH) + 2;
+        for (int cx = (post.getX() - reach) >> 4; cx <= (post.getX() + reach) >> 4; cx++) {
+            for (int cz = (post.getZ() - reach) >> 4; cz <= (post.getZ() + reach) >> 4; cz++) {
+                if (!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.pack(cx, cz))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /** Every light hung on a line tied at {@code post}, switched {@code on} or off. How many changed. */
     public static int switchLines(ServerLevel level, BlockPos post, boolean on) {
         double reach = RopeSpans.MAX_LENGTH + 2;

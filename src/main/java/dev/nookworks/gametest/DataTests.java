@@ -10,7 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -80,6 +84,7 @@ final class DataTests {
         NookworksGameTests.test("startup_logs_nothing_about_us", DataTests::startupLogsNothingAboutUs);
         NookworksGameTests.test("every_language_names_everything", DataTests::everyLanguageNamesEverything);
         NookworksGameTests.test("no_lang_file_names_a_key_twice", DataTests::noLangKeyTwice);
+        NookworksGameTests.test("every_language_keeps_englishs_placeholders", DataTests::everyLanguageKeepsPlaceholders);
         NookworksGameTests.test("every_shown_key_is_written", DataTests::everyShownKeyIsWritten);
         NookworksGameTests.test("every_item_is_in_a_creative_tab", DataTests::everyItemIsInACreativeTab);
         NookworksGameTests.test("parts_of_the_mod_are_whole", DataTests::partsOfTheModAreWhole);
@@ -490,10 +495,90 @@ final class DataTests {
         helper.succeed();
     }
 
-    /** Every language the mod is in besides English: each names everything English does, and nothing else. */
-    private static final List<String> LANGUAGES = List.of("ja_jp", "zh_cn", "zh_tw", "zh_hk", "ko_kr");
+    private static final Pattern PLACEHOLDER = Pattern.compile("%(?:(\\d+)\\$)?([sd%])");
+
+    /**
+     * Every translation takes the arguments its English text takes, has as many line breaks and the same colour codes: a
+     * lost %s drops the value it stands for, an extra one shows on the screen as "%s" (or the whole text falls back to
+     * its key), and a line break more or less breaks a JEI page or a tooltip where English does not. A translation may
+     * name an argument by number (%1$s) to put it elsewhere, or twice.
+     */
+    private static void everyLanguageKeepsPlaceholders(GameTestHelper helper) {
+        Map<String, String> en = texts("en_us");
+        List<String> problems = new ArrayList<>();
+        for (String code : LANGUAGES) {
+            texts(code).forEach((key, text) -> {
+                String english = en.get(key);
+                if (english == null) {
+                    return;  // every_language_names_everything reports it
+                }
+                if (!arguments(text).equals(arguments(english))) {
+                    problems.add(code + " " + key + " takes " + arguments(text) + ", English " + arguments(english));
+                }
+                if (text.chars().filter(c -> c == '\n').count() != english.chars().filter(c -> c == '\n').count()) {
+                    problems.add(code + " " + key + " breaks its lines otherwise than English");
+                }
+                if (!colours(text).equals(colours(english))) {
+                    problems.add(code + " " + key + " has other colour codes than English");
+                }
+            });
+        }
+        NookworksGameTests.check(helper, problems.isEmpty(), String.join(" | ", problems));
+        helper.succeed();
+    }
+
+    /** The arguments a text takes, by number, then a "%%" for each percent sign it writes. */
+    private static List<String> arguments(String text) {
+        Set<Integer> numbers = new TreeSet<>();
+        int next = 0;
+        int percent = 0;
+        Matcher m = PLACEHOLDER.matcher(text);
+        while (m.find()) {
+            if (m.group(2).equals("%")) {
+                percent++;
+            } else {
+                numbers.add(m.group(1) != null ? Integer.parseInt(m.group(1)) : ++next);
+            }
+        }
+        List<String> out = new ArrayList<>(numbers.stream().map(String::valueOf).toList());
+        out.addAll(Collections.nCopies(percent, "%%"));
+        return out;
+    }
+
+    private static List<String> colours(String text) {
+        List<String> codes = new ArrayList<>();
+        for (int i = text.indexOf('\u00a7'); i >= 0 && i + 1 < text.length(); i = text.indexOf('\u00a7', i + 1)) {
+            codes.add(text.substring(i, i + 2));
+        }
+        Collections.sort(codes);
+        return codes;
+    }
+
+    /** A lang file of ours, key by key. */
+    static Map<String, String> texts(String code) {
+        String path = "/assets/" + Nookworks.MODID + "/lang/" + code + ".json";
+        try (var in = Nookworks.class.getResourceAsStream(path)) {
+            if (in == null) {
+                throw new IllegalStateException("no " + path);
+            }
+            Map<String, String> texts = new HashMap<>();
+            JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject().entrySet()
+                    .forEach(e -> texts.put(e.getKey(), e.getValue().getAsString()));
+            return texts;
+        } catch (IOException e) {
+            throw new IllegalStateException("cannot read " + path, e);
+        }
+    }
+
+    /**
+     * Every language the mod is in besides English: each names everything English does, and nothing else. The regional
+     * copies (zh_hk, the Spanish of Latin America, pt_pt) are tools/gen_lang_copies.py's copies of another file: the game
+     * falls back from them to English only, never to their sibling.
+     */
+    private static final List<String> LANGUAGES = List.of("ja_jp", "zh_cn", "zh_tw", "zh_hk", "ko_kr", "es_es", "es_mx",
+            "es_ar", "es_cl", "es_ec", "es_uy", "es_ve", "ru_ru", "pt_br", "pt_pt");
     /** English and the rest: what a test of every language goes through. */
-    static final List<String> ALL_LANGUAGES = List.of("en_us", "ja_jp", "zh_cn", "zh_tw", "zh_hk", "ko_kr");
+    static final List<String> ALL_LANGUAGES = Stream.concat(Stream.of("en_us"), LANGUAGES.stream()).toList();
 
     static Set<String> lang(String code) {
         String path = "/assets/" + Nookworks.MODID + "/lang/" + code + ".json";

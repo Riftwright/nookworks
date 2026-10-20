@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -356,7 +356,15 @@ final class SaveCompat {
         }
         out.addProperty("entity", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(entity.getType()).toString());
         TreeMap<String, Long> items = new TreeMap<>();
-        if (entity instanceof Container container) {
+        if (entity instanceof dev.nookworks.decor.PlacedBooksBlockEntity pile) {
+            for (int i = 0; i < pile.count(); i++) {
+                items.merge(BuiltInRegistries.ITEM.getKey(pile.book(i).getItem()).toString(), 1L, Long::sum);
+            }
+        } else if (entity instanceof dev.nookworks.decor.BookendBlockEntity bookend) {
+            for (int i = 0; i < bookend.count(); i++) {
+                items.merge(BuiltInRegistries.ITEM.getKey(bookend.book(i).getItem()).toString(), 1L, Long::sum);
+            }
+        } else if (entity instanceof Container container) {
             items.putAll(contents(container));
         } else {
             ResourceHandler<ItemResource> handler = firstOf(level, pos, Capabilities.Item.BLOCK);
@@ -810,6 +818,21 @@ final class SaveCompat {
             return;
         }
         List<Item> samples = samples();
+        // books laid down or stood in a Bookend are no container: two books each, one of them named (1.1)
+        if (entity instanceof dev.nookworks.decor.PlacedBooksBlockEntity pile) {
+            pile.add(new ItemStack(Items.ENCHANTED_BOOK), 0.0F, false, level.getRandom());
+            pile.add(new ItemStack(Items.BOOK).copy(), 0.0F, false, level.getRandom());
+            level.setBlock(pos, level.getBlockState(pos).setValue(dev.nookworks.decor.PlacedBooksBlock.BOOKS, pile.count()),
+                    Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            return;
+        }
+        if (entity instanceof dev.nookworks.decor.BookendBlockEntity bookend) {
+            bookend.add(new ItemStack(Items.WRITABLE_BOOK));
+            bookend.add(new ItemStack(Items.BOOK));
+            level.setBlock(pos, level.getBlockState(pos).setValue(dev.nookworks.decor.BookendBlock.BOOKS, bookend.count()),
+                    Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            return;
+        }
         if (entity instanceof Container container) {
             int filled = 0;
             for (int slot = 0; slot < container.getContainerSize() && filled < 3; slot++) {

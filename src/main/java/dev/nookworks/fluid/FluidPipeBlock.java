@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
 import dev.nookworks.block.PipeSides;
@@ -97,7 +98,11 @@ public abstract class FluidPipeBlock extends PipeBlock implements EntityBlock {
             return pipe.family() == this.family() && pipe.joinsSide(thereState, side.getOpposite())
                     && !PipeSides.isOff(thereState, side.getOpposite());
         }
-        return level instanceof Level full && full.getCapability(Capabilities.Fluid.BLOCK, pos, side.getOpposite()) != null;
+        if (!(level instanceof Level full)) {
+            // world generation, where capabilities cannot be asked: the side stays as the template saved it (EnergyCableBlock)
+            return state.getValue(PROPERTY_BY_DIRECTION.get(side));
+        }
+        return full.getCapability(Capabilities.Fluid.BLOCK, pos, side.getOpposite()) != null;
     }
 
     @Override
@@ -134,5 +139,11 @@ public abstract class FluidPipeBlock extends PipeBlock implements EntityBlock {
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return PipeSides.turned(state, mirror::mirror);
+    }
+
+    /** A pipe: no way through, as vanilla's chorus plant of the same make is not (copper and experience pipes). */
+    @Override
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return false;
     }
 }

@@ -42,6 +42,8 @@ final class HungVineTests {
         NookworksGameTests.test("shears_stop_a_hung_vine_for_good", 40, HungVineTests::shears);
         NookworksGameTests.test("a_hung_vines_berries_are_picked_and_bone_mealed", 40, HungVineTests::berries);
         NookworksGameTests.test("a_hung_vine_is_saved_lit_and_dropped_as_it_grew", 120, HungVineTests::savedAndDropped);
+        NookworksGameTests.test("a_hung_vines_lights_are_found_across_a_section_edge", 40, HungVineTests::acrossSections);
+        NookworksGameTests.test("a_hung_vine_keeps_its_length_when_its_rope_is_let_down", 100, HungVineTests::ropeLetDown);
     }
 
     /** Two fence posts six apart, high in the air, a rope strung between them; the posts. */
@@ -62,6 +64,75 @@ final class HungVineTests {
         vine.setVineAge(0);
         level.addFreshEntity(vine);
         return vine;
+    }
+
+    /**
+     * A vine five blocks long whose top is in one 16-block section and whose lower pieces are in the one below: each lit
+     * piece is still found where it lights (its light stays), and nothing can be hung into its pieces from below.
+     */
+    private static void acrossSections(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ServerPlayer player = RopeTests.player(helper, 40);
+        // high over the arena (its barrier roof is in the way of a grown vine), at three heights a block apart: the vine
+        // stands a little under its rope, and one of the three has a section's edge between its top and lower pieces
+        BlockPos corner = helper.absolutePos(BlockPos.ZERO);
+        int high = (corner.getY() + 100) / 16 * 16;
+        boolean crossed = false;
+        java.util.List<BlockPos> placed = new java.util.ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            BlockPos a = new BlockPos(corner.getX(), high + 1 + i, corner.getZ() + 2 * i);
+            BlockPos b = a.east(6);
+            level.setBlockAndUpdate(a, Blocks.OAK_FENCE.defaultBlockState());
+            level.setBlockAndUpdate(b, Blocks.OAK_FENCE.defaultBlockState());
+            placed.add(a);
+            placed.add(b);
+            RopeSpans.tie(level, player, a, player.getMainHandItem());
+            RopeSpans.tie(level, player, b, player.getMainHandItem());
+            HungItemEntity vine = vine(level, new BlockPos[] {a, b}, 0.5);
+            RandomSource random = RandomSource.create(5);
+            while (vine.growVine(level, random)) {
+                // to its full length
+            }
+            check(helper, vine.vineLength() == HungItemEntity.VINE_MAX, "it grew to its full length: " + vine.vineLength());
+            for (int piece = 1; piece < vine.vineLength(); piece++) {
+                vine.setVineBerries(piece, true);
+            }
+            int sectionTop = net.minecraft.core.SectionPos.blockToSectionCoord(vine.getY());
+            for (int piece = 1; piece < vine.vineLength(); piece++) {
+                BlockPos at = vine.vineLightAt(piece);
+                crossed |= net.minecraft.core.SectionPos.blockToSectionCoord(at.getY() + 1) < sectionTop;
+                check(helper, HungItemEntity.lightsAt(level, at), "piece " + piece + " at " + at + " is found lighting its block");
+            }
+        }
+        check(helper, crossed, "one of the vines should cross a section's edge");
+        // what was set up over the arena goes: its posts, and so the lines and the vines
+        level.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, new AABB(placed.get(0)).inflate(12),
+                e -> e instanceof HungItemEntity || e instanceof dev.nookworks.rope.RopeKnotEntity).forEach(e -> e.discard());
+        placed.forEach(pos -> level.removeBlock(pos, false));
+        level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    /** A vine grown three blocks under a Thin Rope's end: the rope let down a block, the vine goes down with it whole. */
+    private static void ropeLetDown(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos ropeEnd = helper.absolutePos(new BlockPos(3, 9, 3));
+        level.setBlockAndUpdate(ropeEnd.above(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(ropeEnd, dev.nookworks.registry.ModBlocks.THIN_ROPE.get().defaultBlockState().setValue(dev.nookworks.block.ThinRopeBlock.ANCHORED, true));
+        HungItemEntity vine = HungItemEntity.underRope(level, ropeEnd, new ItemStack(Items.GLOW_BERRIES), 0.0F);
+        vine.setVineAge(0);
+        level.addFreshEntity(vine);
+        RandomSource random = RandomSource.create(9);
+        vine.growVine(level, random);
+        vine.growVine(level, random);
+        check(helper, vine.vineLength() == 3, "it grew three blocks: " + vine.vineLength());
+        level.setBlockAndUpdate(ropeEnd.below(), dev.nookworks.registry.ModBlocks.THIN_ROPE.get().defaultBlockState());
+        helper.succeedWhen(() -> {
+            check(helper, vine.isRemoved(), "the vine should move to the rope's new end");
+            var moved = level.getEntitiesOfClass(HungItemEntity.class, new AABB(ropeEnd).expandTowards(0, -8, 0), e -> !e.isRemoved());
+            check(helper, moved.size() == 1 && moved.get(0).vineLength() == 3, "whole, three blocks long: "
+                    + moved.stream().map(HungItemEntity::vineLength).toList());
+        });
     }
 
     /** Where to click piece {@code piece} of {@code vine}, as the client sends it: from the entity's place. */

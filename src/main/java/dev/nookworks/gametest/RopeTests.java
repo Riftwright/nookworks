@@ -598,7 +598,8 @@ final class RopeTests {
                 .setValue(SupportBlock.SHAPE, SupportBlock.Shape.BRACKET);
         check(helper, RopeSpans.isPost(bracket), "a bracket takes rope");
         check(helper, !RopeSpans.isPost(bracket.setValue(SupportBlock.SHAPE, SupportBlock.Shape.POST))
-                && !RopeSpans.isPost(bracket.setValue(SupportBlock.SHAPE, SupportBlock.Shape.BEAM)), "a support's post or beam does not");
+                && !RopeSpans.isPost(bracket.setValue(SupportBlock.SHAPE, SupportBlock.Shape.BEAM))
+                && !RopeSpans.isPost(bracket.setValue(SupportBlock.SHAPE, SupportBlock.Shape.WALL_POST)), "a support's post, beam or wall post does not");
         BlockPos at = new BlockPos(1, 3, 2);
         BlockPos fenceAt = new BlockPos(6, 2, 2);
         helper.setBlock(at.west(), Blocks.STONE);
@@ -628,7 +629,8 @@ final class RopeTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE_AXE));
         level.getBlockState(a).useItemOn(player.getMainHandItem(), level, player, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(a), Direction.UP, a, false));
-        check(helper, level.getBlockState(a).getValue(SupportBlock.SHAPE) == SupportBlock.Shape.POST, "an axe makes it a post");
+        check(helper, level.getBlockState(a).getValue(SupportBlock.SHAPE) == SupportBlock.Shape.WALL_POST,
+                "an axe takes its beam and brace off: a post against the wall");
         helper.runAfterDelay(25, () -> {
             RopeKnotEntity far = RopeKnotEntity.at(level, b);
             check(helper, knot.isRemoved() && (far == null || !far.ties(a)), "its brace gone, the rope comes away");

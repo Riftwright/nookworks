@@ -5,8 +5,12 @@ import static dev.nookworks.gametest.NookworksGameTests.test;
 
 import java.util.List;
 
+import dev.nookworks.decor.BookendBlock;
+import dev.nookworks.decor.BookendBlockEntity;
 import dev.nookworks.decor.BottleLook;
 import dev.nookworks.decor.Lanterns;
+import dev.nookworks.decor.PlacedBooksBlock;
+import dev.nookworks.decor.PlacedBooksBlockEntity;
 import dev.nookworks.decor.PlacedBottlesBlock;
 import dev.nookworks.decor.PlacedBottlesBlockEntity;
 import dev.nookworks.registry.ModBlocks;
@@ -34,6 +38,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -46,6 +51,9 @@ final class DecorTests {
         test("lantern_goes_out_and_lights_again", DecorTests::lanternOutAndLit);
         test("copper_lantern_out_keeps_its_copper", DecorTests::copperLanternOut);
         test("bottles_set_down_and_taken_back", DecorTests::bottlesSetDown);
+        test("books_laid_down_and_taken_back", DecorTests::booksLaidDown);
+        test("books_leant_against_a_wall", DecorTests::booksLeantAgainstAWall);
+        test("bookend_holds_books", DecorTests::bookendHoldsBooks);
     }
 
     private static void use(GameTestHelper helper, ServerPlayer player, BlockPos pos, Direction face, ItemStack held) {
@@ -157,6 +165,16 @@ final class DecorTests {
         check(helper, helper.getBlockState(standing).is(weathered), "an axe scrapes the wax off: " + helper.getBlockState(standing));
         use(helper, player, standing, Direction.NORTH, axe);
         check(helper, helper.getBlockState(standing).is(exposed), "and then the weathering: " + helper.getBlockState(standing));
+        // a hanging one keeps hanging through the axe (NeoForge's own transform set the default state: it fell, 2026-10-18)
+        BlockPos ceiling2 = new BlockPos(5, 4, 1);
+        helper.setBlock(ceiling2, Blocks.STONE);
+        helper.setBlock(ceiling2.below(), unlitCopper("waxed_exposed_copper_lantern").defaultBlockState().setValue(LanternBlock.HANGING, true));
+        use(helper, player, ceiling2.below(), Direction.NORTH, axe);
+        BlockState unwaxed = helper.getBlockState(ceiling2.below());
+        check(helper, unwaxed.is(exposed) && unwaxed.getValue(LanternBlock.HANGING), "a hanging one has its wax off, still hanging: " + unwaxed);
+        use(helper, player, ceiling2.below(), Direction.NORTH, axe);
+        BlockState scraped = helper.getBlockState(ceiling2.below());
+        check(helper, scraped.is(plain) && scraped.getValue(LanternBlock.HANGING), "and is scraped back, still hanging: " + scraped);
 
         use(helper, player, hanging, Direction.NORTH, new ItemStack(Items.FLINT_AND_STEEL));
         BlockState lit = helper.getBlockState(hanging);
@@ -169,6 +187,227 @@ final class DecorTests {
 
     private static Block unlitCopper(String lit) {
         return ModBlocks.UNLIT_COPPER_LANTERNS.get(lit).get();
+    }
+
+    /**
+     * Sneaking, books are laid on a block's top, three in a pile, each keeping itself (an enchanted book its enchantment,
+     * a written book its title), the cover shown by kind; a fourth is not taken, nor anything not a book. An empty hand
+     * takes the top one back; broken, the pile drops what is left; its support gone, it goes.
+     */
+    private static void booksLaidDown(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos desk = new BlockPos(1, 1, 1);
+        BlockPos at = desk.above();
+        helper.setBlock(desk, Blocks.STONE);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        Vec3 near = helper.absoluteVec(new Vec3(1.5, 2, 3.5));
+        player.snapTo(near.x, near.y, near.z);
+        var block = ModBlocks.PLACED_BOOKS.get();
+
+        use(helper, player, desk, Direction.UP, new ItemStack(Items.BOOK));
+        check(helper, helper.getBlockState(at).isAir(), "not without sneaking");
+        player.setShiftKeyDown(true);
+        ItemStack books = new ItemStack(Items.BOOK, 3);
+        use(helper, player, desk, Direction.UP, books);
+        check(helper, helper.getBlockState(at).is(block) && books.getCount() == 2, "laid on top");
+
+        ItemStack enchanted = new ItemStack(Items.ENCHANTED_BOOK);
+        var sharpness = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS);
+        var stored = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
+        stored.set(sharpness, 3);
+        enchanted.set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable());
+        ItemStack written = new ItemStack(Items.WRITTEN_BOOK);
+        written.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Field notes"));
+        use(helper, player, at, Direction.NORTH, enchanted);
+        use(helper, player, desk, Direction.UP, written);
+        BlockState four = helper.getBlockState(at);
+        check(helper, four.getValue(PlacedBooksBlock.BOOKS) == PlacedBooksBlock.MAX && enchanted.isEmpty() && written.isEmpty(),
+                "three in a pile: " + four);
+        var pile = (PlacedBooksBlockEntity) level.getBlockEntity(helper.absolutePos(at));
+        check(helper, PlacedBooksBlock.Kind.of(pile.book(0)) == PlacedBooksBlock.Kind.PLAIN
+                && PlacedBooksBlock.Kind.of(pile.book(1)) == PlacedBooksBlock.Kind.ENCHANTED
+                && PlacedBooksBlock.Kind.of(pile.book(2)) == PlacedBooksBlock.Kind.WRITTEN
+                && PlacedBooksBlock.Kind.of(new ItemStack(Items.WRITABLE_BOOK)) == PlacedBooksBlock.Kind.WRITABLE, "each cover shows what it is");
+        for (int i = 0; i < PlacedBooksBlock.MAX; i++) {
+            check(helper, Math.abs(pile.dx(i)) <= PlacedBooksBlockEntity.REACH && Math.abs(pile.dz(i)) <= PlacedBooksBlockEntity.REACH
+                    && pile.dx(i) * 2 == Math.round(pile.dx(i) * 2), "each lies within reach of the middle, on half pixels: " + pile.dx(i));
+        }
+        use(helper, player, desk, Direction.UP, books);
+        check(helper, books.getCount() == 2, "no fourth");
+        check(helper, PlacedBooksBlock.placeFor(level, helper.absolutePos(desk), Direction.UP, new ItemStack(Items.PAPER)) == null,
+                "only books");
+
+        check(helper, pile.book(1).get(DataComponents.STORED_ENCHANTMENTS).getLevel(sharpness) == 3, "the enchanted book keeps its enchantment");
+        check(helper, pile.book(2).getHoverName().getString().equals("Field notes"), "the written one its name");
+        check(helper, four.getCloneItemStack(level, helper.absolutePos(at), true).is(Items.WRITTEN_BOOK), "the pick key gives the top one");
+
+        player.setShiftKeyDown(false);
+        player.getInventory().clearContent();
+        use(helper, player, at, Direction.NORTH, ItemStack.EMPTY);
+        check(helper, player.getInventory().countItem(Items.WRITTEN_BOOK) == 1
+                && helper.getBlockState(at).getValue(PlacedBooksBlock.BOOKS) == 2, "an empty hand takes the top one back, as it was");
+        // saved and loaded, each lies as it did
+        var saved = pile.saveWithoutMetadata(level.registryAccess());
+        BlockPos other = new BlockPos(4, 1, 4);
+        helper.setBlock(other.below(), Blocks.STONE);
+        helper.setBlock(other, ModBlocks.PLACED_BOOKS.get());
+        var copy = (PlacedBooksBlockEntity) level.getBlockEntity(helper.absolutePos(other));
+        copy.loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,
+                level.registryAccess(), saved));
+        check(helper, copy.count() == 2 && copy.yaw(1) == pile.yaw(1) && copy.dz(1) == pile.dz(1), "saved, they lie as they did");
+        helper.setBlock(other, Blocks.AIR);
+        helper.getEntities(EntityTypes.ITEM, other, 2).forEach(e -> e.discard());
+
+        level.destroyBlock(helper.absolutePos(at), true);
+        List<ItemEntity> dropped = helper.getEntities(EntityTypes.ITEM, at, 2);
+        check(helper, dropped.size() == 2 && dropped.stream().anyMatch(e -> e.getItem().is(Items.ENCHANTED_BOOK)
+                && e.getItem().get(DataComponents.STORED_ENCHANTMENTS).getLevel(sharpness) == 3),
+                "broken, the two drop as they were, nothing more: " + dropped.stream().map(ItemEntity::getItem).toList());
+        dropped.forEach(e -> e.discard());
+
+        player.setShiftKeyDown(true);
+        use(helper, player, desk, Direction.UP, new ItemStack(Items.BOOK));
+        helper.setBlock(desk, Blocks.AIR);
+        helper.runAfterDelay(2, () -> { // it falls a tick later
+            check(helper, helper.getBlockState(at).isAir(), "its support gone, it goes");
+            check(helper, helper.getEntities(EntityTypes.ITEM, at, 2).stream().anyMatch(e -> e.getItem().is(Items.BOOK)), "and its book drops");
+            helper.succeed();
+        });
+    }
+
+    /**
+     * A Bookend set down on a block's top faces the player, its upright on the half of the block clicked (left, as they
+     * see it); books used on it stand in it, sneaking or not (a written book is stood, not opened), nothing but books,
+     * five to the block, then on in a Row of Books in the block past it while there is floor; a book used anywhere on
+     * the row goes to its end, and an empty hand takes the end's last one back as it was (a row's block left empty
+     * goes). The bookend gone, the row past it falls; its floor gone, it drops itself and its books.
+     */
+    private static void bookendHoldsBooks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos floor = new BlockPos(1, 1, 1);
+        BlockPos at = floor.above();
+        BlockPos next = at.east(); // the row runs east: spines south, the upright to the west
+        BlockPos floor2 = new BlockPos(1, 1, 3);
+        helper.setBlock(floor, Blocks.STONE);
+        helper.setBlock(next.below(), Blocks.STONE);
+        helper.setBlock(floor2, Blocks.STONE);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        Vec3 near = helper.absoluteVec(new Vec3(2.5, 2, 5.5));
+        player.snapTo(near.x, near.y, near.z, 180.0F, 30.0F); // looking north: west is their left
+        var bookend = ModBlocks.BOOKEND.get();
+        var row = ModBlocks.BOOK_ROW.get();
+
+        placeAt(helper, player, floor, -0.3, new ItemStack(ModItems.BOOKEND.get()));
+        BlockState state = helper.getBlockState(at);
+        check(helper, state.is(bookend) && state.getValue(BookendBlock.FACING) == Direction.SOUTH
+                && state.getValue(BookendBlock.HINGE) == DoorHingeSide.LEFT, "facing the player, upright on the left half clicked: " + state);
+        placeAt(helper, player, floor2, 0.3, new ItemStack(ModItems.BOOKEND.get()));
+        check(helper, helper.getBlockState(floor2.above()).getValue(BookendBlock.HINGE) == DoorHingeSide.RIGHT, "or the right");
+
+        ItemStack written = new ItemStack(Items.WRITTEN_BOOK);
+        use(helper, player, at, Direction.SOUTH, written);
+        check(helper, written.isEmpty(), "a written book stood in it, not opened");
+        use(helper, player, at, Direction.SOUTH, new ItemStack(Items.PAPER));
+        var books = (BookendBlockEntity) level.getBlockEntity(helper.absolutePos(at));
+        check(helper, books.count() == 1, "nothing but books");
+        ItemStack plain = new ItemStack(Items.BOOK, 2);
+        use(helper, player, at, Direction.UP, plain);
+        use(helper, player, at, Direction.WEST, plain);
+        player.setShiftKeyDown(true);
+        ItemStack enchanted = new ItemStack(Items.ENCHANTED_BOOK);
+        enchanted.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Field notes"));
+        use(helper, player, at, Direction.SOUTH, enchanted);
+        ItemStack more = new ItemStack(Items.WRITABLE_BOOK, 9);
+        use(helper, player, at, Direction.SOUTH, more);
+        check(helper, books.count() == BookendBlock.MAX && helper.getBlockState(at).getValue(BookendBlock.BOOKS) == 5
+                && helper.getBlockState(next).isAir(), "sneaking too, five to the block: " + books.count());
+        check(helper, PlacedBooksBlock.Kind.of(books.book(0)) == PlacedBooksBlock.Kind.WRITTEN
+                && "Field notes".equals(books.book(3).getHoverName().getString()), "each as it was, in order");
+
+        use(helper, player, at, Direction.SOUTH, more);
+        check(helper, helper.getBlockState(next).is(row) && helper.getBlockState(next).getValue(BookendBlock.FACING) == Direction.SOUTH,
+                "the sixth stands in the block past it, a row going on: " + helper.getBlockState(next));
+        player.setShiftKeyDown(false);
+        for (int i = 0; i < 5; i++) {
+            use(helper, player, i % 2 == 0 ? at : next, Direction.SOUTH, more);
+        }
+        var rowBooks = (BookendBlockEntity) level.getBlockEntity(helper.absolutePos(next));
+        check(helper, rowBooks.count() == BookendBlock.MAX && more.getCount() == 3 && helper.getBlockState(next.east()).isAir(),
+                "from either block to the row's end, five to it, and not past the floor: " + rowBooks.count() + ", " + more.getCount());
+
+        use(helper, player, at, Direction.SOUTH, ItemStack.EMPTY);
+        check(helper, rowBooks.count() == 4 && books.count() == 5 && player.getInventory().contains(s -> s.is(Items.WRITABLE_BOOK)),
+                "an empty hand takes the row's last one back");
+        for (int i = 0; i < 4; i++) {
+            use(helper, player, next, Direction.SOUTH, ItemStack.EMPTY);
+        }
+        check(helper, helper.getBlockState(next).isAir() && books.count() == 5, "a row's block left empty goes");
+        use(helper, player, at, Direction.SOUTH, ItemStack.EMPTY);
+        use(helper, player, at, Direction.SOUTH, ItemStack.EMPTY);
+        check(helper, player.getInventory().contains(s -> "Field notes".equals(s.getHoverName().getString())), "as it was");
+
+        for (int i = 0; i < 4; i++) {
+            use(helper, player, at, Direction.SOUTH, more.isEmpty() ? new ItemStack(Items.BOOK) : more);
+        }
+        check(helper, helper.getBlockState(next).is(row), "a row again");
+        helper.setBlock(floor, Blocks.AIR);
+        helper.runAfterDelay(4, () -> { // a tick for the bookend, another for the row after it
+            check(helper, helper.getBlockState(at).isAir() && helper.getBlockState(next).isAir(), "its floor gone, it goes, and the row past it");
+            List<ItemEntity> dropped = helper.getEntities(EntityTypes.ITEM, at, 3);
+            check(helper, dropped.stream().filter(e -> e.getItem().is(ModItems.BOOKEND.get())).count() == 1
+                    && dropped.stream().filter(e -> e.getItem().is(PlacedBooksBlock.PLACEABLE)).mapToInt(e -> e.getItem().getCount()).sum() == 7,
+                    "and drops itself and its books, the row's too: " + dropped.stream().map(e -> e.getItem().toString()).toList());
+            helper.succeed();
+        });
+    }
+
+    /** Uses {@code held} on {@code pos}'s top, {@code across} blocks east of its middle. */
+    private static void placeAt(GameTestHelper helper, ServerPlayer player, BlockPos pos, double across, ItemStack held) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        BlockPos abs = helper.absolutePos(pos);
+        Vec3 hit = Vec3.atCenterOf(abs).add(across, 0.5, 0.0);
+        player.gameMode.useItemOn(player, helper.getLevel(), held, InteractionHand.MAIN_HAND, new BlockHitResult(hit, Direction.UP, abs, false));
+    }
+
+    /**
+     * Sneaking, a book used on a wall's side stands in front of it, leant against it, facing out; three at most, a book
+     * kept as it was; the wall taken away, they fall. Not where there is no floor.
+     */
+    private static void booksLeantAgainstAWall(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos wall = new BlockPos(2, 2, 1);
+        BlockPos at = wall.south();
+        helper.setBlock(wall.below(), Blocks.STONE);
+        helper.setBlock(at.below(), Blocks.STONE);
+        helper.setBlock(wall, Blocks.STONE);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        Vec3 near = helper.absoluteVec(new Vec3(2.5, 2, 4.5));
+        player.snapTo(near.x, near.y, near.z);
+        player.setShiftKeyDown(true);
+        ItemStack books = new ItemStack(Items.BOOK, 4);
+        use(helper, player, wall, Direction.SOUTH, books);
+        BlockState stand = helper.getBlockState(at);
+        check(helper, stand.is(ModBlocks.PLACED_BOOKS.get()) && stand.getValue(PlacedBooksBlock.STANDING)
+                && stand.getValue(PlacedBooksBlock.FACING) == Direction.SOUTH && books.getCount() == 3, "leant against the wall, facing out: " + stand);
+        use(helper, player, at, Direction.SOUTH, books);
+        use(helper, player, wall, Direction.SOUTH, books);
+        use(helper, player, at, Direction.UP, books);
+        check(helper, helper.getBlockState(at).getValue(PlacedBooksBlock.BOOKS) == PlacedBooksBlock.MAX && books.getCount() == 1,
+                "three at most, on the books or the wall: " + helper.getBlockState(at));
+        var pile = (PlacedBooksBlockEntity) level.getBlockEntity(helper.absolutePos(at));
+        check(helper, pile.lean() >= 12 && pile.lean() <= 18, "leant back twelve to eighteen degrees: " + pile.lean());
+        BlockPos air = new BlockPos(5, 2, 1);
+        helper.setBlock(air, Blocks.STONE);
+        check(helper, PlacedBooksBlock.placeFor(level, helper.absolutePos(air), Direction.SOUTH, new ItemStack(Items.BOOK)) == null,
+                "not where there is no floor");
+        helper.setBlock(wall, Blocks.AIR);
+        helper.runAfterDelay(2, () -> { // a tick later
+            check(helper, helper.getBlockState(at).isAir(), "the wall gone, they fall");
+            check(helper, helper.getEntities(EntityTypes.ITEM, at, 2).stream().mapToInt(e -> e.getItem().getCount()).sum() == 3,
+                    "and the three drop");
+            helper.succeed();
+        });
     }
 
     /**

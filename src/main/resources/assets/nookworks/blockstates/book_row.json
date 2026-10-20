@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "nookworks:block/placed_books_drawn"
+    }
+  }
+}

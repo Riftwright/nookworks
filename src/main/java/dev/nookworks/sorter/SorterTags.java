@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.Nookworks;
 import dev.nookworks.registry.ModDataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
@@ -34,7 +35,8 @@ public final class SorterTags {
     /**
      * Tags bigger than this are not offered. Vanilla has catch-all tags that hold most of the game -
      * {@code minecraft:sulfur_cube_swallowable} puts cobblestone and planks in the same bucket - and sorting on one of
-     * those would send everything the same way. A real sorting category is small.
+     * those would send everything the same way. A real sorting category is small. Our own tags are offered whatever
+     * their size: they are made to sort by (#nookworks:crushable, recyclable, compressible - the user, 2026-10-18).
      */
     public static final int MAX_SIZE = 128;
 
@@ -63,7 +65,8 @@ public final class SorterTags {
      */
     public static boolean sortable(TagKey<Item> tag) {
         int size = size(tag);
-        return size > 0 && size <= MAX_SIZE && !(size == 1 && tag.location().getNamespace().equals("minecraft"));
+        String namespace = tag.location().getNamespace();
+        return size > 0 && (size <= MAX_SIZE || namespace.equals(Nookworks.MODID)) && !(size == 1 && namespace.equals("minecraft"));
     }
 
     /** How many items the tag holds. */

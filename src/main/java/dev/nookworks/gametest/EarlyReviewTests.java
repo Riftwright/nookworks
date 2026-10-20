@@ -161,6 +161,7 @@ final class EarlyReviewTests {
         test("iron_pot_fries_in_oil", 400, EarlyReviewTests::ironPotFriesInOil);
         test("rice_polisher_makes_white_rice_and_bran", EarlyReviewTests::ricePolisherMakesWhiteRiceAndBran);
         test("nukadoko_pickles_carrots", EarlyReviewTests::nukadokoPicklesCarrots);
+        test("nukadoko_names_alike_vegetables_once", EarlyReviewTests::nukadokoNamesAlikeOnce);
         test("soap_washes_out_dye_and_oil", EarlyReviewTests::soapWashesOutDyeAndOil);
         test("raw_chicken_makes_you_ill_later", EarlyReviewTests::rawChickenMakesYouIllLater);
         test("raw_meat_and_fish_risk_by_kind", EarlyReviewTests::rawFoodRisks);
@@ -173,6 +174,7 @@ final class EarlyReviewTests {
         test("dice_from_a_dispenser_keep_out_of_water", EarlyReviewTests::diceFromADispenserKeepOutOfWater);
         test("dice_from_before_0_5_get_their_block_entity", EarlyReviewTests::oldDiceGetTheirBlockEntity);
         test("iron_pot_boils_rice_over_a_campfire", 400, EarlyReviewTests::ironPotBoilsRiceOverACampfire);
+        test("a_dry_pot_over_a_fire_says_so", EarlyReviewTests::dryPotSaysSo);
         test("grill_cooks_and_keeps_the_food", 700, EarlyReviewTests::grillCooksAndKeepsTheFood);
         test("grill_over_a_dead_fire_stays_cold", 200, EarlyReviewTests::grillOverADeadFireStaysCold);
         test("nested_timer_pours_and_takes_back_water", 120, EarlyReviewTests::redstoneTimerPoursAndTakesBackWater);
@@ -919,6 +921,24 @@ final class EarlyReviewTests {
     }
 
     /** Rice and water in a pot over a campfire cook to bowls of rice; the same pot on cold stone does nothing. */
+    /** Rice in a pot on its grill over a fire, with no water or oil: the pot says nothing cooks dry. */
+    static void dryPotSaysSo(GameTestHelper helper) {
+        BlockPos hot = new BlockPos(1, 2, 1);
+        helper.setBlock(hot.below(), Blocks.CAMPFIRE);
+        helper.setBlock(hot, ModCooking.IRON_POT.get().onGrill(Direction.NORTH));
+        var pot = helper.getBlockEntity(hot, IronPotBlockEntity.class);
+        check(helper, pot.addIngredient(new ItemStack(ModCrops.WHITE_RICE.get())), "rice goes in, dry");
+        List<String> lines = new java.util.ArrayList<>();
+        pot.readout(line -> lines.add(line.getString()));
+        String dry = net.minecraft.network.chat.Component.translatable("nookworks.iron_pot.dry").getString();
+        check(helper, lines.contains(dry), "it says nothing cooks dry: " + lines);
+        pot.addLiquid(PotRecipe.Liquid.WATER, 500);
+        lines.clear();
+        pot.readout(line -> lines.add(line.getString()));
+        check(helper, !lines.contains(dry), "with water in, it does not: " + lines);
+        helper.succeed();
+    }
+
     static void ironPotBoilsRiceOverACampfire(GameTestHelper helper) {
         BlockPos hot = new BlockPos(1, 2, 1);
         BlockPos cold = new BlockPos(4, 2, 1);
@@ -1219,6 +1239,23 @@ final class EarlyReviewTests {
         check(helper, bran.is(ItemTags.CHICKEN_FOOD), "and chickens eat it");
         check(helper, new ItemStack(ModCrops.BROWN_RICE.get()).is(RicePolisherBlockEntity.RICE),
                 "brown rice is the rice crop");
+        helper.succeed();
+    }
+
+    /** Four carrots put in together are named once, with how many; a beetroot beside them on its own. */
+    static void nukadokoNamesAlikeOnce(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(1, 2, 1);
+        helper.setBlock(pos, ModCooking.NUKADOKO.get());
+        var tub = helper.getBlockEntity(pos, NukadokoBlockEntity.class);
+        int carrots = 0;
+        while (carrots < 4 && tub.bury(new ItemStack(Items.CARROT))) {
+            carrots++;
+        }
+        tub.bury(new ItemStack(Items.BEETROOT));
+        String line = tub.describe().getString();
+        String carrot = new ItemStack(Items.CARROT).getHoverName().getString();
+        check(helper, carrots > 1 && line.indexOf(carrot) == line.lastIndexOf(carrot) && line.contains(carrots + "×"),
+                carrots + " carrots named once, with how many: " + line);
         helper.succeed();
     }
 

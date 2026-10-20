@@ -89,21 +89,48 @@ public final class DarkMatter {
         return false;
     }
 
-    /** Whether any block in the disc round {@code centre} gives light (the Dark Matter itself gives none). */
+    /**
+     * Whether any block in the disc round {@code centre} gives light (the Dark Matter itself gives none). A 16-block
+     * section whose palette holds nothing that gives light (nor a block entity, which might) is passed over whole: a dark
+     * disc read all its 565 blocks twice a second (the performance audit, 2026-10-19).
+     */
     public static boolean lit(Level level, BlockPos centre) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap mayGlow = new it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap(8);
         for (int dy = -BELOW; dy <= ABOVE; dy++) {
             for (int dx = -RADIUS; dx <= RADIUS; dx++) {
                 int reach = RADIUS - Math.abs(dx);
                 for (int dz = -reach; dz <= reach; dz++) {
                     pos.set(centre.getX() + dx, centre.getY() + dy, centre.getZ() + dz);
-                    if (level.isLoaded(pos) && level.getBlockState(pos).getLightEmission(level, pos) > 0) {
+                    if (!level.isLoaded(pos)) {
+                        continue;
+                    }
+                    long section = net.minecraft.core.SectionPos.asLong(pos);
+                    boolean may;
+                    if (mayGlow.containsKey(section)) {
+                        may = mayGlow.get(section);
+                    } else {
+                        may = sectionMayGlow(level, pos);
+                        mayGlow.put(section, may);
+                    }
+                    if (may && level.getBlockState(pos).getLightEmission(level, pos) > 0) {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    /** Whether the section holding {@code pos} (its chunk loaded) may hold anything that gives light. */
+    private static boolean sectionMayGlow(Level level, BlockPos pos) {
+        var chunk = level.getChunk(pos.getX() >> 4, pos.getZ() >> 4);
+        int index = chunk.getSectionIndex(pos.getY());
+        if (index < 0 || index >= chunk.getSections().length) {
+            return false;
+        }
+        var section = chunk.getSection(index);
+        return !section.hasOnlyAir() && section.maybeHas(state -> state.getLightEmission() > 0 || state.hasBlockEntity());
     }
 
     /** Puts out the light round {@code centre}, all of the disc, or gives it back. */

@@ -1,13 +1,37 @@
 {
   "values": {
     "nookworks:unlit_copper_lantern": {
-      "next_oxidation_stage": "nookworks:unlit_exposed_copper_lantern"
+      "next_oxidation_stage": "nookworks:unlit_exposed_copper_lantern",
+      "generate_block_transform": false
     },
     "nookworks:unlit_exposed_copper_lantern": {
-      "next_oxidation_stage": "nookworks:unlit_weathered_copper_lantern"
+      "next_oxidation_stage": "nookworks:unlit_weathered_copper_lantern",
+      "generate_block_transform": false
     },
     "nookworks:unlit_weathered_copper_lantern": {
-      "next_oxidation_stage": "nookworks:unlit_oxidized_copper_lantern"
+      "next_oxidation_stage": "nookworks:unlit_oxidized_copper_lantern",
+      "generate_block_transform": false
+    },
+    "nookworks:scrap_bale": {
+      "next_oxidation_stage": "nookworks:exposed_scrap_bale"
+    },
+    "nookworks:exposed_scrap_bale": {
+      "next_oxidation_stage": "nookworks:weathered_scrap_bale"
+    },
+    "nookworks:weathered_scrap_bale": {
+      "next_oxidation_stage": "nookworks:oxidized_scrap_bale"
+    },
+    "nookworks:corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:exposed_corrugated_sheet",
+      "generate_block_transform": false
+    },
+    "nookworks:exposed_corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:weathered_corrugated_sheet",
+      "generate_block_transform": false
+    },
+    "nookworks:weathered_corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:oxidized_corrugated_sheet",
+      "generate_block_transform": false
     }
   }
 }

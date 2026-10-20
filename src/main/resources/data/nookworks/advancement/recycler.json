@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "recycling"
+    }
+  ],
+  "criteria": {
+    "recycler": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:recycler"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:recycler"
+    },
+    "title": {
+      "translate": "advancements.nookworks.recycler.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.recycler.description"
+    }
+  },
+  "requirements": [
+    [
+      "recycler"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:crusher"
+}

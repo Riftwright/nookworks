@@ -28,6 +28,8 @@ public final class ModSounds {
     public static final Supplier<SoundEvent> ELECTROLYTIC_CELL_RUN = event("block.electrolytic_cell.run");
     public static final Supplier<SoundEvent> WATER_PUMP_RUN = event("block.water_pump.run");
     public static final Supplier<SoundEvent> PRINTING_PRESS_RUN = event("block.printing_press.run");
+    public static final Supplier<SoundEvent> COMPRESSOR_RUN = event("block.compressor.run");
+    public static final Supplier<SoundEvent> RECYCLER_RUN = event("block.recycler.run");
     public static final Supplier<SoundEvent> BARTER_TERMINAL_RUN = event("block.barter_terminal.run");
     /** A Ventilation Fan's hum, now and then while it runs. */
     public static final Supplier<SoundEvent> VENTILATION_FAN_RUN = event("block.ventilation_fan.run");

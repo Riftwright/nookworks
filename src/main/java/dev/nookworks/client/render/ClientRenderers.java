@@ -54,6 +54,8 @@ public final class ClientRenderers {
         event.registerBlockEntityRenderer(ModBlockEntities.VENT_FAN.get(), VentFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.TRAY.get(), TrayRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DICE.get(), DiceRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.PLACED_BOOKS.get(), PlacedBooksRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BOOKEND.get(), BookendRenderer::new);
         event.registerEntityRenderer(ModRope.ROPE_KNOT.get(), RopeKnotRenderer::new);
         event.registerEntityRenderer(ModRope.HUNG_ITEM.get(), HungItemRenderer::new);
         event.registerEntityRenderer(ModRope.HUNG_BANNER.get(), HungBannerRenderer::new);
@@ -72,6 +74,7 @@ public final class ClientRenderers {
         VentFanRenderer.registerModels(event);
         TrayRenderer.registerModels(event);
         DiceRenderer.registerModels(event);
+        PlacedBooksRenderer.registerModels(event);
         HungItemRenderer.registerModels(event);
         PipePullRenderer.registerModels(event);
     }

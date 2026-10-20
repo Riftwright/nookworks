@@ -70,6 +70,14 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("catalyst_left", b -> b.persistent(ExtraCodecs.NON_NEGATIVE_INT)
                     .networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /**
+     * The brews the blaze powder a Spawn Egg Brewer already took in still serves, kept in its item when it is broken, as
+     * the Stirring Tank's soda is (the dupe and loss audit, 2026-10-19: up to nine brews were lost on every move).
+     */
+    public static final Supplier<DataComponentType<Integer>> BREWS_LEFT =
+            COMPONENTS.registerComponentType("brews_left", b -> b.persistent(ExtraCodecs.NON_NEGATIVE_INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT));
+
     /** The tag a Precision Sorter's tag entry stands for (see {@link dev.nookworks.sorter.SorterTags}). */
     public static final Supplier<DataComponentType<TagKey<Item>>> SORTER_TAG =
             COMPONENTS.registerComponentType("sorter_tag", b -> b.persistent(TagKey.codec(Registries.ITEM))

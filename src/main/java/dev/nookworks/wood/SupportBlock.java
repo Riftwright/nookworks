@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,21 +32,22 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * A wooden support: a squared timber in one of three shapes.
+ * A wooden support: a squared timber in one of four shapes.
  * <ul>
  * <li>post - an upright, for holding things up from the floor</li>
  * <li>beam - a timber along the top of the block, for a shelf or a floor to rest on</li>
  * <li>bracket - a wall bracket: an upright against the wall, the beam over it and a brace between them</li>
+ * <li>wall post - the bracket's upright alone, standing against the wall (the user's sketch, 2026-10-18)</li>
  * </ul>
  * Placed against the side of a block it is a bracket standing out from that wall; on a floor or a ceiling it is a
- * post. Use an axe on it to go through the shapes. FACING is the way the beam points out from the wall. Thin Rope ties
+ * post. Use an axe on it to go through the shapes: post, beam, bracket, wall post. FACING is the way the beam points out from the wall. Thin Rope ties
  * round a bracket's brace, as round a fence post ({@link #brace}).
  */
 public class SupportBlock extends HorizontalDirectionalBlock {
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
     public enum Shape implements StringRepresentable {
-        POST, BEAM, BRACKET;
+        POST, BEAM, BRACKET, WALL_POST;
 
         @Override
         public String getSerializedName() {
@@ -66,6 +68,7 @@ public class SupportBlock extends HorizontalDirectionalBlock {
             byShape.put(Shape.BEAM, box(facing, 5, 11, 0, 11, 16, 16));
             byShape.put(Shape.BRACKET, Shapes.or(box(facing, 5, 0, 12, 11, 11, 16), box(facing, 5, 11, 0, 11, 16, 16),
                     box(facing, 6, 4, 6, 10, 11, 12)));
+            byShape.put(Shape.WALL_POST, box(facing, 5, 0, 12, 11, 16, 16));
             SHAPES.put(facing, byShape);
         }
     }
@@ -83,7 +86,7 @@ public class SupportBlock extends HorizontalDirectionalBlock {
     public static final double BRACE_WIDTH = 4;
     public static final double BRACE_THICKNESS = 3;
 
-    /** A bracket has a brace, which Thin Rope ties round (RopeSpans); a post or a beam has none. */
+    /** A bracket has a brace, which Thin Rope ties round (RopeSpans); a post, a beam or a wall post has none. */
     public static boolean braced(BlockState state) {
         return state.getBlock() instanceof SupportBlock && state.getValue(SHAPE) == Shape.BRACKET;
     }
@@ -161,5 +164,11 @@ public class SupportBlock extends HorizontalDirectionalBlock {
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    /** A post, a beam at head height, a bracket or a wall post: no way through, as a fence post is not. */
+    @Override
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return false;
     }
 }

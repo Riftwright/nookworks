@@ -161,6 +161,8 @@ final class CookingTests {
         helper.succeedWhen(() -> {
             check(helper, entity.dish().is(ModCooking.FRIED_RICE.get()), "the rice fries");
             check(helper, entity.freed().stream().mapToInt(ItemStack::getCount).sum() == 1, "and its bowl is freed, in the pot");
+            check(helper, entity.describe().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents said
+                    && said.getKey().equals("nookworks.iron_pot.ready_serve_freed"), "it says an empty hand serves into the bowl in it");
             pot.useWithoutItem(helper.getLevel(), player, hitTop(helper, pos));
             check(helper, player.getInventory().countItem(ModCooking.FRIED_RICE.get()) == 1 && bowls.getAsInt() == 0
                     && entity.freed().isEmpty() && entity.dish().isEmpty(), "served into that bowl: one bowl in, one bowl out");

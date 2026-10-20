@@ -85,13 +85,24 @@ public abstract class MachineBlock extends BaseEntityBlock {
         };
     }
 
+    /**
+     * Whether its machine holds mercury, so that setting it down or taking it away changes the mercury lines too. Every
+     * machine said so, and the dimension's every mercury walk was made again for a Crusher set down anywhere (the
+     * performance audit, 2026-10-19).
+     */
+    protected boolean holdsMercury() {
+        return false;
+    }
+
     /** A machine set down or taken away changes what the energy network reaches. */
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (!oldState.is(state.getBlock())) {
             MachineIO.networkChanged(level, pos);
-            MercuryNetwork.changed(level);
+            if (this.holdsMercury()) {
+                MercuryNetwork.changed(level);
+            }
         }
     }
 
@@ -100,7 +111,9 @@ public abstract class MachineBlock extends BaseEntityBlock {
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
         Containers.updateNeighboursAfterDestroy(state, level, pos);
         MachineIO.networkChanged(level, pos);
-        MercuryNetwork.changed(level);
+        if (this.holdsMercury()) {
+            MercuryNetwork.changed(level);
+        }
     }
 
     @Override

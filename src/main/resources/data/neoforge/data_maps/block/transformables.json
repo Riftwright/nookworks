@@ -66,6 +66,356 @@
         "item_damage_per_use": 1,
         "sound": "minecraft:item.hoe.till"
       }
+    },
+    "nookworks:exposed_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:exposed_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:weathered_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:weathered_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:exposed_corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:oxidized_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:oxidized_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:weathered_corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:waxed_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:waxed_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:waxed_exposed_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:waxed_exposed_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:exposed_corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:waxed_weathered_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:waxed_weathered_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:weathered_corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:waxed_oxidized_corrugated_sheet": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:waxed_oxidized_corrugated_sheet"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:oxidized_corrugated_sheet"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:unlit_exposed_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_exposed_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:unlit_weathered_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_weathered_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_exposed_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:unlit_oxidized_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_oxidized_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_weathered_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "scrape",
+        "sound": "minecraft:item.axe.scrape"
+      }
+    },
+    "nookworks:unlit_waxed_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_waxed_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:unlit_waxed_exposed_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_waxed_exposed_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_exposed_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:unlit_waxed_weathered_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_waxed_weathered_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_weathered_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
+    },
+    "nookworks:unlit_waxed_oxidized_copper_lantern": {
+      "transformer": "minecraft:axe",
+      "transform_data": {
+        "block_state_provider": {
+          "type": "minecraft:rule_based",
+          "rules": [
+            {
+              "if_true": {
+                "type": "minecraft:matching_blocks",
+                "blocks": "nookworks:unlit_waxed_oxidized_copper_lantern"
+              },
+              "then": {
+                "type": "minecraft:copy_properties",
+                "source": {
+                  "id": "nookworks:unlit_oxidized_copper_lantern"
+                }
+              }
+            }
+          ]
+        },
+        "item_damage_per_use": 1,
+        "particle": "wax_off",
+        "sound": "minecraft:item.axe.wax_off"
+      }
     }
   }
 }

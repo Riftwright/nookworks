@@ -2,8 +2,10 @@ package dev.nookworks.machine;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -483,10 +485,12 @@ public final class MachineIO {
         LevelChunk here = loadedChunk(level, origin);
         BlockEntity giver = here == null ? null : here.getBlockEntity(origin);
         List<EnergyHandler> targets = new ArrayList<>(receivers.size());
+        Set<EnergyHandler> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         int start = Math.floorMod(level.getGameTime() + origin.hashCode(), receivers.size());
         for (int i = 0; i < receivers.size(); i++) {
             EnergyHandler target = handlerOf(level, receivers.get((start + i) % receivers.size()), origin, giver);
-            if (target != null) {
+            // one store reached through two blocks (a Recycler cabled at its body and its intake) takes one share
+            if (target != null && seen.add(target)) {
                 targets.add(target);
             }
         }
