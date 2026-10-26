@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 (2026-10-27)
+- 1.2.2: fixes - the Create World screen's lines for the newer parts, the Motor's JEI page, and the Range Hood seen from above. Worlds from every earlier version keep everything in them.
+- Fixed: on the Create World screen's Nookworks parts, the nine added in 1.1 and 1.2 (Recycling, Generators, Electric Furnace, Planter, Water Pump, Motor, Electrolytic Cell, Stone Maker, Velarium) showed a text id under their names instead of what they are.
+- Fixed: the Motor's JEI page still said it draws power only while its machine has work; it says it idles when powered and stops on a redstone signal.
+- Fixed: the Range Hood seen from above had two open rings where its tiers step in, the ground showing through; the steps are closed.
+
 ## 1.2.1 (2026-10-26)
 - 1.2.1: a powered Motor runs until a redstone signal stops it, the Oil Can quiets it, the Magnet draws experience fast and takes it at once, and felled trees' leaves for those who asked: a Silk Touch axe drops them as leaves, and a setting takes them all at once. Worlds from every earlier version keep everything in them.
 - Added: a hidden advancement for taking a Red-Hot Velarium Ingot in a bare hand (a viewer's idea).

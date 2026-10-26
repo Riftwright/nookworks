@@ -129,6 +129,10 @@ def hood():
     ring(3, 13, 5, 8, "#copper")
     ring(4.5, 11.5, 8, 11, "#copper")
     els.append(box([1, 4.99, 1], [15, 5, 15], "#inner", faces="d"))   # the underside of the shoulders, seen from below
+    # the shoulders' tops, the steps between the tiers seen from above: open, the ground showed through (the user,
+    # 2026-10-26) - each inside the ring below's inner edge, so no face lies on another
+    els.append(box([2, 4.99, 2], [14, 5, 14], "#copper", faces="u"))
+    els.append(box([4, 7.99, 4], [12, 8, 12], "#copper", faces="u"))
     els.append(box([5, 11, 5], [11, 16, 11], {"n": "#copper", "s": "#copper", "e": "#copper", "w": "#copper",
                                               "u": "#inner", "d": "#inner"}))  # the collar a duct fits onto
     return {"parent": "minecraft:block/block", "textures": t, "elements": els}
@@ -205,7 +209,9 @@ def main():
     write_json(ASSETS / "blockstates/duct.json", {"multipart": parts})
     write_json(m / "duct_item.json", {"parent": "minecraft:block/block", "textures": DUCT_TEX,
                                       "elements": [box([5, 5, 0], [11, 11, 16], "#steel"), box([4.5, 4.5, 0], [11.5, 11.5, 1], "#steel"),
-                                                   box([4.5, 4.5, 15], [11.5, 11.5, 16], "#steel")]})
+                                                   box([4.5, 4.5, 15], [11.5, 11.5, 16], "#steel")],
+                                      # turned side on in an item frame, not end on (a small square)
+                                      "display": {"fixed": {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]}}})
     write_json(ASSETS / "items/duct.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/duct_item"}})
     write_json(m / "chimney.json", chimney(False))
     write_json(m / "chimney_top.json", chimney(True))

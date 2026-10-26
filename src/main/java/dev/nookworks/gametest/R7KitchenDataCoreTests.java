@@ -76,6 +76,7 @@ final class R7KitchenDataCoreTests {
         NookworksGameTests.test("corn_and_rice_grow_by_the_crop_events", R7KitchenDataCoreTests::cropsGrowByTheCropEvents);
         NookworksGameTests.test("jei_pages_read_without_a_switched_off_part", R7KitchenDataCoreTests::jeiPagesWithoutAPart);
         NookworksGameTests.test("a_parts_tooltip_names_what_goes_with_it", R7KitchenDataCoreTests::partTooltipNamesItsDependents);
+        NookworksGameTests.test("every_part_has_its_line_on_the_create_world_screen", R7KitchenDataCoreTests::everyPartHasItsLine);
         NookworksGameTests.test("conflicting_mod_lists_can_be_added_to", R7KitchenDataCoreTests::conflictListsCanBeAddedTo);
     }
 
@@ -334,6 +335,28 @@ final class R7KitchenDataCoreTests {
             }
         }
         check(helper, problems.isEmpty(), String.join(" | ", problems));
+        helper.succeed();
+    }
+
+    /**
+     * Every part a world can switch off has its one line under its name on the Create World screen, in every language
+     * (WorldFeaturesScreen): the nine parts added in 1.1 and 1.2 had none, and the screen showed the key; English lacked
+     * them too, so check_lang.py, which holds the others to English, could not see it.
+     */
+    private static void everyPartHasItsLine(GameTestHelper helper) {
+        List<String> missing = new ArrayList<>();
+        for (String code : DataTests.ALL_LANGUAGES) {
+            JsonObject lang = texts(code);
+            for (String part : Features.PARTS.keySet()) {
+                for (String key : List.of("nookworks.world_features." + part, "nookworks.configuration.features." + part,
+                        "nookworks.configuration.features." + part + ".tooltip")) {
+                    if (!lang.has(key)) {
+                        missing.add(code + " " + key);
+                    }
+                }
+            }
+        }
+        check(helper, missing.isEmpty(), "lines missing: " + String.join(", ", missing));
         helper.succeed();
     }
 

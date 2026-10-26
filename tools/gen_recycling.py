@@ -20,7 +20,8 @@ ASSETS = RES / "assets/nookworks"
 DATA = RES / "data/nookworks"
 AGES = ("", "exposed_", "weathered_", "oxidized_")
 PAINTS = ("red", "green", "blue", "white")
-DYES = {"red": "minecraft:red_dye", "green": "minecraft:green_dye", "blue": "minecraft:blue_dye", "white": "minecraft:white_dye"}
+# the common tags, as the 1.2.0 compatibility sweep made the recipes take (another mod's dye or copper works)
+DYES = {"red": "#c:dyes/red", "green": "#c:dyes/green", "blue": "#c:dyes/blue", "white": "#c:dyes/white"}
 
 
 def write(path, data):
@@ -219,7 +220,7 @@ def write_recipes():
     write(R / "compressor.json", shaped(["IPI", "IXI", "IRI"], {"I": "minecraft:iron_ingot", "P": "minecraft:piston",
                                                                "X": "nookworks:machine_chassis", "R": "minecraft:redstone"}, "nookworks:compressor"))
     write(R / "baler.json", shaped(["IPI", "BCB", "IPI"], {"I": "minecraft:iron_ingot", "P": "minecraft:piston",
-                                                          "B": "minecraft:iron_bars", "C": "minecraft:copper_ingot"}, "nookworks:baler"))
+                                                          "B": "minecraft:iron_bars", "C": "#c:ingots/copper"}, "nookworks:baler"))
     write(R / "recycler.json", shapeless(["nookworks:crusher", "nookworks:compressor", "nookworks:baler"], "nookworks:recycler"))
     write(R / "scrap_bale.json", shaped(["SSS", "SSS", "SSS"], {"S": "nookworks:scrap"}, "nookworks:scrap_bale", category="building"))
     write(R / "scrap_from_scrap_bale.json", shapeless(["#nookworks:scrap_bales"], "nookworks:scrap", count=9))
