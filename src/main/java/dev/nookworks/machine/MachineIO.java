@@ -25,6 +25,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.ICapabilityInvalidationListener;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
@@ -87,6 +89,49 @@ public final class MachineIO {
     public record Receiver(BlockPos pos, List<Direction> sides) {}
 
     /**
+     * A block that is part of a machine whose block entity stands at another place (a Recycler's intake, over its body):
+     * power sent to it is asked of claims as sent to the body, whose owner it is.
+     */
+    public interface Part {
+        /** Where the block entity of the machine whose part stands at {@code pos} as {@code state} is. */
+        BlockPos body(BlockState state, BlockPos pos);
+    }
+
+    /**
+     * What a receiver takes power through, as last found: its handler through each side the network touches, and the
+     * block entity that answers for it to claims (its own, or a part's body). Found again when NeoForge says what stands
+     * there changed (a block entity set down or taken away, its chunk loaded or unloaded, a block saying its handlers
+     * changed), and after a walk's time at most, as the networks are, for another mod's machine that changes unsaid.
+     * Until then it is asked as found: every generator on a network looked up every receiver's chunk, block, block entity
+     * and each side's capability every tick (the 10-19 performance audit).
+     */
+    private static final class Feed implements ICapabilityInvalidationListener {
+        @Nullable EnergyHandler handler;
+        @Nullable BlockEntity owner;
+        /**
+         * The chunk it was found in, to see it leave the full world: dropping below FULL (on its way to unloading) is
+         * told by no invalidation, and a receiver there was nobody's to the per-tick {@link #loadedChunk} it stands for.
+         */
+        @Nullable LevelChunk chunk;
+        /** When it is to be found again; never found yet, or told of a change: now. */
+        long until = Long.MIN_VALUE;
+        long usedAt;
+        boolean listening;
+
+        @Override
+        public boolean onInvalidate() {
+            this.until = Long.MIN_VALUE;
+            this.listening = false;
+            // let go of what was there: a base everyone left keeps its feeds until a generator sweeps them, and they
+            // held its unloaded chunks and block entities meanwhile (found again before any is read)
+            this.handler = null;
+            this.owner = null;
+            this.chunk = null;
+            return false; // listened for again as it is next found
+        }
+    }
+
+    /**
      * The chunk {@code pos} is in, if it is loaded - without loading it, or keeping it loaded. Reading a block through
      * the level does both: each read leaves a ticket that holds its chunk a tick longer, so a network read every tick
      * would hold every chunk it runs through loaded for good, after everyone had gone, and load one that had gone
@@ -115,19 +160,53 @@ public final class MachineIO {
      * held loaded by the generator asking every tick (r15 fix check 3).
      */
     public static @Nullable EnergyHandler handlerOf(ServerLevel level, Receiver receiver, @Nullable BlockPos origin, @Nullable BlockEntity giver) {
-        LevelChunk chunk = loadedChunk(level, receiver.pos());
-        if (chunk == null) {
-            return null; // out of the loaded world: it gets nothing, and is not loaded to be given it
+        Kept kept = KEPT.computeIfAbsent(level.dimension(), k -> new Kept());
+        return given(level, kept.feeds.computeIfAbsent(receiver, r -> new Feed()), receiver, origin, giver);
+    }
+
+    /** {@link #handlerOf(ServerLevel, Receiver, BlockPos, BlockEntity)}, through the receiver's {@code feed}. */
+    private static @Nullable EnergyHandler given(ServerLevel level, Feed feed, Receiver receiver, @Nullable BlockPos origin,
+            @Nullable BlockEntity giver) {
+        long now = level.getGameTime();
+        if (now >= feed.until || feed.chunk != null && !feed.chunk.getFullStatus().isOrAfter(FullChunkStatus.FULL)) {
+            feed.until = find(level, receiver, feed) ? until(now, receiver.pos()) : now + 1;
         }
-        BlockState state = chunk.getBlockState(receiver.pos());
-        BlockEntity blockEntity = state.hasBlockEntity() ? chunk.getBlockEntity(receiver.pos()) : null;
-        EnergyHandler handler = sidesHandler(level, receiver, state, blockEntity);
+        feed.usedAt = now;
+        EnergyHandler handler = feed.handler;
         if (handler == null || origin == null
                 || handler.getCapacityAsLong() > 0 && handler.getAmountAsLong() >= handler.getCapacityAsLong()
-                || DrawRights.mayMove(level, origin, giver, receiver.pos(), blockEntity)) {
+                || DrawRights.mayMove(level, origin, giver, receiver.pos(), feed.owner)) {
             return handler;
         }
         return null; // across a claim's edge from where the power comes, where it may not go
+    }
+
+    /**
+     * Finds what {@code receiver} takes power through, read through its loaded chunk; out of the loaded world, nothing (it
+     * gets nothing, and is not loaded to be given it) - and false, to be looked for again next tick, as the chunk may come
+     * back into the full world with no word from NeoForge. Otherwise NeoForge tells the feed when it may have changed.
+     */
+    private static boolean find(ServerLevel level, Receiver receiver, Feed feed) {
+        if (!feed.listening) {
+            level.registerCapabilityListener(receiver.pos(), feed);
+            feed.listening = true;
+        }
+        LevelChunk chunk = loadedChunk(level, receiver.pos());
+        feed.chunk = chunk;
+        if (chunk == null) {
+            feed.handler = null;
+            feed.owner = null;
+            return false;
+        }
+        BlockState state = chunk.getBlockState(receiver.pos());
+        BlockEntity blockEntity = state.hasBlockEntity() ? chunk.getBlockEntity(receiver.pos()) : null;
+        feed.handler = sidesHandler(level, receiver, state, blockEntity);
+        // a part answers as its body (r4: a Recycler's intake, having no block entity, was asked as nobody's - a
+        // stranger's intake touching a claimed cable was powered while the body was refused); the body stands in the
+        // same column, so in the same chunk
+        feed.owner = blockEntity == null && state.getBlock() instanceof Part part
+                ? chunk.getBlockEntity(part.body(state, receiver.pos())) : blockEntity;
+        return true;
     }
 
     /** The handler of the receiver standing as {@code state}, with {@code blockEntity}, through each touched side. */
@@ -210,13 +289,16 @@ public final class MachineIO {
      */
     private static final class Reach {
         final List<Receiver> receivers;
+        /** Each receiver's feed, in the same order. */
+        final List<Feed> feeds;
         final List<Network> networks;
         final boolean cut;
         final long until;
         boolean stale;
 
-        Reach(List<Receiver> receivers, List<Network> networks, boolean cut, long until) {
+        Reach(List<Receiver> receivers, List<Feed> feeds, List<Network> networks, boolean cut, long until) {
             this.receivers = receivers;
+            this.feeds = feeds;
             this.networks = networks;
             this.cut = cut;
             this.until = until;
@@ -235,10 +317,11 @@ public final class MachineIO {
         }
     }
 
-    /** What is kept for one level: each walked cable's network, each origin's reach. Server thread only. */
+    /** What is kept for one level: each walked cable's network, each origin's reach, each receiver's feed. Server thread only. */
     private static final class Kept {
         final Map<BlockPos, Network> byCable = new HashMap<>();
         final Map<BlockPos, Reach> byOrigin = new HashMap<>();
+        final Map<Receiver, Feed> feeds = new HashMap<>();
         long sweptAt;
     }
 
@@ -299,7 +382,8 @@ public final class MachineIO {
     /**
      * Every non-cable energy handler reachable from {@code origin}: its direct neighbours and anything connected
      * through Energy Cables, up to the reach of the {@code energyCableReach} setting. {@code origin} itself is never
-     * included, nor a Generator (which takes no power in). Each receiver's handler is looked up fresh when used.
+     * included, nor a Generator (which takes no power in). Each receiver's handler is kept as found until NeoForge says
+     * it may have changed ({@link Feed}).
      */
     public static List<Receiver> receivers(ServerLevel level, BlockPos origin) {
         return reach(level, origin).receivers;
@@ -359,7 +443,11 @@ public final class MachineIO {
         }
         List<Receiver> receivers = new ArrayList<>(found.size());
         found.forEach((pos, sides) -> receivers.add(new Receiver(pos, List.copyOf(sides))));
-        Reach reach = new Reach(List.copyOf(receivers), List.copyOf(networks), cut, until(now, origin));
+        List<Feed> feeds = new ArrayList<>(receivers.size());
+        for (Receiver receiver : receivers) {
+            feeds.add(kept.feeds.computeIfAbsent(receiver, r -> new Feed()));
+        }
+        Reach reach = new Reach(List.copyOf(receivers), List.copyOf(feeds), List.copyOf(networks), cut, until(now, origin));
         kept.byOrigin.put(origin.immutable(), reach);
         return reach;
     }
@@ -378,6 +466,8 @@ public final class MachineIO {
         kept.sweptAt = now;
         kept.byCable.values().removeIf(network -> !network.fresh(now));
         kept.byOrigin.values().removeIf(reach -> !reach.fresh(now));
+        // a feed nothing has asked for a while: its listener goes with it (NeoForge holds listeners weakly)
+        kept.feeds.values().removeIf(feed -> now - feed.usedAt >= SWEEP || now < feed.usedAt);
     }
 
     /** Forgets every kept walk: the next world opened in this game must not see this one's. */
@@ -478,7 +568,8 @@ public final class MachineIO {
         if (Math.min(max, source.getAmountAsLong()) <= 0) {
             return 0; // an empty store walks no cables
         }
-        List<Receiver> receivers = receivers(level, origin);
+        Reach reach = reach(level, origin);
+        List<Receiver> receivers = reach.receivers;
         if (receivers.isEmpty()) {
             return 0;
         }
@@ -488,7 +579,8 @@ public final class MachineIO {
         Set<EnergyHandler> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         int start = Math.floorMod(level.getGameTime() + origin.hashCode(), receivers.size());
         for (int i = 0; i < receivers.size(); i++) {
-            EnergyHandler target = handlerOf(level, receivers.get((start + i) % receivers.size()), origin, giver);
+            int at = (start + i) % receivers.size();
+            EnergyHandler target = given(level, reach.feeds.get(at), receivers.get(at), origin, giver);
             // one store reached through two blocks (a Recycler cabled at its body and its intake) takes one share
             if (target != null && seen.add(target)) {
                 targets.add(target);

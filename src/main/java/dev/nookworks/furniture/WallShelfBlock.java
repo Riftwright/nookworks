@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -37,12 +39,16 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * joins go, leaving those at its ends, as a long board is hung.
  * <p>
  * It faces away from its wall ({@link #FACING}); {@link #LEFT} and {@link #RIGHT} say it is joined on that side, as
- * seen by someone standing in front of it.
+ * seen by someone standing in front of it. Two shelves side by side are kept apart by a Wrench sneak-used on the end
+ * between them ({@link #LEFT_APART}, {@link #RIGHT_APART}: set on both, cleared when the other goes; the user,
+ * 2026-10-23), and joined again the same way.
  */
 public class WallShelfBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
+    public static final BooleanProperty LEFT_APART = BooleanProperty.create("left_apart");
+    public static final BooleanProperty RIGHT_APART = BooleanProperty.create("right_apart");
 
     /** Facing north, its wall to the south: the board, and a bracket on each side - an arm down the wall, one under the board. */
     private static final VoxelShape BOARD = Block.box(0.0, 13.0, 0.0, 16.0, 16.0, 16.0);
@@ -70,12 +76,12 @@ public class WallShelfBlock extends HorizontalDirectionalBlock implements Simple
     public WallShelfBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LEFT, false)
-                .setValue(RIGHT, false).setValue(WATERLOGGED, false));
+                .setValue(RIGHT, false).setValue(LEFT_APART, false).setValue(RIGHT_APART, false).setValue(WATERLOGGED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, LEFT, RIGHT, WATERLOGGED);
+        builder.add(FACING, LEFT, RIGHT, LEFT_APART, RIGHT_APART, WATERLOGGED);
     }
 
     /** The side a shelf facing {@code facing} has on its left, to someone in front of it. */
@@ -91,8 +97,35 @@ public class WallShelfBlock extends HorizontalDirectionalBlock implements Simple
 
     private static BlockState joined(BlockState state, LevelReader level, BlockPos pos) {
         Direction facing = state.getValue(FACING);
-        return state.setValue(LEFT, joins(level, pos, facing, leftOf(facing)))
-                .setValue(RIGHT, joins(level, pos, facing, leftOf(facing).getOpposite()));
+        for (Direction side : new Direction[] {leftOf(facing), leftOf(facing).getOpposite()}) {
+            boolean shelf = joins(level, pos, facing, side);
+            BooleanProperty apart = side == leftOf(facing) ? LEFT_APART : RIGHT_APART;
+            boolean kept = shelf && state.getValue(apart);
+            state = state.setValue(apart, kept).setValue(side == leftOf(facing) ? LEFT : RIGHT, shelf && !kept);
+        }
+        return state;
+    }
+
+    /** The end of the shelf nearer {@code hit}, if a shelf it joins (or is kept apart from) hangs there; else null. */
+    public static @Nullable Direction apartSide(LevelReader level, BlockPos pos, BlockState state, Vec3 hit) {
+        Direction facing = state.getValue(FACING);
+        Direction left = leftOf(facing);
+        double along = (hit.x - pos.getX() - 0.5) * left.getStepX() + (hit.z - pos.getZ() - 0.5) * left.getStepZ();
+        Direction side = along >= 0 ? left : left.getOpposite();
+        return joins(level, pos, facing, side) ? side : null;
+    }
+
+    /** The shelf on {@code side} kept apart from this one, or joined to it again - on both; whether they are apart now. */
+    public static boolean toggleApart(Level level, BlockPos pos, BlockState state, Direction side) {
+        Direction facing = state.getValue(FACING);
+        Direction left = leftOf(facing);
+        BooleanProperty mine = side == left ? LEFT_APART : RIGHT_APART;
+        BooleanProperty theirs = side == left ? RIGHT_APART : LEFT_APART;  // the same facing: our left is its right
+        boolean apart = !state.getValue(mine);
+        BlockPos nextPos = pos.relative(side);
+        level.setBlock(pos, joined(state.setValue(mine, apart), level, pos), Block.UPDATE_ALL);
+        level.setBlock(nextPos, joined(level.getBlockState(nextPos).setValue(theirs, apart), level, nextPos), Block.UPDATE_ALL);
+        return apart;
     }
 
     /** On the wall it is set against; set on a floor or a ceiling, against the wall the player looks at, if there is one. */
@@ -135,8 +168,10 @@ public class WallShelfBlock extends HorizontalDirectionalBlock implements Simple
             return Blocks.AIR.defaultBlockState();
         }
         if (directionToNeighbour.getAxis() != facing.getAxis() && directionToNeighbour.getAxis().isHorizontal()) {
-            boolean join = neighbourState.getBlock() instanceof WallShelfBlock && neighbourState.getValue(FACING) == facing;
-            state = state.setValue(directionToNeighbour == leftOf(facing) ? LEFT : RIGHT, join);
+            boolean shelf = neighbourState.getBlock() instanceof WallShelfBlock && neighbourState.getValue(FACING) == facing;
+            BooleanProperty apart = directionToNeighbour == leftOf(facing) ? LEFT_APART : RIGHT_APART;
+            boolean kept = shelf && state.getValue(apart);
+            state = state.setValue(apart, kept).setValue(directionToNeighbour == leftOf(facing) ? LEFT : RIGHT, shelf && !kept);
         }
         return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
@@ -164,6 +199,7 @@ public class WallShelfBlock extends HorizontalDirectionalBlock implements Simple
         if (mirror == Mirror.NONE) {
             return state;
         }
-        return state.rotate(mirror.getRotation(state.getValue(FACING))).setValue(LEFT, state.getValue(RIGHT)).setValue(RIGHT, state.getValue(LEFT));
+        return state.rotate(mirror.getRotation(state.getValue(FACING))).setValue(LEFT, state.getValue(RIGHT)).setValue(RIGHT, state.getValue(LEFT))
+                .setValue(LEFT_APART, state.getValue(RIGHT_APART)).setValue(RIGHT_APART, state.getValue(LEFT_APART));
     }
 }

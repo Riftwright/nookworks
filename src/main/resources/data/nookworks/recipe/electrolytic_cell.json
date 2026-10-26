@@ -1,10 +1,16 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "electrolytic_cell"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
     "B": "#c:ingots/brass",
-    "G": "minecraft:glass",
-    "C": "minecraft:copper_ingot",
+    "G": "#c:glass_blocks/colorless",
+    "C": "#c:ingots/copper",
     "M": "nookworks:machine_chassis",
     "R": "minecraft:redstone"
   },

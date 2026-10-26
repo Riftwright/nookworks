@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -63,13 +64,16 @@ public record EndSeedPlant(int weight, Map<String, String> properties) {
         return property.getValue(value).map(v -> state.setValue(property, v)).orElse(null);
     }
 
-    /** Every plant of the draw, a tall one only where there is room above for its top. */
+    /**
+     * Every plant of the draw, a tall one only where there is room above for its top, and none of a part that is off
+     * (the corn, with the kitchen switched off: its crop would drop corn nothing else gives then).
+     */
     public static List<Entry> fitting(LevelReader level, BlockPos pos) {
         List<Entry> fitting = new ArrayList<>();
         for (var plant : BuiltInRegistries.BLOCK.getDataMap(DATA_MAP).entrySet()) {
             Block block = BuiltInRegistries.BLOCK.getValue(plant.getKey());
             BlockState state = block == null ? null : plant.getValue().state(block);
-            if (state != null && (!isTall(state) || BloomingCropBlock.roomAbove(level, pos))) {
+            if (state != null && Features.enabled(block.asItem()) && (!isTall(state) || BloomingCropBlock.roomAbove(level, pos))) {
                 fitting.add(new Entry(state, plant.getValue().weight()));
             }
         }

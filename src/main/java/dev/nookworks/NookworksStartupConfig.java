@@ -46,7 +46,12 @@ public final class NookworksStartupConfig {
                 "out of no sifting or trade, and its advancements are gone; what a world already holds stays and works. The",
                 "kitchen off takes the flour bakery with it (vanilla's bread, cake, cookies and pie stay).")
                 .translation("nookworks.configuration.features").push("features");
+        Map<String, String> english = english();
         for (String part : Features.PARTS.keySet()) {
+            String tooltip = english.get("nookworks.configuration.features." + part + ".tooltip");
+            if (tooltip != null) { // a pack's author reads the file: printing = true says nothing of the posters it takes
+                builder.comment(tooltip);
+            }
             FEATURES.put(part, builder.translation("nookworks.configuration.features." + part).define(part, true));
         }
         builder.pop();
@@ -101,6 +106,21 @@ public final class NookworksStartupConfig {
             case "edible_raw_foods" -> EDIBLE_RAW_FOODS;
             default -> null;
         };
+    }
+
+    /** The mod's English texts, for the comments in the file; none if they cannot be read (the file is then bare). */
+    private static Map<String, String> english() {
+        try (var in = NookworksStartupConfig.class.getResourceAsStream("/assets/nookworks/lang/en_us.json")) {
+            if (in == null) {
+                return Map.of();
+            }
+            Map<String, String> texts = new LinkedHashMap<>();
+            com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8))
+                    .getAsJsonObject().entrySet().forEach(e -> texts.put(e.getKey(), e.getValue().getAsString()));
+            return texts;
+        } catch (java.io.IOException | RuntimeException unreadable) {
+            return Map.of();
+        }
     }
 
     /** The setting that switches the part {@code name} on or off, or null for no such part. */

@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,6 +81,10 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
  *   keyup KEY [MODS]
  *   look X Y Z          turn to look at a point from the eyes (tp ... facing aims from the feet)
  *   shot NAME           save the frame as drawn to screenshots/NAME.png (fine with the window hidden)
+ *   timelapse NAME SECS [MAX]  save a frame every SECS seconds (decimals allowed) as
+ *                       screenshots/timelapse/NAME/000001.png and on, up to MAX frames (none: until stopped), going on
+ *                       from the last number already there; timelapse stop ends it. A fixed camera for a build:
+ *                       spectator mode, a tp, hud off, then this; tools/make_timelapse.py makes the video
  *   use                 in-world right click (does not capture the cursor)
  *   attack              in-world left click
  *   mine N              hold the attack button for N ticks, to break a block
@@ -106,6 +111,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
  *                       (the cursor captured on a click, looking round with the mouse); off (the default) frees them
  *   lid X Y Z open|shut open or shut a chest's lid (a vanilla chest, a Repair Box) on this client only, as when someone
  *                       has it open, with no screen in front of it
+ *   bot COMMAND...      the agent's own player: walks, mines, builds, crafts, fights (see client.dev.bot.Bot)
+ *   botwait [TICKS]     hold the queue until the bot has done what it was given
  *   window show|hide    show the hidden window (without taking the focus: to watch, or to film it with a window
  *                       capture), or hide it again
  * </pre>
@@ -125,6 +132,8 @@ public final class AgentInput {
     /** Whether {@code agent_ready.txt} says a world is joined. */
     private static boolean toldReady;
     private static int waitTicks;
+    /** Ticks left to wait for the bot to be idle (botwait); 0: not waiting. */
+    private static int botWait;
     /** Ticks left of a held attack, for breaking a block. */
     private static int mineTicks;
     /** Ticks left of a held use (usehold). */
@@ -152,6 +161,12 @@ public final class AgentInput {
     /** Whether the lines over the hotbar - the action bar and the held item's name - are kept off the screen
      *  (actionbar off): a video's captions go there. */
     private static boolean actionbarHidden;
+    /** A time-lapse under way (timelapse NAME SECS): a frame every {@link #tlEvery} ticks into screenshots/timelapse/NAME. */
+    private static @Nullable String tlName;
+    private static int tlEvery;
+    private static int tlCountdown;
+    private static int tlFrame;
+    private static int tlMax;
 
     /**
      * Hides the window as the game first shows it. The game makes its window hidden and shows it once it is set up
@@ -226,9 +241,16 @@ public final class AgentInput {
             mineTicks--;
             invoke(Minecraft.class, mc, "continueAttack", new Class<?>[] {boolean.class}, true);
         }
+        jumpToNow(dir);
         if (waitTicks > 0) {
             waitTicks--;
             return;
+        }
+        if (botWait > 0) {
+            if (dev.nookworks.client.dev.bot.Bot.busy() && --botWait > 0) {
+                return;
+            }
+            botWait = 0;
         }
         String line = nextLine(dir.resolve("agent_input.txt"));
         if (line != null && !line.isBlank()) {
@@ -276,6 +298,21 @@ public final class AgentInput {
                     new Vec3(Double.parseDouble(a[1]), Double.parseDouble(a[2]), Double.parseDouble(a[3])));
             // the last frame drawn, read from the game's own framebuffer rather than the window
             case "shot" -> Screenshot.grab(mc.gameDirectory, a[1] + ".png", mc.gameRenderer.mainRenderTarget(), 1, message -> {});
+            case "timelapse" -> {
+                if (a[1].equals("stop")) {
+                    stopTimelapse(mc);
+                } else {
+                    java.io.File folder = new java.io.File(mc.gameDirectory, "screenshots/timelapse/" + a[1]);
+                    folder.mkdirs(); // Screenshot.grab makes screenshots/ only, not the folders below it
+                    String[] there = folder.list((d, n) -> n.matches("\\d{6}\\.png"));
+                    tlFrame = there == null ? 0 : java.util.Arrays.stream(there)
+                            .mapToInt(n -> Integer.parseInt(n.substring(0, 6))).max().orElse(0);
+                    tlName = a[1];
+                    tlEvery = Math.max(1, (int) Math.round(Double.parseDouble(a[2]) * 20));
+                    tlMax = a.length > 3 ? tlFrame + Integer.parseInt(a[3]) : 0; // MAX more frames, not counting those there
+                    tlCountdown = 1; // the first frame on the next tick
+                }
+            }
             case "use" -> invoke(Minecraft.class, mc, "startUseItem", new Class<?>[] {});
             case "attack" -> invoke(Minecraft.class, mc, "startAttack", new Class<?>[] {});
             case "mine" -> mineTicks = Integer.parseInt(a[1]);
@@ -286,6 +323,10 @@ public final class AgentInput {
             }
             case "click" -> KeyMapping.click((a[1].equals("use") ? mc.options.keyUse : mc.options.keyAttack).getKey());
             case "wait" -> waitTicks = Integer.parseInt(a[1]);
+            // the agent's own player (dev.nookworks.client.dev.bot.Bot): bot <command...>
+            case "bot" -> dev.nookworks.client.dev.bot.Bot.command(mc, Arrays.copyOfRange(a, 1, a.length));
+            // the queue held until the bot has done all it was given (or TICKS have gone by): botwait [TICKS]
+            case "botwait" -> botWait = a.length > 1 ? Integer.parseInt(a[1]) : 72000;
             case "state" -> Nookworks.LOGGER.info("[agent-input] state: focused={} grabbed={} screen={} jumpDown={} shiftDown={} onGround={} fps={} windowHidden={}",
                     mc.getWindow().isFocused(), mc.mouseHandler.isMouseGrabbed(), mc.gui.screen(),
                     mc.options.keyJump.isDown(), mc.options.keyShift.isDown(), mc.player != null && mc.player.onGround(),
@@ -436,6 +477,16 @@ public final class AgentInput {
         if (!ENABLED || mc.player == null) {
             return;
         }
+        if (tlName != null && --tlCountdown <= 0) {
+            tlCountdown = tlEvery;
+            tlFrame++;
+            Screenshot.grab(mc.gameDirectory, "timelapse/" + tlName + "/" + String.format("%06d.png", tlFrame),
+                    mc.gameRenderer.mainRenderTarget(), 1, message -> {});
+            write(mc.gameDirectory.toPath().resolve("timelapse.txt"), tlName + " " + tlFrame + "\n", false);
+            if (tlMax > 0 && tlFrame >= tlMax) {
+                stopTimelapse(mc);
+            }
+        }
         if (camFrom != null) {
             camTick++;
             // kept one tick past the end, so the frames drawn on the way to the last place still turn with it
@@ -488,6 +539,13 @@ public final class AgentInput {
         event.setPitch(pitch);
     }
 
+    private static void stopTimelapse(Minecraft mc) {
+        if (tlName != null) {
+            write(mc.gameDirectory.toPath().resolve("timelapse.txt"), tlName + " " + tlFrame + " stopped\n", false);
+        }
+        tlName = null;
+    }
+
     private static double eased(double t) {
         return t * t * (3 - 2 * t);
     }
@@ -538,6 +596,54 @@ public final class AgentInput {
     }
 
     /** Reads the next unread line. Commands already in the file when the game started are skipped. */
+    /**
+     * A {@code bot now ...} or {@code bot stop} waiting in the file is taken at once: the commands before it are dropped
+     * unrun (written to agent_output as failed, skipped), and a wait or botwait under way ends. Before, a "now" sent
+     * behind a botwait waited for the very jobs it was meant to replace.
+     */
+    private static void jumpToNow(Path dir) {
+        Path file = dir.resolve("agent_input.txt");
+        if (readOffset < 0 || !Files.exists(file)) {
+            return;
+        }
+        List<String> lines = new ArrayList<>();
+        List<Long> starts = new ArrayList<>();
+        try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r")) {
+            if (readOffset >= raf.length()) {
+                return;
+            }
+            raf.seek(readOffset);
+            long start = readOffset;
+            java.io.ByteArrayOutputStream sb = new java.io.ByteArrayOutputStream();
+            int b;
+            while ((b = raf.read()) != -1) {
+                if (b == '\n') {
+                    lines.add(sb.toString(StandardCharsets.UTF_8));
+                    starts.add(start);
+                    sb.reset();
+                    start = raf.getFilePointer();
+                } else {
+                    sb.write(b);
+                }
+            }
+        } catch (IOException e) {
+            return;
+        }
+        int at = dev.nookworks.dev.bot.BotRules.jumpTo(lines);
+        if (at < 0 || at == 0 && waitTicks == 0 && botWait == 0) {
+            return;
+        }
+        for (int i = 0; i < at; i++) {
+            String skipped = lines.get(i).trim();
+            if (!skipped.isEmpty()) {
+                write(dir.resolve("agent_output.txt"), "failed " + skipped + ": skipped for a later bot now/stop\n", true);
+            }
+        }
+        readOffset = starts.get(at);
+        waitTicks = 0;
+        botWait = 0;
+    }
+
     private static String nextLine(Path file) {
         if (!Files.exists(file)) {
             readOffset = 0; // a file created later is read from its start

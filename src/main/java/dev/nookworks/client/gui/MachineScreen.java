@@ -14,6 +14,7 @@ import dev.nookworks.machine.GuiTank;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineMenu;
 import dev.nookworks.machine.MachineStatus;
+import dev.nookworks.machine.MachineTuning;
 import dev.nookworks.mercury.RetortBlockEntity;
 import dev.nookworks.mercury.RetortBottles;
 import dev.nookworks.mercury.StirringTankBlockEntity;
@@ -104,7 +105,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         }
         int gx = x + layout.gaugeX();
         int gy = y + layout.gaugeY();
-        float done = this.menu.progressMax() > 0 ? (float) this.menu.progress() / this.menu.progressMax() : 0.0F;
+        float done = this.menu.progressMax() > 0 ? Math.min(1.0F, (float) this.menu.progress() / this.menu.progressMax()) : 0.0F;
         int beamEnd = layout.tanks().isEmpty() ? this.imageWidth - 10 : layout.tanks().get(0).x() - 4;
         switch (layout.gauge()) {
             case ARROW -> MachineStyle.arrow(g, gx, gy, done);
@@ -173,7 +174,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     piglins, room);
         }
         if (status == MachineStatus.RUNNING && this.layout().gauge() == MachineLayout.Gauge.ARROW && this.menu.progressMax() > 0) {
-            return Component.translatable("gui.nookworks.machine.running_percent", this.menu.progress() * 100 / this.menu.progressMax());
+            return Component.translatable("gui.nookworks.machine.running_percent", MachineTuning.percent(this.menu.progress(), this.menu.progressMax()));
         }
         if (status == MachineStatus.NO_MERCURY && this.layout() == MachineLayout.ELECTROLYTIC_CELL) {
             // A mercury cell runs on a pool of mercury standing in it and loses only a little of it a run: say both, or
@@ -273,7 +274,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if (layout.gauge() != MachineLayout.Gauge.NONE && this.overGauge(layout, mouseX, mouseY)) {
             int max = Math.max(1, this.menu.progressMax());
             switch (layout.gauge()) {
-                case ARROW -> lines.add(Component.translatable(k + "progress", this.menu.progress() * 100 / max));
+                case ARROW -> lines.add(Component.translatable(k + "progress", MachineTuning.percent(this.menu.progress(), max)));
                 case FLAME -> lines.add(Component.translatable(k + "burning", number(this.menu.progress() / 20)));
                 case BEAM -> lines.add(Component.translatable(k + "beam", this.menu.progress(), this.menu.progressMax()));
                 case NONE -> {}

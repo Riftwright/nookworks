@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/oak_bench",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:oak_bench"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

@@ -37,7 +37,6 @@ RUST = [(110, 60, 34), (146, 82, 44), (174, 104, 56), (196, 128, 74), (212, 152,
 DEEP = [(66, 36, 24), (90, 48, 30), (116, 62, 36), (140, 78, 44), (164, 98, 56)]
 STAGES = (CLEAN, DULL, RUST, DEEP)
 CREVICE = (54, 52, 54)
-SCREW = (58, 60, 66)
 PAINT = {
     "red": [(92, 26, 24), (128, 38, 32), (158, 50, 40), (184, 66, 52), (204, 90, 72)],
     "green": [(34, 66, 40), (48, 92, 54), (62, 116, 66), (82, 140, 82), (110, 162, 104)],
@@ -105,8 +104,6 @@ def paint(layout, score, age, stages=STAGES, crevice=CREVICE):
             st = stage(age, score[y][x])
             if mat == "metal":
                 colour = stages[st][tone]
-            elif mat == "screw":
-                colour = SCREW if st < 2 else DEEP[0]
             else:
                 colour = mat[tone] if st < 3 or score[y][x] < 0.5 else RUST[max(0, tone - 1)]
             img.putpixel((x, y), colour + (255,))
@@ -441,11 +438,11 @@ def main():
              clusters=0.55, grain=0.14, size=3, reach=1)
         save(paint_bale(top, top_owner, top_rust, age), f"{prefix}scrap_bale_top", 320 + age, keep=(GAP_DEEP,),
              clusters=0.55, grain=0.14, size=3, reach=1)
-        save(paint(sheet_layout("metal"), sheet_rust, age), f"{prefix}corrugated_sheet", 330 + age, keep=(SCREW,),
+        save(paint(sheet_layout("metal"), sheet_rust, age), f"{prefix}corrugated_sheet", 330 + age,
              clusters=0.4, grain=0.06, size=4, reach=1)
     for i, (colour, tones) in enumerate(PAINT.items()):
         img = chips(paint(sheet_layout(tones), sheet_rust, 0), 340 + i, CLEAN)
-        save(img, f"{colour}_corrugated_sheet", 350 + i, keep=(SCREW,), clusters=0.4, grain=0, size=5, reach=1)
+        save(img, f"{colour}_corrugated_sheet", 350 + i, clusters=0.4, grain=0, size=5, reach=1)
     for which in range(len(PATCH_DRAWINGS)):
         save(patched(which), f"patched_sheet_metal_{which}", 360 + which, clusters=0.35, grain=0.02, size=5, reach=1)
     texkit.icon(from_map(SCRAP_ITEM, SCRAP_COLOURS), 370, keep=(SCRAP_COLOURS["K"],)).save(TEX / "item/scrap.png")

@@ -172,6 +172,6 @@ public class ElectrolyticCellBlockEntity extends MercuryMachineBlockEntity imple
 
     @Override
     public Component status() {
-        return Component.translatable("nookworks.machine.electrolytic_cell.working", this.energyText(), this.progress * 100 / MachineTuning.time(TICKS));
+        return Component.translatable("nookworks.machine.electrolytic_cell.working", this.energyText(), MachineTuning.percent(this.progress, MachineTuning.time(TICKS)));
     }
 }

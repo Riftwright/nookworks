@@ -8,6 +8,7 @@ import java.util.Map;
 
 import dev.nookworks.Nookworks;
 import dev.nookworks.mixin.FireBlockAccessor;
+import dev.nookworks.furniture.BenchBlock;
 import dev.nookworks.furniture.ChairBlock;
 import dev.nookworks.furniture.DeskBlock;
 import dev.nookworks.furniture.StoolBlock;
@@ -166,9 +167,12 @@ public final class ModWoods {
         return p.overrideLootTable(standing.getLootTable()).overrideDescription(standing.getDescriptionId());
     }
 
-    /** The woods that get a support, in the order vanilla lists its woods; Dawnwood last. */
+    /**
+     * The woods that get a support (and the furniture), in the order vanilla lists its woods; Dawnwood last. Poplar,
+     * 26.3's wood, since 1.2.0 (the user, 2026-10-23: it had been left out).
+     */
     public static final List<String> SUPPORT_WOODS = List.of("oak", "spruce", "birch", "jungle", "acacia", "dark_oak",
-            "mangrove", "cherry", "pale_oak", "crimson", "warped", "bamboo", "dawnwood");
+            "mangrove", "cherry", "pale_oak", "poplar", "crimson", "warped", "bamboo", "dawnwood");
     public static final Map<String, DeferredBlock<SupportBlock>> SUPPORTS;
     public static final Map<String, DeferredItem<BlockItem>> SUPPORT_ITEMS;
 
@@ -197,6 +201,9 @@ public final class ModWoods {
     public static final Map<String, DeferredBlock<ChairBlock>> CHAIRS;
     public static final Map<String, DeferredBlock<StoolBlock>> STOOLS;
     public static final Map<String, DeferredBlock<DeskBlock>> DESKS;
+    /** A Bench for every wood too: a long seat that joins its neighbours (tools/gen_wood_data.py, gen_bench.py). */
+    public static final Map<String, DeferredBlock<BenchBlock>> BENCHES;
+    public static final Map<String, DeferredItem<BlockItem>> BENCH_ITEMS;
     public static final Map<String, DeferredItem<BlockItem>> CHAIR_ITEMS;
     public static final Map<String, DeferredItem<BlockItem>> STOOL_ITEMS;
     public static final Map<String, DeferredItem<BlockItem>> DESK_ITEMS;
@@ -211,6 +218,8 @@ public final class ModWoods {
         Map<String, DeferredItem<BlockItem>> chairItems = new LinkedHashMap<>();
         Map<String, DeferredItem<BlockItem>> stoolItems = new LinkedHashMap<>();
         Map<String, DeferredItem<BlockItem>> deskItems = new LinkedHashMap<>();
+        Map<String, DeferredBlock<BenchBlock>> benches = new LinkedHashMap<>();
+        Map<String, DeferredItem<BlockItem>> benchItems = new LinkedHashMap<>();
         Map<String, DeferredBlock<WallShelfBlock>> shelves = new LinkedHashMap<>();
         Map<String, DeferredItem<BlockItem>> shelfItems = new LinkedHashMap<>();
         for (String wood : SUPPORT_WOODS) {
@@ -223,6 +232,9 @@ public final class ModWoods {
             chairItems.put(wood, ModItems.ITEMS.registerSimpleBlockItem(chair));
             stoolItems.put(wood, ModItems.ITEMS.registerSimpleBlockItem(stool));
             deskItems.put(wood, ModItems.ITEMS.registerSimpleBlockItem(desk));
+            DeferredBlock<BenchBlock> bench = ModBlocks.BLOCKS.registerBlock(wood + "_bench", BenchBlock::new, p -> furniture(p, wood));
+            benches.put(wood, bench);
+            benchItems.put(wood, ModItems.ITEMS.registerSimpleBlockItem(bench));
             DeferredBlock<WallShelfBlock> shelf = ModBlocks.BLOCKS.registerBlock(wood + "_wall_shelf", WallShelfBlock::new, p -> furniture(p, wood));
             shelves.put(wood, shelf);
             shelfItems.put(wood, ModItems.ITEMS.registerSimpleBlockItem(shelf));
@@ -233,6 +245,8 @@ public final class ModWoods {
         CHAIR_ITEMS = Collections.unmodifiableMap(chairItems);
         STOOL_ITEMS = Collections.unmodifiableMap(stoolItems);
         DESK_ITEMS = Collections.unmodifiableMap(deskItems);
+        BENCHES = Collections.unmodifiableMap(benches);
+        BENCH_ITEMS = Collections.unmodifiableMap(benchItems);
         WALL_SHELVES = Collections.unmodifiableMap(shelves);
         WALL_SHELF_ITEMS = Collections.unmodifiableMap(shelfItems);
     }
@@ -283,6 +297,10 @@ public final class ModWoods {
                     fire.nookworks$setFlammable(support.get(), 5, 20);
                     fire.nookworks$setFlammable(CHAIRS.get(wood).get(), 5, 20);
                     fire.nookworks$setFlammable(DESKS.get(wood).get(), 5, 20);
+                    fire.nookworks$setFlammable(BENCHES.get(wood).get(), 5, 20);
+                    // the stool and the wall shelf were left out: they did not catch fire where the chair beside them did
+                    fire.nookworks$setFlammable(STOOLS.get(wood).get(), 5, 20);
+                    fire.nookworks$setFlammable(WALL_SHELVES.get(wood).get(), 5, 20);
                 }
             });
             // (the potted sapling joins the empty pot by itself: NeoForge links every full pot to its empty one)

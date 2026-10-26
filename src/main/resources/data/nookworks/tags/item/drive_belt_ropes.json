@@ -1,5 +1,9 @@
 {
   "values": [
-    "nookworks:rope"
+    "nookworks:rope",
+    {
+      "id": "supplementaries:rope",
+      "required": false
+    }
   ]
 }

@@ -9,6 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.logging.LogUtils;
 
+import dev.nookworks.NookworksNetwork;
 import dev.nookworks.feature.DrawRights;
 import dev.nookworks.fluid.OneTank;
 import dev.nookworks.machine.Readout;
@@ -34,6 +35,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -92,6 +94,16 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
     private int settled = SETTLE;
     /** Set while the pot is being moved to another block (onto or off a grill): its contents go with it, not on the floor. */
     private boolean moving;
+    /**
+     * What {@link PotRecipe#find} last gave, and for what: the contents as they were (copies), the liquid and how much,
+     * and the recipes it looked in. A heated pot with no dish searched every pot recipe every tick; now only when one
+     * of those changes (the 10-19 performance audit).
+     */
+    private final NonNullList<ItemStack> foundFor = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+    private PotRecipe.@Nullable Liquid foundLiquid;
+    private int foundAmount = -1;
+    private @Nullable Object foundIn;
+    private @Nullable RecipeHolder<PotRecipe> found;
 
     /** The water or oil, filled from outside and used only by the cooking. */
     private final FluidStacksResourceHandler liquid = new OneTank(CAPACITY) {
@@ -468,8 +480,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         if (this.settled < SETTLE) {
             this.settled++;
         }
-        var found = this.dish.isEmpty() && IronPotBlock.heated(level, pos)
-                ? PotRecipe.find(level, this.contents, this.liquid(), this.amount()) : null;
+        var found = this.dish.isEmpty() && IronPotBlock.heated(level, pos) ? this.recipeNow(level) : null;
         boolean cooking = found != null;
         if (state.getValue(IronPotBlock.COOKING) != cooking) {
             level.setBlock(pos, state.setValue(IronPotBlock.COOKING, cooking), Block.UPDATE_CLIENTS);
@@ -546,6 +557,27 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         }
     }
 
+    /** {@link PotRecipe#find} for what the pot holds now: the last answer, while nothing it rests on has changed. */
+    private @Nullable RecipeHolder<PotRecipe> recipeNow(ServerLevel level) {
+        Object recipes = level.recipeAccess().recipeMap(); // a new one on every /reload
+        PotRecipe.Liquid held = this.liquid();
+        int amount = this.amount();
+        boolean same = recipes == this.foundIn && held == this.foundLiquid && amount == this.foundAmount;
+        for (int slot = 0; same && slot < SLOTS; slot++) {
+            same = ItemStack.matches(this.contents.get(slot), this.foundFor.get(slot));
+        }
+        if (!same) {
+            this.found = PotRecipe.find(level, this.contents, held, amount);
+            this.foundIn = recipes;
+            this.foundLiquid = held;
+            this.foundAmount = amount;
+            for (int slot = 0; slot < SLOTS; slot++) {
+                this.foundFor.set(slot, this.contents.get(slot).copy());
+            }
+        }
+        return this.found;
+    }
+
     /** Keeps the block's LIQUID state (what the model shows in the pot) in step with what is in it. */
     private void showLiquid() {
         if (this.level == null || this.level.isClientSide()) {
@@ -558,6 +590,26 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         if (state.hasProperty(IronPotBlock.LIQUID) && state.getValue(IronPotBlock.LIQUID) != shown) {
             this.level.setBlock(this.worldPosition, state.setValue(IronPotBlock.LIQUID, shown), Block.UPDATE_CLIENTS);
         }
+    }
+
+    /**
+     * What the pot holds, as the client is sent it to show on the action bar (an empty hand's click), or null with a dish
+     * in it ({@link #describe} says that, in one short line). Sent as parts: the client fits them to its screen
+     * ({@code PotLines}), as the whole list of a full pot did not fit one line (cream stew, six kinds, ran past a 1280x720
+     * window in English and Japanese, past 1080p's in Spanish, Portuguese and Russian).
+     */
+    public NookworksNetwork.@Nullable PotContents shown() {
+        if (!this.dish.isEmpty()) {
+            return null;
+        }
+        PotRecipe.Liquid held = this.liquid();
+        List<ItemStack> items = new ArrayList<>();
+        for (ItemStack stack : this.contents) {
+            if (!stack.isEmpty()) {
+                items.add(stack.copy());
+            }
+        }
+        return new NookworksNetwork.PotContents(held == null ? 0 : held == PotRecipe.Liquid.WATER ? 1 : 2, this.amount(), CAPACITY, items);
     }
 
     /** What the pot holds, for the player who looks in. */

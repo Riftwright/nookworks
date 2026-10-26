@@ -3,6 +3,7 @@ package dev.nookworks.client;
 import dev.nookworks.Nookworks;
 import dev.nookworks.client.gui.WorldFeaturesScreen;
 import dev.nookworks.feature.WorldFeatures;
+import dev.nookworks.recycling.Compressing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -43,5 +44,6 @@ public final class WorldFeaturesClient {
     @SubscribeEvent
     static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         WorldFeatures.leftServer();
+        Compressing.leftServer(); // what the server said presses (the Compressor's slots), too
     }
 }

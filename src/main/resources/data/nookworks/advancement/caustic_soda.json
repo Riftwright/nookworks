@@ -30,5 +30,5 @@
     ]
   ],
   "sends_telemetry_event": false,
-  "parent": "nookworks:electrolytic_cell"
+  "parent": "nookworks:brass"
 }

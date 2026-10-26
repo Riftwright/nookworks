@@ -61,7 +61,8 @@ public final class ChainBreaking {
             }
             List<BlockPos> tree = new ArrayList<>(targets);
             tree.add(origin);
-            FastLeafDecay.schedule(level, tree, player);
+            FastLeafDecay.schedule(level, tree, player, tool);
+            Rootbound.felling(level, player, tool, origin, targets); // read now, while its crown still tells the kind
         } else if (state.is(Tags.Blocks.ORES) && tool.is(ItemTags.PICKAXES)
                 && state.canHarvestBlock(level, origin, player)
                 && FeatureGate.vein()

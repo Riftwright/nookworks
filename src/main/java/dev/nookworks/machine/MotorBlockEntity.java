@@ -23,15 +23,17 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Motor: an electric motor that turns the handle of the machine its shaft points into (anything {@link Crankable},
- * such as the Oil Press, from a side it can be driven from), a turn every half second on FE. It draws power only while
- * the machine has work to do.
+ * such as the Oil Press, from a side it can be driven from), a turn every half second on FE. Powered, it runs - with work
+ * or without, with a machine on its shaft or none - until a redstone signal stops it (the user, 2026-10-25: a motor that
+ * stood still when power reached it puzzled anyone used to Create): {@link #IDLE_FE_PER_TICK} to turn on its own, and
+ * {@link #FE_PER_TICK} for each machine it turns that has work.
  * <p>
  * With a Drive Wheel on its shaft instead, it turns every machine the wheel's belts reach - each through a wheel of its
  * own set against it - up to {@link DriveNetwork#MOST_MACHINES}, at {@link #FE_PER_TICK} for each that has work (the
  * user, 2026-10-10: a motor for every machine looked poor). As much as it has power for, the first found first.
  * <p>
  * One motor turns a machine: two set against the same press turn it no faster than one (the user, 2026-10-01). The
- * motor that turned it last keeps it; another stands by, spending nothing, and takes over the tick after the first
+ * motor that turned it last keeps it; another stands by, turning on its own, and takes over the tick after the first
  * stops - for want of power, or a redstone signal.
  * <p>
  * Across a claim's edge it turns a machine only where the machine's owner could break the motor, as power goes along a
@@ -40,6 +42,8 @@ import net.minecraft.world.level.storage.ValueOutput;
  */
 public class MotorBlockEntity extends MachineBlockEntity implements DriveSource {
     public static final int FE_PER_TICK = 20;
+    /** What it draws turning with no machine at work (the user, 2026-10-25: little, as it runs whenever powered). */
+    public static final int IDLE_FE_PER_TICK = 2;
     public static final int TICKS_PER_TURN = 10;
     private static final int[] NO_SLOTS = {};
 
@@ -108,7 +112,8 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
             machines.add(entity);
         } else if (entity instanceof DriveWheelBlockEntity wheel && wheel.axis() == facing.getAxis()) {
             wheels = DriveNetwork.wheels(level, wheel);
-            machines.addAll(DriveNetwork.machines(level, wheels));
+            // counted only as it may turn them: one across a claim's edge it may not is no machine of its eight
+            machines.addAll(DriveNetwork.machines(level, wheels, machine -> DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)));
         }
         long now = level.getGameTime();
         List<BlockEntity> wanting = new ArrayList<>();
@@ -117,7 +122,8 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
             // its power goes into the machine as a cable's would, and is asked the same across a claim's edge, as the
             // machine's owner breaking this motor: a stranger's press set against a claimed motor's shaft from outside,
             // or beyond a wheel of theirs set end to end with its wheel, ran on the claim's owner's power (r15 fix check
-            // 4). Asked only of a machine with work to do; one refused is let be, as one with none is
+            // 4). The one on its shaft is asked only when it has work to do; those beyond its wheels were asked as they
+            // were counted (the answer kept, DrawRights). One refused is let be, as one with no work is
             if (!((Crankable) machine).wantsTurn() || !DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)) {
                 continue;
             }
@@ -130,16 +136,21 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
         }
         // as many as it can pay for together, the fractions carried (r14 re-check: priced one by one, at under 1 FE a
         // machine it turned them all on nothing)
+        boolean allowed = this.redstoneAllows();
         int affordable = 0;
-        while (affordable < wanting.size() && this.workCost(FE_PER_TICK, affordable + 1) <= this.energyStored()) {
+        while (allowed && affordable < wanting.size() && this.workCost(FE_PER_TICK, affordable + 1) <= this.energyStored()) {
             affordable++;
         }
-        MachineStatus blocked = wanting.isEmpty() ? (another ? MachineStatus.ANOTHER_MOTOR : MachineStatus.IDLE)
-                : !this.redstoneAllows() ? MachineStatus.REDSTONE
-                : affordable == 0 ? MachineStatus.NO_POWER : null;
-        this.status = blocked == null ? MachineStatus.RUNNING : blocked;
+        // powered, it turns whether or not anything has work: on its own power when nothing does. A machine with work
+        // it cannot pay for keeps it waiting, not idling: idle payments would eat what it saves up for the next turn
+        boolean spins = allowed && (affordable > 0
+                || wanting.isEmpty() && this.workCost(IDLE_FE_PER_TICK) <= this.energyStored());
+        this.status = !allowed ? MachineStatus.STOPPED
+                : affordable > 0 ? MachineStatus.RUNNING
+                : !spins || !wanting.isEmpty() ? MachineStatus.NO_POWER
+                : another ? MachineStatus.ANOTHER_MOTOR : MachineStatus.IDLING;
         // its coil lit a moment after it last turned: short of power it turns every other tick, and would blink
-        boolean lit = this.showsLit(blocked == null);
+        boolean lit = this.showsLit(spins);
         if (state.getValue(MotorBlock.POWERED) != lit) {
             level.setBlock(pos, state.setValue(MotorBlock.POWERED, lit), 3);
         }
@@ -148,12 +159,17 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
                 wheel.driven(now); // the wheels and their belts go round with it
             }
         }
-        if (blocked != null) {
+        if (!spins) {
             return;
         }
         List<BlockEntity> served = wanting.subList(0, affordable);
         for (BlockEntity machine : served) {
             TURNED_BY.put(machine, new Turning(pos.immutable(), now));
+        }
+        if (served.isEmpty()) {
+            this.payWork(IDLE_FE_PER_TICK);
+            savePower(this);
+            return; // the turn counts only the ticks it turns a machine on
         }
         this.payWork(FE_PER_TICK, served.size());
         if (++this.progress >= MachineTuning.time(TICKS_PER_TURN)) {

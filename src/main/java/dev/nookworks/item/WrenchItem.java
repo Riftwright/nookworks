@@ -9,6 +9,9 @@ import dev.nookworks.Nookworks;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.block.PipeSides;
 import dev.nookworks.fluid.FluidPipeBlockEntity;
+import dev.nookworks.furniture.BenchBlock;
+import dev.nookworks.furniture.DeskBlock;
+import dev.nookworks.furniture.WallShelfBlock;
 import dev.nookworks.feature.Permission;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Wrench: right-click a block to turn it.
@@ -52,9 +57,11 @@ import net.minecraft.world.level.block.state.properties.Property;
  * On vanilla's blocks and ours it works before the block's own right-click ({@code onItemUseFirst}), or a machine or a
  * chest would open its screen instead of turning; a block it cannot turn is used as it would be with anything else in
  * hand. Another mod's block is let have the click first - the Wrench is in {@code c:tools/wrench}, and a mod's machine
- * may take a wrench to dismantle or set itself up - and is turned only if it does nothing with it (sneaking, always:
- * the block's own use is skipped then). The block is asked to turn with its place in the world, for a mod whose block
- * turns more than itself.
+ * may take a wrench to dismantle or set itself up - and is turned only if it does nothing with it. Sneaking too (the
+ * user, 2026-10-23), as with that mod's own wrench: its use with the Wrench in hand is asked first (a sneak-use that
+ * picks a machine up, say), and if it takes none the block is turned back a step - its empty-hand use, which would
+ * open its screen, is not asked, vanilla skipping it for a sneak-use too. The block is asked to turn with its place in
+ * the world, for a mod whose block turns more than itself.
  */
 public class WrenchItem extends Item {
     /** Blocks the Wrench leaves alone although they face some way. Packs may add their own. */
@@ -63,6 +70,17 @@ public class WrenchItem extends Item {
 
     public WrenchItem(Properties properties) {
         super(properties);
+    }
+
+    /** The side a bench, desk or wall shelf at {@code pos} meets another of its kind nearer {@code hit}, or null. */
+    private static @Nullable Direction furnitureSide(Level level, BlockPos pos, BlockState state, Vec3 hit) {
+        if (state.getBlock() instanceof BenchBlock) {
+            return BenchBlock.apartSide(level, pos, state, hit);
+        }
+        if (state.getBlock() instanceof DeskBlock) {
+            return DeskBlock.apartSide(level, pos, state, hit);
+        }
+        return state.getBlock() instanceof WallShelfBlock ? WallShelfBlock.apartSide(level, pos, state, hit) : null;
     }
 
     @Override
@@ -121,6 +139,31 @@ public class WrenchItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
+        // Benches, desks and wall shelves: sneak-use on the end (a desk's edge) next to another keeps the two apart, or
+        // joins them again (the user, 2026-10-23: 「つなげたくないときもある」); a lone one turns back as anything else.
+        Direction apartSide = backwards ? furnitureSide(level, pos, state, context.getClickLocation()) : null;
+        if (apartSide != null) {
+            BlockPos next = pos.relative(apartSide);
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel server) {
+                if (player != null && !Permission.mayPlace(server, next, apartSide, player)) {
+                    return InteractionResult.FAIL; // the other one changes with it: asked as the clicked one was
+                }
+                boolean apart = state.getBlock() instanceof BenchBlock ? BenchBlock.toggleApart(level, pos, state, apartSide)
+                        : state.getBlock() instanceof DeskBlock ? DeskBlock.toggleApart(level, pos, state, apartSide)
+                        : WallShelfBlock.toggleApart(level, pos, state, apartSide);
+                level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.8F, apart ? 0.8F : 1.2F);
+                if (player != null) {
+                    player.sendOverlayMessage(Component.translatable(apart ? "message.nookworks.wrench.furniture_apart"
+                            : "message.nookworks.wrench.furniture_joined"));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         // A pipe used with the wrench (not sneaking) is flushed: what it holds is let out, so a line can change fluids.
         if (!backwards && level.getBlockEntity(pos) instanceof FluidPipeBlockEntity pipe) {
             if (pipe.stored() <= 0) {
@@ -140,6 +183,15 @@ public class WrenchItem extends Item {
         }
 
         if (!ownOrVanilla(state)) {
+            if (backwards && player != null) {
+                // sneaking, vanilla skips a block's own use and goes to the item: asked here first, as its own wrench would be
+                InteractionResult own = state.useItemOn(stack, level, player, context.getHand(),
+                        new BlockHitResult(context.getClickLocation(), context.getClickedFace(), pos, context.isInside()));
+                if (own.consumesAction()) {
+                    return own;
+                }
+                return turnAt(context, state, true);
+            }
             return InteractionResult.PASS; // another mod's block: its own use first; turned in useOn if it lets the click by
         }
         return turnAt(context, state, backwards);

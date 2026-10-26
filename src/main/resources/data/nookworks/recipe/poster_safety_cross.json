@@ -9,10 +9,10 @@
   "category": "misc",
   "ingredients": [
     "nookworks:fine_paper",
-    "minecraft:cyan_dye",
-    "minecraft:magenta_dye",
-    "minecraft:yellow_dye",
-    "minecraft:black_dye"
+    "#c:dyes/cyan",
+    "#c:dyes/magenta",
+    "#c:dyes/yellow",
+    "#c:dyes/black"
   ],
   "result": {
     "id": "nookworks:poster",

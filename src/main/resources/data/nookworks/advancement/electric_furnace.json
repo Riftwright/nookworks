@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "electric_furnace"
+    }
+  ],
   "criteria": {
     "furnace": {
       "trigger": "minecraft:inventory_changed",
@@ -30,5 +36,5 @@
     ]
   ],
   "sends_telemetry_event": false,
-  "parent": "nookworks:generator"
+  "parent": "nookworks:machine_chassis"
 }

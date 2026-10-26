@@ -115,7 +115,8 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
                     .create(LootContextParamSets.CHEST);
             products.addAll(table.getRandomItems(params));
         }
-        if (level.getRandom().nextFloat() < recipe.velariumChance()) {
+        // none while velarium is switched off (features.json)
+        if (level.getRandom().nextFloat() < recipe.velariumChance() && dev.nookworks.feature.Features.enabled(ModItems.VELARIUM_NUGGET.get())) {
             products.add(new ItemStack(ModItems.VELARIUM_NUGGET.get()));
         }
         return products;
@@ -146,6 +147,6 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         if (this.level != null && !isFormed(this.level, this.worldPosition)) {
             return Component.translatable("nookworks.machine.distiller.incomplete");
         }
-        return Component.translatable("nookworks.machine.mercury_status", this.energyText(), this.mercuryText(), this.progress * 100 / MachineTuning.time(TICKS));
+        return Component.translatable("nookworks.machine.mercury_status", this.energyText(), this.mercuryText(), MachineTuning.percent(this.progress, MachineTuning.time(TICKS)));
     }
 }

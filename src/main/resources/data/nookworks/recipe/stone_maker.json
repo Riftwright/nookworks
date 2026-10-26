@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "stone_maker"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [

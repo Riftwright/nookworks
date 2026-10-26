@@ -8,7 +8,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": "minecraft:glass",
+    "G": "#c:glass_blocks/colorless",
     "I": "minecraft:iron_nugget"
   },
   "pattern": [

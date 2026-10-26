@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "K": "minecraft:dried_kelp",
-    "C": "minecraft:copper_ingot",
+    "C": "#c:ingots/copper",
     "R": "minecraft:redstone"
   },
   "pattern": [

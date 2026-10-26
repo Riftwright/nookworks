@@ -50,6 +50,7 @@ public final class ModCreativeTabs {
                         ModWoods.CHAIR_ITEMS.forEach((wood, chair) -> {
                             output.accept(chair.get());
                             output.accept(ModWoods.STOOL_ITEMS.get(wood).get());
+                            output.accept(ModWoods.BENCH_ITEMS.get(wood).get());
                             output.accept(ModWoods.DESK_ITEMS.get(wood).get());
                             output.accept(ModWoods.WALL_SHELF_ITEMS.get(wood).get());
                         });
@@ -232,8 +233,8 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.VELARIUM_SORTER_GEAR.get());
                         output.accept(ModItems.ITEM_WARP_SENDER.get());
                         output.accept(ModItems.ITEM_WARP_RECEIVER.get());
-                        output.accept(ModItems.LINE_WARP_SENDER.get());
-                        output.accept(ModItems.LINE_WARP_RECEIVER.get());
+                        output.accept(ModItems.HORIZONTAL_ITEM_WARP_SENDER.get());
+                        output.accept(ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get());
                         output.accept(ModTravel.DAEMON_DOOR_ITEM.get());
                         output.accept(ModTravel.DAEMON_PANEL_ITEM.get());
                         output.accept(ModTravel.IF_MIRROR_ITEM.get());

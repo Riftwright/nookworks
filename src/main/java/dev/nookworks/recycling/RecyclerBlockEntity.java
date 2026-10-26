@@ -74,8 +74,12 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
             recycler.items.get(INPUT).shrink(1);
             recycler.store(out);
             recycler.flush(server, pos);
+            recycler.setChanged(); // its contents changed: the comparators by either half are told
+        } else {
+            // only its progress and power to keep: what a comparator reads, the contents, is as it was, so the comparators
+            // round both halves are not told every tick it works (the recycler review's cost, dropped 2026-10-22)
+            savePower(recycler);
         }
-        recycler.setChanged();
     }
 
     /** Whether an output slot is free, or holds the same item with room for as many as this could make. */
@@ -160,6 +164,26 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
         return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
     }
 
+    /**
+     * The intake's handlers are this block entity's (ModCapabilities): they come and go with it, so the intake's place
+     * is told too, as NeoForge asks, or a cache of them (a pipe's, a network's) would keep one gone.
+     */
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null) {
+            this.level.invalidateCapabilities(this.worldPosition.above());
+        }
+    }
+
+    @Override
+    public void clearRemoved() {
+        super.clearRemoved();
+        if (this.level != null) {
+            this.level.invalidateCapabilities(this.worldPosition.above());
+        }
+    }
+
     /** A comparator by the intake reads the body too, so it hears of the body's changes. */
     @Override
     public void setChanged() {
@@ -206,7 +230,7 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
     public Component status() {
         return this.progress > 0
                 ? Component.translatable("nookworks.machine.recycler.working", this.energyText(),
-                        Math.min(100, this.progress * 100 / this.pieceTicks()))
+                        MachineTuning.percent(this.progress, this.pieceTicks()))
                 : Component.translatable("nookworks.machine.idle", this.energyText());
     }
 

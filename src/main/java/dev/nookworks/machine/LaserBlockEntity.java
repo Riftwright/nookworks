@@ -308,7 +308,7 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
             return Fell.REFUSED;
         }
         this.energy.set((int) (this.energy.getAmountAsLong() - MachineTuning.energy(FE_PER_FELL)));
-        FastLeafDecay.schedule(level, tree, actor);
+        FastLeafDecay.schedule(level, tree, actor, net.minecraft.world.item.ItemStack.EMPTY);
         for (BlockPos log : tree) {
             level.destroyBlock(log, true);
         }

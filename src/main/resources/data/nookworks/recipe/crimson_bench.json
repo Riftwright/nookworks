@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "bench",
+  "key": {
+    "L": "minecraft:crimson_slab",
+    "S": "#c:rods/wooden"
+  },
+  "pattern": [
+    "LLL",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:crimson_bench"
+  }
+}

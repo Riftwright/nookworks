@@ -193,15 +193,6 @@ public class MachineMenu extends AbstractContainerMenu {
         return this.wide(EXTRA);
     }
 
-    /** How many tanks the machine shows. */
-    public int tankCount() {
-        int n = 0;
-        while (n < MAX_TANKS && this.data.get(KINDS + n) >= 0) {
-            n++;
-        }
-        return n;
-    }
-
     public int tankAmount(int i) {
         return this.wide(TANKS + i * 2);
     }

@@ -1,9 +1,15 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "electric_furnace"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
     "F": "minecraft:furnace",
-    "C": "minecraft:copper_ingot",
+    "C": "#c:ingots/copper",
     "M": "nookworks:machine_chassis",
     "R": "minecraft:redstone"
   },

@@ -86,9 +86,9 @@ final class R10RequestTests {
     /** A sender or receiver and an ender pearl make the horizontal one; a chorus fruit no longer does. */
     private static void warpRecipes(GameTestHelper helper) {
         ItemStack pearl = new ItemStack(Items.ENDER_PEARL);
-        check(helper, crafted(helper, new ItemStack(ModItems.ITEM_WARP_SENDER.get()), pearl).is(ModItems.LINE_WARP_SENDER.get()),
+        check(helper, crafted(helper, new ItemStack(ModItems.ITEM_WARP_SENDER.get()), pearl).is(ModItems.HORIZONTAL_ITEM_WARP_SENDER.get()),
                 "a sender and an ender pearl make the horizontal sender");
-        check(helper, crafted(helper, new ItemStack(ModItems.ITEM_WARP_RECEIVER.get()), pearl).is(ModItems.LINE_WARP_RECEIVER.get()),
+        check(helper, crafted(helper, new ItemStack(ModItems.ITEM_WARP_RECEIVER.get()), pearl).is(ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get()),
                 "a receiver and an ender pearl make the horizontal receiver");
         check(helper, crafted(helper, new ItemStack(ModItems.ITEM_WARP_SENDER.get()), new ItemStack(Items.CHORUS_FRUIT)).isEmpty(),
                 "a chorus fruit no longer makes one");

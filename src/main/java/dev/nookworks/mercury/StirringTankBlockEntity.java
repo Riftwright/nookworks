@@ -364,6 +364,6 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         // making mud, the water it stirs in is what counts, not the mercury it has no use for
         Component held = this.makingMud() ? Component.translatable("nookworks.water.amount", this.waterStored(), WATER_TANK)
                 : this.mercuryText();
-        return Component.translatable("nookworks.machine.mercury_status", this.energyText(), held, this.progress * 100 / MachineTuning.time(TICKS));
+        return Component.translatable("nookworks.machine.mercury_status", this.energyText(), held, MachineTuning.percent(this.progress, MachineTuning.time(TICKS)));
     }
 }

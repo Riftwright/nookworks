@@ -2,7 +2,11 @@ package dev.nookworks.drive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
@@ -15,6 +19,7 @@ import dev.nookworks.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -61,19 +66,59 @@ public class DriveWheelBlockEntity extends BlockEntity implements DriveSource {
     /**
      * A belt to the wheel at {@code other}, of {@code kind}, and what it was made with: {@code count} of {@code item}.
      * {@code farWheel} is that wheel's {@link #wheelId}, or 0 for a belt saved before belts knew it (any wheel there is
-     * taken to be the one).
+     * taken to be the one). {@code madeOf} is what of those carried more than the item (an anvil's name), as it was, the
+     * rest being plain: it comes back as it went in (a belt kept item and count only, and a named Rope came back
+     * unnamed). {@code tiedBy} is the player who tied it, or null for one tied before belts kept it, or by no one known:
+     * whose leave a block set down on its line asks ({@link Belts#onPlace}).
      */
-    public record Belt(BlockPos other, BeltKind kind, Item item, int count, long farWheel) {
+    public record Belt(BlockPos other, BeltKind kind, Item item, int count, long farWheel, List<ItemStack> madeOf,
+            @Nullable UUID tiedBy) {
         public static final Codec<Belt> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockPos.CODEC.fieldOf("other").forGetter(Belt::other),
                 StringRepresentable.fromEnum(BeltKind::values).fieldOf("kind").forGetter(Belt::kind),
                 BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(Belt::item),
                 Codec.INT.fieldOf("count").forGetter(Belt::count),
-                Codec.LONG.optionalFieldOf("far_wheel", 0L).forGetter(Belt::farWheel)).apply(i, Belt::new));
+                Codec.LONG.optionalFieldOf("far_wheel", 0L).forGetter(Belt::farWheel),
+                // both saved only when there is something to say, so a belt of plain rope saves as before
+                ItemStack.CODEC.listOf().optionalFieldOf("made_of", List.of()).forGetter(Belt::madeOf),
+                UUIDUtil.CODEC.optionalFieldOf("tied_by").forGetter(belt -> Optional.ofNullable(belt.tiedBy())))
+                .apply(i, (other, kind, item, count, farWheel, madeOf, tiedBy) -> new Belt(other, kind, item, count, farWheel,
+                        madeOf, tiedBy.orElse(null))));
+
+        public Belt {
+            madeOf = List.copyOf(madeOf);
+        }
+
+        /** A belt of plain {@code item}, tied by no one known: as belts were saved before they kept either. */
+        public Belt(BlockPos other, BeltKind kind, Item item, int count, long farWheel) {
+            this(other, kind, item, count, farWheel, List.of(), null);
+        }
 
         /** The same belt, its far wheel at {@code other}. */
         Belt to(BlockPos other) {
-            return new Belt(other, this.kind, this.item, this.count, this.farWheel);
+            return new Belt(other, this.kind, this.item, this.count, this.farWheel, this.madeOf, this.tiedBy);
+        }
+
+        /**
+         * What it gives back, in stacks a hand can hold: what it was made of that carried more than the item, as it was,
+         * and the rest of its count as plain {@code item}.
+         */
+        public List<ItemStack> givenBack() {
+            List<ItemStack> back = new ArrayList<>();
+            int plain = this.count;
+            for (ItemStack made : this.madeOf) {
+                int n = Math.min(made.getCount(), plain);
+                if (n > 0) {
+                    back.add(made.copyWithCount(n));
+                    plain -= n;
+                }
+            }
+            for (int left = plain; left > 0; ) {
+                int n = Math.min(left, this.item.getDefaultMaxStackSize());
+                back.add(new ItemStack(this.item, n));
+                left -= n;
+            }
+            return back;
         }
     }
 
@@ -235,21 +280,34 @@ public class DriveWheelBlockEntity extends BlockEntity implements DriveSource {
             Direction.Axis axis = this.axis();
             boolean askew = far.axis() != axis || belt.other().get(axis) != this.worldPosition.get(axis);
             if (askew || this.owns(belt.other()) && Belts.blocker(level, this.worldPosition, belt.other(), axis) != null) {
-                Vec3 middle = Vec3.atCenterOf(this.worldPosition).lerp(Vec3.atCenterOf(belt.other()), 0.5);
-                drop(level, middle, belt);
-                level.playSound(null, middle.x, middle.y, middle.z, belt.kind().snapSound(), SoundSource.BLOCKS, 1.0F, 0.8F);
-                far.remove(this.worldPosition);
-                this.remove(belt.other());
+                this.snap(level, belt);
             }
         }
     }
 
     private static void drop(Level level, Vec3 at, Belt belt) {
-        for (int left = belt.count(); left > 0; ) {
-            int n = Math.min(left, belt.item().getDefaultMaxStackSize());
-            Containers.dropItemStack(level, at.x, at.y, at.z, new ItemStack(belt.item(), n));
-            left -= n;
+        for (ItemStack back : belt.givenBack()) {
+            Containers.dropItemStack(level, at.x, at.y, at.z, back);
         }
+    }
+
+    /**
+     * Its belts looked along again next tick, not at the next check: a block set down on one's line where its tier may
+     * no longer build, by someone who may, is let stand ({@link Belts#onPlace}), and snaps the belt if it stays.
+     */
+    void recheck() {
+        this.turned = true;
+    }
+
+    /** Snaps {@code belt}, which this end owns, as something come into its way does: its rope or chain dropped at the middle, both ends let go. */
+    private void snap(Level level, Belt belt) {
+        Vec3 middle = Vec3.atCenterOf(this.worldPosition).lerp(Vec3.atCenterOf(belt.other()), 0.5);
+        drop(level, middle, belt);
+        level.playSound(null, middle.x, middle.y, middle.z, belt.kind().snapSound(), SoundSource.BLOCKS, 1.0F, 0.8F);
+        if (level.isLoaded(belt.other()) && level.getBlockEntity(belt.other()) instanceof DriveWheelBlockEntity far) {
+            far.remove(this.worldPosition);
+        }
+        this.remove(belt.other());
     }
 
     /** Sneak-used with an empty hand: every belt off, its rope or chain into the player's hands, the far ends freed. */
@@ -263,13 +321,10 @@ public class DriveWheelBlockEntity extends BlockEntity implements DriveSource {
             }
             // the far end loaded: given back by the same rule as breaking (a stale belt, already given back, is not)
             boolean owed = this.level == null || !this.level.isLoaded(belt.other()) || this.givesBack(this.level, belt);
-            for (int left = owed ? belt.count() : 0; left > 0; ) {
-                int n = Math.min(left, belt.item().getDefaultMaxStackSize());
-                ItemStack back = new ItemStack(belt.item(), n);
+            for (ItemStack back : owed ? belt.givenBack() : List.<ItemStack>of()) {
                 if (!player.getInventory().add(back)) {
                     player.drop(back, false, Prediction.PREDICTED);
                 }
-                left -= n;
             }
             if (this.level != null && this.level.isLoaded(belt.other())
                     && this.level.getBlockEntity(belt.other()) instanceof DriveWheelBlockEntity far) {

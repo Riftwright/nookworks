@@ -18,7 +18,7 @@ import dev.nookworks.block.HubStoneBlock;
 import dev.nookworks.block.ItemWarpReceiverBlock;
 import dev.nookworks.block.ItemWarpSenderBlock;
 import dev.nookworks.block.LaserBlock;
-import dev.nookworks.block.LineWarpBlock;
+import dev.nookworks.block.HorizontalItemWarpBlock;
 import dev.nookworks.block.MagnetChestBlock;
 import dev.nookworks.block.NestedTimerBlock;
 import dev.nookworks.block.OilLampBlock;
@@ -122,10 +122,10 @@ public final class ModBlocks {
             ItemWarpSenderBlock::new, p -> stoneProperties(p));
     public static final DeferredBlock<ItemWarpReceiverBlock> ITEM_WARP_RECEIVER = BLOCKS.registerBlock("item_warp_receiver",
             ItemWarpReceiverBlock::new, p -> stoneProperties(p));
-    public static final DeferredBlock<LineWarpBlock> LINE_WARP_SENDER = BLOCKS.registerBlock("horizontal_item_warp_sender",
-            p -> new LineWarpBlock(true, p), p -> stoneProperties(p));
-    public static final DeferredBlock<LineWarpBlock> LINE_WARP_RECEIVER = BLOCKS.registerBlock("horizontal_item_warp_receiver",
-            p -> new LineWarpBlock(false, p), p -> stoneProperties(p));
+    public static final DeferredBlock<HorizontalItemWarpBlock> HORIZONTAL_ITEM_WARP_SENDER = BLOCKS.registerBlock("horizontal_item_warp_sender",
+            p -> new HorizontalItemWarpBlock(true, p), p -> stoneProperties(p));
+    public static final DeferredBlock<HorizontalItemWarpBlock> HORIZONTAL_ITEM_WARP_RECEIVER = BLOCKS.registerBlock("horizontal_item_warp_receiver",
+            p -> new HorizontalItemWarpBlock(false, p), p -> stoneProperties(p));
 
     // A sieve on legs with a funnel under it, dropping into whatever stands below: a chest there has to open, and a
     // chest will not open under a block that carries redstone. The cabinet machines stay solid, as they look.

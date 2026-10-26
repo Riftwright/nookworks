@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "velarium"
+    }
+  ],
   "type": "nookworks:heating",
   "category": "misc",
   "ingredient": [

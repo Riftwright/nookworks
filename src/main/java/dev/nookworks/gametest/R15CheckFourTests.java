@@ -27,6 +27,7 @@ import dev.nookworks.fluid.FluidPipeBlockEntity;
 import dev.nookworks.machine.CrusherBlockEntity;
 import dev.nookworks.machine.GeneratorBlockEntity;
 import dev.nookworks.machine.MachineIO;
+import dev.nookworks.machine.MachineTuning;
 import dev.nookworks.machine.MotorBlockEntity;
 import dev.nookworks.oil.OilPressBlockEntity;
 import dev.nookworks.registry.ModBarter;
@@ -199,7 +200,7 @@ final class R15CheckFourTests {
         int had = motor.energyStored();
         helper.runAfterDelay(40, () -> {
             int spent = had - motor.energyStored();
-            check(helper, !worked(theirs) && spent == 0, "a stranger's press against the claimed motor's shaft is turned: turns "
+            check(helper, !worked(theirs) && spent <= MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 40, "a stranger's press against the claimed motor's shaft is turned: turns "
                     + theirs.turns() + ", oil " + theirs.stored() + ", the claim's owner's FE spent " + spent);
             check(helper, worked(own), "the claim's owner's own press against their motor, a step out of the claim, is turned");
             helper.succeed();
@@ -228,7 +229,7 @@ final class R15CheckFourTests {
         int had = motor.energyStored();
         helper.runAfterDelay(40, () -> {
             int spent = had - motor.energyStored();
-            check(helper, !worked(theirs) && spent == 0, "a stranger's wheel and press joined to the claimed motor's wheel are turned: turns "
+            check(helper, !worked(theirs) && spent <= MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 40, "a stranger's wheel and press joined to the claimed motor's wheel are turned: turns "
                     + theirs.turns() + ", oil " + theirs.stored() + ", the claim's owner's FE spent " + spent);
             check(helper, worked(own), "the claim's owner's own press beyond their wheels, out of the claim, is turned");
             helper.succeed();

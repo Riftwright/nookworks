@@ -50,6 +50,14 @@ public final class MachineTuning {
         return (int) Math.floor(owed + exact + 1e-9);
     }
 
+    /**
+     * How far along {@code progress} of {@code max} is, in percent, 0 to 100: with the workTime setting lowered mid-piece
+     * a machine's progress may stand past its new time for the tick before it finishes, and read 120 % meanwhile.
+     */
+    public static int percent(int progress, int max) {
+        return max <= 0 ? 0 : (int) Math.clamp(progress * 100L / max, 0, 100);
+    }
+
     /** Ticks a machine takes over a job, or between one and the next. */
     public static int time(int base) {
         return scaled(base, NookworksConfig.MACHINE_TIME);

@@ -26,6 +26,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ThreadedLevelLightEngine;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.gametest.GameTestHooks;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -69,6 +71,9 @@ public final class NookworksGameTests {
         RopeSignalTests.register();
         FixTests.register();
         R18FixTests.register();
+        BotPathTests.register();
+        BotRulesTests.register();
+        BotDigTests.register();
         LineTests.register();
         FeatureTests.register();
         PlayTests.register();
@@ -135,6 +140,12 @@ public final class NookworksGameTests {
         StructureCopyTests.register();
         TurnedShapeTests.register();
         EggsAndCampfiresTests.register();
+        LowItemTests.register();
+        BenchTests.register();
+        FurnitureApartTests.register();
+        RootboundTests.register();
+        CompatSweepTests.register();
+        ForeignBlockTests.register();
     }
 
     public static void register(IEventBus modEventBus) {
@@ -144,7 +155,31 @@ public final class NookworksGameTests {
         DataTests.listen();
         R15LateAuditTests.listen(modEventBus);
         FUNCTIONS.register(modEventBus);
+        ForeignBlockTests.listen(modEventBus); // stand-ins for another mod's blocks, in GameTest runs only
         modEventBus.addListener(NookworksGameTests::onRegisterTests);
+        NeoForge.EVENT_BUS.addListener(NookworksGameTests::watchdog);
+    }
+
+    /**
+     * A GameTest run that has not ended after this long is stopped, failing the build: a test that never finished once
+     * kept the run going for hours, a progress line every tick, until its log held 72 GB (2026-10-23; a full run takes
+     * under a minute). {@code -Dnookworks.gametestMinutes=N} for a longer one.
+     */
+    private static final long WATCHDOG_MINUTES = Long.getLong("nookworks.gametestMinutes", 20);
+    /** When the GameTest server first ticked; by the clock, as the server runs its ticks as fast as it can. */
+    private static long firstTick;
+
+    private static void watchdog(ServerTickEvent.Post event) {
+        if (!(event.getServer() instanceof net.minecraft.gametest.framework.GameTestServer)) {
+            return;
+        }
+        long now = System.nanoTime();
+        if (firstTick == 0) {
+            firstTick = now;
+        } else if (now - firstTick > java.util.concurrent.TimeUnit.MINUTES.toNanos(WATCHDOG_MINUTES)) {
+            Nookworks.LOGGER.error("The GameTests are still running after {} minutes, so a test never finished: stopped", WATCHDOG_MINUTES);
+            Runtime.getRuntime().halt(3);
+        }
     }
 
     static void test(String name, Consumer<GameTestHelper> body) {
@@ -193,7 +228,14 @@ public final class NookworksGameTests {
                 "timber_spares_a_village_house", "timber_fells_a_tree_by_the_road", "a_tree_grown_by_bone_meal_fells_from_the_bottom",
                 "an_old_marked_stump_still_fells", "timber_leaves_decay_fast_but_spare_other_trees",
                 "conflicting_mods_stand_our_features_down", "timber_fells_a_huge_fungus", "timber_spares_a_built_stem_wall");
-        needs(NookworksConfig.FAST_LEAF_DECAY, "timber_leaves_decay_fast_but_spare_other_trees");
+        needs(NookworksConfig.FAST_LEAF_DECAY, "timber_leaves_decay_fast_but_spare_other_trees",
+                "timber_with_silk_touch_drops_the_leaves", "timber_leaves_can_go_at_once");
+        needs(NookworksConfig.TIMBER_ENABLED, "timber_with_silk_touch_drops_the_leaves", "timber_leaves_can_go_at_once",
+                "silk_touch_leaves_stop_before_the_axe_breaks");
+        needs(NookworksConfig.FAST_LEAF_DECAY, "silk_touch_leaves_stop_before_the_axe_breaks");
+        needs(NookworksConfig.PROTECT_TOOLS, "silk_touch_leaves_stop_before_the_axe_breaks");
+        needs(NookworksConfig.TIMBER_ENABLED, "a_silk_touch_axe_switches_its_leaf_gathering", "a_silk_touch_axe_with_leaf_gathering_off_leaves_the_leaves");
+        needs(NookworksConfig.FAST_LEAF_DECAY, "a_silk_touch_axe_switches_its_leaf_gathering", "a_silk_touch_axe_with_leaf_gathering_off_leaves_the_leaves");
         needs(NookworksConfig.VEIN_ENABLED, "vein_mines_connected_ore", "vein_runs_on_into_deepslate", "vein_stops_before_tool_breaks");
         needs(NookworksConfig.PROTECT_TOOLS, "vein_stops_before_tool_breaks");
         needs(NookworksConfig.HAMMER_ENABLED, "hammer_mines_3x3_facing_player", "hammer_spares_unsuitable_blocks",

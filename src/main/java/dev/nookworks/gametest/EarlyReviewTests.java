@@ -49,6 +49,7 @@ import dev.nookworks.machine.Drive;
 import dev.nookworks.machine.GeneratorBlockEntity;
 import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineStatus;
+import dev.nookworks.machine.MachineTuning;
 import dev.nookworks.machine.MotorBlockEntity;
 import dev.nookworks.mercury.MercuryRecipes;
 import dev.nookworks.mercury.RetortBlockEntity;
@@ -156,6 +157,9 @@ final class EarlyReviewTests {
         test("oil_press_by_hand", EarlyReviewTests::oilPressByHand);
         test("motor_turns_the_oil_press", 300, EarlyReviewTests::motorTurnsTheOilPress);
         test("two_motors_turn_a_press_no_faster_than_one", 200, EarlyReviewTests::twoMotorsTurnNoFasterThanOne);
+        test("a_powered_motor_runs_until_a_signal_stops_it", 200, EarlyReviewTests::poweredMotorRuns);
+        test("an_oiled_motor_runs_without_its_hum", 100, EarlyReviewTests::oiledMotorIsQuiet);
+        test("a_motor_short_of_power_turns_at_the_rate_it_is_paid", 400, EarlyReviewTests::motorShortOfPower);
         test("oil_burns_in_a_generator", EarlyReviewTests::oilBurnsInAGenerator);
         test("lubricated_door_is_silent", EarlyReviewTests::lubricatedDoorIsSilent);
         test("iron_pot_fries_in_oil", 400, EarlyReviewTests::ironPotFriesInOil);
@@ -1078,7 +1082,10 @@ final class EarlyReviewTests {
         helper.succeed();
     }
 
-    /** A powered Motor set against the press turns it until the seeds are gone, then stops drawing power. */
+    /**
+     * A powered Motor set against the press turns it until the seeds are gone, and turns on after, drawing only its own
+     * small power (the user, 2026-10-25: powered, a motor runs).
+     */
     static void motorTurnsTheOilPress(GameTestHelper helper) {
         BlockPos pressPos = new BlockPos(2, 2, 1);
         BlockPos motorPos = pressPos.west();
@@ -1095,17 +1102,81 @@ final class EarlyReviewTests {
         helper.startSequence().thenWaitUntil(() -> {
             check(helper, press.stored() == 200 && press.getItem(OilPressBlockEntity.INPUT).isEmpty(),
                     "four pumpkin seeds pressed to 200 mB");
-            check(helper, !helper.getBlockState(motorPos).getValue(MotorBlock.POWERED), "the motor stops");
         }).thenExecute(() -> left[0] = motor.energyStored()).thenExecuteAfter(40, () -> {
             // read again two seconds on, not twice in the same tick
-            check(helper, motor.energyStored() == left[0] && left[0] > 0,
-                    "and stops drawing power: " + left[0] + " FE then, " + motor.energyStored() + " now");
+            int spent = left[0] - motor.energyStored();
+            check(helper, helper.getBlockState(motorPos).getValue(MotorBlock.POWERED) && motor.guiStatus() == MachineStatus.IDLING,
+                    "the motor turns on, idling: " + motor.guiStatus());
+            check(helper, spent > 0 && spent <= MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 40,
+                    "on its idling power only: " + spent + " FE in forty ticks");
         }).thenSucceed();
     }
 
     /**
-     * Two Motors set against one press turn it no faster than one: one turns it, the other stands by and spends
-     * nothing, and takes over when the first runs out of power (the user, 2026-10-01: doubling made no sense).
+     * A powered Motor runs with nothing on its shaft (the user, 2026-10-25: powered, it should turn, as a Create motor
+     * does), on its small idling power; a redstone signal stops it, spending nothing, and says only that it is
+     * stopped; out of power it stands still.
+     */
+    static void poweredMotorRuns(GameTestHelper helper) {
+        BlockPos motorPos = new BlockPos(1, 2, 1);
+        helper.setBlock(motorPos, ModOil.MOTOR.get().defaultBlockState().setValue(MotorBlock.FACING, Direction.EAST));
+        var motor = helper.getBlockEntity(motorPos, MotorBlockEntity.class);
+        int full = (int) motor.energy().getCapacityAsLong();
+        motor.energy().set(full);
+        int[] at = new int[1];
+        helper.startSequence().thenExecuteAfter(20, () -> {
+            check(helper, helper.getBlockState(motorPos).getValue(MotorBlock.POWERED) && motor.guiStatus() == MachineStatus.IDLING,
+                    "powered, with nothing to turn, it runs: " + motor.guiStatus());
+            int spent = full - motor.energyStored();
+            check(helper, spent > 0 && spent <= MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 20,
+                    "on its idling power: " + spent + " FE in twenty ticks");
+            helper.setBlock(motorPos.above(), net.minecraft.world.level.block.Blocks.REDSTONE_BLOCK);
+        }).thenExecuteAfter(2, () -> at[0] = motor.energyStored()).thenExecuteAfter(MotorBlockEntity.LAMP_HOLD + 10, () -> {
+            check(helper, motor.guiStatus() == MachineStatus.STOPPED, "a signal stops it, plainly: " + motor.guiStatus());
+            check(helper, !helper.getBlockState(motorPos).getValue(MotorBlock.POWERED) && motor.energyStored() == at[0],
+                    "standing still and spending nothing: " + (at[0] - motor.energyStored()) + " FE");
+            helper.setBlock(motorPos.above(), net.minecraft.world.level.block.Blocks.AIR);
+            motor.energy().set(0);
+        }).thenExecuteAfter(MotorBlockEntity.LAMP_HOLD + 10, () -> {
+            check(helper, !helper.getBlockState(motorPos).getValue(MotorBlock.POWERED) && motor.guiStatus() == MachineStatus.NO_POWER,
+                    "out of power, it stands still: " + motor.guiStatus());
+        }).thenSucceed();
+    }
+
+    /**
+     * A Motor fed 11 FE/t - over half a machine's 20 - turns the press about as often as that pays for, not every
+     * turn nor never (the self-review of 1.2.1: idle payments and idle ticks counted toward a turn made it either).
+     */
+    static void motorShortOfPower(GameTestHelper helper) {
+        BlockPos pressPos = new BlockPos(2, 2, 1);
+        helper.setBlock(pressPos, ModOil.OIL_PRESS.get());
+        helper.setBlock(pressPos.west(), ModOil.MOTOR.get().defaultBlockState().setValue(MotorBlock.FACING, Direction.EAST));
+        var press = helper.getBlockEntity(pressPos, OilPressBlockEntity.class);
+        var motor = helper.getBlockEntity(pressPos.west(), MotorBlockEntity.class);
+        press.setItem(OilPressBlockEntity.INPUT, new ItemStack(ModOil.SUNFLOWER_SEEDS.get(), 64));
+        int feed = MachineTuning.energy(11);
+        helper.onEachTick(() -> motor.energy().set((int) Math.min(motor.energy().getCapacityAsLong(), motor.energyStored() + feed)));
+        helper.runAfterDelay(300, () -> {
+            int turns = press.stored() / 60 * 2 + press.turns();
+            // 300 ticks at full power is 30 turns; 11 of 20 FE pays for about 16
+            check(helper, turns >= 12 && turns <= 20, "about sixteen turns on 11 FE/t, not " + turns);
+            helper.succeed();
+        });
+    }
+
+    /** A Motor takes the Oil Can's oil (its hum stops, MotorBlock#animateTick; lost with the block, as a door's). */
+    static void oiledMotorIsQuiet(GameTestHelper helper) {
+        BlockPos motorPos = new BlockPos(1, 2, 1);
+        helper.setBlock(motorPos, ModOil.MOTOR.get().defaultBlockState().setValue(MotorBlock.FACING, Direction.EAST));
+        check(helper, helper.getBlockState(motorPos).is(dev.nookworks.feature.Lubrication.LUBRICATABLE), "a motor takes oil");
+        check(helper, dev.nookworks.feature.Lubrication.lubricate(helper.getLevel(), helper.absolutePos(motorPos))
+                && dev.nookworks.feature.Lubrication.isLubricated(helper.getLevel(), helper.absolutePos(motorPos)), "and keeps it");
+        helper.succeed();
+    }
+
+    /**
+     * Two Motors set against one press turn it no faster than one: one turns it, the other stands by on its idling
+     * power, and takes over when the first runs out of power (the user, 2026-10-01: doubling made no sense).
      */
     static void twoMotorsTurnNoFasterThanOne(GameTestHelper helper) {
         BlockPos pressPos = new BlockPos(2, 2, 1);
@@ -1121,8 +1192,8 @@ final class EarlyReviewTests {
         helper.runAfterDelay(40, () -> {
             int turns = press.stored() / 60 * 2 + press.turns();
             check(helper, turns >= 3 && turns <= 5, "forty ticks are four turns, as for one motor, not " + turns);
-            List<MotorBlockEntity> spent = motors.stream().filter(m -> m.energyStored() < full).toList();
-            check(helper, spent.size() == 1, "one motor spends power, not " + spent.size());
+            List<MotorBlockEntity> spent = motors.stream().filter(m -> full - m.energyStored() > MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 40).toList();
+            check(helper, spent.size() == 1, "one motor spends a machine's power, not " + spent.size());
             MotorBlockEntity other = motors.get(spent.get(0) == motors.get(0) ? 1 : 0);
             check(helper, other.guiStatus() == MachineStatus.ANOTHER_MOTOR, "the other stands by: " + other.guiStatus());
             spent.get(0).energy().set(0);

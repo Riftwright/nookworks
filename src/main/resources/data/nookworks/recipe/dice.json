@@ -3,8 +3,8 @@
   "category": "misc",
   "ingredients": [
     "minecraft:bone",
-    "minecraft:black_dye",
-    "minecraft:red_dye"
+    "#c:dyes/black",
+    "#c:dyes/red"
   ],
   "result": {
     "count": 2,

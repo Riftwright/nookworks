@@ -157,6 +157,10 @@ neoForge {
             // Its own folder, so a test run never touches run/ (the user's worlds and logs, maybe in use).
             gameDirectory = project.file('run-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // A hook of ours (or of any mod here) that finds no place in the game's code stops the test run at load, as it
+            // stopped every game before 2026-10-23: in players' games such a hook is now left out (defaultRequire 0 in
+            // nookworks.mixins.json, the user: クラッシュは避けたい), so this is where a Minecraft update or a clash shows.
+            systemProperty 'mixin.debug.countInjections', 'true'
             // -PcaptureCompat makes this version's save-compatibility fixture (gametest/SaveCompat) instead of checking
             // the ones kept: every block of ours, filled, into data/nookworks/structure/compat/<version>
             if (project.hasProperty('captureCompat')) {
@@ -301,7 +305,8 @@ tasks.matching { it.name == 'runAgentClient' }.configureEach {
 }
 
 // The agent input bridge drives the dev client for automated visual checks. It is inert without
-// -Dnookworks.agentInput=true, but there is no reason to ship it, so it is left out of the published jar.
+// -Dnookworks.agentInput=true, but there is no reason to ship it, so it is left out of the published jar, and the
+// agent bot's planner (dev/nookworks/dev, which it and BotPathTests use) with it.
 // The GameTests and their arena are only registered when the game runs in GameTest mode, and would be a fifth
 // of the jar for nothing, so they are left out too. check_release.py makes sure nothing still links to either.
 tasks.named('jar') {
@@ -309,6 +314,7 @@ tasks.named('jar') {
     var licenseName = "LICENSE_${mod_id}" // read here: the configuration cache keeps no project for the rename to ask
     from('LICENSE') { rename { licenseName } }
     exclude 'dev/nookworks/client/dev/**'
+    exclude 'dev/nookworks/dev/**'
     exclude 'dev/nookworks/gametest/**'
     exclude 'data/nookworks/structure/arena.nbt'
     exclude 'data/nookworks/structure/compat/**' // the save-compatibility fixtures, for the GameTests only

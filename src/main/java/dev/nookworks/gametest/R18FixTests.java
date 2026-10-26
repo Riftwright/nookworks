@@ -266,17 +266,24 @@ final class R18FixTests {
         });
     }
 
-    /** A row of 520 blocks past its bookend: the bookend broken, it comes down whole (512 on, it stood before). */
+    /**
+     * A row of 520 blocks past its bookend: the bookend broken, it comes down whole (512 on, it stood before). Built far
+     * from every test (2026-10-23): built over them, it kept the chunks it ran across loaded and let them go as it passed,
+     * and a test of the same batch set down in one of them meanwhile waited for its chunks without end - the whole run
+     * hung, a progress line every tick, until its log held 72 GB.
+     */
     private static void longRow(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        BlockPos at = helper.absolutePos(new BlockPos(1, 60, 1)); // high over the other tests it runs east across
+        BlockPos at = helper.absolutePos(new BlockPos(1, 60, 1)).offset(40_000, 0, 40_000);
         int length = 520;
-        // its blocks fall a tick apart: their chunks must tick, which far from a test they do only kept loaded
+        // its blocks fall a tick apart: their chunks must tick, which far from a test they do only kept loaded - and
+        // loaded in full now, with the chunks round them (entities tick only there), as the Lode Pearl's far ground is
         for (int cx = at.getX() >> 4; cx <= (at.getX() + length) >> 4; cx++) {
             int chunkX = cx;
             if (level.setChunkForced(chunkX, at.getZ() >> 4, true)) {
                 AfterTest.undo(helper, () -> level.setChunkForced(chunkX, at.getZ() >> 4, false));
             }
+            NookworksGameTests.loadChunks(level, chunkX, at.getZ() >> 4, 2);
         }
         BlockState bookend = ModBlocks.BOOKEND.get().defaultBlockState().setValue(BookendBlock.FACING, Direction.SOUTH)
                 .setValue(BookendBlock.BOOKS, 1);

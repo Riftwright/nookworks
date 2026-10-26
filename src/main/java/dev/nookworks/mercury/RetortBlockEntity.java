@@ -424,7 +424,7 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     @Override
     public Component status() {
-        Component base = Component.translatable("nookworks.machine.mercury_status", this.energyText(), this.mercuryText(), this.progress * 100 / MachineTuning.time(TICKS));
+        Component base = Component.translatable("nookworks.machine.mercury_status", this.energyText(), this.mercuryText(), MachineTuning.percent(this.progress, MachineTuning.time(TICKS)));
         return this.waterStored() <= 0 ? base
                 : base.copy().append(Component.translatable("nookworks.machine.retort_water", this.waterStored(), WATER_TANK));
     }

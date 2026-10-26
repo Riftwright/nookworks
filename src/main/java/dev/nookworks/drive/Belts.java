@@ -1,16 +1,19 @@
 package dev.nookworks.drive;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.function.BiPredicate;
 
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.DrawRights;
 import dev.nookworks.feature.Permission;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -162,14 +165,13 @@ public final class Belts {
         if (player != null && level instanceof ServerLevel server && claimed(server, from, to, axis, player)) {
             return Component.translatable(key + "not_here");
         }
-        if (player != null && !free) {
-            take(player, stack, item, count);
-        }
+        List<ItemStack> madeOf = player != null && !free ? take(player, stack, item, count) : List.of();
         int paid = free ? 0 : count;
+        UUID tiedBy = player == null ? null : DrawRights.ownerOf(player);
         // both ends know what it took: whichever lets it go (broken, taken off, snapped) gives it back, and the other end
         // only lets go of it
-        a.add(new DriveWheelBlockEntity.Belt(to.immutable(), kind, item, paid, b.wheelId()));
-        b.add(new DriveWheelBlockEntity.Belt(from.immutable(), kind, item, paid, a.wheelId()));
+        a.add(new DriveWheelBlockEntity.Belt(to.immutable(), kind, item, paid, b.wheelId(), madeOf, tiedBy));
+        b.add(new DriveWheelBlockEntity.Belt(from.immutable(), kind, item, paid, a.wheelId(), madeOf, tiedBy));
         Vec3 middle = Vec3.atCenterOf(from).lerp(Vec3.atCenterOf(to), 0.5);
         level.playSound(null, middle.x, middle.y, middle.z, kind.sound(), SoundSource.BLOCKS, 1.0F, 1.0F);
         return null;
@@ -189,9 +191,14 @@ public final class Belts {
                 && (!level.isLoaded(pos) || !Permission.mayPlace(level, pos, Direction.UP, player))) != null;
     }
 
-    /** Takes {@code count} of {@code item}, from the stack in hand first and then from the rest of the inventory. */
-    private static void take(Player player, ItemStack inHand, Item item, int count) {
+    /**
+     * Takes {@code count} of {@code item}, from the stack in hand first and then from the rest of the inventory; gives
+     * what of it carried more than the item (a name, another mod's data), as it was, for the belt to give back so.
+     */
+    private static List<ItemStack> take(Player player, ItemStack inHand, Item item, int count) {
+        List<ItemStack> marked = new ArrayList<>();
         int fromHand = Math.min(count, inHand.getCount());
+        keep(marked, inHand, fromHand);
         inHand.shrink(fromHand);
         int left = count - fromHand;
         var inventory = player.getInventory();
@@ -199,10 +206,26 @@ public final class Belts {
             ItemStack stack = inventory.getItem(slot);
             if (stack != inHand && stack.is(item)) {
                 int n = Math.min(left, stack.getCount());
+                keep(marked, stack, n);
                 stack.shrink(n);
                 left -= n;
             }
         }
+        return marked;
+    }
+
+    /** {@code n} of {@code stack} into {@code marked}, if it is more than its item (with those like it already there). */
+    private static void keep(List<ItemStack> marked, ItemStack stack, int n) {
+        if (n <= 0 || stack.getComponentsPatch().isEmpty()) {
+            return;
+        }
+        for (ItemStack kept : marked) {
+            if (ItemStack.isSameItemSameComponents(kept, stack)) {
+                kept.grow(n);
+                return;
+            }
+        }
+        marked.add(stack.copyWithCount(n));
     }
 
     /**
@@ -217,8 +240,16 @@ public final class Belts {
         List<BlockPos> placed = event instanceof BlockEvent.EntityMultiPlaceEvent several
                 ? several.getReplacedBlockSnapshots().stream().map(snapshot -> snapshot.getPos()).toList()
                 : List.of(event.getPos());
+        List<Crossing> lapsed = new ArrayList<>();
         for (BlockPos pos : placed) {
-            if (inABeltsWay(level, pos, level.getBlockState(pos))) {
+            for (Crossing crossing : crossings(level, pos, level.getBlockState(pos))) {
+                // whoever may build here sets it down; a belt tied before its tier lost the leave there (a claim made
+                // over its line since) gives way to it - it kept the claim's owner from building in their own claim
+                // (the 1.0 review's deferred note). One that has not lapsed keeps the block out, as before
+                if (event.getEntity() instanceof Player && level instanceof ServerLevel server && lapsed(server, pos, crossing.belt())) {
+                    lapsed.add(crossing);
+                    continue;
+                }
                 event.setCanceled(true);
                 if (event.getEntity() instanceof Player player) {
                     player.sendOverlayMessage(Component.translatable("block.nookworks.drive_wheel.belt_here"));
@@ -226,16 +257,38 @@ public final class Belts {
                 return;
             }
         }
+        // not snapped here: the block may yet be taken back (another listener, a door's other half), and a belt snapped
+        // stays snapped. Its wheel looks again next tick and snaps it then if the block stands in its way, as for a
+        // block a piston pushes in
+        lapsed.forEach(crossing -> crossing.wheel().recheck());
     }
+
+    /**
+     * Whether whoever tied {@code belt} may no longer build at {@code pos} - asked as them, as a break there (nothing is
+     * changed); for a belt tied before belts kept who tied them, or by no one known, as a stranger: then it gives way
+     * only in land a stranger may not build in, a claim, and stays in the way in open land as before.
+     */
+    private static boolean lapsed(ServerLevel level, BlockPos pos, DriveWheelBlockEntity.Belt belt) {
+        return !Permission.mayBreak(level, pos, Permission.actor(level, belt.tiedBy()));
+    }
+
+    /** A belt that passes through a block, from the wheel that owns it. */
+    private record Crossing(DriveWheelBlockEntity wheel, DriveWheelBlockEntity.Belt belt) {}
 
     /** Whether {@code state}, set at {@code pos}, would stand in the way of a belt tied there. */
     public static boolean inABeltsWay(Level level, BlockPos pos, BlockState state) {
+        return !crossings(level, pos, state).isEmpty();
+    }
+
+    /** Every belt {@code state}, set at {@code pos}, would stand in the way of. */
+    private static List<Crossing> crossings(Level level, BlockPos pos, BlockState state) {
+        List<Crossing> crossings = new ArrayList<>();
         if (LOADED.isEmpty()) {
-            return false;
+            return crossings;
         }
         VoxelShape shape = state.getCollisionShape(level, pos);
         if (shape.isEmpty()) {
-            return false;
+            return crossings;
         }
         AABB around = new AABB(pos).inflate(1);
         for (DriveWheelBlockEntity wheel : LOADED.toArray(DriveWheelBlockEntity[]::new)) {
@@ -247,11 +300,11 @@ public final class Belts {
                 // each belt once, from its owning end; only one that passes by here is walked along
                 if (wheel.owns(belt.other()) && new AABB(from).minmax(new AABB(belt.other())).intersects(around)
                         && along(from, belt.other(), wheel.axis(), (at, inside) -> at.equals(pos) && hits(shape, inside)) != null) {
-                    return true;
+                    crossings.add(new Crossing(wheel, belt));
                 }
             }
         }
-        return false;
+        return crossings;
     }
 
     /**

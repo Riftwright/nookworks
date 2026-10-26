@@ -14,7 +14,7 @@
   ],
   "key": {
     "I": "minecraft:iron_ingot",
-    "G": "minecraft:glass",
+    "G": "#c:glass_blocks/colorless",
     "R": "minecraft:redstone",
     "D": "minecraft:diamond",
     "X": "nookworks:machine_chassis"

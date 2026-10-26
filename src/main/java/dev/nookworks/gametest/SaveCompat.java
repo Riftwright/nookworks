@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -325,6 +325,23 @@ final class SaveCompat {
             // ItemWarpReceiverBlockEntity); one from before had no block entity, and is given one of no owner as its chunk
             // loads - and with no owner, every sender of no owner sends to it as before
             now.addProperty("entity", Nookworks.MODID + ":item_warp_receiver");
+        }
+        String furniture = now.get("state").getAsString();
+        String[] apart = furniture.matches(Nookworks.MODID + ":[a-z_]+_desk\\[.*") ? new String[] {"east_apart", "north_apart", "south_apart", "west_apart"}
+                : furniture.matches(Nookworks.MODID + ":[a-z_]+_(bench|wall_shelf)\\[.*") ? new String[] {"left_apart", "right_apart"} : new String[0];
+        if (apart.length > 0 && !furniture.contains("_apart=")) {
+            // 1.2.0: benches, desks and wall shelves are kept apart from the one beside them by a Wrench (DeskBlock,
+            // BenchBlock, WallShelfBlock: *_apart); one from before was kept apart from nothing, and loads so
+            TreeMap<String, String> properties = new TreeMap<>();
+            for (String pair : furniture.substring(furniture.indexOf('[') + 1, furniture.length() - 1).split(",")) {
+                properties.put(pair.substring(0, pair.indexOf('=')), pair.substring(pair.indexOf('=') + 1));
+            }
+            for (String key : apart) {
+                properties.put(key, "false");
+            }
+            StringBuilder out = new StringBuilder(furniture.substring(0, furniture.indexOf('[') + 1));
+            properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
+            now.addProperty("state", out.append(']').toString());
         }
         if (state.equals(Nookworks.MODID + ":filament_bulb")) {
             // 1.0.1: a Filament Bulb switches off and on by hand and by redstone (rope/FilamentBulbBlock, LIT and

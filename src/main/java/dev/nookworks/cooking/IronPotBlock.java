@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import com.mojang.logging.LogUtils;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.NookworksNetwork;
 import dev.nookworks.block.Clicks;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
@@ -43,15 +44,15 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -66,6 +67,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Iron Pot: a deep black iron pot for the fire. Set it over heat (on a Grill over a lit campfire, fire, magma, lava, a
@@ -393,6 +395,14 @@ public class IronPotBlock extends BaseEntityBlock {
             }
             return Clicks.REFUSED;
         }
+        if (stack.has(DataComponents.FOOD)) {
+            // a food no pot recipe takes (a Boiled Egg into the oil) went on to be eaten, or did nothing at all, with no
+            // word why (the kitchen play-test, item 8); other things in hand still act as on any block (one is set down)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("nookworks.iron_pot.not_an_ingredient").withStyle(ChatFormatting.RED));
+            }
+            return Clicks.REFUSED;
+        }
         return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
     }
 
@@ -425,7 +435,12 @@ public class IronPotBlock extends BaseEntityBlock {
                 }
             }
             if (out.isEmpty()) {
-                player.sendOverlayMessage(pot.describe());
+                NookworksNetwork.PotContents contents = pot.shown();
+                if (contents != null && player instanceof ServerPlayer to && to.connection.hasChannel(NookworksNetwork.PotContents.TYPE)) {
+                    PacketDistributor.sendToPlayer(to, contents); // fitted to the screen there
+                } else {
+                    player.sendOverlayMessage(pot.describe());
+                }
             } else {
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
             }

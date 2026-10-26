@@ -51,6 +51,7 @@ final class QuenchingTests {
     static void register() {
         test("velarium_heats_red_hot_one_at_a_time", QuenchingTests::heatsRedHot);
         test("a_red_hot_ingot_cannot_be_held_and_cools", QuenchingTests::cannotBeHeld);
+        test("a_red_hot_ingot_in_hand_earns_too_hot", QuenchingTests::tooHot);
         test("oil_cauldron_quenches_what_a_hopper_feeds_it", 60, QuenchingTests::quenchesFromAHopper);
         test("a_dispenser_dips_a_red_hot_ingot", 40, QuenchingTests::dispenserDips);
         test("velarium_gear_takes_tempered_ingots_and_reinforced_rods", QuenchingTests::gearTakesTempered);
@@ -88,6 +89,29 @@ final class QuenchingTests {
         var metal = MercuryRecipes.distillation(new ItemStack(ModItems.GOLD_AMALGAM.get())).velariumChance();
         check(helper, Math.abs(chance - 0.002F) < 1e-6 && Math.abs(metal - 0.001F) < 1e-6,
                 "Velarium two and a half times as often: rock's amalgam " + chance + ", a metal's " + metal);
+        helper.succeed();
+    }
+
+    /**
+     * Burned by a red-hot ingot, a survival player has "Too Hot to Handle" (a viewer's idea, 2026-10-23), an advancement
+     * hidden in the tab until had.
+     */
+    private static void tooHot(GameTestHelper helper) {
+        var server = helper.getLevel().getServer();
+        var advancement = server.getAdvancements().get(dev.nookworks.Nookworks.id("too_hot"));
+        check(helper, advancement != null && advancement.value().display().map(d -> d.hidden()).orElse(false), "a hidden advancement");
+        net.minecraft.server.level.ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        var aside = helper.absoluteVec(new Vec3(0.5, 8, 0.5));
+        player.snapTo(aside.x, aside.y, aside.z);
+        player.getAbilities().mayfly = true; // held up clear of the test: one falling to the void hangs the batch
+        player.getAbilities().flying = true;
+        player.onUpdateAbilities();
+        player.connection.markClientLoaded(); // a player just joined cannot be hurt until its client says it has loaded
+        check(helper, !player.getAdvancements().getOrStartProgress(advancement).isDone(), "not had before");
+        player.getInventory().add(redHot(helper.getLevel(), 0));
+        player.getInventory().tick();
+        check(helper, player.getAdvancements().getOrStartProgress(advancement).isDone(), "had once the ingot burns");
+        server.getPlayerList().remove(player);
         helper.succeed();
     }
 

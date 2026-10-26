@@ -3,6 +3,10 @@
     {
       "type": "nookworks:feature",
       "feature": "sorting"
+    },
+    {
+      "type": "nookworks:feature",
+      "feature": "velarium"
     }
   ],
   "parent": "minecraft:recipes/root",

@@ -122,7 +122,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements MachineInf
     @Override
     public Component status() {
         return this.progress > 0
-                ? Component.translatable("nookworks.machine.crusher.working", this.energyText(), this.progress * 100 / MachineTuning.time(TICKS_PER_ITEM))
+                ? Component.translatable("nookworks.machine.crusher.working", this.energyText(), MachineTuning.percent(this.progress, MachineTuning.time(TICKS_PER_ITEM)))
                 : Component.translatable("nookworks.machine.idle", this.energyText());
     }
 

@@ -87,14 +87,16 @@ public class CorrugatedSheetBlock extends Block implements SimpleWaterloggedBloc
     /**
      * Standing up (against a wall, or in the middle of its block) a sheet is a wall to mobs, as a closed trapdoor or a
      * glass pane is - they took it for open air and walked into it (a zombie at a sheet fence). Lying on a floor or under
-     * a ceiling it is walked over and under, as a carpet is.
+     * a ceiling it is walked over and under, as a carpet is. Lying in the middle of its block (the Wrench) it is a slab's
+     * floor to them, no way through: at head height in a passage two high they took it for open air and stuck under it
+     * (the user, 2026-10-22); at their feet they step up onto it, as onto a slab.
      */
     @Override
     protected boolean isPathfindable(BlockState state, PathComputationType type) {
         if (type == PathComputationType.WATER) {
             return state.getValue(WATERLOGGED);
         }
-        return state.getValue(FACING).getAxis() == Direction.Axis.Y && super.isPathfindable(state, type);
+        return state.getValue(FACING).getAxis() == Direction.Axis.Y && !state.getValue(CENTERED) && super.isPathfindable(state, type);
     }
 
     @Override

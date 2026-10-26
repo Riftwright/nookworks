@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "velarium"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "group": "velarium_ingot",

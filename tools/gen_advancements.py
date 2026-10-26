@@ -63,7 +63,7 @@ def riding(entity):
 HAMMERS = ("stone_hammer", "copper_hammer", "iron_hammer", "golden_hammer", "diamond_hammer", "netherite_hammer", "velarium_hammer")
 VELARIUM = ("velarium_sword", "velarium_pickaxe", "velarium_axe", "velarium_shovel", "velarium_hoe", "velarium_hammer",
             "velarium_helmet", "velarium_chestplate", "velarium_leggings", "velarium_boots")
-CHAIRS = [f"{w}_chair" for w in ("oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove", "cherry", "pale_oak",
+CHAIRS = [f"{w}_chair" for w in ("oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove", "cherry", "pale_oak", "poplar",
                                  "crimson", "warped", "bamboo", "dawnwood")]
 
 # id: (parent, icon, frame, criteria)
@@ -121,16 +121,16 @@ TREE = {
     # machines, and the power they run on
     "machine_chassis": ("root", "machine_chassis", "task", {"machine_chassis": has("machine_chassis")}),
     "generator": ("machine_chassis", "generator", "task", {"generator": has("generator")}),
-    "energy_cable": ("generator", "energy_cable", "task", {"cable": has("energy_cable")}),
-    "electric_furnace": ("generator", "electric_furnace", "task", {"furnace": has("electric_furnace")}),
-    "crusher": ("generator", "crusher", "task", {"crusher": has("crusher")}),
+    "energy_cable": ("machine_chassis", "energy_cable", "task", {"cable": has("energy_cable")}),
+    "electric_furnace": ("machine_chassis", "electric_furnace", "task", {"furnace": has("electric_furnace")}),
+    "crusher": ("machine_chassis", "crusher", "task", {"crusher": has("crusher")}),
     "wood_chips": ("crusher", "wood_chips", "task", {"chips": has("wood_chips")}),
-    "compressor": ("generator", "compressor", "task", {"compressor": has("compressor")}),
+    "compressor": ("machine_chassis", "compressor", "task", {"compressor": has("compressor")}),
     "recycler": ("crusher", "recycler", "task", {"recycler": has("recycler")}),
-    "spawner_controller": ("generator", "spawner_controller", "task", {"controller": has("spawner_controller")}),
-    "barter_terminal": ("generator", "barter_terminal", "task", {"terminal": has("barter_terminal")}),
+    "spawner_controller": ("machine_chassis", "spawner_controller", "task", {"controller": has("spawner_controller")}),
+    "barter_terminal": ("machine_chassis", "barter_terminal", "task", {"terminal": has("barter_terminal")}),
     # the Sealed Retort (a powered machine), and what is made in it
-    "retort": ("generator", "retort", "task", {"retort": has("retort")}),
+    "retort": ("machine_chassis", "retort", "task", {"retort": has("retort")}),
     # WoodVinegarItem.useOn, once a field has taken it: any click with the bottle on a block (loading a Distiller) counted
     "wood_vinegar": ("retort", "wood_vinegar", "task", {"vinegar": by_the_mod()}),
     "crude_salt": ("retort", "crude_salt", "task", {"crude_salt": has("crude_salt")}),
@@ -146,6 +146,10 @@ TREE = {
     "velarium_nugget": ("distilled", "velarium_nugget", "goal", {"nugget": has("velarium_nugget")}),
     "velarium_ingot": ("velarium_nugget", "velarium_ingot", "task", {"ingot": has("velarium_ingot")}),
     "tempered": ("velarium_ingot", "tempered_velarium_ingot", "task", {"tempered": has("tempered_velarium_ingot")}),
+    # hidden until had: a red-hot ingot taken in a bare hand burns (a viewer's idea, 2026-10-23); its burn is its own
+    # damage type, asked by the tag #nookworks:red_hot_ingot
+    "too_hot": ("velarium_ingot", "red_hot_velarium_ingot", "task", {"burned": {"trigger": "minecraft:entity_hurt_player",
+        "conditions": {"damage": {"type": {"tags": [{"id": "nookworks:red_hot_ingot", "expected": True}]}}}}}),
     "velarium_gear": ("tempered", "velarium_chestplate", "challenge", {"gear": has(*VELARIUM)}),
     # brass, and what is built of it
     "brass": ("retort", "brass_ingot", "task", {"brass": has("brass_ingot")}),
@@ -155,7 +159,7 @@ TREE = {
     "wool_shears": ("brass", "wool_shears", "task", {"shorn": shorn("wool_shears")}),
     "daemon_door": ("dawnwood", "daemon_door", "task", {"door": placed("daemon_door")}),
     "electrolytic_cell": ("brass", "electrolytic_cell", "task", {"cell": has("electrolytic_cell")}),
-    "caustic_soda": ("electrolytic_cell", "caustic_soda", "task", {"soda": has("caustic_soda")}),
+    "caustic_soda": ("brass", "caustic_soda", "task", {"soda": has("caustic_soda")}),
     "biodiesel": ("caustic_soda", "biodiesel_bucket", "task", {"biodiesel": has("biodiesel_bottle", "biodiesel_bucket")}),
     # under the fuel it alone burns, the last of what it takes in play; its line names the Generator and tank it is built of
     "diesel_generator": ("biodiesel", "diesel_generator", "task", {"engine": has("diesel_generator")}),
@@ -187,7 +191,17 @@ FEATURE = {
     "barter_terminal": "barter_terminal",
     "trading_counter": "trading_counter",
     "compressor": "recycling", "recycler": "recycling",
+    # the parts of 2026-10-23; what hung from the Generator and the Electrolytic Cell hangs a step higher (machine_chassis,
+    # brass), so a pack switching those off keeps the rest of the tree
+    "generator": "generators", "diesel_generator": "generators",
+    "electric_furnace": "electric_furnace", "electrolytic_cell": "electrolytic_cell",
+    "velarium_nugget": "velarium", "velarium_ingot": "velarium", "tempered": "velarium", "velarium_gear": "velarium",
+    "too_hot": "velarium",
 }
+
+
+# Shown in the tab only once had: a joke found by doing it
+HIDDEN = {"too_hot"}
 
 
 def features_of(name):
@@ -218,6 +232,8 @@ def main():
         display["description"] = {"translate": f"advancements.nookworks.{name}.description"}
         if frame != "task":
             display["frame"] = frame
+        if name in HIDDEN:
+            display["hidden"] = True
         (OUT / f"{name}.json").write_bytes((json.dumps(data, indent=2) + "\n").encode("utf-8"))
         written += 1
     print(f"wrote {written} advancements (root is kept by hand)")

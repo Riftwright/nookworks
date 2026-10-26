@@ -19,7 +19,7 @@ import dev.nookworks.item.CreativeOnlyBlockItem;
 import dev.nookworks.item.DiceItem;
 import dev.nookworks.item.FireproofCoatingItem;
 import dev.nookworks.item.Hammers;
-import dev.nookworks.item.LineWarpReceiverItem;
+import dev.nookworks.item.HorizontalItemWarpReceiverItem;
 import dev.nookworks.item.MagnetItem;
 import dev.nookworks.item.VelariumGear;
 import dev.nookworks.item.WrenchItem;
@@ -86,9 +86,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ITEM_WARP_SENDER = ITEMS.registerSimpleBlockItem(ModBlocks.ITEM_WARP_SENDER);
     public static final DeferredItem<BlockItem> ITEM_WARP_RECEIVER = ITEMS.registerSimpleBlockItem(ModBlocks.ITEM_WARP_RECEIVER);
     /** The Horizontal Item Warps (ids {@code horizontal_item_warp_sender} / {@code _receiver}). */
-    public static final DeferredItem<BlockItem> LINE_WARP_SENDER = ITEMS.registerSimpleBlockItem(ModBlocks.LINE_WARP_SENDER);
-    public static final DeferredItem<LineWarpReceiverItem> LINE_WARP_RECEIVER = ITEMS.registerItem("horizontal_item_warp_receiver",
-            p -> new LineWarpReceiverItem(ModBlocks.LINE_WARP_RECEIVER.get(), p), p -> p.useBlockDescriptionPrefix());
+    public static final DeferredItem<BlockItem> HORIZONTAL_ITEM_WARP_SENDER = ITEMS.registerSimpleBlockItem(ModBlocks.HORIZONTAL_ITEM_WARP_SENDER);
+    public static final DeferredItem<HorizontalItemWarpReceiverItem> HORIZONTAL_ITEM_WARP_RECEIVER = ITEMS.registerItem("horizontal_item_warp_receiver",
+            p -> new HorizontalItemWarpReceiverItem(ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), p), p -> p.useBlockDescriptionPrefix());
 
     public static final DeferredItem<BlockItem> SIFTER = ITEMS.registerSimpleBlockItem(ModBlocks.SIFTER);
 

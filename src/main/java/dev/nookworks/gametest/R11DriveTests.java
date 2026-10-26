@@ -188,8 +188,9 @@ final class R11DriveTests {
             check(helper, worked(polishers.get(1)) && !worked(polishers.get(0)), "the polisher is turned from its side, not from above");
             for (BlockPos idle : List.of(side.west(), polisherAbove.above())) {
                 MotorBlockEntity motor = helper.getBlockEntity(idle, MotorBlockEntity.class);
-                check(helper, motor.energyStored() == full && motor.guiStatus() == MachineStatus.IDLE,
-                        "a motor that turns nothing spends nothing: " + motor.energyStored() + " FE, " + motor.guiStatus());
+                int spent = full - motor.energyStored();
+                check(helper, spent > 0 && spent <= MachineTuning.energy(MotorBlockEntity.IDLE_FE_PER_TICK) * 40 && motor.guiStatus() == MachineStatus.IDLING,
+                        "a motor that turns nothing idles on its own small power: " + spent + " FE, " + motor.guiStatus());
             }
             helper.succeed();
         });

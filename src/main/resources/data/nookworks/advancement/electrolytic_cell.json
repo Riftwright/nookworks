@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "electrolytic_cell"
+    }
+  ],
   "criteria": {
     "cell": {
       "trigger": "minecraft:inventory_changed",

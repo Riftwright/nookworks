@@ -135,8 +135,8 @@ public final class InfoPages {
         info(page, ModItems.ELEVATOR.get(), "elevator");
         info(page, ModItems.ITEM_WARP_SENDER.get(), "item_warp");
         info(page, ModItems.ITEM_WARP_RECEIVER.get(), "item_warp");
-        info(page, ModItems.LINE_WARP_SENDER.get(), "line_warp");
-        info(page, ModItems.LINE_WARP_RECEIVER.get(), "line_warp");
+        info(page, ModItems.HORIZONTAL_ITEM_WARP_SENDER.get(), "horizontal_item_warp");
+        info(page, ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get(), "horizontal_item_warp");
         info(page, ModItems.MAGNET_CHEST.get(), "magnet_chest");
         info(page, ModItems.FERTILE_SOIL.get(), "nourished_soil");
         info(page, ModItems.LASER.get(), "laser");
@@ -220,7 +220,9 @@ public final class InfoPages {
         ModWoods.SUPPORT_ITEMS.values().forEach(support -> info(page, support.get(), "support"));
         ModWoods.CHAIR_ITEMS.values().forEach(chair -> info(page, chair.get(), "chair"));
         ModWoods.STOOL_ITEMS.values().forEach(stool -> info(page, stool.get(), "stool"));
+        ModWoods.BENCH_ITEMS.values().forEach(bench -> info(page, bench.get(), "bench"));
         ModWoods.WALL_SHELF_ITEMS.values().forEach(shelf -> info(page, shelf.get(), "wall_shelf"));
+        ModWoods.DESK_ITEMS.values().forEach(desk -> info(page, desk.get(), "desk"));
     }
 
     private static void info(BiConsumer<Item, Component> page, Item item, String key) {

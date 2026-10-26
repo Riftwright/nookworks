@@ -9,7 +9,7 @@
   "key": {
     "I": "minecraft:iron_ingot",
     "R": "minecraft:redstone",
-    "G": "minecraft:glass",
+    "G": "#c:glass_blocks/colorless",
     "U": "minecraft:bucket",
     "B": "#c:ingots/brass"
   },

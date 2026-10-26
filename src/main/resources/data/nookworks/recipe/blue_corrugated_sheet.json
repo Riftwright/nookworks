@@ -10,7 +10,7 @@
   "group": "painted_corrugated_sheet",
   "key": {
     "C": "#nookworks:bare_corrugated_sheets",
-    "D": "minecraft:blue_dye"
+    "D": "#c:dyes/blue"
   },
   "pattern": [
     "CCC",

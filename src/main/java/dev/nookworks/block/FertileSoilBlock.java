@@ -144,7 +144,8 @@ public class FertileSoilBlock extends Block {
         boolean crop = plant.getBlock() instanceof CropBlock
                 || plant.getBlock() instanceof StemBlock
                 || plant.getBlock() instanceof PitcherCropBlock
-                || plant.getBlock() instanceof CornBlock;
+                || plant.getBlock() instanceof CornBlock
+                || plant.is(BlockTags.CROPS); // another mod's crop, built on some other plant
         return plant.is(this) || (state.getValue(TILLED) && crop) ? TriState.TRUE : TriState.DEFAULT;
     }
 

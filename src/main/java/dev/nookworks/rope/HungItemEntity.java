@@ -803,7 +803,7 @@ public class HungItemEntity extends Entity {
         Block unlit = Lanterns.unlit(item.getBlock());
         Block lit = Lanterns.lit(item.getBlock());
         boolean putOut = unlit != null && hand == InteractionHand.MAIN_HAND && held.isEmpty() && player.isSecondaryUseActive();
-        boolean light = lit != null && (held.is(Items.FLINT_AND_STEEL) || held.is(Items.FIRE_CHARGE));
+        boolean light = lit != null && Lanterns.lighter(held);
         if (!putOut && !light) {
             return null;
         }
@@ -813,12 +813,8 @@ public class HungItemEntity extends Entity {
         if (this.level() instanceof ServerLevel level) {
             if (putOut) {
                 this.lanternTo(level, unlit, false, SoundEvents.CANDLE_EXTINGUISH);
-            } else if (held.is(Items.FLINT_AND_STEEL)) {
-                this.lanternTo(level, lit, true, SoundEvents.FLINTANDSTEEL_USE);
-                held.hurtAndBreak(1, player, hand);
             } else {
-                this.lanternTo(level, lit, true, SoundEvents.FIRECHARGE_USE);
-                held.consume(1, player);
+                this.lanternTo(level, lit, true, Lanterns.useLighter(held, player, hand));
             }
         }
         return InteractionResult.SUCCESS;

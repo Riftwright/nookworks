@@ -7,8 +7,8 @@ import dev.nookworks.Nookworks;
 import dev.nookworks.block.entity.CrateBlockEntity;
 import dev.nookworks.block.entity.ItemWarpReceiverBlockEntity;
 import dev.nookworks.block.entity.ItemWarpSenderBlockEntity;
-import dev.nookworks.block.entity.LineWarpReceiverBlockEntity;
-import dev.nookworks.block.entity.LineWarpSenderBlockEntity;
+import dev.nookworks.block.entity.HorizontalItemWarpReceiverBlockEntity;
+import dev.nookworks.block.entity.HorizontalItemWarpSenderBlockEntity;
 import dev.nookworks.block.entity.MagnetChestBlockEntity;
 import dev.nookworks.block.entity.NestedTimerBlockEntity;
 import dev.nookworks.block.entity.SifterBlockEntity;
@@ -72,10 +72,10 @@ public final class ModBlockEntities {
     /** Its owner only: one from before owners were kept gets one, of no owner, as its chunk loads. */
     public static final Supplier<BlockEntityType<ItemWarpReceiverBlockEntity>> ITEM_WARP_RECEIVER = BLOCK_ENTITY_TYPES.register(
             "item_warp_receiver", () -> new BlockEntityType<>(ItemWarpReceiverBlockEntity::new, ModBlocks.ITEM_WARP_RECEIVER.get()));
-    public static final Supplier<BlockEntityType<LineWarpSenderBlockEntity>> LINE_WARP_SENDER = BLOCK_ENTITY_TYPES.register(
-            "horizontal_item_warp_sender", () -> new BlockEntityType<>(LineWarpSenderBlockEntity::new, ModBlocks.LINE_WARP_SENDER.get()));
-    public static final Supplier<BlockEntityType<LineWarpReceiverBlockEntity>> LINE_WARP_RECEIVER = BLOCK_ENTITY_TYPES.register(
-            "horizontal_item_warp_receiver", () -> new BlockEntityType<>(LineWarpReceiverBlockEntity::new, ModBlocks.LINE_WARP_RECEIVER.get()));
+    public static final Supplier<BlockEntityType<HorizontalItemWarpSenderBlockEntity>> HORIZONTAL_ITEM_WARP_SENDER = BLOCK_ENTITY_TYPES.register(
+            "horizontal_item_warp_sender", () -> new BlockEntityType<>(HorizontalItemWarpSenderBlockEntity::new, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get()));
+    public static final Supplier<BlockEntityType<HorizontalItemWarpReceiverBlockEntity>> HORIZONTAL_ITEM_WARP_RECEIVER = BLOCK_ENTITY_TYPES.register(
+            "horizontal_item_warp_receiver", () -> new BlockEntityType<>(HorizontalItemWarpReceiverBlockEntity::new, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get()));
 
     public static final Supplier<BlockEntityType<MagnetChestBlockEntity>> MAGNET_CHEST = BLOCK_ENTITY_TYPES.register(
             "magnet_chest", () -> new BlockEntityType<>(MagnetChestBlockEntity::new, ModBlocks.MAGNET_CHEST.get()));

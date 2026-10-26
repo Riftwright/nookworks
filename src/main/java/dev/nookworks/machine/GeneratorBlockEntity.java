@@ -178,6 +178,9 @@ public class GeneratorBlockEntity extends MachineBlockEntity implements MachineI
      * with the Generator in the furnace's place (so not the half a smoker or a blast furnace gives).
      */
     public int burnTime(ServerLevel level, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return 0; // nothing to burn: no loot context built for it, every tick an idle Generator stands
+        }
         if (stack.is(ModOil.VEGETABLE_OIL_BOTTLE.get())) {
             return OIL_BOTTLE_TICKS;
         }
@@ -190,7 +193,7 @@ public class GeneratorBlockEntity extends MachineBlockEntity implements MachineI
                 .withParameter(LootContextParams.BLOCK_ENTITY, this)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(this.getBlockPos()))
                 .withParameter(LootContextParams.CONTAINER, this)
-                .withOptionalParameter(NeoForgeLootContextParams.QUERIED_STACK, stack.isEmpty() ? null : stack)
+                .withParameter(NeoForgeLootContextParams.QUERIED_STACK, stack)
                 .create(LootContextParamSets.CONTAINER_PROCESS)).create(Optional.empty());
         return ResolvableInt.getFromItem(stack, DataComponents.COOKING_FUEL, CookingFuel::burnTime, context, 0);
     }

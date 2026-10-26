@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "generators"
+    }
+  ],
   "criteria": {
     "generator": {
       "trigger": "minecraft:inventory_changed",

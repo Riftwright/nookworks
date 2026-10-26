@@ -63,7 +63,11 @@ public enum MachineStatus {
      */
     LOW_OIL(Tone.WARN),
     /** A Compressor with fewer than nine of a thing it packs: waiting for the rest (it said "idle, nothing in it"). */
-    NEEDS_NINE(Tone.QUIET);
+    NEEDS_NINE(Tone.QUIET),
+    /** A Motor turning with no machine at work (powered, it always turns). */
+    IDLING(Tone.QUIET),
+    /** A Motor held still by a redstone signal: shown plainly (the user, 2026-10-25: the redstone wording read as fussy). */
+    STOPPED(Tone.QUIET);
 
     public enum Tone {
         GOOD, QUIET, WARN, BAD

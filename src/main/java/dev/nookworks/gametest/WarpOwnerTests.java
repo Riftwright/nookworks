@@ -3,7 +3,7 @@ package dev.nookworks.gametest;
 import static dev.nookworks.gametest.NookworksGameTests.check;
 import static dev.nookworks.gametest.NookworksGameTests.test;
 import static dev.nookworks.gametest.TransportTests.countIn;
-import static dev.nookworks.gametest.TransportTests.placeLineWarp;
+import static dev.nookworks.gametest.TransportTests.placeHorizontalWarp;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,11 +12,11 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
 
-import dev.nookworks.block.LineWarpBlock;
+import dev.nookworks.block.HorizontalItemWarpBlock;
 import dev.nookworks.block.entity.ItemWarpReceiverBlockEntity;
 import dev.nookworks.block.entity.ItemWarpSenderBlockEntity;
-import dev.nookworks.block.entity.LineWarpReceiverBlockEntity;
-import dev.nookworks.block.entity.LineWarpSenderBlockEntity;
+import dev.nookworks.block.entity.HorizontalItemWarpReceiverBlockEntity;
+import dev.nookworks.block.entity.HorizontalItemWarpSenderBlockEntity;
 import dev.nookworks.feature.DrawRights;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModDataComponents;
@@ -70,8 +70,8 @@ final class WarpOwnerTests {
         ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
         Vec3 near = helper.absoluteVec(new Vec3(3.5, 2, 3.5));
         player.snapTo(near.x, near.y, near.z);
-        List<Block> warps = List.of(ModBlocks.ITEM_WARP_SENDER.get(), ModBlocks.ITEM_WARP_RECEIVER.get(), ModBlocks.LINE_WARP_SENDER.get(),
-                ModBlocks.LINE_WARP_RECEIVER.get());
+        List<Block> warps = List.of(ModBlocks.ITEM_WARP_SENDER.get(), ModBlocks.ITEM_WARP_RECEIVER.get(), ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(),
+                ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get());
         int x = 0;
         for (Block block : warps) {
             BlockPos floor = helper.absolutePos(new BlockPos(x, 1, 1));
@@ -83,7 +83,7 @@ final class WarpOwnerTests {
             BlockEntity placed = level.getBlockEntity(floor.above());
             check(helper, placed instanceof DrawRights.Owned owned && player.getUUID().equals(owned.owner()),
                     block.getDescriptionId() + " set down by a player is theirs: " + placed);
-            if (placed instanceof LineWarpSenderBlockEntity sender) {
+            if (placed instanceof HorizontalItemWarpSenderBlockEntity sender) {
                 check(helper, sender.stamp() != 0, "a horizontal sender set down has a stamp of its own");
             }
             x += 2;
@@ -100,7 +100,7 @@ final class WarpOwnerTests {
             BlockEntity placed = level.getBlockEntity(nobodys);
             check(helper, placed instanceof DrawRights.Owned owned && owned.owner() == null,
                     block.getDescriptionId() + " set down by an unknown machine keeps no owner: " + placed);
-            if (placed instanceof LineWarpSenderBlockEntity sender) {
+            if (placed instanceof HorizontalItemWarpSenderBlockEntity sender) {
                 check(helper, sender.stamp() == 0, "and its horizontal sender works as one from before: stamp " + sender.stamp());
             }
             x += 2;
@@ -146,8 +146,8 @@ final class WarpOwnerTests {
         UUID owner = player.getUUID();
         UUID stranger = UUID.randomUUID();
         BlockPos senderPos = new BlockPos(0, 1, 3);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), senderPos, Direction.EAST);
-        var sender = helper.getBlockEntity(senderPos, LineWarpSenderBlockEntity.class);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), senderPos, Direction.EAST);
+        var sender = helper.getBlockEntity(senderPos, HorizontalItemWarpSenderBlockEntity.class);
         sender.setOwner(owner);
         check(helper, sender.stamp() != 0, "given an owner, a sender has a stamp of its own");
         BlockPos theirs = new BlockPos(2, 1, 3);
@@ -157,14 +157,14 @@ final class WarpOwnerTests {
         lineReceiver(helper, mine, owner);
         helper.setBlock(mine.east(), Blocks.CHEST);
         BlockPos at = helper.absolutePos(senderPos);
-        check(helper, helper.absolutePos(mine).equals(LineWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
+        check(helper, helper.absolutePos(mine).equals(HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
                 sender.stamp(), owner)), "the sender passes over the stranger's receiver, to its owner's");
-        check(helper, helper.absolutePos(theirs).equals(LineWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
+        check(helper, helper.absolutePos(theirs).equals(HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
                 12345L, stranger)), "a stranger's sender there would send to their own, not on to the owner's");
         // what each receiver says to an empty hand
-        check(helper, says(level, helper.getBlockEntity(mine, LineWarpReceiverBlockEntity.class), player).equals("message.nookworks.line_warp.yours"),
+        check(helper, says(level, helper.getBlockEntity(mine, HorizontalItemWarpReceiverBlockEntity.class), player).equals("message.nookworks.horizontal_item_warp.yours"),
                 "a receiver of one's own says so");
-        check(helper, says(level, helper.getBlockEntity(theirs, LineWarpReceiverBlockEntity.class), player).equals("message.nookworks.line_warp.theirs"),
+        check(helper, says(level, helper.getBlockEntity(theirs, HorizontalItemWarpReceiverBlockEntity.class), player).equals("message.nookworks.horizontal_item_warp.theirs"),
                 "someone else's says it takes from their senders only");
         sender.setItem(0, new ItemStack(Items.IRON_INGOT, 5));
         helper.succeedWhen(() -> {
@@ -223,39 +223,39 @@ final class WarpOwnerTests {
         ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
         // before pairing
         BlockPos oldSender = new BlockPos(0, 1, 0);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), oldSender, Direction.EAST);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), oldSender, Direction.EAST);
         lineReceiver(helper, new BlockPos(1, 1, 0), owner);
         oldReceiver(helper, new BlockPos(2, 1, 0), null, true); // set down unpaired while receivers paired
         BlockPos oldOne = new BlockPos(4, 1, 0);
         oldReceiver(helper, oldOne, null, false);
-        var oldEntity = helper.getBlockEntity(oldOne, LineWarpReceiverBlockEntity.class);
-        check(helper, helper.absolutePos(oldOne).equals(LineWarpSenderBlockEntity.findLineReceiver(level, helper.absolutePos(oldSender),
+        var oldEntity = helper.getBlockEntity(oldOne, HorizontalItemWarpReceiverBlockEntity.class);
+        check(helper, helper.absolutePos(oldOne).equals(HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, helper.absolutePos(oldSender),
                 Direction.EAST, 64, 0L, null)), "an old sender sends to an old receiver, past a new one and an unpaired one");
-        check(helper, helper.absolutePos(oldOne).equals(LineWarpSenderBlockEntity.findLineReceiver(level, helper.absolutePos(oldSender),
+        check(helper, helper.absolutePos(oldOne).equals(HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, helper.absolutePos(oldSender),
                 Direction.EAST, 64, 99L, UUID.randomUUID())), "set down again, someone's, it still does, past the same two");
-        check(helper, says(level, oldEntity, player).equals("message.nookworks.line_warp.old"), "an old receiver says it is one");
-        check(helper, says(level, helper.getBlockEntity(new BlockPos(2, 1, 0), LineWarpReceiverBlockEntity.class), player)
-                .equals("message.nookworks.line_warp.unpaired"), "one set down unpaired says it takes nothing");
+        check(helper, says(level, oldEntity, player).equals("message.nookworks.horizontal_item_warp.old"), "an old receiver says it is one");
+        check(helper, says(level, helper.getBlockEntity(new BlockPos(2, 1, 0), HorizontalItemWarpReceiverBlockEntity.class), player)
+                .equals("message.nookworks.horizontal_item_warp.unpaired"), "one set down unpaired says it takes nothing");
         // the pairing days
         BlockPos senderPos = new BlockPos(0, 1, 3);
         BlockPos at = helper.absolutePos(senderPos);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), senderPos, Direction.EAST);
-        var sender = helper.getBlockEntity(senderPos, LineWarpSenderBlockEntity.class);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), senderPos, Direction.EAST);
+        var sender = helper.getBlockEntity(senderPos, HorizontalItemWarpSenderBlockEntity.class);
         sender.placed(owner, 0x5EED_CAFEL);
-        ItemStack paired = new ItemStack(ModItems.LINE_WARP_RECEIVER.get());
+        ItemStack paired = new ItemStack(ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get());
         paired.set(ModDataComponents.WARP_LINK.get(), GlobalPos.of(level.dimension(), at));
         paired.set(ModDataComponents.WARP_LINK_STAMP.get(), sender.stamp());
         lineReceiver(helper, new BlockPos(2, 1, 3), stranger);
         BlockPos pairedPos = new BlockPos(4, 1, 3);
         oldReceiver(helper, pairedPos, paired, true);
-        var pairedEntity = helper.getBlockEntity(pairedPos, LineWarpReceiverBlockEntity.class);
-        check(helper, helper.absolutePos(pairedPos).equals(LineWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
+        var pairedEntity = helper.getBlockEntity(pairedPos, HorizontalItemWarpReceiverBlockEntity.class);
+        check(helper, helper.absolutePos(pairedPos).equals(HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64,
                 sender.stamp(), owner)), "a sender of the pairing days sends to its paired receiver, past a stranger's");
-        check(helper, says(level, pairedEntity, player).equals("message.nookworks.line_warp.target"), "the paired one names its sender");
+        check(helper, says(level, pairedEntity, player).equals("message.nookworks.horizontal_item_warp.target"), "the paired one names its sender");
         // a receiver set down now from an item still carrying that pairing, by the stranger: it takes from that sender too
         BlockPos fromItem = new BlockPos(3, 1, 6);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), fromItem, Direction.NORTH);
-        var fromItemEntity = helper.getBlockEntity(fromItem, LineWarpReceiverBlockEntity.class);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), fromItem, Direction.NORTH);
+        var fromItemEntity = helper.getBlockEntity(fromItem, HorizontalItemWarpReceiverBlockEntity.class);
         fromItemEntity.applyComponentsFromItemStack(paired);
         fromItemEntity.setOwner(stranger);
         check(helper, fromItemEntity.takesFrom(level, at, sender.stamp(), owner), "a paired item set down now keeps its pairing");
@@ -269,12 +269,12 @@ final class WarpOwnerTests {
             check(helper, countIn(helper.getBlockEntity(pairedPos.east(), ChestBlockEntity.class), Items.IRON_INGOT) == 5,
                     "the paired receiver's chest gets all 5");
             helper.setBlock(senderPos, Blocks.AIR);
-            placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), senderPos, Direction.EAST);
-            ModBlocks.LINE_WARP_SENDER.get().setPlacedBy(level, at, level.getBlockState(at), player, ItemStack.EMPTY);
-            var moved = helper.getBlockEntity(senderPos, LineWarpSenderBlockEntity.class);
-            check(helper, LineWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64, moved.stamp(), moved.owner()) == null
+            placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), senderPos, Direction.EAST);
+            ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get().setPlacedBy(level, at, level.getBlockState(at), player, ItemStack.EMPTY);
+            var moved = helper.getBlockEntity(senderPos, HorizontalItemWarpSenderBlockEntity.class);
+            check(helper, HorizontalItemWarpSenderBlockEntity.findLineReceiver(level, at, Direction.EAST, 64, moved.stamp(), moved.owner()) == null
                     && Boolean.TRUE.equals(pairedEntity.senderMoved(level)), "set down again, the sender reaches none of its old pairings");
-            check(helper, says(level, pairedEntity, player).equals("message.nookworks.line_warp.moved"), "and the receiver says so");
+            check(helper, says(level, pairedEntity, player).equals("message.nookworks.horizontal_item_warp.moved"), "and the receiver says so");
         });
     }
 
@@ -288,8 +288,8 @@ final class WarpOwnerTests {
 
     /** A Horizontal Item Warp Receiver at {@code pos} facing east, of {@code owner}. */
     private static void lineReceiver(GameTestHelper helper, BlockPos pos, UUID owner) {
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), pos, Direction.EAST);
-        helper.getBlockEntity(pos, LineWarpReceiverBlockEntity.class).setOwner(owner);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), pos, Direction.EAST);
+        helper.getBlockEntity(pos, HorizontalItemWarpReceiverBlockEntity.class).setOwner(owner);
     }
 
     /**
@@ -298,8 +298,8 @@ final class WarpOwnerTests {
      * world opened from disk reads it.
      */
     private static void oldReceiver(GameTestHelper helper, BlockPos pos, @Nullable ItemStack paired, boolean pairs) {
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), pos, Direction.EAST);
-        var receiver = helper.getBlockEntity(pos, LineWarpReceiverBlockEntity.class);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), pos, Direction.EAST);
+        var receiver = helper.getBlockEntity(pos, HorizontalItemWarpReceiverBlockEntity.class);
         if (paired != null) {
             receiver.applyComponentsFromItemStack(paired);
         }
@@ -312,8 +312,8 @@ final class WarpOwnerTests {
     }
 
     /** The key of what {@code receiver} says to {@code player}'s empty hand. */
-    private static String says(ServerLevel level, LineWarpReceiverBlockEntity receiver, ServerPlayer player) {
-        return LineWarpBlock.says(level, receiver, player).getContents() instanceof TranslatableContents key ? key.getKey() : "";
+    private static String says(ServerLevel level, HorizontalItemWarpReceiverBlockEntity receiver, ServerPlayer player) {
+        return HorizontalItemWarpBlock.says(level, receiver, player).getContents() instanceof TranslatableContents key ? key.getKey() : "";
     }
 
     /** Sets {@code block} down on stone at {@code floor} as another mod's machine would: a fake player carrying {@code id}. */

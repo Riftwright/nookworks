@@ -30,7 +30,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
@@ -93,6 +95,13 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     };
     private final SorterSettings settings = new SorterSettings();
     private int cooldown;
+    /**
+     * The inventory on each side - the container above, the two outlets - as NeoForge keeps it until it changes: asked
+     * afresh each beat, with the verdict on what lies further down the line (which is not kept: a stale one would hold
+     * or misroute an item). Made as first asked.
+     */
+    @SuppressWarnings("unchecked")
+    private final @Nullable BlockCapabilityCache<ResourceHandler<ItemResource>, @Nullable Direction>[] sides = new BlockCapabilityCache[6];
 
     public SorterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SORTER.get(), pos, state);
@@ -128,7 +137,18 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
 
     /** Whether the sorter is never to take {@code stack} in: kept out, or bound for an inventory that cannot hold it. */
     private boolean keepsOut(ServerLevel level, ItemStack stack) {
-        return this.denies(stack) || refuses(level, this.worldPosition, this.outletFor(stack), stack);
+        Direction outlet = this.outletFor(stack);
+        return this.denies(stack) || refuses(level, this.worldPosition, outlet, stack, this.itemsOn(level, outlet));
+    }
+
+    /** The inventory on {@code side}, as kept ({@link #sides}); none in a chunk not loaded, which is not loaded for it. */
+    private @Nullable ResourceHandler<ItemResource> itemsOn(ServerLevel level, Direction side) {
+        int i = side.ordinal();
+        if (this.sides[i] == null) {
+            this.sides[i] = BlockCapabilityCache.create(Capabilities.Item.BLOCK, level, this.worldPosition.relative(side),
+                    side.getOpposite(), () -> !this.isRemoved(), () -> {});
+        }
+        return this.sides[i].getCapability();
     }
 
     /** The gear slot. */
@@ -192,7 +212,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         if (!stack.isEmpty()) {
             Direction side = sorter.outletFor(stack);
             int batch = gear.batch;
-            if (gear.interval < THROW_INTERVAL && throwsOut(server, pos, side)) {
+            if (gear.interval < THROW_INTERVAL && sorter.throwsOut(server, pos, side)) {
                 // Thrown out on the ground, not handed over: at a fast gear's pace that is a stream of item entities
                 // (a Velarium gear, twenty stacks a second) for the server to carry. Thrown ones go at a hopper's beat,
                 // as many at a time as the gear moves in it, up to a stack.
@@ -200,7 +220,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
                 sorter.cooldown = THROW_INTERVAL;
             }
             int offered = Math.min(batch, stack.getCount());
-            int moved = output(server, pos, side, stack.copyWithCount(offered));
+            int moved = sorter.output(server, pos, side, stack.copyWithCount(offered));
             if (moved > 0) {
                 stack.shrink(moved);
                 sorter.setChanged();
@@ -228,7 +248,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         if (most <= 0 || !level.isLoaded(above)) {
             return; // over the top of the world (the rest of the column is the sorter's own chunk, loaded)
         }
-        var handler = level.getCapability(Capabilities.Item.BLOCK, above, Direction.DOWN);
+        var handler = this.itemsOn(level, Direction.UP);
         if (handler == null) {
             return;
         }
@@ -268,8 +288,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
      * side - from a hopper, a pipe - went into it for good (r10, items going missing).
      */
     private boolean giveBack(ServerLevel level, BlockPos pos) {
-        BlockPos above = pos.above();
-        var handler = level.isLoaded(above) ? level.getCapability(Capabilities.Item.BLOCK, above, Direction.DOWN) : null;
+        var handler = this.itemsOn(level, Direction.UP);
         if (handler == null) {
             return false;
         }
@@ -296,14 +315,10 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
      * Whether the inventory on {@code side} could never hold {@code stack}: one is there, and none of its slots (of the
      * first {@link #ASKED_SLOTS}) would take that item - a Storage Barrel and a bundle or a shulker box, a shulker box
      * and another, a Sorter and what it keeps out. A full one does not refuse (it waits for room), nor does open ground,
-     * a solid block or a chunk not loaded.
+     * a solid block or a chunk not loaded. {@code handler} is that inventory, as found there (none for nothing there).
      */
-    static boolean refuses(ServerLevel level, BlockPos pos, Direction side, ItemStack stack) {
+    private static boolean refuses(ServerLevel level, BlockPos pos, Direction side, ItemStack stack, @Nullable ResourceHandler<ItemResource> handler) {
         BlockPos target = pos.relative(side);
-        if (!level.isLoaded(target)) {
-            return false;
-        }
-        var handler = level.getCapability(Capabilities.Item.BLOCK, target, side.getOpposite());
         if (handler == null) {
             return false;
         }
@@ -357,9 +372,9 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     static final int THROW_INTERVAL = SorterGear.NONE.interval;
 
     /** Whether the outlet on {@code side} throws onto the ground: loaded, open, and no inventory there. */
-    static boolean throwsOut(ServerLevel level, BlockPos pos, Direction side) {
+    private boolean throwsOut(ServerLevel level, BlockPos pos, Direction side) {
         BlockPos target = pos.relative(side);
-        return level.isLoaded(target) && level.getCapability(Capabilities.Item.BLOCK, target, side.getOpposite()) == null
+        return level.isLoaded(target) && this.itemsOn(level, side) == null
                 && level.getBlockState(target).getCollisionShape(level, target).isEmpty();
     }
 
@@ -367,12 +382,12 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
      * Sends {@code stack} out through {@code side}: into the container there, or thrown onto open ground. Returns how
      * many went out - none while the outlet is blocked or in a chunk not loaded.
      */
-    static int output(ServerLevel level, BlockPos pos, Direction side, ItemStack stack) {
+    private int output(ServerLevel level, BlockPos pos, Direction side, ItemStack stack) {
         BlockPos target = pos.relative(side);
         if (!level.isLoaded(target)) {
             return 0; // the outlet is in an unloaded chunk: wait rather than load it
         }
-        var handler = level.getCapability(Capabilities.Item.BLOCK, target, side.getOpposite());
+        var handler = this.itemsOn(level, side);
         if (handler != null) {
             ItemStack rest = ItemUtil.insertItemReturnRemaining(handler, stack, false, null);
             return stack.getCount() - rest.getCount();
@@ -401,7 +416,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new SorterMenu(containerId, inventory, this.filter, this.gear, this.deny, this.worldPosition, this.tier(), this.settings);
+        return new SorterMenu(containerId, inventory, this.filter, this.gear, this.deny, this, this.worldPosition, this.tier(), this.settings);
     }
 
     @Override

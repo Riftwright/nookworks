@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import dev.nookworks.Nookworks;
 import dev.nookworks.NookworksConfig;
 import net.minecraft.core.BlockPos;
@@ -17,7 +19,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -29,7 +33,12 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * After a tree is felled (timber, laser), its now-unsupported leaves decay within a second or two instead of
- * over minutes. Drops are the normal decay drops (saplings, sticks, apples). Leaves still held by another
+ * over minutes - or all at once as it comes down, with {@code instantLeafDecay} on (a CurseForge comment,
+ * 2026-10-26). Drops are the normal decay drops (saplings, sticks, apples); felled by an axe with Silk Touch, the
+ * leaves themselves, as that axe would break them (the same comment: shearing leaves is a bother), for a point of the
+ * axe's durability every {@link #SILK_LEAVES_PER_POINT} leaves - a quarter of what cutting them by hand costs, more than
+ * the nothing a felling without Silk Touch costs (the user, 2026-10-26) - unless the axe's leaf gathering is switched
+ * off ({@link LeafGathering}). Leaves still held by another
  * tree's logs, and player-placed leaves, are left alone: the check is the same "log within 6 leaves" rule
  * vanilla uses, computed directly so it does not depend on distance updates having finished.
  */
@@ -37,7 +46,11 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 public final class FastLeafDecay {
     private static final int DELAY = 4;
     private static final int PER_TICK = 12;
+    /** Instant decay's share a tick: a crown in one to a few ticks, not thousands of breaks and drops in one. */
+    private static final int INSTANT_PER_TICK = 256;
     private static final int MAX_LEAVES = 2048;
+    /** Silk Touch leaves a point of the axe's durability buys: the first leaf costs one, and each fourth after it. */
+    private static final int SILK_LEAVES_PER_POINT = 4;
 
     /** Keyed by dimension, not by the level itself: holding the level would keep an unloaded world alive. */
     private static final Map<ResourceKey<Level>, List<Job>> JOBS =
@@ -47,23 +60,38 @@ public final class FastLeafDecay {
         final ArrayDeque<BlockPos> queue;
         /** Who felled the tree: leaves they may not break (a claim, spawn protection) are left to vanilla's slow decay. */
         final Player actor;
-        int delay = DELAY;
+        /**
+         * The Silk Touch axe that felled the tree, itself (not a copy: it is worn), the leaves dropped as it would break
+         * them while the actor still holds it; null otherwise.
+         */
+        final @Nullable ItemStack silkTool;
+        final boolean instant;
+        int delay;
+        /** Leaves dropped as leaves so far: every {@link #SILK_LEAVES_PER_POINT}th wears the axe a point. */
+        int silkLeaves;
 
-        Job(List<BlockPos> leaves, Player actor) {
+        Job(List<BlockPos> leaves, Player actor, @Nullable ItemStack silkTool, boolean instant) {
             this.queue = new ArrayDeque<>(leaves);
             this.actor = actor;
+            this.silkTool = silkTool;
+            this.instant = instant;
+            // instant still waits a tick or two: the logs are broken after this is scheduled, and still hold the leaves now
+            this.delay = instant ? 1 : DELAY;
         }
     }
 
-    /** Queues the leaves connected to the logs {@code actor} felled. */
-    public static void schedule(ServerLevel level, Collection<BlockPos> logs, Player actor) {
+    /** Queues the leaves connected to the logs {@code actor} felled with {@code tool} (empty for a Laser). */
+    public static void schedule(ServerLevel level, Collection<BlockPos> logs, Player actor, ItemStack tool) {
         if (!NookworksConfig.FAST_LEAF_DECAY.getAsBoolean()) {
             return;
         }
         List<BlockPos> leaves = connectedLeaves(level, logs);
         if (!leaves.isEmpty()) {
             Collections.shuffle(leaves); // falls away evenly rather than layer by layer
-            JOBS.computeIfAbsent(level.dimension(), l -> new ArrayList<>()).add(new Job(leaves, actor));
+            // its leaf gathering switched off, a Silk Touch axe leaves them to decay as any other does (LeafGathering)
+            ItemStack silkTool = !tool.isEmpty() && LeafGathering.hasSilkTouch(tool) && LeafGathering.gathers(tool) ? tool : null;
+            JOBS.computeIfAbsent(level.dimension(), l -> new ArrayList<>())
+                    .add(new Job(leaves, actor, silkTool, NookworksConfig.INSTANT_LEAF_DECAY.getAsBoolean()));
         }
     }
 
@@ -160,18 +188,39 @@ public final class FastLeafDecay {
             // left to fall as vanilla's do
             return true;
         }
-        for (int i = 0; i < PER_TICK && !job.queue.isEmpty(); i++) {
+        for (int i = 0; i < (job.instant ? INSTANT_PER_TICK : PER_TICK) && !job.queue.isEmpty(); i++) {
             BlockPos pos = job.queue.poll();
             if (!level.isLoaded(pos)) {
                 continue; // checked before the block is read: reading it would load the chunk again
             }
             BlockState state = level.getBlockState(pos);
             if (isNaturalLeaves(state) && !anchored(level, pos) && Permission.mayBreak(level, pos, job.actor)) {
-                Block.dropResources(state, level, pos);
+                if (job.silkTool != null && silkHeld(level, job)) {
+                    Block.dropResources(state, level, pos, null, job.actor, job.silkTool);
+                    if (job.silkLeaves++ % SILK_LEAVES_PER_POINT == 0) {
+                        job.silkTool.hurtAndBreak(1, job.actor, EquipmentSlot.MAINHAND); // Unbreaking spares some, as by hand
+                    }
+                } else {
+                    Block.dropResources(state, level, pos);
+                }
                 level.removeBlock(pos, false);
             }
         }
         return job.queue.isEmpty();
+    }
+
+    /**
+     * Whether the Silk Touch axe still takes the leaves as leaves: held in the actor's main hand, in this world (switched
+     * away, broken, or carried through a portal, the rest decay as without it) and, with protectTools on, not on its last point - the leaves left then decay as
+     * usual rather than the axe breaking on them.
+     */
+    private static boolean silkHeld(ServerLevel level, Job job) {
+        ItemStack tool = job.silkTool;
+        if (tool == null || tool.isEmpty() || job.actor.level() != level || job.actor.getMainHandItem() != tool) {
+            return false;
+        }
+        return !(NookworksConfig.PROTECT_TOOLS.getAsBoolean() && tool.isDamageableItem()
+                && tool.getMaxDamage() - tool.getDamageValue() <= 1);
     }
 
     private FastLeafDecay() {}

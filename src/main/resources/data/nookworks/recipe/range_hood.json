@@ -8,7 +8,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "C": "minecraft:copper_ingot",
+    "C": "#c:ingots/copper",
     "D": "nookworks:duct"
   },
   "pattern": [

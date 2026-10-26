@@ -229,7 +229,7 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
     @Override
     public Component status() {
         return this.progress > 0
-                ? Component.translatable("nookworks.machine.electric_furnace.working", this.energyText(), this.progress * 100 / Math.max(1, this.cookTime))
+                ? Component.translatable("nookworks.machine.electric_furnace.working", this.energyText(), MachineTuning.percent(this.progress, this.cookTime))
                 : Component.translatable("nookworks.machine.idle", this.energyText());
     }
 

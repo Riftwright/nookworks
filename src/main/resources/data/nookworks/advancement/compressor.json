@@ -36,5 +36,5 @@
     ]
   ],
   "sends_telemetry_event": false,
-  "parent": "nookworks:generator"
+  "parent": "nookworks:machine_chassis"
 }

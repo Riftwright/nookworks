@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     "minecraft:flower_pot",
-    "minecraft:white_dye"
+    "#c:dyes/white"
   ],
   "result": {
     "count": 1,

@@ -1,9 +1,13 @@
 {
   "_comment": "The parts of Nookworks a modpack can switch off (nookworks-startup.toml, [features]), and a world can leave out when it is made (<world>/serverconfig/nookworks-features.json): each name, and the items that are its. Switched off, a part's items are made by no recipe, sit in no creative tab, are hidden in JEI, come out of no sifting or trade, and its advancements are not loaded. Read by the mod (dev.nookworks.feature.Features) and by tools/gen_feature_conditions.py and tools/gen_advancements.py, which write the recipe and advancement conditions.",
   "_needs": {
-    "_comment": "A part, or a single item, that needs another part on as well: with that part off it goes too. The Barter Terminal's piglin goes in by a Mob Bottle; the Absorption Pad is made with a Magnet.",
+    "_comment": "A part, or a single item, that needs another part on as well: with that part off it goes too. The Barter Terminal's piglin goes in by a Mob Bottle; the Absorption Pad is made with a Magnet; the Velarium Hammer, Sorter Gear, Storage Barrel and Upgrade are made of velarium.",
     "barter_terminal": ["mob_bottle"],
-    "nookworks:absorption_pad": ["magnets"]
+    "nookworks:absorption_pad": ["magnets"],
+    "nookworks:velarium_hammer": ["velarium"],
+    "nookworks:velarium_sorter_gear": ["velarium"],
+    "nookworks:velarium_storage_barrel": ["velarium"],
+    "nookworks:velarium_storage_upgrade": ["velarium"]
   },
   "kitchen": [
     "nookworks:rice_polisher", "nookworks:hand_quern", "nookworks:noodle_maker", "nookworks:grill", "nookworks:iron_pot",
@@ -61,5 +65,29 @@
     "nookworks:waxed_exposed_corrugated_sheet", "nookworks:waxed_weathered_corrugated_sheet",
     "nookworks:waxed_oxidized_corrugated_sheet", "nookworks:red_corrugated_sheet", "nookworks:green_corrugated_sheet",
     "nookworks:blue_corrugated_sheet", "nookworks:white_corrugated_sheet", "nookworks:patched_sheet_metal"
+  ],
+  "generators": [
+    "nookworks:generator", "nookworks:diesel_generator"
+  ],
+  "electric_furnace": [
+    "nookworks:electric_furnace"
+  ],
+  "planter": [
+    "nookworks:planter"
+  ],
+  "water_pump": [
+    "nookworks:water_pump"
+  ],
+  "motor": [
+    "nookworks:motor"
+  ],
+  "electrolytic_cell": [
+    "nookworks:electrolytic_cell"
+  ],
+  "stone_maker": [
+    "nookworks:stone_maker"
+  ],
+  "velarium": [
+    "nookworks:velarium_ingot", "nookworks:velarium_nugget", "nookworks:velarium_block", "nookworks:red_hot_velarium_ingot", "nookworks:tempered_velarium_ingot", "nookworks:velarium_pickaxe", "nookworks:velarium_axe", "nookworks:velarium_shovel", "nookworks:velarium_hoe", "nookworks:velarium_sword", "nookworks:velarium_helmet", "nookworks:velarium_chestplate", "nookworks:velarium_leggings", "nookworks:velarium_boots"
   ]
 }

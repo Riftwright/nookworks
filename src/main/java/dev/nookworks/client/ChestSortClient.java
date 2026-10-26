@@ -60,9 +60,18 @@ public final class ChestSortClient {
         }
     }
 
+    /** Whether the server lets its players sort (its synced setting chestSortAllowed); before it has said, as it would. */
+    private static boolean serverAllows() {
+        try {
+            return dev.nookworks.NookworksConfig.CHEST_SORT_ALLOWED.getAsBoolean();
+        } catch (IllegalStateException notLoaded) {
+            return true;
+        }
+    }
+
     @SubscribeEvent
     static void onInit(ScreenEvent.Init.Post event) {
-        if (OTHER_SORTER != null || !NookworksClientConfig.CHEST_SORT.getAsBoolean()
+        if (OTHER_SORTER != null || !NookworksClientConfig.CHEST_SORT.getAsBoolean() || !serverAllows()
                 || !(event.getScreen() instanceof AbstractContainerScreen<?> screen)
                 || screen.getClass() != ContainerScreen.class && screen.getClass() != ShulkerBoxScreen.class
                 || !ChestSorting.sortable(screen.getMenu())) {

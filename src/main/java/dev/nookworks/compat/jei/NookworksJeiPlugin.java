@@ -136,6 +136,7 @@ public class NookworksJeiPlugin implements IModPlugin {
         station(registration, ElectrolysisCategory.TYPE, ModItems.ELECTROLYTIC_CELL.get());
         station(registration, RecipeTypes.CRAFTING, ModItems.IRON_WORKBENCH.get(), ModItems.BRASS_WORKBENCH.get());
         station(registration, RecipeTypes.SMELTING, ModItems.ELECTRIC_FURNACE.get());
+        station(registration, RecipeTypes.SMELTING_FUEL, ModItems.GENERATOR.get()); // it burns what a furnace burns
         station(registration, SiftingCategory.TYPE, ModItems.SIFTER.get());
         station(registration, SpawnEggBrewingCategory.TYPE, ModItems.SPAWN_EGG_BREWER.get());
         station(registration, MercuryCategories.RETORTING, ModItems.RETORT.get());

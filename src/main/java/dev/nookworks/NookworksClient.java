@@ -2,6 +2,7 @@ package dev.nookworks;
 
 import dev.nookworks.client.CameraView;
 import dev.nookworks.client.PhotoTextures;
+import dev.nookworks.client.PotLines;
 import dev.nookworks.client.RecipeChoiceClient;
 import dev.nookworks.client.Squint;
 import dev.nookworks.client.gui.TradingCounterScreen;
@@ -60,6 +61,7 @@ public class NookworksClient {
         // the Camera: its viewfinder, the photos the server sends, and a photo poster's item showing its picture
         modEventBus.addListener(CameraView::registerLayer);
         PhotoTextures.init();
+        PotLines.init(); // an Iron Pot's contents on the action bar, fitted to the screen
         RedHotLook.register(modEventBus); // a red-hot ingot cooling in a chest, and its heat left
         modEventBus.addListener((RegisterSpecialModelRendererEvent event) -> event.register(
                 PhotoIconRenderer.TYPE, PhotoIconRenderer.Unbaked.MAP_CODEC));

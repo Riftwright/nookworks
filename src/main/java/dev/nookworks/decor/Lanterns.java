@@ -15,12 +15,13 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TriState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,6 +33,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
@@ -97,20 +100,33 @@ public final class Lanterns {
             return;
         }
         Block in = lit(state.getBlock());
-        if (in != null && (held.is(Items.FLINT_AND_STEEL) || held.is(Items.FIRE_CHARGE)) && event.getUseItem() != TriState.FALSE
+        if (in != null && lighter(held) && event.getUseItem() != TriState.FALSE
                 && event.getFace() != null && player.mayUseItemAt(pos.relative(event.getFace()), event.getFace(), held)) {
             if (level instanceof ServerLevel server) {
                 server.setBlock(pos, swap(state, in), Block.UPDATE_ALL);
-                if (held.is(Items.FLINT_AND_STEEL)) {
-                    server.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    held.hurtAndBreak(1, player, event.getHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-                } else {
-                    server.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    held.consume(1, player);
-                }
+                server.playSound(null, pos, useLighter(held, player, event.getHand()), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             done(event);
         }
+    }
+
+    /**
+     * Whether {@code held} lights a lantern: flint and steel, a fire charge, or another mod's fire starter (in
+     * #c:tools/igniter, or with NeoForge's fire-starting ability, as a Sconce or an Oil Lamp is lit by them).
+     */
+    public static boolean lighter(ItemStack held) {
+        return held.is(Items.FLINT_AND_STEEL) || held.is(Items.FIRE_CHARGE) || held.is(Tags.Items.TOOLS_IGNITER)
+                || held.canPerformAction(ItemAbilities.FIRESTARTER_LIGHT);
+    }
+
+    /** A {@link #lighter} used once - worn if it wears (with flint and steel's sound), else one used up (a fire charge's) - and its sound. */
+    public static SoundEvent useLighter(ItemStack held, LivingEntity user, InteractionHand hand) {
+        if (held.isDamageableItem()) {
+            held.hurtAndBreak(1, user, hand);
+            return SoundEvents.FLINTANDSTEEL_USE;
+        }
+        held.consume(1, user);
+        return SoundEvents.FIRECHARGE_USE;
     }
 
     private static void done(PlayerInteractEvent.RightClickBlock event) {

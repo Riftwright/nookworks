@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "I": "minecraft:iron_ingot",
-    "G": "minecraft:glass"
+    "G": "#c:glass_blocks/colorless"
   },
   "pattern": [
     "IGI",

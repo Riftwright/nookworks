@@ -33,7 +33,21 @@ public final class FeatureGate {
 
     public static boolean hammer() {
         return allowed(NookworksConfig.HAMMER_ENABLED.getAsBoolean(), NookworksConfig.HAMMER_STAND_DOWN.getAsBoolean(),
-                NookworksConfig.HAMMER_CONFLICTS.get());
+                hammerConflicts());
+    }
+
+    /** The hammers' default list until 1.2.0, which held FTB Ultimine. */
+    static final List<String> HAMMER_CONFLICTS_UNTIL_1_2 = List.of("justhammers", "hammers", "vanilla_hammers", "ftbultimine");
+
+    /**
+     * The mods the hammers stand down for. FTB Ultimine is no longer among them (the user, 2026-10-23: ハンマーは止めない):
+     * it mines what is joined to the block, a tool of its own beside ours, and a pack that has it - most do - was left
+     * with seven hammers digging one block. A settings file still holding the old default list unchanged is read as
+     * today's; one a pack wrote its own list into is read as written.
+     */
+    public static List<? extends String> hammerConflicts() {
+        List<? extends String> conflicts = NookworksConfig.HAMMER_CONFLICTS.get();
+        return conflicts.equals(HAMMER_CONFLICTS_UNTIL_1_2) ? HAMMER_CONFLICTS_UNTIL_1_2.subList(0, 3) : conflicts;
     }
 
     public static boolean magnet() {
@@ -72,7 +86,7 @@ public final class FeatureGate {
         report("Vein mining", NookworksConfig.VEIN_ENABLED.getAsBoolean(), NookworksConfig.VEIN_STAND_DOWN.getAsBoolean(),
                 NookworksConfig.VEIN_CONFLICTS.get());
         report("Hammer 3x3", NookworksConfig.HAMMER_ENABLED.getAsBoolean(), NookworksConfig.HAMMER_STAND_DOWN.getAsBoolean(),
-                NookworksConfig.HAMMER_CONFLICTS.get());
+                hammerConflicts());
         report("Magnet", NookworksConfig.MAGNET_ENABLED.getAsBoolean(), NookworksConfig.MAGNET_STAND_DOWN.getAsBoolean(),
                 NookworksConfig.MAGNET_CONFLICTS.get());
         report("Building Wand", NookworksConfig.WAND_ENABLED.getAsBoolean(), NookworksConfig.WAND_STAND_DOWN.getAsBoolean(),

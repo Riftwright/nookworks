@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,8 @@ import dev.nookworks.registry.ModCreativeTabs;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.sorter.LegacySorterItem;
 import dev.nookworks.storage.SortOrder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -56,18 +59,25 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 
 /**
  * Our data files have to load, not merely exist. A recipe with a bad field is skipped with one line in the log and
@@ -89,6 +99,7 @@ final class DataTests {
         NookworksGameTests.test("every_item_is_in_a_creative_tab", DataTests::everyItemIsInACreativeTab);
         NookworksGameTests.test("parts_of_the_mod_are_whole", DataTests::partsOfTheModAreWhole);
         NookworksGameTests.test("blocks_keep_their_solidity", DataTests::blocksKeepTheirSolidity);
+        NookworksGameTests.test("an_axe_keeps_a_weathering_blocks_state", DataTests::axeKeepsWeatheringState);
     }
 
     /**
@@ -615,6 +626,71 @@ final class DataTests {
         } catch (Exception e) {
             return false;   // unreadable: let the lookup report it
         }
+    }
+
+    /**
+     * The 26.3 axe trap (HANDOFF, "Things that cost time"): for an entry of neoforge:oxidizables or neoforge:waxables,
+     * NeoForge makes the axe's way back itself unless the entry says {@code generate_block_transform: false} - and the
+     * transform it makes sets the default state of the block it goes back to, so a hanging lantern scraped fell, and a
+     * sheet scraped lay down. Every entry of ours whose block has properties says false and has a neoforge:transformables
+     * entry for the axe that copies them: checked here by scraping each block an axe works on - every property moved off
+     * its default - and finding the block it goes back to with the same properties.
+     */
+    private static void axeKeepsWeatheringState(GameTestHelper helper) {
+        List<String> problems = new ArrayList<>();
+        Map<Block, Block> scraped = new LinkedHashMap<>(); // what an axe works on -> what it is to become
+        BuiltInRegistries.BLOCK.getDataMap(NeoForgeDataMaps.OXIDIZABLES).forEach((key, oxidizable) -> {
+            Block from = BuiltInRegistries.BLOCK.getValueOrThrow(key);
+            if (ours(from)) {
+                if (!from.getStateDefinition().getProperties().isEmpty() && oxidizable.generateBlockTransform()) {
+                    problems.add(key.identifier() + " (oxidizables) has properties and lets NeoForge make its axe transform");
+                }
+                scraped.put(oxidizable.nextOxidationStage(), from);
+            }
+        });
+        BuiltInRegistries.BLOCK.getDataMap(NeoForgeDataMaps.WAXABLES).forEach((key, waxable) -> {
+            Block from = BuiltInRegistries.BLOCK.getValueOrThrow(key);
+            if (ours(from)) {
+                if (!from.getStateDefinition().getProperties().isEmpty() && waxable.generateBlockTransform()) {
+                    problems.add(key.identifier() + " (waxables) has properties and lets NeoForge make its axe transform");
+                }
+                scraped.put(waxable.waxed(), from);
+            }
+        });
+        NookworksGameTests.check(helper, !scraped.isEmpty(), "our weathering blocks are found in the data maps");
+        BlockPos at = new BlockPos(3, 1, 3);
+        // stone over it as under it, so that what hangs has its ceiling (the transform's state is fitted to its neighbours)
+        helper.setBlock(at.above(), net.minecraft.world.level.block.Blocks.STONE);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        scraped.forEach((target, back) -> {
+            BlockState state = target.defaultBlockState();
+            for (net.minecraft.world.level.block.state.properties.Property<?> property : state.getProperties()) {
+                state = state.cycle(property);
+            }
+            helper.setBlock(at, state);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
+            BlockPos absolute = helper.absolutePos(at);
+            player.getMainHandItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)));
+            BlockState after = helper.getBlockState(at);
+            String name = BuiltInRegistries.BLOCK.getKey(target).toString();
+            if (!after.is(back)) {
+                problems.add("an axe on " + name + " gave " + after + ", not " + BuiltInRegistries.BLOCK.getKey(back));
+                return;
+            }
+            for (net.minecraft.world.level.block.state.properties.Property<?> property : state.getProperties()) {
+                if (after.hasProperty(property) && !after.getValue(property).equals(state.getValue(property))) {
+                    problems.add("an axe on " + name + " lost its " + property.getName() + " (" + state.getValue(property)
+                            + " -> " + after.getValue(property) + ")");
+                }
+            }
+        });
+        NookworksGameTests.check(helper, problems.isEmpty(), String.join(" | ", problems));
+        helper.succeed();
+    }
+
+    private static boolean ours(Block block) {
+        return BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(Nookworks.MODID);
     }
 
     /**

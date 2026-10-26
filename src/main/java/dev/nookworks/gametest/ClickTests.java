@@ -116,6 +116,12 @@ final class ClickTests {
         check(helper, Lubrication.isLubricated(level, helper.absolutePos(door)), "the door took the oil");
         check(helper, !helper.getBlockState(door).getValue(DoorBlock.OPEN), "and did not open instead");
 
+        BlockPos motor = new BlockPos(1, 2, 3); // a Motor too: its hum goes (MotorBlock#animateTick), no screen opened
+        helper.setBlock(motor, ModOil.MOTOR.get());
+        click(helper, player, new ItemStack(ModOil.OIL_CAN.get()), motor, Direction.NORTH);
+        check(helper, Lubrication.isLubricated(level, helper.absolutePos(motor)), "the motor took the oil");
+        check(helper, player.containerMenu == player.inventoryMenu, "and its screen did not open instead");
+
         BlockPos gate = new BlockPos(3, 2, 1); // a wooden trapdoor or door does not burn in vanilla; a fence gate does
         helper.setBlock(gate, Blocks.OAK_FENCE_GATE);
         click(helper, player, new ItemStack(ModItems.FIREPROOF_COATING.get()), gate, Direction.NORTH);

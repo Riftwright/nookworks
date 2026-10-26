@@ -11,7 +11,7 @@
     "I": "minecraft:iron_ingot",
     "P": "minecraft:piston",
     "B": "minecraft:iron_bars",
-    "C": "minecraft:copper_ingot"
+    "C": "#c:ingots/copper"
   },
   "pattern": [
     "IPI",

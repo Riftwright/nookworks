@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.common.Tags;
 
 /**
  * Compressor: nine of an item into what the crafting table makes of nine of it ({@link Compressing}), every 40 ticks at
@@ -187,7 +186,7 @@ public class CompressorBlockEntity extends MachineBlockEntity implements Machine
     public Component status() {
         return this.progress > 0
                 ? Component.translatable("nookworks.machine.compressor.working", this.energyText(),
-                        this.progress * 100 / MachineTuning.time(TICKS_PER_PRESS))
+                        MachineTuning.percent(this.progress, MachineTuning.time(TICKS_PER_PRESS)))
                 : Component.translatable("nookworks.machine.idle", this.energyText());
     }
 
@@ -232,14 +231,8 @@ public class CompressorBlockEntity extends MachineBlockEntity implements Machine
                 }
             }
         }
-        if (!(this.level instanceof ServerLevel server) || resultOf(server, stack).isEmpty()) {
-            // the client cannot look the recipe up: #nookworks:compressible is what it takes of vanilla's and ours (a
-            // GameTest keeps them one), and another mod's metal is most likely a nugget, an ingot, raw ore, a gem or a dust
-            return !(this.level instanceof ServerLevel) && (stack.is(Compressing.COMPRESSIBLE)
-                    || stack.is(Tags.Items.NUGGETS) || stack.is(Tags.Items.INGOTS) || stack.is(Tags.Items.RAW_MATERIALS)
-                    || stack.is(Tags.Items.GEMS) || stack.is(Tags.Items.DUSTS));
-        }
-        return true;
+        // the client cannot look the recipe up: it goes by what the server said presses
+        return this.level instanceof ServerLevel server ? !resultOf(server, stack).isEmpty() : Compressing.pressesHere(stack);
     }
 
     @Override

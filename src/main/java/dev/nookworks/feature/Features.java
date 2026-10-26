@@ -148,9 +148,4 @@ public final class Features {
             }
         });
     }
-
-    /** Whether any part is off: the creative tabs and JEI need do nothing otherwise. */
-    public static boolean anyOff() {
-        return PARTS.keySet().stream().anyMatch(name -> !enabled(name));
-    }
 }

@@ -17,9 +17,13 @@ import dev.nookworks.pearl.LodestoneNames;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.nookworks.feature.WorldFeatures;
 import dev.nookworks.machine.LootSummaries;
+import dev.nookworks.recycling.Compressing;
+import dev.nookworks.cooking.IronPotBlockEntity;
+import dev.nookworks.cooking.PotLine;
 import dev.nookworks.registry.ModCreativeTabs;
 import dev.nookworks.travel.DaemonDestinations;
 import dev.nookworks.travel.DaemonTravel;
@@ -32,6 +36,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -58,6 +63,35 @@ public final class NookworksNetwork {
 
         @Override
         public Type<LootTables> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * What an Iron Pot holds, for the action bar: its liquid (0 none, 1 water, 2 oil), how much of what it holds, and the
+     * things in it; the client fits the line to its screen ({@link PotLine}).
+     */
+    public record PotContents(int liquid, int amount, int capacity, List<ItemStack> items) implements CustomPacketPayload {
+        public static final Type<PotContents> TYPE = new Type<>(Nookworks.id("pot_contents"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, PotContents> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, PotContents::liquid, ByteBufCodecs.VAR_INT, PotContents::amount,
+                ByteBufCodecs.VAR_INT, PotContents::capacity,
+                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list(IronPotBlockEntity.SLOTS)), PotContents::items, PotContents::new);
+
+        @Override
+        public Type<PotContents> type() {
+            return TYPE;
+        }
+    }
+
+    /** What nine of presses in a Compressor, on this server ({@link Compressing#compressible}). */
+    public record Compressible(List<Item> items) implements CustomPacketPayload {
+        public static final Type<Compressible> TYPE = new Type<>(Nookworks.id("compressible"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Compressible> STREAM_CODEC =
+                ByteBufCodecs.registry(Registries.ITEM).apply(ByteBufCodecs.list(65536)).map(Compressible::new, Compressible::items);
+
+        @Override
+        public Type<Compressible> type() {
             return TYPE;
         }
     }
@@ -296,6 +330,8 @@ public final class NookworksNetwork {
                 RecipeChoice.showAgain(player, payload.containerId());
             }
         });
+        registrar.playToClient(PotContents.TYPE, PotContents.STREAM_CODEC, (payload, context) -> PotLine.shown.accept(payload));
+        registrar.playToClient(Compressible.TYPE, Compressible.STREAM_CODEC, (payload, context) -> Compressing.heard(Set.copyOf(payload.items())));
         registrar.playToClient(StartupSettings.TYPE, StartupSettings.STREAM_CODEC, (payload, context) ->
                 NookworksStartupConfig.mismatch(payload.values()).ifPresent(message -> context.player().sendSystemMessage(message)));
         registrar.playToClient(WorldParts.TYPE, WorldParts.STREAM_CODEC, (payload, context) -> {
@@ -317,7 +353,7 @@ public final class NookworksNetwork {
             }
         });
         registrar.playToServer(SortChest.TYPE, SortChest.STREAM_CODEC, (payload, context) -> {
-            if (context.player() instanceof ServerPlayer player) {
+            if (context.player() instanceof ServerPlayer player && NookworksConfig.CHEST_SORT_ALLOWED.getAsBoolean()) {
                 ChestSorting.sortOpen(player, payload.containerId(), payload.order());
             }
         });
@@ -347,6 +383,10 @@ public final class NookworksNetwork {
         event.getRelevantPlayers()
                 .filter((ServerPlayer player) -> player.connection.hasChannel(WorldParts.TYPE))
                 .forEach(player -> PacketDistributor.sendToPlayer(player, parts));
+        Compressible compressible = new Compressible(List.copyOf(Compressing.compressible(event.getPlayerList().getServer().overworld())));
+        event.getRelevantPlayers()
+                .filter((ServerPlayer player) -> player.connection.hasChannel(Compressible.TYPE))
+                .forEach(player -> PacketDistributor.sendToPlayer(player, compressible));
         LootTables payload = new LootTables(LootSummaries.collect(event.getPlayerList().getServer()));
         event.getRelevantPlayers()
                 .filter((ServerPlayer player) -> player.connection.hasChannel(LootTables.TYPE)) // a test's stand-in player has none

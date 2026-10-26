@@ -112,6 +112,10 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<Boolean>> MAGNET_ACTIVE = COMPONENTS.registerComponentType("magnet_active",
             b -> b.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
+    /** A Silk Touch axe's leaf gathering switched off (LeafGathering); absent, it is on. */
+    public static final Supplier<DataComponentType<Boolean>> GATHERS_LEAVES = COMPONENTS.registerComponentType("gathers_leaves",
+            b -> b.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+
     /** The mob inside a filled Mob Bottle. */
     public static final Supplier<DataComponentType<EntityType<?>>> CAPTURED_ENTITY = COMPONENTS.registerComponentType("captured_entity",
             b -> b.persistent(EntityType.CODEC).networkSynchronized(ByteBufCodecs.registry(Registries.ENTITY_TYPE)));
@@ -132,7 +136,7 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<Long>> SPAWNER_LINK_STAMP = COMPONENTS.registerComponentType("spawner_link_stamp",
             b -> b.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
 
-    /** The Horizontal Item Warp Sender a receiver is paired with (see {@link dev.nookworks.block.entity.LineWarpReceiverBlockEntity}). */
+    /** The Horizontal Item Warp Sender a receiver is paired with (see {@link dev.nookworks.block.entity.HorizontalItemWarpReceiverBlockEntity}). */
     public static final Supplier<DataComponentType<GlobalPos>> WARP_LINK = COMPONENTS.registerComponentType("warp_link",
             b -> b.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
     /** Which setting-down of the paired warp sender the link was made with, as {@link #SPAWNER_LINK_STAMP} for spawners. */

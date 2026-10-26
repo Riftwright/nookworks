@@ -10,10 +10,11 @@ import net.neoforged.neoforge.common.TranslatableEnum;
 
 /** Server-side gameplay settings (per world, synced to clients). Editable in Mods > Nookworks > Config. */
 public final class NookworksConfig {
+    /** When tree felling, vein mining and the hammers' 3x3 work: each has a setting of its own ({@code *_ACTIVATION}). */
     public enum Activation implements TranslatableEnum {
-        /** Chain breaking unless the player is sneaking (default). */
+        /** Unless the player is sneaking (default). */
         NOT_SNEAKING,
-        /** Chain breaking only while sneaking. */
+        /** Only while sneaking. */
         SNEAKING,
         ALWAYS;
 
@@ -68,8 +69,10 @@ public final class NookworksConfig {
     public static final ModConfigSpec.BooleanValue RAW_FOOD_SICKNESS;
     public static final ModConfigSpec.BooleanValue CAMPFIRES_PLACED_UNLIT;
     public static final ModConfigSpec.BooleanValue RECIPE_CHOICE;
+    public static final ModConfigSpec.BooleanValue CHEST_SORT_ALLOWED;
     public static final ModConfigSpec.BooleanValue PLAYER_PHOTOS;
     public static final ModConfigSpec.BooleanValue FAST_LEAF_DECAY;
+    public static final ModConfigSpec.BooleanValue INSTANT_LEAF_DECAY;
     public static final ModConfigSpec.DoubleValue TRADER_VILLAGE_MAP_CHANCE;
     public static final ModConfigSpec.DoubleValue MACHINE_ENERGY;
     public static final ModConfigSpec.DoubleValue MACHINE_TIME;
@@ -85,6 +88,8 @@ public final class NookworksConfig {
                 .translation(key("timber.maxBlocks")).defineInRange("maxBlocks", 256, 1, 1024);
         FAST_LEAF_DECAY = BUILDER.comment("Leaves of a felled tree decay within seconds (normal drops, saplings included).")
                 .translation(key("timber.fastLeafDecay")).define("fastLeafDecay", true);
+        INSTANT_LEAF_DECAY = BUILDER.comment("With fast leaf decay on: a felled tree's leaves all go at once, as it comes down.")
+                .translation(key("timber.instantLeafDecay")).define("instantLeafDecay", false);
         TIMBER_STAND_DOWN = BUILDER.comment("Turn tree felling off when another tree-felling mod is loaded.")
                 .translation(key("timber.standDownIfConflicting")).define("standDownIfConflicting", true);
         TIMBER_CONFLICTS = BUILDER.comment("Mod ids that also fell trees. Add or remove ids as the pack needs.")
@@ -115,9 +120,10 @@ public final class NookworksConfig {
                 .translation(key("hammer.activation")).defineEnum("activation", Activation.NOT_SNEAKING);
         HAMMER_STAND_DOWN = BUILDER.comment("Turn 3x3 mining off when another hammer/AOE-mining mod is loaded. The hammer still breaks one block.")
                 .translation(key("hammer.standDownIfConflicting")).define("standDownIfConflicting", true);
-        HAMMER_CONFLICTS = BUILDER.comment("Mod ids that also mine a 3x3 (or similar) with hammers.")
+        HAMMER_CONFLICTS = BUILDER.comment("Mod ids that also mine a 3x3 (or similar) with hammers. Not FTB Ultimine (since 1.2.0):",
+                        "it is a tool of its own beside the hammers.")
                 .translation(key("hammer.conflictingMods")).defineListAllowEmpty("conflictingMods",
-                        List.of("justhammers", "hammers", "vanilla_hammers", "ftbultimine"),
+                        List.of("justhammers", "hammers", "vanilla_hammers"),
                         NEW_MOD_ID, o -> o instanceof String);
         BUILDER.pop();
 
@@ -195,6 +201,9 @@ public final class NookworksConfig {
                 "ingredients), a button by the result lets the player pick which to make, and the pick is remembered. Off by itself",
                 "when Polymorph is installed, which does the same.")
                 .translation(key("recipeChoice")).define("recipeChoice", true);
+        CHEST_SORT_ALLOWED = BUILDER.comment("Players may sort a chest, barrel or shulker box with the Sort button on its screen (each player",
+                        "can also hide the button in their own client settings). Off, no one sees the button and the server sorts nothing.")
+                .translation(key("chestSortAllowed")).define("chestSortAllowed", true);
 
         PLAYER_PHOTOS = BUILDER.comment("Cameras take photos, which players' games send the server and the server shows others on posters. Off,",
                 "cameras take none and the server sends no photo to anyone: posters of them show blank paper. An operator can take",

@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Predicate;
 
 import dev.nookworks.machine.Crankable;
 import net.minecraft.core.BlockPos;
@@ -55,13 +56,23 @@ public final class DriveNetwork {
 
     /** The machines {@code wheels} turn, at most {@link #MOST_MACHINES}, in the order the wheels were found. */
     public static List<BlockEntity> machines(Level level, List<DriveWheelBlockEntity> wheels) {
+        return machines(level, wheels, machine -> true);
+    }
+
+    /**
+     * As {@link #machines(Level, List)}, counting only those {@code turnable} lets the motor turn: a stranger's machines
+     * beyond a wheel outside a claim, which the claimed motor may not turn, took up its eight and left the owner's own
+     * still (the 1.0 review's deferred note).
+     */
+    public static List<BlockEntity> machines(Level level, List<DriveWheelBlockEntity> wheels, Predicate<BlockEntity> turnable) {
         List<BlockEntity> machines = new ArrayList<>();
         for (DriveWheelBlockEntity wheel : wheels) {
             for (Direction.AxisDirection way : Direction.AxisDirection.values()) {
                 Direction toward = Direction.fromAxisAndDirection(wheel.axis(), way);
                 BlockPos at = wheel.getBlockPos().relative(toward);
                 if (level.isLoaded(at) && level.getBlockEntity(at) instanceof Crankable machine
-                        && machine.drivenFrom(toward.getOpposite()) && !machines.contains((BlockEntity) machine)) {
+                        && machine.drivenFrom(toward.getOpposite()) && !machines.contains((BlockEntity) machine)
+                        && turnable.test((BlockEntity) machine)) {
                     machines.add((BlockEntity) machine);
                     if (machines.size() >= MOST_MACHINES) {
                         return machines;

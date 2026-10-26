@@ -10,7 +10,7 @@
   "group": "iron_storage_barrel",
   "key": {
     "I": "minecraft:iron_ingot",
-    "C": "minecraft:barrel"
+    "C": "#c:barrels/wooden"
   },
   "pattern": [
     "III",

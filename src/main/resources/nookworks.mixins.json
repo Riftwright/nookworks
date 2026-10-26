@@ -28,7 +28,9 @@
     "ResultSlotMixin",
     "DataFixTypesMixin",
     "TeleportCommandMixin",
-    "CampfireBlockMixin"
+    "CampfireBlockMixin",
+    "EnchantmentHelperMixin",
+    "EnchantRandomlyFunctionMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin",
@@ -37,6 +39,6 @@
     "client.AbstractContainerScreenMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   }
 }

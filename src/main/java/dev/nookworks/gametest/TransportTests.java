@@ -5,9 +5,9 @@ import static dev.nookworks.gametest.NookworksGameTests.test;
 
 import java.util.List;
 
-import dev.nookworks.block.LineWarpBlock;
+import dev.nookworks.block.HorizontalItemWarpBlock;
 import dev.nookworks.block.entity.ItemWarpSenderBlockEntity;
-import dev.nookworks.block.entity.LineWarpSenderBlockEntity;
+import dev.nookworks.block.entity.HorizontalItemWarpSenderBlockEntity;
 import dev.nookworks.block.entity.MagnetChestBlockEntity;
 import dev.nookworks.compat.FeatureGate;
 import dev.nookworks.feature.Elevators;
@@ -49,10 +49,11 @@ final class TransportTests {
         test("item_warp_waits_without_receiver", TransportTests::warpWaits);
         test("magnet_pulls_items_but_not_fresh_drops", TransportTests::magnetPulls);
         test("magnet_pulls_experience_from_its_whole_reach", TransportTests::magnetPullsOrbs);
+        test("magnet_draws_orbs_fast_and_takes_them_at_once", TransportTests::magnetTakesOrbsAtOnce);
         test("magnet_leaves_to_a_nearer_magnet", TransportTests::magnetLeavesToANearerMagnet);
         test("conflicting_mods_stand_our_features_down", TransportTests::conflictingModsStandDown);
-        test("line_warp_sends_along_its_facing", TransportTests::lineWarpSends);
-        test("line_warp_ignores_other_lines", TransportTests::lineWarpIgnoresOffLine);
+        test("horizontal_item_warp_sends_along_its_facing", TransportTests::horizontalWarpSends);
+        test("horizontal_item_warp_ignores_other_lines", TransportTests::horizontalWarpIgnoresOffLine);
         test("magnet_chest_collects_nearby_drops", TransportTests::magnetChestCollects);
     }
 
@@ -233,6 +234,35 @@ final class TransportTests {
         helper.succeed();
     }
 
+    /**
+     * The Magnet draws orbs faster than vanilla's own drift (which reaches 8 blocks, the plain Magnet's range) and takes
+     * those at the player all at once, not one every other tick (the user, 2026-10-26: its pull did not show).
+     */
+    static void magnetTakesOrbsAtOnce(GameTestHelper helper) {
+        ServerPlayer player = MockPlayers.inLevel(helper);
+        player.snapTo(helper.absoluteVec(new Vec3(1.5, 1, 1.5)));
+        Vec3 off = helper.absoluteVec(new Vec3(6.5, 1.5, 1.5));
+        var far = new net.minecraft.world.entity.ExperienceOrb(helper.getLevel(), off.x, off.y, off.z, 3);
+        far.setDeltaMovement(Vec3.ZERO);
+        helper.getLevel().addFreshEntity(far);
+        List<net.minecraft.world.entity.ExperienceOrb> near = new java.util.ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Vec3 at = helper.absoluteVec(new Vec3(2.2 + i * 0.3, 1.5, 1.5)); // apart enough not to merge
+            var orb = new net.minecraft.world.entity.ExperienceOrb(helper.getLevel(), at.x, at.y, at.z, 5);
+            orb.setDeltaMovement(Vec3.ZERO);
+            helper.getLevel().addFreshEntity(orb);
+            near.add(orb);
+        }
+        int before = player.totalExperience;
+        MagnetItem.pull(player, 8);
+        check(helper, far.getDeltaMovement().x < -0.8, "an orb five blocks off comes fast: " + far.getDeltaMovement());
+        check(helper, near.stream().noneMatch(net.minecraft.world.entity.ExperienceOrb::isAlive)
+                && player.totalExperience - before == 15, "the three at the player taken at once: "
+                + (player.totalExperience - before) + " points");
+        helper.getLevel().getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
     /** With two magnets in reach, a thing goes to the nearer player, not to whoever's magnet acts last (r7 multiplayer). */
     static void magnetLeavesToANearerMagnet(GameTestHelper helper) {
         ServerPlayer near = MockPlayers.inLevel(helper);
@@ -314,15 +344,15 @@ final class TransportTests {
     }
 
     // ---- Horizontal item warp ----
-    static void placeLineWarp(GameTestHelper helper, Block block, BlockPos pos, Direction facing) {
-        helper.setBlock(pos, block.defaultBlockState().setValue(LineWarpBlock.FACING, facing));
+    static void placeHorizontalWarp(GameTestHelper helper, Block block, BlockPos pos, Direction facing) {
+        helper.setBlock(pos, block.defaultBlockState().setValue(HorizontalItemWarpBlock.FACING, facing));
     }
 
-    static void lineWarpSends(GameTestHelper helper) {
-        placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), new BlockPos(0, 1, 3), Direction.EAST);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), new BlockPos(5, 1, 3), Direction.EAST);
+    static void horizontalWarpSends(GameTestHelper helper) {
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), new BlockPos(0, 1, 3), Direction.EAST);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), new BlockPos(5, 1, 3), Direction.EAST);
         helper.setBlock(new BlockPos(6, 1, 3), Blocks.CHEST);
-        helper.getBlockEntity(new BlockPos(0, 1, 3), LineWarpSenderBlockEntity.class)
+        helper.getBlockEntity(new BlockPos(0, 1, 3), HorizontalItemWarpSenderBlockEntity.class)
                 .setItem(0, new ItemStack(Items.IRON_INGOT, 5));
         helper.succeedWhen(() -> {
             Container chest = helper.getBlockEntity(new BlockPos(6, 1, 3), ChestBlockEntity.class);
@@ -330,11 +360,11 @@ final class TransportTests {
         });
     }
 
-    static void lineWarpIgnoresOffLine(GameTestHelper helper) {
-        placeLineWarp(helper, ModBlocks.LINE_WARP_SENDER.get(), new BlockPos(0, 1, 3), Direction.EAST);
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), new BlockPos(5, 2, 3), Direction.EAST); // one block higher
-        placeLineWarp(helper, ModBlocks.LINE_WARP_RECEIVER.get(), new BlockPos(0, 1, 6), Direction.SOUTH); // to the side
-        var sender = helper.getBlockEntity(new BlockPos(0, 1, 3), LineWarpSenderBlockEntity.class);
+    static void horizontalWarpIgnoresOffLine(GameTestHelper helper) {
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_SENDER.get(), new BlockPos(0, 1, 3), Direction.EAST);
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), new BlockPos(5, 2, 3), Direction.EAST); // one block higher
+        placeHorizontalWarp(helper, ModBlocks.HORIZONTAL_ITEM_WARP_RECEIVER.get(), new BlockPos(0, 1, 6), Direction.SOUTH); // to the side
+        var sender = helper.getBlockEntity(new BlockPos(0, 1, 3), HorizontalItemWarpSenderBlockEntity.class);
         sender.setItem(0, new ItemStack(Items.IRON_INGOT, 5));
         helper.runAfterDelay(20, () -> {
             check(helper, sender.getItem(0).getCount() == 5, "no receiver on the line: the items wait");

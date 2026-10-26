@@ -23,6 +23,15 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public final class Earthmover {
     public static final ResourceKey<Enchantment> KEY = ResourceKey.create(Registries.ENCHANTMENT, Nookworks.id("earthmover"));
 
+    /**
+     * Whether Earthmover is offered by the enchanting table and the trades: only while the hammers are a part of the game,
+     * there being nothing else it goes on (a librarian sold its book with the hammers switched off). Hammers standing
+     * down for another mod keep it: they still dig dirt and wood with it, a block at a time.
+     */
+    public static boolean offered() {
+        return Features.enabled("hammers");
+    }
+
     public static boolean has(ItemStack stack) {
         return stack.getEnchantments().keySet().stream().anyMatch(holder -> holder.is(KEY));
     }

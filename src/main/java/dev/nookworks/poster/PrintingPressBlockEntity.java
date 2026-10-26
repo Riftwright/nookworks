@@ -103,7 +103,7 @@ public class PrintingPressBlockEntity extends MachineBlockEntity implements Menu
         public int get(int index) {
             return switch (index) {
                 case 0 -> PrintingPressBlockEntity.this.selectedIndex() + 1; // 0 for none: a screen not yet sent a value reads none
-                case 1 -> PrintingPressBlockEntity.this.progress * 100 / MachineTuning.time(TICKS);
+                case 1 -> MachineTuning.percent(PrintingPressBlockEntity.this.progress, MachineTuning.time(TICKS));
                 case 2 -> PrintingPressBlockEntity.this.energyStored();
                 case 3 -> PrintingPressBlockEntity.this.running ? 1 : 0;
                 case 4 -> PrintingPressBlockEntity.this.redstone.ordinal();
@@ -450,7 +450,7 @@ public class PrintingPressBlockEntity extends MachineBlockEntity implements Menu
     @Override
     public Component status() {
         if (this.running && this.status == MachineStatus.RUNNING) {
-            return Component.translatable("nookworks.machine.printing_press", this.energyText(), this.progress * 100 / MachineTuning.time(TICKS));
+            return Component.translatable("nookworks.machine.printing_press", this.energyText(), MachineTuning.percent(this.progress, MachineTuning.time(TICKS)));
         }
         return Component.translatable("nookworks.machine.printing_press.waiting", this.energyText(),
                 Component.translatable(this.status.translationKey()));
@@ -460,7 +460,7 @@ public class PrintingPressBlockEntity extends MachineBlockEntity implements Menu
     @Override
     public void jade(java.util.function.Consumer<Component> lines) {
         lines.accept(this.running && this.status == MachineStatus.RUNNING
-                ? Component.translatable("gui.nookworks.machine.running_percent", this.progress * 100 / MachineTuning.time(TICKS))
+                ? Component.translatable("gui.nookworks.machine.running_percent", MachineTuning.percent(this.progress, MachineTuning.time(TICKS)))
                 : Component.translatable(this.status.translationKey()));
     }
 

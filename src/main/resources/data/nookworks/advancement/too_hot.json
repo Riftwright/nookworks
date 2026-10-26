@@ -1,0 +1,44 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "velarium"
+    }
+  ],
+  "criteria": {
+    "burned": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "damage": {
+          "type": {
+            "tags": [
+              {
+                "id": "nookworks:red_hot_ingot",
+                "expected": true
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:red_hot_velarium_ingot"
+    },
+    "title": {
+      "translate": "advancements.nookworks.too_hot.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.too_hot.description"
+    },
+    "hidden": true
+  },
+  "requirements": [
+    [
+      "burned"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:velarium_ingot"
+}

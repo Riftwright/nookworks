@@ -167,7 +167,9 @@ public class OilLampBlock extends Block {
         }
         int burnt = state.getValue(BURNT) + 1;
         if (burnt < STEPS) {
-            level.setBlock(pos, state.setValue(BURNT, burnt), Block.UPDATE_CLIENTS);
+            // kept on the server alone: no model shows how far a bottle has burnt, and sent, each step had every
+            // client near draw the lamp's section again (r17 N6); its look changes with OIL and LIT, sent as ever
+            level.setBlock(pos, state.setValue(BURNT, burnt), Block.UPDATE_INVISIBLE);
             level.scheduleTick(pos, this, STEP);
             return;
         }

@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 @Mixin(ServerPacksSource.class)
 abstract class ServerPacksSourceMixin {
     @Inject(method = "createPackRepository(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;)Lnet/minecraft/server/packs/repository/PackRepository;",
-            at = @At("HEAD"))
+            at = @At("HEAD"), require = 1) // required (HookCheck): without it a world's parts are not what it chose
     private static void nookworks$readWorldFeatures(LevelStorageSource.LevelStorageAccess world, CallbackInfoReturnable<PackRepository> cir) {
         WorldFeatures.opening(world.getLevelPath(LevelResource.ROOT));
     }

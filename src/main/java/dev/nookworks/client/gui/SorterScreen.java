@@ -497,6 +497,17 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
             return;
         }
+        ItemStack held = this.menu.held();
+        Component holding = Component.translatable("gui.nookworks.sorter.holding");
+        int heldY = SorterMenu.playerY(this.menu.tier()) - 17;
+        int heldLeft = SorterMenu.HELD_X - 3 - this.font.width(holding);
+        if (!held.isEmpty() && !this.menu.picking() && this.menu.getCarried().isEmpty()
+                && this.isHovering(heldLeft, heldY, SorterMenu.HELD_X + 16 - heldLeft, 16, mouseX, mouseY)) {
+            List<Component> lines = new ArrayList<>(getTooltipFromItem(this.minecraft, held));
+            lines.add(Component.translatable("gui.nookworks.sorter.holding.tooltip").withStyle(ChatFormatting.GRAY));
+            graphics.setTooltipForNextFrame(this.font, lines, held.getTooltipImage(), held, mouseX, mouseY);
+            return;
+        }
         Slot gear = this.menu.getSlot(SorterMenu.GEAR_SLOT);
         if (gear.isActive() && !gear.hasItem() && this.menu.getCarried().isEmpty()
                 && this.isHovering(gear.x - 1, gear.y - 1, 18, 18, mouseX, mouseY)) {
@@ -518,6 +529,16 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
         MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 16, MachineStyle.TITLE, true);
         graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, MachineStyle.DIM, false);
+        ItemStack held = this.menu.held();
+        if (!held.isEmpty()) {
+            // what it holds, at the caption row's right end: one batch, waiting there while its outlet is full or blocked
+            // - a sorter that stopped says why without Jade (the 1.1 low items, 48)
+            int y = SorterMenu.playerY(this.menu.tier()) - 17;
+            Component holding = Component.translatable("gui.nookworks.sorter.holding");
+            graphics.text(this.font, holding, SorterMenu.HELD_X - 3 - this.font.width(holding), this.inventoryLabelY, MachineStyle.DIM, false);
+            graphics.item(held, SorterMenu.HELD_X, y);
+            graphics.itemDecorations(this.font, held, SorterMenu.HELD_X, y);
+        }
         if (this.menu.picking()) {
             // under the slot, in the room between the screen's edge and the list: a word too wide for it (English's
             // "Sample" ran into the list's text) is left out, the hint beside the slot naming it already

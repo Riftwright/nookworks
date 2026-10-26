@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "velarium"
+    }
+  ],
   "criteria": {
     "nugget": {
       "trigger": "minecraft:inventory_changed",

@@ -66,7 +66,15 @@ public class SorterMenu extends AbstractContainerMenu {
     /** The Keep Out row's first slot, and where the row sits: right of its mark, ending where the filter's rows end. */
     public static final int DENY_SLOT = SAMPLE_SLOT + 1;
     public static final int DENY_X = 26;
-    private static final int INVENTORY = DENY_SLOT + SorterBlockEntity.DENY_SLOTS;
+    /** Where what the sorter holds is shown: the right end of the inventory's caption row. */
+    public static final int HELD_X = 152;
+    /**
+     * What the sorter holds - one batch, waiting there while its outlet is full or blocked - after the Keep Out row: the
+     * player's inventory stays the last 36 slots, as a menu's is. Shown, not clicked: the screen draws it
+     * ({@code SorterScreen}).
+     */
+    public static final int HELD_SLOT = DENY_SLOT + SorterBlockEntity.DENY_SLOTS;
+    private static final int INVENTORY = HELD_SLOT + 1;
 
     private final Container filter;
     private final Container deny;
@@ -86,7 +94,7 @@ public class SorterMenu extends AbstractContainerMenu {
         SorterTier tier = data.readEnum(SorterTier.class);
         BlockPos pos = data.readBlockPos();
         return new SorterMenu(containerId, inventory, new SimpleContainer(SorterBlockEntity.FILTER_SLOTS), new SimpleContainer(1),
-                new SimpleContainer(SorterBlockEntity.DENY_SLOTS), pos, tier, null);
+                new SimpleContainer(SorterBlockEntity.DENY_SLOTS), new SimpleContainer(1), pos, tier, null);
     }
 
     /** Where the gear slot's top sits: beside the swap button, under the filter rows. */
@@ -105,8 +113,15 @@ public class SorterMenu extends AbstractContainerMenu {
         this(containerId, inventory, filter, gear, new SimpleContainer(SorterBlockEntity.DENY_SLOTS), pos, tier, settings);
     }
 
+    /** With nothing held shown, as a menu made before it was. */
     public SorterMenu(int containerId, Inventory inventory, Container filter, Container gear, Container deny, BlockPos pos,
             SorterTier tier, @Nullable SorterSettings settings) {
+        this(containerId, inventory, filter, gear, deny, new SimpleContainer(1), pos, tier, settings);
+    }
+
+    /** {@code held}: what the sorter holds, its one slot (the sorter itself, on the server). */
+    public SorterMenu(int containerId, Inventory inventory, Container filter, Container gear, Container deny, Container held,
+            BlockPos pos, SorterTier tier, @Nullable SorterSettings settings) {
         super(ModMenus.SORTER.get(), containerId);
         this.filter = filter;
         this.deny = deny;
@@ -184,6 +199,22 @@ public class SorterMenu extends AbstractContainerMenu {
                 }
             });
         }
+        this.addSlot(new Slot(held, 0, HELD_X, playerY(tier) - 17) {
+            @Override
+            public boolean mayPickup(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return false;
+            }
+
+            @Override
+            public boolean isActive() {
+                return false; // drawn by the screen, over the inventory's caption; never clicked
+            }
+        });
         this.addStandardInventorySlots(inventory, 8, playerY(tier));
         for (int i = 0; i < SorterSettings.COUNT; i++) {
             int flag = i;
@@ -220,9 +251,17 @@ public class SorterMenu extends AbstractContainerMenu {
         });
     }
 
-    /** The player inventory, under the Keep Out row (lower when there is a second row of filter slots). */
+    /**
+     * The player inventory, under the Keep Out row (lower when there is a second row of filter slots), with 18 px over
+     * it for its caption and what the sorter holds beside it (a Precision Sorter's 14 grew by 4 for it).
+     */
     public static int playerY(SorterTier tier) {
-        return tier.filterSlots > COLUMNS ? 146 : 108;
+        return tier.filterSlots > COLUMNS ? 150 : 108;
+    }
+
+    /** What the sorter holds, as last sent. */
+    public ItemStack held() {
+        return this.slots.get(HELD_SLOT).getItem();
     }
 
     public SorterTier tier() {
@@ -414,6 +453,9 @@ public class SorterMenu extends AbstractContainerMenu {
                 this.setSample(this.getCarried()); // a copy, as a filter entry is: the item stays in hand
             }
             return;
+        }
+        if (slotIndex == HELD_SLOT) {
+            return; // shown, not taken: what the sorter holds stays with it
         }
         if (slotIndex >= DENY_SLOT && slotIndex < INVENTORY) {
             // the Keep Out row, as the filter: an item clicked in registers a copy, an empty hand clears

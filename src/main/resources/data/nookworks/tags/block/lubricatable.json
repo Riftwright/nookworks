@@ -4,6 +4,7 @@
     "#minecraft:trapdoors",
     "#minecraft:fence_gates",
     "minecraft:piston",
-    "minecraft:sticky_piston"
+    "minecraft:sticky_piston",
+    "nookworks:motor"
   ]
 }

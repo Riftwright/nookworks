@@ -50,6 +50,14 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = Nookworks.MODID)
 public class MagnetItem extends Item {
     private static final double SPEED = 0.45;
+    /**
+     * Orbs come twice as fast, and those that reach the player are taken all at once (the user, 2026-10-26: within
+     * vanilla's own 8 blocks the orbs drift in anyway, and the player takes one every other tick, so a Magnet on made no
+     * difference to see).
+     */
+    private static final double ORB_SPEED = 0.9;
+    /** How near the player's middle an orb is taken at once, every one of a merged orb's count. */
+    private static final double ORB_TAKE = 2.0;
 
     public final int range;
 
@@ -103,7 +111,7 @@ public class MagnetItem extends Item {
 
     @SubscribeEvent
     static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.isSpectator() || player.isShiftKeyDown()
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.isSpectator() || player.isDeadOrDying() || player.isShiftKeyDown()
                 || player.tickCount % 2 != 0) {
             return;
         }
@@ -201,6 +209,22 @@ public class MagnetItem extends Item {
         return rivals;
     }
 
+    /**
+     * Takes every one of a merged orb's count now, by the orb's own pickup (Mending, the pickup event and sound as when
+     * walked into), where vanilla takes one every other tick. At most 64 a call, the rest the next.
+     */
+    private static void takeAll(ServerPlayer player, ExperienceOrb orb) {
+        int delay = player.takeXpDelay;
+        for (int i = 0; i < 64 && orb.isAlive(); i++) {
+            player.takeXpDelay = 0;
+            orb.playerTouch(player);
+            if (player.takeXpDelay == 0) {
+                player.takeXpDelay = delay; // the pickup was refused (a claim mod's event): vanilla's wait as it was
+                break;
+            }
+        }
+    }
+
     /** Pulls items and XP within {@code range} towards the player. Public for tests. */
     public static void pull(Player player, int range) {
         AABB box = player.getBoundingBox().inflate(range);
@@ -222,10 +246,20 @@ public class MagnetItem extends Item {
                 continue;
             }
             Vec3 toward = target.subtract(entity.position());
-            if (toward.lengthSqr() < 1.0 || !inSight(player, entity) || !mayTake(player, entity)) {
-                continue; // at the player's feet already, nothing to do - and so no line of sight to trace to it
+            double distance = toward.length();
+            if (entity instanceof ItemEntity && distance < 1.0 || !inSight(player, entity) || !mayTake(player, entity)) {
+                continue; // an item at the player's feet already, nothing to do - and so no line of sight to trace to it
             }
-            entity.setDeltaMovement(toward.normalize().scale(SPEED));
+            if (entity instanceof ExperienceOrb orb) {
+                if (distance < ORB_TAKE && player instanceof ServerPlayer taker) {
+                    takeAll(taker, orb);
+                    continue;
+                }
+                // no faster than the way left, so it does not fly past the player
+                entity.setDeltaMovement(toward.scale(Math.min(ORB_SPEED, distance) / distance));
+            } else {
+                entity.setDeltaMovement(toward.normalize().scale(SPEED));
+            }
             entity.syncVelocity = true;
         }
     }

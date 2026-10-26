@@ -17,7 +17,8 @@ import net.minecraft.util.datafix.DataFixTypes;
  */
 @Mixin(DataFixTypes.class)
 abstract class DataFixTypesMixin {
-    @WrapMethod(method = "update(Lcom/mojang/datafixers/DataFixer;Lcom/mojang/serialization/Dynamic;II)Lcom/mojang/serialization/Dynamic;")
+    // required, as few hooks are (HookCheck): a world's data goes through it, and it is never left out
+    @WrapMethod(method = "update(Lcom/mojang/datafixers/DataFixer;Lcom/mojang/serialization/Dynamic;II)Lcom/mojang/serialization/Dynamic;", require = 1)
     private <T> Dynamic<T> nookworks$updateOurItems(DataFixer fixer, Dynamic<T> input, int fromVersion, int toVersion,
             Operation<Dynamic<T>> original) {
         return SaveFixes.update((DataFixTypes) (Object) this, fixer, input, fromVersion, toVersion,

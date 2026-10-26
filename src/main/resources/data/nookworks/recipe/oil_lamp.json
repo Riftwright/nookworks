@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     "minecraft:brick",
-    "minecraft:string"
+    "#c:strings"
   ],
   "result": {
     "id": "nookworks:oil_lamp",

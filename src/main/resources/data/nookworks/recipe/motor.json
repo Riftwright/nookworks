@@ -1,8 +1,14 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:feature",
+      "feature": "motor"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": "minecraft:copper_ingot",
+    "C": "#c:ingots/copper",
     "I": "minecraft:iron_ingot",
     "M": "nookworks:machine_chassis",
     "R": "minecraft:redstone"

@@ -8,6 +8,7 @@ import dev.nookworks.client.CameraView;
 import dev.nookworks.machine.MachineInfo;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineStatus;
+import dev.nookworks.machine.MachineTuning;
 import dev.nookworks.machine.Readout;
 import dev.nookworks.mercury.MercuryMachineBlockEntity;
 import dev.nookworks.pearl.LodestoneNames;
@@ -123,7 +124,7 @@ public final class NookworksJadePlugin implements IWailaPlugin {
         MachineStatus status = machine.guiStatus();
         int max = machine.guiProgressMax();
         Component line = status == MachineStatus.RUNNING && max > 0 && machine.layout().gauge() == MachineLayout.Gauge.ARROW
-                ? Component.translatable("gui.nookworks.machine.running_percent", machine.guiProgress() * 100 / max)
+                ? Component.translatable("gui.nookworks.machine.running_percent", MachineTuning.percent(machine.guiProgress(), max))
                 // an incomplete tower says what it lacks, as its screen's tooltip does
                 : status == MachineStatus.INCOMPLETE ? Component.translatable("nookworks.machine.distiller.incomplete")
                 : Component.translatable(status.translationKey());

@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 /**
- * Oil Can: lubricant (vegetable oil with sulfur in it) for hinges. A drop on a door, trapdoor, fence gate or piston
- * silences it for good (see {@link Lubrication}); a door takes it on both halves. One can does a good many.
+ * Oil Can: lubricant (vegetable oil with sulfur in it) for hinges. A drop on a door, trapdoor, fence gate, piston or
+ * Motor silences it for good (see {@link Lubrication}); a door takes it on both halves. One can does a good many.
  */
 public class OilCanItem extends Item {
     public OilCanItem(Properties properties) {

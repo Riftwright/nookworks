@@ -359,11 +359,6 @@ public final class MachineStyle {
         };
     }
 
-    public static void statusDot(GuiGraphicsExtractor g, int x, int y, MachineStatus.Tone tone) {
-        g.fill(x, y, x + 4, y + 4, EDGE);
-        g.fill(x + 1, y + 1, x + 3, y + 3, toneColour(tone));
-    }
-
     /** The energy gauge: a column of cells like a battery meter, coloured by whether the machine can run. */
     public static void energy(GuiGraphicsExtractor g, int x, int y, int h, int energy, int capacity, MachineStatus.Tone tone) {
         // Framed in red when the machine cannot run on what it has, so an empty gauge still says something.
@@ -497,14 +492,6 @@ public final class MachineStyle {
             g.fill(x + 9, t, x + 13, t + 1, SLOT_LIT);
         }
         g.fill(x + 5, y + 2, x + 6, y + h - 2, 0x40FFFFFF);
-    }
-
-    /** A small arrow at the tank's pipe connection: out to the pipes, or in from them. */
-    public static void pipeFlow(GuiGraphicsExtractor g, int x, int y, boolean out) {
-        for (int i = 0; i < 4; i++) {
-            int column = out ? x + i : x + 3 - i;
-            g.fill(column, y + i, column + 1, y + 7 - i, BRASS_LIT);
-        }
     }
 
     /** Under the outputs: they leave through the bottom. */

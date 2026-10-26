@@ -9,8 +9,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
@@ -26,6 +28,12 @@ public class ExperienceBuffer extends OneTank {
 
     private final int capacity;
     private final Runnable changed;
+    /**
+     * What stands on each side to take it, as NeoForge keeps it until it changes: asked afresh, all six sides were
+     * looked up every tick a machine held any (the 10-19 performance audit). Made at the first push.
+     */
+    @SuppressWarnings("unchecked")
+    private final @Nullable BlockCapabilityCache<ResourceHandler<FluidResource>, @Nullable Direction>[] sides = new BlockCapabilityCache[6];
 
     /** {@code changed} is told of every change, to have the machine saved. */
     public ExperienceBuffer(int capacity, Runnable changed) {
@@ -75,10 +83,12 @@ public class ExperienceBuffer extends OneTank {
                 return;
             }
             BlockPos next = pos.relative(side);
-            if (!level.isLoaded(next)) {
-                continue;
+            if (this.sides[side.ordinal()] == null) {
+                // nothing in a chunk not loaded: the cache answers none there, and is told when it loads
+                this.sides[side.ordinal()] = BlockCapabilityCache.create(Capabilities.Fluid.BLOCK, level, next, side.getOpposite(),
+                        () -> !machine.isRemoved(), () -> {});
             }
-            var target = level.getCapability(Capabilities.Fluid.BLOCK, next, side.getOpposite());
+            var target = this.sides[side.ordinal()].getCapability();
             if (target != null && DrawRights.mayMove(level, pos, machine, next, level.getBlockEntity(next))) {
                 Move.transfer(this, target, this.getResource(0), Math.min(PUSH, this.stored()));
             }

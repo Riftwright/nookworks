@@ -9,6 +9,7 @@ import java.util.List;
 
 import dev.nookworks.block.SconceBlock;
 import dev.nookworks.block.entity.CrateBlockEntity;
+import dev.nookworks.NookworksConfig;
 import dev.nookworks.feature.Earthmover;
 import dev.nookworks.feature.Fireproofing;
 import dev.nookworks.feature.PlacedLogs;
@@ -60,6 +61,11 @@ final class MiningTests {
         test("timber_fells_tree", MiningTests::timberFellsTree);
         test("timber_ignores_log_cabin", MiningTests::timberIgnoresLogCabin);
         test("timber_leaves_decay_fast_but_spare_other_trees", MiningTests::timberLeavesDecayFast);
+        test("timber_with_silk_touch_drops_the_leaves", MiningTests::timberSilkTouchLeaves);
+        test("timber_leaves_can_go_at_once", MiningTests::timberLeavesAtOnce);
+        test("silk_touch_leaves_stop_before_the_axe_breaks", MiningTests::silkLeavesSpareAWornAxe);
+        test("a_silk_touch_axe_switches_its_leaf_gathering", MiningTests::leafGatheringSwitches);
+        test("a_silk_touch_axe_with_leaf_gathering_off_leaves_the_leaves", MiningTests::leafGatheringOff);
         test("timber_sneak_breaks_one", MiningTests::timberSneakBreaksOne);
         test("timber_spares_a_cabin_against_the_tree", MiningTests::timberSparesCabinAgainstTree);
         test("timber_spares_a_village_house", MiningTests::timberSparesVillageHouse);
@@ -133,6 +139,147 @@ final class MiningTests {
             check(helper, helper.getBlockState(new BlockPos(1, 5, 1)).isAir(), "leaves above the felled trunk decay");
             check(helper, helper.getBlockState(new BlockPos(5, 5, 4)).is(Blocks.OAK_LEAVES), "tree B keeps its leaves");
             check(helper, helper.getBlockState(new BlockPos(3, 5, 3)).is(Blocks.OAK_LEAVES), "leaves within reach of tree B stay");
+        });
+    }
+
+    /** One oak, its trunk at (1,1..4,1) and a crown of 5x5x2 leaves above (50, more than a tick's share). */
+    private static void smallOak(GameTestHelper helper) {
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, false)
+                .setValue(LeavesBlock.DISTANCE, 1);
+        for (int y = 1; y <= 4; y++) {
+            helper.setBlock(new BlockPos(3, y, 3), Blocks.OAK_LOG);
+        }
+        for (BlockPos p : BlockPos.betweenClosed(new BlockPos(1, 5, 1), new BlockPos(5, 6, 5))) {
+            helper.setBlock(p.immutable(), leaves);
+        }
+    }
+
+    /**
+     * Felled by an axe with Silk Touch, the tree's leaves drop as leaves - as that axe would break them - and no
+     * saplings (a CurseForge comment, 2026-10-26: shearing leaves is a bother).
+     */
+    static void timberSilkTouchLeaves(GameTestHelper helper) {
+        smallOak(helper);
+        ItemStack axe = new ItemStack(Items.DIAMOND_AXE);
+        axe.enchant(helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH), 1);
+        ServerPlayer player = playerWith(helper, axe);
+        player.gameMode.destroyBlock(helper.absolutePos(new BlockPos(3, 1, 3)));
+        helper.succeedWhen(() -> {
+            check(helper, helper.getBlockState(new BlockPos(1, 5, 1)).isAir() && helper.getBlockState(new BlockPos(5, 6, 5)).isAir(),
+                    "the leaves have gone");
+            var drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(9));
+            int leafItems = drops.stream().filter(e -> e.getItem().is(Items.OAK_LEAVES)).mapToInt(e -> e.getItem().getCount()).sum();
+            boolean saplings = drops.stream().anyMatch(e -> e.getItem().is(Items.OAK_SAPLING));
+            // (the mock player at the corner may pick a few up: what matters is leaves, not saplings)
+            check(helper, leafItems >= 40 && !saplings, "the leaves dropped as leaves, no saplings: " + leafItems + ", " + saplings);
+            // four logs a point each, as by hand; the fifty leaves a point for the first and each fourth after: 13
+            check(helper, axe.getDamageValue() == 4 + 13, "the axe worn a point a log and one for every four leaves: " + axe.getDamageValue());
+        });
+    }
+
+    /**
+     * A Silk Touch axe on its last points (protectTools on, the default) fells the tree, takes a leaf or so as leaves and
+     * then leaves the rest to decay as usual, rather than breaking on them.
+     */
+    static void silkLeavesSpareAWornAxe(GameTestHelper helper) {
+        smallOak(helper);
+        ItemStack axe = new ItemStack(Items.DIAMOND_AXE);
+        axe.enchant(helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH), 1);
+        axe.setDamageValue(axe.getMaxDamage() - 6); // the four logs leave it two
+        ServerPlayer player = playerWith(helper, axe);
+        player.gameMode.destroyBlock(helper.absolutePos(new BlockPos(3, 1, 3)));
+        helper.succeedWhen(() -> {
+            check(helper, helper.getBlockState(new BlockPos(1, 5, 1)).isAir() && helper.getBlockState(new BlockPos(5, 6, 5)).isAir(),
+                    "the leaves have gone");
+            var drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(9));
+            int leafItems = drops.stream().filter(e -> e.getItem().is(Items.OAK_LEAVES)).mapToInt(e -> e.getItem().getCount()).sum();
+            check(helper, player.getMainHandItem() == axe && axe.getMaxDamage() - axe.getDamageValue() == 1,
+                    "the axe kept, on its last point: " + (axe.getMaxDamage() - axe.getDamageValue()));
+            check(helper, leafItems <= SILK_POINT_LEAVES, "only the leaves its last point paid for as leaves: " + leafItems);
+        });
+    }
+
+    static ItemStack silkAxe(GameTestHelper helper) {
+        ItemStack axe = new ItemStack(Items.DIAMOND_AXE);
+        axe.enchant(helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH), 1);
+        return axe;
+    }
+
+    /**
+     * Sneak-use in the air switches a Silk Touch axe's leaf gathering off and on again; not without sneaking, not on a
+     * plain axe, and not when the click lands on a block (the other hand may be placing one).
+     */
+    static void leafGatheringSwitches(GameTestHelper helper) {
+        ItemStack axe = silkAxe(helper);
+        ServerPlayer player = MockPlayers.inLevel(helper); // with a connection: the switch says so on the action bar
+        player.setItemInHand(InteractionHand.MAIN_HAND, axe);
+        player.snapTo(helper.absoluteVec(new net.minecraft.world.phys.Vec3(1.5, 1, 1.5)), 0.0F, -90.0F); // looking at the sky
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, dev.nookworks.feature.LeafGathering.gathers(axe), "not sneaking, nothing switched");
+        player.setShiftKeyDown(true);
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, !dev.nookworks.feature.LeafGathering.gathers(axe), "sneak-used in the air, it is switched off");
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, !dev.nookworks.feature.LeafGathering.gathers(axe), "the button held (a use every 4 ticks) does not flip it back");
+        player.getCooldowns().removeCooldown(player.getCooldowns().getCooldownGroup(axe));
+        player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, !dev.nookworks.feature.LeafGathering.gathers(axe), "a shield in the other hand is raised instead");
+        player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, dev.nookworks.feature.LeafGathering.gathers(axe)
+                && !axe.has(dev.nookworks.registry.ModDataComponents.GATHERS_LEAVES.get()), "and on again, as it came");
+        ItemStack plain = new ItemStack(Items.DIAMOND_AXE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, plain);
+        player.gameMode.useItem(player, helper.getLevel(), plain, InteractionHand.MAIN_HAND);
+        check(helper, !plain.has(dev.nookworks.registry.ModDataComponents.GATHERS_LEAVES.get()), "an axe without Silk Touch has no switch");
+        player.setItemInHand(InteractionHand.MAIN_HAND, axe);
+        player.getCooldowns().removeCooldown(player.getCooldowns().getCooldownGroup(axe));
+        helper.setBlock(new BlockPos(1, 3, 1), Blocks.STONE); // a block over its head, in reach
+        player.gameMode.useItem(player, helper.getLevel(), axe, InteractionHand.MAIN_HAND);
+        check(helper, dev.nookworks.feature.LeafGathering.gathers(axe), "used at a block, nothing switched");
+        helper.getLevel().getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    /** Its leaf gathering off, a Silk Touch axe's felled tree decays as any other's: saplings and all, the axe worn only for the logs. */
+    static void leafGatheringOff(GameTestHelper helper) {
+        smallOak(helper);
+        ItemStack axe = silkAxe(helper);
+        axe.set(dev.nookworks.registry.ModDataComponents.GATHERS_LEAVES.get(), false);
+        ServerPlayer player = playerWith(helper, axe);
+        player.gameMode.destroyBlock(helper.absolutePos(new BlockPos(3, 1, 3)));
+        helper.succeedWhen(() -> {
+            check(helper, helper.getBlockState(new BlockPos(1, 5, 1)).isAir() && helper.getBlockState(new BlockPos(5, 6, 5)).isAir(),
+                    "the leaves have gone");
+            var drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(9));
+            check(helper, drops.stream().noneMatch(e -> e.getItem().is(Items.OAK_LEAVES)), "no leaves dropped as leaves");
+            check(helper, axe.getDamageValue() == 4, "the axe worn for the four logs only: " + axe.getDamageValue());
+        });
+    }
+
+    /** The leaves a point of a Silk Touch axe's durability takes as leaves (FastLeafDecay). */
+    private static final int SILK_POINT_LEAVES = 4;
+
+    /** With instantLeafDecay on, the crown goes the tick after the tree falls, all of it, not a dozen a tick. */
+    static void timberLeavesAtOnce(GameTestHelper helper) {
+        smallOak(helper);
+        boolean was = NookworksConfig.INSTANT_LEAF_DECAY.get();
+        NookworksConfig.INSTANT_LEAF_DECAY.set(true);
+        ServerPlayer player = playerWith(helper, new ItemStack(Items.DIAMOND_AXE));
+        player.gameMode.destroyBlock(helper.absolutePos(new BlockPos(3, 1, 3)));
+        NookworksConfig.INSTANT_LEAF_DECAY.set(was);
+        helper.runAfterDelay(3, () -> {
+            for (BlockPos p : BlockPos.betweenClosed(new BlockPos(1, 5, 1), new BlockPos(5, 6, 5))) {
+                check(helper, helper.getBlockState(p).isAir(), "every leaf gone at once: one left at " + p);
+            }
+            helper.succeed();
         });
     }
 

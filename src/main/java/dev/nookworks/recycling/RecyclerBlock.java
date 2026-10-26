@@ -4,10 +4,12 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.MachineBlock;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.machine.MachineIO;
 import dev.nookworks.registry.ModRecycling;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -40,7 +42,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * the intake above, one block as a door is. Set down, the intake rises with it; either half gone, the other goes. The
  * intake is the body's too: a click on it opens the body's screen, a hopper over it feeds the body.
  */
-public class RecyclerBlock extends MachineBlock implements WorldlyContainerHolder {
+public class RecyclerBlock extends MachineBlock implements WorldlyContainerHolder, MachineIO.Part {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public RecyclerBlock(BlockBehaviour.Properties properties) {
@@ -57,6 +59,32 @@ public class RecyclerBlock extends MachineBlock implements WorldlyContainerHolde
     /** The body of the recycler whose half is at {@code pos}. */
     public static BlockPos lower(BlockState state, BlockPos pos) {
         return state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+    }
+
+    @Override
+    public BlockPos body(BlockState state, BlockPos pos) {
+        return lower(state, pos);
+    }
+
+    /**
+     * The intake's handlers are the body's, its block given them as a plain block's (no block entity of its own): so it
+     * tells of them as one must, set down and taken away (the body's own block entity tells of the body's, and of the
+     * intake's too when it comes or goes: {@link RecyclerBlockEntity#setRemoved}).
+     */
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            level.invalidateCapabilities(pos);
+        }
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            level.invalidateCapabilities(pos);
+        }
     }
 
     @Override

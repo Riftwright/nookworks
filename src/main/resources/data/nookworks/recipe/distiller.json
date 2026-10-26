@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "I": "minecraft:iron_ingot",
-    "G": "minecraft:glass",
+    "G": "#c:glass_blocks/colorless",
     "F": "minecraft:furnace",
     "R": "minecraft:redstone_block"
   },

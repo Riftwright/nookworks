@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "B": "#c:ingots/brass",
-    "S": "minecraft:string"
+    "S": "#c:strings"
   },
   "pattern": [
     "BSB",

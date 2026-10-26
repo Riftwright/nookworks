@@ -822,6 +822,9 @@ final class StorageTests {
         ItemStack magnet = new ItemStack(ModItems.MAGNET.get());
         magnet.set(ModDataComponents.MAGNET_ACTIVE.get(), true);
         sample.accept(ModDataComponents.MAGNET_ACTIVE.get(), magnet);
+        ItemStack leafless = new ItemStack(net.minecraft.world.item.Items.DIAMOND_AXE);
+        leafless.set(ModDataComponents.GATHERS_LEAVES.get(), false);
+        sample.accept(ModDataComponents.GATHERS_LEAVES.get(), leafless);
         ItemStack bottle = new ItemStack(ModItems.MOB_BOTTLE.get());
         bottle.set(ModDataComponents.CAPTURED_ENTITY.get(), EntityTypes.COW);
         sample.accept(ModDataComponents.CAPTURED_ENTITY.get(), bottle);
@@ -835,10 +838,10 @@ final class StorageTests {
         receiver.set(ModDataComponents.SPAWNER_LINK.get(),
                 GlobalPos.of(helper.getLevel().dimension(), helper.absolutePos(new BlockPos(1, 2, 3))));
         sample.accept(ModDataComponents.SPAWNER_LINK.get(), receiver);
-        ItemStack warpReceiver = new ItemStack(ModItems.LINE_WARP_RECEIVER.get());
+        ItemStack warpReceiver = new ItemStack(ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get());
         warpReceiver.set(ModDataComponents.WARP_LINK.get(), GlobalPos.of(helper.getLevel().dimension(), helper.absolutePos(new BlockPos(3, 2, 1))));
         sample.accept(ModDataComponents.WARP_LINK.get(), warpReceiver);
-        ItemStack stampedWarp = new ItemStack(ModItems.LINE_WARP_RECEIVER.get());
+        ItemStack stampedWarp = new ItemStack(ModItems.HORIZONTAL_ITEM_WARP_RECEIVER.get());
         stampedWarp.set(ModDataComponents.WARP_LINK_STAMP.get(), -0x0123_4567_89AB_CDEFL);
         sample.accept(ModDataComponents.WARP_LINK_STAMP.get(), stampedWarp);
         ItemStack camera = new ItemStack(ModItems.CAMERA.get());
@@ -870,7 +873,7 @@ final class StorageTests {
         check(helper, BuiltInRegistries.ITEM.getValue(Nookworks.id("trace_amalgam")) == ModItems.TRACE_AMALGAM.get(),
                 "trace_amalgam loads as Mixed Amalgam");
         check(helper, BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(Nookworks.id("line_warp_sender"))
-                == ModBlockEntities.LINE_WARP_SENDER.get(), "the horizontal warp sender's block entity loads");
+                == ModBlockEntities.HORIZONTAL_ITEM_WARP_SENDER.get(), "the horizontal warp sender's block entity loads");
         check(helper, BuiltInRegistries.BLOCK.getValue(Nookworks.id("chair")) == ModWoods.CHAIRS.get("oak").get()
                 && BuiltInRegistries.ITEM.getValue(Nookworks.id("desk")) == ModWoods.DESK_ITEMS.get("oak").get(),
                 "the Chair and the Desk load as the oak ones");

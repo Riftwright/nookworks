@@ -2,12 +2,14 @@ package dev.nookworks.block;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.feature.Lubrication;
 import dev.nookworks.machine.MotorBlockEntity;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -35,6 +37,14 @@ public class MotorBlock extends MachineBlock {
     @Override
     public @Nullable SoundEvent workSound(BlockState state) {
         return state.getValue(POWERED) ? ModSounds.MOTOR_RUN.get() : null;
+    }
+
+    /** Oiled (the Oil Can), it runs without its hum (the user, 2026-10-25: a motor that always runs hums always). */
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!Lubrication.isLubricated(level, pos)) {
+            super.animateTick(state, level, pos, random);
+        }
     }
 
     @Override

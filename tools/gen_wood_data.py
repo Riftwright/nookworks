@@ -9,6 +9,9 @@ Two families:
 - Chairs, stools and desks, one of each per wood, on the template models block/template_chair, template_stool and
   template_desk (a desk's blockstate is built of its parts, so desks side by side join into one long desk): the seat
   and the top in that wood's planks, the legs and the back's posts in its stripped log.
+- Benches, one per wood, on block/template_bench and its parts (tools/textures/gen_bench.py): the seat in that wood's
+  planks, the legs and rails in its stripped log; the blockstate leaves an end's legs out where the bench is joined to
+  another on that side (BenchBlock), and runs the rail on instead. Made of three of the wood's slabs over two sticks.
 - Wall shelves, one per wood: that wood's planks on block/template_wall_shelf_board, and the black iron brackets the
   same for all (tools/textures/gen_wall_shelf.py); the blockstate leaves a bracket out where the shelf is joined to
   another on that side (WallShelfBlock). Made of the wood's trapdoor and two iron nuggets.
@@ -154,6 +157,7 @@ WOODS = {
     "oak": "stripped_oak_log", "spruce": "stripped_spruce_log", "birch": "stripped_birch_log",
     "jungle": "stripped_jungle_log", "acacia": "stripped_acacia_log", "dark_oak": "stripped_dark_oak_log",
     "mangrove": "stripped_mangrove_log", "cherry": "stripped_cherry_log", "pale_oak": "stripped_pale_oak_log",
+    "poplar": "stripped_poplar_log",
     "crimson": "stripped_crimson_stem", "warped": "stripped_warped_stem", "bamboo": "stripped_bamboo_block",
     "dawnwood": "stripped_dawnwood_log",
 }
@@ -321,6 +325,50 @@ def furniture():
     return len(WOODS)
 
 
+def slab_of(wood):
+    return f"{'nookworks' if wood == 'dawnwood' else 'minecraft'}:{wood}_slab"
+
+
+# (facing, y turn): the bench's models face south, their left (to someone in front) at the west end
+BENCH_TURNS = (("south", 0), ("west", 90), ("north", 180), ("east", 270))
+BENCH_PARTS = ("seat", "rail", "end_left", "end_right", "rail_left", "rail_right")
+
+
+def benches():
+    names = []
+    for wood in WOODS:
+        planks_item, planks = planks_of(wood)
+        _, post, _ = support_textures(wood)
+        name = f"{wood}_bench"
+        names.append(f"nookworks:{name}")
+        textures = {"particle": planks, "planks": planks, "post": post}
+        write(ASSETS / f"models/block/{name}.json", {"parent": "nookworks:block/template_bench", "textures": textures})
+        for part in BENCH_PARTS:
+            write(ASSETS / f"models/block/{name}_{part}.json", {"parent": f"nookworks:block/template_bench_{part}", "textures": textures})
+        multipart = []
+        for facing, y in BENCH_TURNS:
+            turn = {"y": y} if y else {}
+            model = lambda part: {"model": f"nookworks:block/{name}_{part}", **turn}
+            multipart.append({"when": {"facing": facing}, "apply": model("seat")})
+            multipart.append({"when": {"facing": facing}, "apply": model("rail")})
+            for side in ("left", "right"):
+                multipart.append({"when": {"facing": facing, side: "false"}, "apply": model(f"end_{side}")})
+                multipart.append({"when": {"facing": facing, side: "true"}, "apply": model(f"rail_{side}")})
+        write(ASSETS / f"blockstates/{name}.json", {"multipart": multipart})
+        write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}"}})
+        write(DATA / f"loot_table/blocks/{name}.json", {
+            "type": "minecraft:block", "random_sequence": f"nookworks:blocks/{name}",
+            "pools": [{"rolls": 1, "bonus_rolls": 0.0, "entries": [{"type": "minecraft:item", "name": f"nookworks:{name}"}],
+                       "condition": {"type": "minecraft:survives_explosion"}}]})
+        write(DATA / f"recipe/{name}.json", {
+            "type": "minecraft:crafting_shaped", "category": "building", "group": "bench",
+            "key": {"L": slab_of(wood), "S": "#c:rods/wooden"}, "pattern": ["LLL", "S S"],
+            "result": {"count": 1, "id": f"nookworks:{name}"}})
+    write(DATA / "tags/block/benches.json", {"values": names})
+    write(DATA / "tags/item/benches.json", {"values": names})
+    return len(WOODS)
+
+
 def trapdoor_of(wood):
     return f"{'nookworks' if wood == 'dawnwood' else 'minecraft'}:{wood}_trapdoor"
 
@@ -363,4 +411,4 @@ def wall_shelves():
 
 if __name__ == "__main__":
     print(f"dawnwood: {dawnwood()} files; supports: {supports()} woods; chairs, stools and desks: {furniture()} woods; "
-          f"wall shelves: {wall_shelves()} woods")
+          f"benches: {benches()} woods; wall shelves: {wall_shelves()} woods")

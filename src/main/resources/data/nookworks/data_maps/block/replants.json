@@ -1,0 +1,572 @@
+{
+  "values": {
+    "minecraft:oak_leaves": {
+      "sapling": "minecraft:oak_sapling"
+    },
+    "minecraft:spruce_leaves": {
+      "sapling": "minecraft:spruce_sapling"
+    },
+    "minecraft:birch_leaves": {
+      "sapling": "minecraft:birch_sapling"
+    },
+    "minecraft:jungle_leaves": {
+      "sapling": "minecraft:jungle_sapling"
+    },
+    "minecraft:acacia_leaves": {
+      "sapling": "minecraft:acacia_sapling"
+    },
+    "minecraft:cherry_leaves": {
+      "sapling": "minecraft:cherry_sapling"
+    },
+    "minecraft:dark_oak_leaves": {
+      "sapling": "minecraft:dark_oak_sapling",
+      "four_only": true
+    },
+    "minecraft:pale_oak_leaves": {
+      "sapling": "minecraft:pale_oak_sapling",
+      "four_only": true
+    },
+    "minecraft:red_poplar_leaves": {
+      "sapling": "minecraft:poplar_sapling",
+      "preferred": [
+        "wilderwild:red_poplar_sapling"
+      ]
+    },
+    "minecraft:orange_poplar_leaves": {
+      "sapling": "minecraft:poplar_sapling"
+    },
+    "minecraft:yellow_poplar_leaves": {
+      "sapling": "minecraft:poplar_sapling",
+      "preferred": [
+        "wilderwild:yellow_poplar_sapling"
+      ]
+    },
+    "minecraft:azalea_leaves": {
+      "sapling": "minecraft:azalea"
+    },
+    "minecraft:flowering_azalea_leaves": {
+      "sapling": "minecraft:flowering_azalea"
+    },
+    "minecraft:nether_wart_block": {
+      "sapling": "minecraft:crimson_fungus",
+      "three_wide": "middle"
+    },
+    "minecraft:warped_wart_block": {
+      "sapling": "minecraft:warped_fungus",
+      "three_wide": "middle"
+    },
+    "nookworks:dawnwood_leaves": {
+      "sapling": "nookworks:rare_seed"
+    },
+    "biomesoplenty:pink_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomesoplenty"
+        }
+      ],
+      "sapling": "biomesoplenty:maple_sapling"
+    },
+    "biomesoplenty:magenta_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomesoplenty"
+        }
+      ],
+      "sapling": "biomesoplenty:maple_sapling"
+    },
+    "biomesoplenty:purple_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomesoplenty"
+        }
+      ],
+      "sapling": "biomesoplenty:maple_sapling"
+    },
+    "biomesoplenty:flowering_oak_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomesoplenty"
+        }
+      ],
+      "sapling": "biomesoplenty:flowering_oak_sapling",
+      "outvotes": true
+    },
+    "biomesoplenty:redwood_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomesoplenty"
+        }
+      ],
+      "sapling": "biomesoplenty:redwood_sapling",
+      "spread": "four"
+    },
+    "wilderwild:palm_fronds": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "wilderwild"
+        }
+      ],
+      "sapling": "wilderwild:coconut"
+    },
+    "ecologics:coconut_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "ecologics"
+        }
+      ],
+      "sapling": "ecologics:coconut_seedling",
+      "spread": "one"
+    },
+    "ecologics:red_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "ecologics"
+        }
+      ],
+      "sapling": "ecologics:maple_sapling"
+    },
+    "ecologics:orange_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "ecologics"
+        }
+      ],
+      "sapling": "ecologics:maple_sapling"
+    },
+    "ecologics:yellow_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "ecologics"
+        }
+      ],
+      "sapling": "ecologics:maple_sapling"
+    },
+    "ecologics:green_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "ecologics"
+        }
+      ],
+      "sapling": "ecologics:maple_sapling"
+    },
+    "promenade:blush_sakura_blossoms": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:blush_sakura_sapling"
+    },
+    "promenade:snowy_blush_sakura_blossoms": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:blush_sakura_sapling"
+    },
+    "promenade:cotton_sakura_blossoms": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:cotton_sakura_sapling"
+    },
+    "promenade:snowy_cotton_sakura_blossoms": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:cotton_sakura_sapling"
+    },
+    "promenade:snowy_sap_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:sap_maple_sapling"
+    },
+    "promenade:snowy_vermilion_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:vermilion_maple_sapling"
+    },
+    "promenade:snowy_fulvous_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:fulvous_maple_sapling"
+    },
+    "promenade:snowy_mikado_maple_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:mikado_maple_sapling"
+    },
+    "promenade:snowy_palm_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "promenade:palm_sapling"
+    },
+    "promenade:snowy_oak_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:oak_sapling"
+    },
+    "promenade:snowy_spruce_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:spruce_sapling"
+    },
+    "promenade:snowy_birch_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:birch_sapling"
+    },
+    "promenade:snowy_jungle_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:jungle_sapling"
+    },
+    "promenade:snowy_acacia_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:acacia_sapling"
+    },
+    "promenade:snowy_cherry_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:cherry_sapling"
+    },
+    "promenade:snowy_dark_oak_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:dark_oak_sapling",
+      "four_only": true
+    },
+    "promenade:snowy_pale_oak_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:pale_oak_sapling",
+      "four_only": true
+    },
+    "promenade:snowy_azalea_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:azalea"
+    },
+    "promenade:snowy_flowering_azalea_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "promenade"
+        }
+      ],
+      "sapling": "minecraft:flowering_azalea"
+    },
+    "integrateddynamics:menril_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "integrateddynamics"
+        }
+      ],
+      "sapling": "integrateddynamics:menril_sapling",
+      "spread": "one"
+    },
+    "occultism:otherworld_leaves_natural": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "occultism"
+        }
+      ],
+      "sapling": "occultism:otherworld_sapling_natural"
+    },
+    "twilightforest:dark_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "twilightforest"
+        }
+      ],
+      "sapling": "twilightforest:darkwood_sapling"
+    },
+    "twilightforest:hardened_dark_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "twilightforest"
+        }
+      ],
+      "sapling": "twilightforest:darkwood_sapling"
+    },
+    "undergarden:smogstem_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "undergarden"
+        }
+      ],
+      "sapling": "undergarden:smogstem_sapling",
+      "three_wide": "middle",
+      "spread": "four"
+    },
+    "biomeswevegone:baobab_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:baobab_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:cypress_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:cypress_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:ebony_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:ebony_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:redwood_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:redwood_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:flowering_baobab_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:baobab_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:flowering_orchard_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:orchard_sapling"
+    },
+    "biomeswevegone:flowering_yucca_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:yucca_sapling"
+    },
+    "biomeswevegone:ripe_baobab_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:baobab_sapling",
+      "four_only": true
+    },
+    "biomeswevegone:ripe_orchard_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:orchard_sapling"
+    },
+    "biomeswevegone:ripe_yucca_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:yucca_sapling"
+    },
+    "biomeswevegone:flowering_palo_verde_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:palo_verde_sapling"
+    },
+    "biomeswevegone:flowering_ironwood_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:ironwood_sapling"
+    },
+    "biomeswevegone:flowering_jacaranda_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:jacaranda_sapling"
+    },
+    "biomeswevegone:flowering_indigo_jacaranda_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:indigo_jacaranda_sapling"
+    },
+    "biomeswevegone:flowering_skyris_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:skyris_sapling"
+    },
+    "biomeswevegone:flowering_spirit_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:spirit_sapling"
+    },
+    "biomeswevegone:green_apple_skyris_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:skyris_sapling"
+    },
+    "biomeswevegone:blooming_witch_hazel_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "biomeswevegone"
+        }
+      ],
+      "sapling": "biomeswevegone:witch_hazel_sapling"
+    },
+    "atmospheric:flowering_morado_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "atmospheric"
+        }
+      ],
+      "sapling": "atmospheric:morado_sapling"
+    },
+    "atmospheric:grimwood_leaves": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "atmospheric"
+        }
+      ],
+      "sapling": "atmospheric:grimwood_sapling",
+      "four_only": true
+    }
+  }
+}
