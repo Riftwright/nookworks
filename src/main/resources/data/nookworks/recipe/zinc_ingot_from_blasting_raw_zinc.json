@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:zinc_ingot",
+        "nookworks:raw_zinc"
+      ]
+    }
+  ],
   "type": "minecraft:blasting",
   "category": "misc",
   "experience": 0.7,

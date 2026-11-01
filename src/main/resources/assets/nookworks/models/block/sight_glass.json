@@ -4,7 +4,8 @@
     "particle": "nookworks:block/brass_fitting",
     "brass": "nookworks:block/brass_fitting",
     "glass": "nookworks:block/sight_glass_glass",
-    "copper": "nookworks:block/copper_pipe"
+    "copper": "nookworks:block/copper_pipe",
+    "bore": "nookworks:block/copper_pipe_end"
   },
   "elements": [
     {
@@ -56,6 +57,15 @@
             2
           ],
           "rotation": 90
+        },
+        "north": {
+          "texture": "#bore",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
         }
       },
       "name": "stub"
@@ -109,6 +119,15 @@
             2
           ],
           "rotation": 90
+        },
+        "south": {
+          "texture": "#bore",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
         }
       },
       "name": "stub"

@@ -105,24 +105,6 @@
             4,
             16
           ]
-        },
-        "north": {
-          "texture": "#liquid",
-          "uv": [
-            0,
-            0,
-            4,
-            4
-          ]
-        },
-        "south": {
-          "texture": "#liquid",
-          "uv": [
-            0,
-            0,
-            4,
-            4
-          ]
         }
       },
       "shade_direction_override": "up",
@@ -177,6 +159,15 @@
             12,
             8
           ]
+        },
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            4,
+            11,
+            11
+          ]
         }
       }
     },
@@ -228,6 +219,15 @@
             6,
             12,
             8
+          ]
+        },
+        "south": {
+          "texture": "#collar",
+          "uv": [
+            4,
+            4,
+            11,
+            11
           ]
         }
       }

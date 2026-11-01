@@ -1,8 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "barter_terminal"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:barter_terminal"
+      ],
+      "any": true
     }
   ],
   "criteria": {

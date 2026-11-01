@@ -1,8 +1,17 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "hammers"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:copper_hammer",
+        "nookworks:diamond_hammer",
+        "nookworks:golden_hammer",
+        "nookworks:iron_hammer",
+        "nookworks:netherite_hammer",
+        "nookworks:stone_hammer",
+        "nookworks:velarium_hammer"
+      ],
+      "any": true
     }
   ],
   "criteria": {

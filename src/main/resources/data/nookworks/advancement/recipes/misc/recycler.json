@@ -1,8 +1,13 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "recycling"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:recycler",
+        "nookworks:crusher",
+        "nookworks:compressor",
+        "nookworks:baler"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

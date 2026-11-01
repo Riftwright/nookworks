@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "water_pump"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:water_pump"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

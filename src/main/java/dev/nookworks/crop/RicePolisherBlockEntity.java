@@ -3,10 +3,10 @@ package dev.nookworks.crop;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.nookworks.experience.Move;
 import dev.nookworks.machine.CrankMotion;
 import dev.nookworks.machine.Crankable;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModCrops;
@@ -19,24 +19,19 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.item.ItemResource;
 
 /**
  * Rice Polisher: brown rice in at the top, worked by its handle - by hand, or by a Motor - and white rice out of the
  * front, with the bran rubbed off it: one Rice Bran for every {@link #GRAINS_PER_BRAN} grains. What it makes goes into a
- * hopper or chest under it, or else one in front of it; with neither it gathers inside (a sneaking empty hand takes it
- * out) until there is no more room, and then the handle will not turn - a Motor on it stops rather than spilling rice
- * over the floor for ever.
+ * hopper or chest under it, or else one in front of it, or else it drops out of the chute onto the ground just in front
+ * ({@link MachineIO#handOut}); with a block in the way it gathers inside (a sneaking empty hand takes it out) until
+ * there is no more room, and then the handle will not turn - a Motor on it stops.
  * <p>
  * It takes any {@code #c:crops/rice}, so Farmer's Delight's rice polishes too.
  */
@@ -74,7 +69,7 @@ public class RicePolisherBlockEntity extends MachineBlockEntity implements Crank
                 && this.items.get(BRAN_OUT).getCount() < this.items.get(BRAN_OUT).getMaxStackSize();
     }
 
-    /** Hands what it has made on, each tick: to a container below, else in front. */
+    /** Hands what it has made on, now and then: to a container below, else in front, else out of its front. */
     public static void serverTick(Level level, BlockPos pos, BlockState state, RicePolisherBlockEntity polisher) {
         if (level instanceof ServerLevel server && level.getGameTime() % 8 == 0) {
             polisher.pushOut(server);
@@ -143,23 +138,15 @@ public class RicePolisherBlockEntity extends MachineBlockEntity implements Crank
         }
     }
 
-    /** What it has made, into a container under it, else one in front of it. */
+    /** What it has made, into a container under it, else one in front of it, else out of its front. */
     private void pushOut(ServerLevel level) {
         Direction front = this.getBlockState().getValue(RicePolisherBlock.FACING);
         for (int slot : OUTPUT_SLOTS) {
             ItemStack stack = this.items.get(slot);
-            for (Direction side : new Direction[] {Direction.DOWN, front}) {
-                if (stack.isEmpty() || !level.isLoaded(this.worldPosition.relative(side))) {
-                    continue;
-                }
-                ResourceHandler<ItemResource> target = level.getCapability(Capabilities.Item.BLOCK, this.worldPosition.relative(side), side.getOpposite());
-                if (target != null) {
-                    int moved = Move.insert(target, ItemResource.of(stack), stack.getCount());
-                    if (moved > 0) {
-                        stack.shrink(moved);
-                        this.setChanged();
-                    }
-                }
+            int before = stack.getCount();
+            MachineIO.handOut(level, this.worldPosition, front, stack);
+            if (stack.getCount() != before) {
+                this.setChanged();
             }
         }
     }

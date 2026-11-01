@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "laser"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:laser",
+        "nookworks:machine_chassis"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

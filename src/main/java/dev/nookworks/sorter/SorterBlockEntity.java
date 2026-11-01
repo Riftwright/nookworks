@@ -117,16 +117,16 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     }
 
     /**
-     * Whether the Keep Out row names {@code stack}: as the filter would catch it (the same item; a Precision Sorter's
-     * Exact switch asks for the same condition too).
+     * Whether the Keep Out row keeps {@code stack} out: it names it, as the filter would catch it (the same item; a
+     * Precision Sorter's Exact switch asks for the same condition too) - or, the row turned round
+     * ({@link SorterSettings#KEEP_OUT_OTHERS}), it does not, and with nothing in the row nothing comes in.
      */
     public boolean denies(ItemStack stack) {
-        for (int i = 0; i < DENY_SLOTS; i++) {
-            if (this.settings.matches(stack, this.deny.getItem(i))) {
-                return true;
-            }
+        boolean named = false;
+        for (int i = 0; i < DENY_SLOTS && !named; i++) {
+            named = this.settings.matches(stack, this.deny.getItem(i));
         }
-        return false;
+        return named != this.settings.get(SorterSettings.KEEP_OUT_OTHERS);
     }
 
     /** The outlet {@code stack} would leave by. */

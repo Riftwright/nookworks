@@ -45,7 +45,10 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.fluid.FluidTintSource;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import dev.nookworks.client.gui.NookworksSettingsScreen;
+import dev.nookworks.client.gui.WorldFeaturesScreen;
+import dev.nookworks.feature.WorldPartsEditing;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -89,8 +92,13 @@ public class NookworksClient {
         // lodestones' names: the box to rename one, and another world's names forgotten on leaving
         LodestoneNames.editor = pos -> Minecraft.getInstance().gui.setScreen(new LodestoneNameScreen(pos));
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> LodestoneNames.clientForget());
-        // Mods > Nookworks > Config. Labels come from nookworks.configuration.* lang keys.
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        // Mods > Nookworks > Config: the configs (labels from nookworks.configuration.* lang keys) and, in a world, its parts
+        container.registerExtensionPoint(IConfigScreenFactory.class, NookworksSettingsScreen::new);
+        WorldPartsEditing.shown = view -> {
+            Minecraft minecraft = Minecraft.getInstance();
+            minecraft.gui.setScreen(WorldFeaturesScreen.playing(minecraft.gui.screen(), view,
+                    chosen -> ClientPacketDistributor.sendToServer(new NookworksNetwork.SetWorldParts(chosen))));
+        };
     }
 
     /** Our liquids are drawn with their own still/flowing textures (no tint); what they look like from inside is {@link dev.nookworks.client.LiquidLooks}. */

@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "barter_terminal"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:barter_terminal",
+        "nookworks:machine_chassis"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

@@ -126,6 +126,7 @@ import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 
 /** What the reviews of September 26, 2026 found, each held to the right behaviour. */
 final class EarlyReviewTests {
@@ -1053,9 +1054,13 @@ final class EarlyReviewTests {
         });
     }
 
-    /** Two turns of the handle press a sunflower seed's oil; now and then a cake drops; the oil pours off by the bottle. */
+    /**
+     * Two turns of the handle press a sunflower seed's oil; now and then a cake, into the barrel in front of it; the oil
+     * pours off by the bottle.
+     */
     static void oilPressByHand(GameTestHelper helper) {
         BlockPos pos = new BlockPos(1, 2, 1);
+        helper.setBlock(pos.north(), Blocks.BARREL); // in front of it: the press faces north as set down here
         helper.setBlock(pos, ModOil.OIL_PRESS.get());
         var press = helper.getBlockEntity(pos, OilPressBlockEntity.class);
         check(helper, !press.canPlaceItem(OilPressBlockEntity.INPUT, new ItemStack(Items.WHEAT_SEEDS)),
@@ -1070,10 +1075,11 @@ final class EarlyReviewTests {
         check(helper, press.stored() == 60 && press.getItem(OilPressBlockEntity.INPUT).getCount() == 63,
                 "the second presses out a seed's oil");
         // a cake one seed in four: sixty more seeds without one would be one press in some thirty million
-        while (press.getItem(OilPressBlockEntity.CAKE).isEmpty() && !press.getItem(OilPressBlockEntity.INPUT).isEmpty()) {
+        var barrel = (BarrelBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(pos.north()));
+        while (barrel.countItem(ModOil.OIL_CAKE.get()) == 0 && !press.getItem(OilPressBlockEntity.INPUT).isEmpty()) {
             press.turn(helper.getLevel());
         }
-        check(helper, press.getItem(OilPressBlockEntity.CAKE).is(ModOil.OIL_CAKE.get()), "now and then a cake");
+        check(helper, barrel.countItem(ModOil.OIL_CAKE.get()) == 1, "now and then a cake, into the barrel in front");
         while (press.stored() < OilFluids.BOTTLE) {
             press.turn(helper.getLevel());
         }

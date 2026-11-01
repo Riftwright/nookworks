@@ -1,4 +1,28 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:raw_zinc"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:range_hood",
+        "nookworks:ventilation_fan"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "air": {
       "trigger": "minecraft:inventory_changed",

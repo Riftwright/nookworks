@@ -54,6 +54,43 @@ final class R8WorldFeaturesTests {
         NookworksGameTests.test("the_start_up_config_is_over_every_worlds_choice", R8WorldFeaturesTests::startUpConfigIsOverTheWorld);
         NookworksGameTests.test("a_pack_can_do_without_the_choice_per_world", R8WorldFeaturesTests::packCanTurnTheChoiceOff);
         NookworksGameTests.test("players_go_by_the_parts_of_the_servers_world", R8WorldFeaturesTests::playersFollowTheServer);
+        NookworksGameTests.test("a_worlds_parts_change_in_game_for_its_next_opening", R8WorldFeaturesTests::partsChangeInGame);
+    }
+
+    /**
+     * The world's parts changed in a world from the mod's settings (the user, 2026-10-31): a choice sent is written with
+     * every part named, one not sent left on, and read back as the world's choice for its next opening - not put in
+     * force now. A player who is neither the world's single player owner nor an operator may look but not change it
+     * ({@code WorldPartsEditing.set} checks the same before it writes). The payload carries the parts whole.
+     */
+    private static void partsChangeInGame(GameTestHelper helper) {
+        inTempWorld(helper, world -> {
+            try {
+                WorldFeatures.Choice before = WorldFeatures.current();
+                var written = dev.nookworks.feature.WorldPartsEditing.save(world, Map.of("laser", false, "recycling", false));
+                check(helper, written.keySet().equals(Features.PARTS.keySet()) && !written.get("laser") && written.get("kitchen"),
+                        "every part written, one not sent on: " + written);
+                var read = WorldFeatures.read(world);
+                check(helper, read != null && !read.parts().get("laser") && !read.parts().get("recycling") && read.parts().get("storage"),
+                        "it is the world's choice when it next opens: " + read);
+                check(helper, WorldFeatures.current() == before, "and not put in force while the world is open");
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+        var player = (net.minecraft.server.level.ServerPlayer) helper.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        check(helper, !dev.nookworks.feature.WorldPartsEditing.mayChange(player), "a player who is no operator may not change them");
+        // the server's own start-up config goes with it: a player whose game switches a part off is shown the server's (r19)
+        var view = dev.nookworks.feature.WorldPartsEditing.view(player);
+        check(helper, view.offered().keySet().equals(Features.PARTS.keySet())
+                && Features.PARTS.keySet().stream().allMatch(part -> view.offered().get(part) == WorldFeatures.offered(part))
+                && view.menu() == WorldFeatures.menuShown() && !view.editable(), "what the server allows is shown, as it is there: " + view);
+        var payload = new NookworksNetwork.WorldPartsFile(new dev.nookworks.feature.WorldPartsEditing.View(
+                Map.of("laser", false, "kitchen", true), Map.of("kitchen", true, "generators", false), true, true));
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        NookworksNetwork.WorldPartsFile.STREAM_CODEC.encode(buffer, payload);
+        check(helper, NookworksNetwork.WorldPartsFile.STREAM_CODEC.decode(buffer).equals(payload), "the file's parts reach the client whole");
+        helper.succeed();
     }
 
     /**
@@ -291,5 +328,6 @@ final class R8WorldFeaturesTests {
     private static void set(ModConfigSpec.BooleanValue setting, boolean value) {
         setting.set(value);
         setting.clearCache();
+        WorldFeatures.changed(); // what parts switched off take along is worked out again
     }
 }

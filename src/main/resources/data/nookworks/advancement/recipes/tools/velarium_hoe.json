@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "velarium"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_hoe",
+        "nookworks:reinforced_rod"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

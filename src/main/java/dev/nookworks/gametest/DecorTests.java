@@ -8,6 +8,8 @@ import java.util.List;
 import dev.nookworks.decor.BookendBlock;
 import dev.nookworks.decor.BookendBlockEntity;
 import dev.nookworks.decor.BottleLook;
+import dev.nookworks.decor.ChevalMirrorBlock;
+import dev.nookworks.decor.StandingMirrorBlockEntity;
 import dev.nookworks.decor.Lanterns;
 import dev.nookworks.decor.PlacedBooksBlock;
 import dev.nookworks.decor.PlacedBooksBlockEntity;
@@ -16,6 +18,8 @@ import dev.nookworks.decor.PlacedBottlesBlockEntity;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModTravel;
+import dev.nookworks.registry.ModWoods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -30,6 +34,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.LightLayer;
@@ -39,12 +45,13 @@ import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
  * The decorations of 2026-10-12: lanterns put out and lit again, and small bottles set down on a block (the user:
- * "置けるタイプの瓶", "消えてるランタン").
+ * "置けるタイプの瓶", "消えてるランタン"); books and bookends after; the Standing Mirror (2026-10-28, "普通の鏡").
  */
 final class DecorTests {
     static void register() {
@@ -54,6 +61,8 @@ final class DecorTests {
         test("books_laid_down_and_taken_back", DecorTests::booksLaidDown);
         test("books_leant_against_a_wall", DecorTests::booksLeantAgainstAWall);
         test("bookend_holds_books", DecorTests::bookendHoldsBooks);
+        test("standing_mirror_stands_whole", DecorTests::standingMirrorStandsWhole);
+        test("standing_mirror_recipe_without_dice", DecorTests::standingMirrorRecipe);
     }
 
     private static void use(GameTestHelper helper, ServerPlayer player, BlockPos pos, Direction face, ItemStack held) {
@@ -498,4 +507,53 @@ final class DecorTests {
     }
 
     private DecorTests() {}
+
+    /**
+     * A Standing Mirror set down stands two blocks high, its glass to whoever set it down; an empty hand on the glass
+     * takes nobody anywhere; broken from its upper half in survival, both halves go and one mirror drops.
+     */
+    private static void standingMirrorStandsWhole(GameTestHelper helper) {
+        BlockPos floor = new BlockPos(2, 1, 2);
+        BlockPos at = floor.above();
+        helper.setBlock(floor, Blocks.STONE);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        Vec3 standing = helper.absoluteVec(new Vec3(2.5, 2, 5.5));
+        player.snapTo(standing.x, standing.y, standing.z, 180.0F, 30.0F); // south of it, looking north
+        use(helper, player, floor, Direction.UP, new ItemStack(ModItems.STANDING_MIRROR.get()));
+        BlockState lower = helper.getBlockState(at);
+        BlockState upper = helper.getBlockState(at.above());
+        check(helper, lower.is(ModBlocks.STANDING_MIRROR.get()) && lower.getValue(ChevalMirrorBlock.HALF) == DoubleBlockHalf.LOWER,
+                "the lower half stands on the floor: " + lower);
+        check(helper, upper.is(ModBlocks.STANDING_MIRROR.get()) && upper.getValue(ChevalMirrorBlock.HALF) == DoubleBlockHalf.UPPER,
+                "the upper half above it: " + upper);
+        check(helper, lower.getValue(ChevalMirrorBlock.FACING) == Direction.SOUTH, "its glass faces whoever set it down: " + lower);
+        check(helper, helper.getLevel().getBlockEntity(helper.absolutePos(at)) instanceof StandingMirrorBlockEntity,
+                "the lower half has the block entity the glass is drawn from");
+        Vec3 before = player.position();
+        use(helper, player, at.above(), Direction.SOUTH, ItemStack.EMPTY);
+        check(helper, player.level() == helper.getLevel() && player.position().equals(before), "an empty hand on the glass goes nowhere");
+        player.gameMode.destroyBlock(helper.absolutePos(at.above()));
+        helper.succeedWhen(() -> {
+            check(helper, helper.getBlockState(at).isAir() && helper.getBlockState(at.above()).isAir(), "both halves go");
+            int dropped = helper.getEntities(EntityTypes.ITEM).stream().filter(item -> item.getItem().is(ModItems.STANDING_MIRROR.get()))
+                    .mapToInt(item -> item.getItem().getCount()).sum();
+            check(helper, dropped == 1, "one mirror drops: " + dropped);
+        });
+    }
+
+    /** The If Mirror's recipe with no Die: Dawnwood planks round a glass pane, a Mercury Bucket below. With a Die, the If Mirror. */
+    private static void standingMirrorRecipe(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ItemStack planks = new ItemStack(ModWoods.DAWNWOOD_PLANKS.get());
+        ItemStack pane = new ItemStack(Items.GLASS_PANE);
+        ItemStack mercury = new ItemStack(ModItems.MERCURY_BUCKET.get());
+        for (ItemStack top : List.of(ItemStack.EMPTY, new ItemStack(ModItems.DICE.get()))) {
+            CraftingInput grid = CraftingInput.of(3, 3, List.of(planks, top, planks, planks, pane, planks, planks, mercury, planks));
+            ItemStack made = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid, level)
+                    .map(holder -> holder.value().assemble(grid)).orElse(ItemStack.EMPTY);
+            var wanted = top.isEmpty() ? ModItems.STANDING_MIRROR.get() : ModTravel.IF_MIRROR_ITEM.get();
+            check(helper, made.is(wanted), (top.isEmpty() ? "no Die" : "a Die") + " in the top's middle makes " + wanted + ": " + made);
+        }
+        helper.succeed();
+    }
 }

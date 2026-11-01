@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "on=false": {
+      "model": "nookworks:block/warp_anchor"
+    },
+    "on=true": {
+      "model": "nookworks:block/warp_anchor"
+    }
+  }
+}

@@ -575,9 +575,13 @@ final class FixTests {
         helper.succeed();
     }
 
-    /** With nowhere to put what it makes, the Rice Polisher keeps it inside, and when that is full the handle stops. */
+    /**
+     * With nowhere to put what it makes - nothing under it, a block in front of its chute - the Rice Polisher keeps it
+     * inside, and when that is full the handle stops.
+     */
     private static void ricePolisherStopsWhenFull(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 2, 2);
+        helper.setBlock(pos.north(), Blocks.STONE); // in front: it faces north as set down here
         helper.setBlock(pos, ModCrops.RICE_POLISHER.get());
         var polisher = helper.getBlockEntity(pos, RicePolisherBlockEntity.class);
         polisher.setItem(RicePolisherBlockEntity.INPUT, new ItemStack(ModCrops.BROWN_RICE.get(), 10));

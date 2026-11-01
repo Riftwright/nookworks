@@ -477,7 +477,8 @@ final class MercuryTests {
         check(helper, MercuryRecipes.amalgamation(new ItemStack(ModItems.CRUDE_SALT.get())) == null, "crude salt is too dirty for the tank");
         check(helper, new ItemStack(ModItems.CRUDE_SALT.get()).is(SifterBlockEntity.SIFTABLE), "crude salt is siftable");
         var washed = SifterBlockEntity.sift(helper.getLevel(), helper.absolutePos(pos), new ItemStack(ModItems.CRUDE_SALT.get()));
-        check(helper, washed.size() == 1 && washed.getFirst().is(ModItems.SALT.get()), "sifting it gives salt");
+        // (salt among what comes out, not alone: an add-on may add to the table - nookTechnology's limestone powder)
+        check(helper, washed.stream().anyMatch(stack -> stack.is(ModItems.SALT.get())), "sifting it gives salt: " + washed);
 
         check(helper, MercuryRecipes.amalgamation(new ItemStack(ModItems.SALT.get())) == null,
                 "salt no longer amalgamates in the Stirring Tank: the Electrolytic Cell makes caustic soda of it");

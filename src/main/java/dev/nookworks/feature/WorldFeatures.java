@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jspecify.annotations.Nullable;
 
@@ -66,8 +68,25 @@ public final class WorldFeatures {
     private static volatile @Nullable Choice current;
     /** On a client playing on another's server: which parts that server has on. Null otherwise. */
     private static volatile @Nullable Map<String, Boolean> server;
+    /** On a client playing on another's server: the items it keeps in whatever its parts take with them. Null otherwise. */
+    private static volatile @Nullable List<String> serverKept;
+    /**
+     * Counted up at every change of which parts are on here (the world's choice, the server's word, the items it keeps):
+     * what is worked out from them is kept till it moves ({@link Features#lost()}).
+     */
+    private static final AtomicInteger GENERATION = new AtomicInteger();
 
     private WorldFeatures() {}
+
+    /** Which change of the parts' state this is ({@link #GENERATION}). */
+    public static int generation() {
+        return GENERATION.get();
+    }
+
+    /** Which parts are on changed some other way (a test setting the start-up config): what was worked out from it goes. */
+    public static void changed() {
+        GENERATION.incrementAndGet();
+    }
 
     /** Whether the pack lets each new world choose its parts: the Nookworks button on the Create World screen, and the files read. */
     public static boolean menuShown() {
@@ -108,6 +127,7 @@ public final class WorldFeatures {
     /** Puts {@code choice} in force: for tests, and for the Create World screen ({@link #choose}). */
     public static void restore(@Nullable Choice choice) {
         current = choice;
+        changed();
     }
 
     /**
@@ -124,16 +144,19 @@ public final class WorldFeatures {
     /** The Create World screen is opening: its data packs load with nothing left out, whatever the last world chose. */
     public static void creatingWorld() {
         current = null;
+        changed();
     }
 
     /** What the Nookworks screen chose, for the world still being made: its data packs are loaded again with it. */
     public static void choose(Map<String, Boolean> parts) {
         current = new Choice(null, parts);
+        changed();
     }
 
     /** A world's data packs are about to load: what it chose, from its folder {@code world}, is in force from now on. */
     public static void opening(Path world) {
         current = menuShown() ? read(world) : null;
+        changed();
     }
 
     /**
@@ -208,11 +231,29 @@ public final class WorldFeatures {
      */
     public static void heard(Map<String, Boolean> parts, boolean ownServer) {
         server = ownServer ? null : Map.copyOf(parts);
+        changed();
     }
 
     /** On a client: left the server; its word goes with it. */
     public static void leftServer() {
         server = null;
+        serverKept = null;
+        changed();
+    }
+
+    /**
+     * The items had whatever the parts switched off take with them ({@link PartGraph}): the start-up config's
+     * {@code [features] keepItems}, or on another's server, that server's.
+     */
+    public static List<String> kept() {
+        List<String> said = serverKept;
+        return said != null ? said : NookworksStartupConfig.keptItems();
+    }
+
+    /** On a client: the server's {@code [features] keepItems}, told before its parts ({@link #heard}). */
+    public static void heardKept(List<String> items, boolean ownServer) {
+        serverKept = ownServer ? null : List.copyOf(items);
+        changed();
     }
 
     /**
@@ -229,6 +270,7 @@ public final class WorldFeatures {
         Choice chosen = current;
         if (chosen != null && sameWorld(chosen.world(), server)) {
             current = null;
+            changed();
         }
     }
 

@@ -66,6 +66,9 @@
     "nookworks:vegetable_oil",
     "nookworks:wall_sconce",
     "nookworks:placed_bottles",
-    "nookworks:placed_books"
+    "nookworks:placed_books",
+    "nookworks:wine_glass",
+    "nookworks:mug",
+    "nookworks:plate"
   ]
 }

@@ -159,23 +159,52 @@ CHIMNEY_TEX = {"particle": "minecraft:block/bricks", "brick": "minecraft:block/b
                "soot": "minecraft:block/black_concrete"}
 
 
-def chimney(top):
+# each chimney's masonry (the user, 2026-10-24 and 10-31): (id prefix of the chimney, of the flue, vanilla texture);
+# the brick chimney keeps its id, "chimney"
+MASONRY = [("", "brick_", "minecraft:block/bricks"), ("stone_brick_", "stone_brick_", "minecraft:block/stone_bricks"),
+           ("nether_brick_", "nether_brick_", "minecraft:block/nether_bricks"),
+           ("cobblestone_", "cobblestone_", "minecraft:block/cobblestone")]
+
+
+def masonry_tex(texture):
+    return dict(CHIMNEY_TEX, particle=texture, brick=texture)
+
+
+def chimney(top, tex=CHIMNEY_TEX):
     """The stack of brick; on the top one a stone cap over the brick and a round chimney pot (as round as sixteen
-    pixels let it be) of terracotta, sooty inside."""
+    pixels let it be) of terracotta, sooty inside - the clay pot on every masonry's (the user, 2026-10-31)."""
     if not top:
-        return {"parent": "minecraft:block/block", "textures": CHIMNEY_TEX, "elements": [box([3, 0, 3], [13, 16, 13], "#brick")]}
+        return {"parent": "minecraft:block/block", "textures": tex, "elements": [box([3, 0, 3], [13, 16, 13], "#brick")]}
     cap = {"n": "#cap_side", "s": "#cap_side", "e": "#cap_side", "w": "#cap_side", "u": "#cap", "d": "#cap"}
     els = [box([3, 0, 3], [13, 12, 13], "#brick"), box([2, 12, 2], [14, 13, 14], cap),
            # the pot: four walls round its mouth (the corners cut, so it reads round), the soot down inside
            box([6, 13, 5], [10, 16, 6], "#pot"), box([6, 13, 10], [10, 16, 11], "#pot"),
            box([5, 13, 6], [6, 16, 10], "#pot"), box([10, 13, 6], [11, 16, 10], "#pot"),
            box([6, 13, 6], [10, 14.5, 10], {"n": "#soot", "s": "#soot", "e": "#soot", "w": "#soot", "u": "#soot", "d": "#pot"})]
-    return {"parent": "minecraft:block/block", "textures": CHIMNEY_TEX, "elements": els}
+    return {"parent": "minecraft:block/block", "textures": tex, "elements": els}
 
 
-def chimney_collar():
+def chimney_collar(tex=CHIMNEY_TEX):
     """Where a duct runs into the chimney's side: a collar of brick from the stack out to the edge, to the north."""
-    return {"parent": "minecraft:block/block", "textures": CHIMNEY_TEX, "elements": [box([4, 4, 0], [12, 12, 3], "#brick")]}
+    return {"parent": "minecraft:block/block", "textures": tex, "elements": [box([4, 4, 0], [12, 12, 3], "#brick")]}
+
+
+def flue(tex):
+    """A whole block of the masonry with the flue down its middle, 6 px square, sooty inside: four walls, their outer
+    faces culled against neighbours as a full block's are, the opening only at top and bottom."""
+    walls = [([0, 0, 0], [16, 16, 5]), ([0, 0, 11], [16, 16, 16]), ([0, 0, 5], [5, 16, 11]), ([11, 0, 5], [16, 16, 11])]
+    els = []
+    for frm, to in walls:
+        faces = {}
+        for f, name in (("n", "north"), ("s", "south"), ("e", "east"), ("w", "west"), ("u", "up"), ("d", "down")):
+            outer = (f == "n" and frm[2] == 0) or (f == "s" and to[2] == 16) or (f == "w" and frm[0] == 0) or (f == "e" and to[0] == 16)
+            inner = not outer and f in "nsew"
+            face = {"texture": "#soot" if inner else "#brick"}
+            if outer or f in "ud":
+                face["cullface"] = name
+            faces[name] = face
+        els.append({"from": frm, "to": to, "faces": faces})
+    return {"parent": "minecraft:block/block", "textures": tex, "elements": els}
 
 
 FACINGS = (("north", 0), ("east", 90), ("south", 180), ("west", 270))
@@ -213,17 +242,39 @@ def main():
                                       # turned side on in an item frame, not end on (a small square)
                                       "display": {"fixed": {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]}}})
     write_json(ASSETS / "items/duct.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/duct_item"}})
-    write_json(m / "chimney.json", chimney(False))
-    write_json(m / "chimney_top.json", chimney(True))
-    write_json(m / "chimney_collar.json", chimney_collar())
-    parts = [{"when": {"top": "false"}, "apply": {"model": "nookworks:block/chimney"}},
-             {"when": {"top": "true"}, "apply": {"model": "nookworks:block/chimney_top"}}]
-    for side, rot in SIDE_ROT.items():
-        if side in ("up", "down"):
-            continue
-        parts.append({"when": {side: "true"}, "apply": dict({"model": "nookworks:block/chimney_collar"}, **rot)})
-    write_json(ASSETS / "blockstates/chimney.json", {"multipart": parts})
-    write_json(ASSETS / "items/chimney.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/chimney_top"}})
+    for prefix, flue_prefix, texture in MASONRY:
+        tex = masonry_tex(texture)
+        name = prefix + "chimney"
+        write_json(m / f"{name}.json", chimney(False, tex))
+        write_json(m / f"{name}_top.json", chimney(True, tex))
+        write_json(m / f"{name}_collar.json", chimney_collar(tex))
+        parts = [{"when": {"top": "false"}, "apply": {"model": f"nookworks:block/{name}"}},
+                 {"when": {"top": "true"}, "apply": {"model": f"nookworks:block/{name}_top"}}]
+        for side, rot in SIDE_ROT.items():
+            if side in ("up", "down"):
+                continue
+            parts.append({"when": {side: "true"}, "apply": dict({"model": f"nookworks:block/{name}_collar"}, **rot)})
+        write_json(ASSETS / f"blockstates/{name}.json", {"multipart": parts})
+        write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}_top"}})
+        flue_name = flue_prefix + "flue"
+        write_json(m / f"{flue_name}.json", flue(tex))
+        write_json(ASSETS / f"blockstates/{flue_name}.json", {"multipart": [{"apply": {"model": f"nookworks:block/{flue_name}"}}]})
+        write_json(ASSETS / f"items/{flue_name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{flue_name}"}})
+        loot = {"type": "minecraft:block", "pools": [{"bonus_rolls": 0.0, "rolls": 1, "condition": {"type": "minecraft:survives_explosion"},
+                                                      "entries": [{"type": "minecraft:item", "name": "nookworks:{}"}]}]}
+        data = ROOT / "src/main/resources/data/nookworks"
+        for block in ([name] if prefix else []) + [flue_name]:
+            l = json.loads(json.dumps(loot).replace("{}", block))
+            l["random_sequence"] = f"nookworks:blocks/{block}"
+            write_json(data / f"loot_table/blocks/{block}.json", l)
+        material = texture.split("/")[-1]
+        if prefix:
+            write_json(data / f"recipe/{name}.json", {"type": "minecraft:crafting_shaped", "category": "building",
+                                                      "key": {"B": f"minecraft:{material}"}, "pattern": ["B B", "B B"],
+                                                      "result": {"id": f"nookworks:{name}", "count": 4}})
+        write_json(data / f"recipe/{flue_name}.json", {"type": "minecraft:crafting_shaped", "category": "building",
+                                                       "key": {"B": f"minecraft:{material}"}, "pattern": ["B B", "B B", "B B"],
+                                                       "result": {"id": f"nookworks:{flue_name}", "count": 6}})
     print("wrote the ventilation")
 
 

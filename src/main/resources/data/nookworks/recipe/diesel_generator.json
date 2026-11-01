@@ -1,8 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "generators"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diesel_generator",
+        "nookworks:copper_tank",
+        "nookworks:generator"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "storage"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_storage_barrel",
+        "nookworks:iron_storage_upgrade"
+      ]
     }
   ],
   "type": "minecraft:crafting_transmute",

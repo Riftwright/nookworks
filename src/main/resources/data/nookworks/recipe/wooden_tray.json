@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wooden_tray"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

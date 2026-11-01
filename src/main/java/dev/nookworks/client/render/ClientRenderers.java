@@ -54,6 +54,8 @@ public final class ClientRenderers {
         event.registerBlockEntityRenderer(ModBlockEntities.VENT_FAN.get(), VentFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.TRAY.get(), TrayRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DICE.get(), DiceRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.WARP_ANCHOR.get(), WarpAnchorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.PLATE.get(), PlateRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PLACED_BOOKS.get(), PlacedBooksRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BOOKEND.get(), BookendRenderer::new);
         event.registerEntityRenderer(ModRope.ROPE_KNOT.get(), RopeKnotRenderer::new);
@@ -62,6 +64,7 @@ public final class ClientRenderers {
         event.registerBlockEntityRenderer(ModBlockEntities.NOODLE_MAKER.get(), c -> new CrankRenderer<>(c, CrankRenderer.NOODLE_MAKER));
         event.registerBlockEntityRenderer(ModTravel.DAEMON_DOOR_ENTITY.get(), DaemonDoorRenderer::new);
         event.registerBlockEntityRenderer(ModTravel.IF_MIRROR_ENTITY.get(), IfMirrorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.STANDING_MIRROR.get(), StandingMirrorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.COPPER_PIPE.get(), c -> new PipePullRenderer<>(c, PipePullRenderer.COPPER));
         event.registerBlockEntityRenderer(ModBlockEntities.EXPERIENCE_PIPE.get(), c -> new PipePullRenderer<>(c, PipePullRenderer.EXPERIENCE));
     }
@@ -74,6 +77,8 @@ public final class ClientRenderers {
         VentFanRenderer.registerModels(event);
         TrayRenderer.registerModels(event);
         DiceRenderer.registerModels(event);
+        WarpAnchorRenderer.registerModels(event);
+        DishModels.registerModels(event);
         PlacedBooksRenderer.registerModels(event);
         HungItemRenderer.registerModels(event);
         PipePullRenderer.registerModels(event);

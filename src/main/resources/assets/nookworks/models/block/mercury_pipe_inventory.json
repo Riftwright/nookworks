@@ -92,6 +92,15 @@
           ],
           "rotation": 90
         },
+        "south": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
         "west": {
           "texture": "#collar",
           "uv": [
@@ -135,7 +144,7 @@
         16
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#bore",
           "uv": [
             3,
@@ -153,6 +162,15 @@
             8
           ],
           "rotation": 90
+        },
+        "south": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
         },
         "west": {
           "texture": "#collar",

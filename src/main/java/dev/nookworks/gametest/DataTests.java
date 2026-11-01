@@ -137,11 +137,18 @@ final class DataTests {
             for (var entry : resources.listResources(folder, id -> id.getNamespace().equals(Nookworks.MODID) && id.getPath().endsWith(".json")).entrySet()) {
                 try (var reader = entry.getValue().openAsReader()) {
                     var json = JsonParser.parseReader(reader).getAsJsonObject();
+                    // what holds it: the items its availability conditions name, each standing for its part (since 1.3:
+                    // tools/gen_feature_conditions.py and gen_advancements.py write nookworks:available)
                     Set<String> held = new HashSet<>();
                     if (json.has("neoforge:conditions")) {
                         for (var c : json.getAsJsonArray("neoforge:conditions")) {
-                            if ("nookworks:feature".equals(c.getAsJsonObject().get("type").getAsString())) {
-                                held.add(c.getAsJsonObject().get("feature").getAsString());
+                            if ("nookworks:available".equals(c.getAsJsonObject().get("type").getAsString())) {
+                                for (var item : c.getAsJsonObject().getAsJsonArray("items")) {
+                                    String part = partOf.get(Identifier.parse(item.getAsString()));
+                                    if (part != null) {
+                                        held.add(part);
+                                    }
+                                }
                             }
                         }
                     }
@@ -604,6 +611,14 @@ final class DataTests {
         }
     }
 
+    /** Whether an availability condition holds now: its items can be had (any of them, with {@code "any"}). */
+    private static boolean isAvailable(com.google.gson.JsonObject condition) {
+        List<String> items = new ArrayList<>();
+        condition.getAsJsonArray("items").forEach(item -> items.add(item.getAsString()));
+        boolean any = condition.has("any") && condition.get("any").getAsBoolean();
+        return any ? items.stream().anyMatch(Features::available) : items.stream().allMatch(Features::available);
+    }
+
     /**
      * Whether a file may stay unloaded: it has a condition other than one on a part of the mod that is on (another
      * mod's compat, a start-up setting). A file held only by parts that are on - most of ours - has to load.
@@ -616,8 +631,9 @@ final class DataTests {
             }
             for (var condition : json.getAsJsonObject().getAsJsonArray("neoforge:conditions")) {
                 var object = condition.getAsJsonObject();
-                boolean partOn = "nookworks:feature".equals(object.get("type").getAsString())
-                        && Features.enabled(object.get("feature").getAsString());
+                String type = object.get("type").getAsString();
+                boolean partOn = "nookworks:feature".equals(type) && Features.enabled(object.get("feature").getAsString())
+                        || "nookworks:available".equals(type) && isAvailable(object);
                 if (!partOn) {
                     return true;
                 }

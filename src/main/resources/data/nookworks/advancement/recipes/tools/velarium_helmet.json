@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "velarium"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_helmet"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

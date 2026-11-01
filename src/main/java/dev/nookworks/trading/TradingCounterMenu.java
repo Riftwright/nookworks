@@ -32,6 +32,8 @@ public class TradingCounterMenu extends AbstractContainerMenu {
      * never taken for an offer's button, however many offers there are.
      */
     public static final int BUTTON_REROLL = -1;
+    /** "Stop when prices rise" ticked or unticked ({@link TradingCounterBlockEntity#togglePauseWhenDear}). */
+    public static final int BUTTON_PAUSE_WHEN_DEAR = -2;
 
     private final Container container;
     private final Inventory inventory;
@@ -70,6 +72,13 @@ public class TradingCounterMenu extends AbstractContainerMenu {
             if (this.counter != null) {
                 this.counter.reroll(player);
                 this.broadcastChanges(); // the new offers shown at once
+            }
+            return true;
+        }
+        if (id == BUTTON_PAUSE_WHEN_DEAR) {
+            if (this.counter != null && !player.isSpectator()) {
+                this.counter.togglePauseWhenDear();
+                this.broadcastChanges();
             }
             return true;
         }

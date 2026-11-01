@@ -163,6 +163,9 @@
         },
         "up": {
           "texture": "#up"
+        },
+        "down": {
+          "texture": "#down"
         }
       },
       "name": "foot band"
@@ -193,6 +196,9 @@
         },
         "up": {
           "texture": "#up"
+        },
+        "down": {
+          "texture": "#down"
         }
       },
       "name": "foot band"
@@ -223,6 +229,9 @@
         },
         "up": {
           "texture": "#up"
+        },
+        "down": {
+          "texture": "#down"
         }
       },
       "name": "foot band"
@@ -340,6 +349,9 @@
         },
         "up": {
           "texture": "#up"
+        },
+        "down": {
+          "texture": "#down"
         }
       },
       "name": "stopper"
@@ -370,6 +382,9 @@
         },
         "up": {
           "texture": "#up"
+        },
+        "down": {
+          "texture": "#down"
         }
       },
       "name": "stopper"

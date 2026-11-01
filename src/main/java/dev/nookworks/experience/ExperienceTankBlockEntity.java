@@ -25,6 +25,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import dev.nookworks.fluid.PipePorts;
 
 /**
  * Experience Tank: 16 buckets of Liquid Experience, worth 800 XP points.
@@ -78,6 +79,7 @@ public class ExperienceTankBlockEntity extends BlockEntity implements DrawRights
     public void onLoad() {
         super.onLoad();
         SightGlass.showOnLoad(this, this::amount, CAPACITY);
+        PipePorts.showOnLoad(this);
     }
 
     public FluidResource resource() {

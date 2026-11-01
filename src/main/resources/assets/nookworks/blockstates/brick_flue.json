@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/brick_flue"
+      }
+    }
+  ]
+}

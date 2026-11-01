@@ -156,6 +156,9 @@ public final class Ventilation {
         if (first.isAir()) {
             return List.of(Vec3.atCenterOf(exit).relative(intake.exitSide(), -0.3));
         }
+        if (first.getBlock() instanceof FlueBlock && intake.exitSide().getAxis() != Direction.Axis.Y) {
+            return List.of(); // a fan blowing into a flue's side: walled, as a flue is closed but at its top and bottom
+        }
         if (first.getBlock() instanceof ChimneyBlock) {
             Vec3 top = chimneyTop(level, exit);
             return top == null ? List.of() : List.of(top);

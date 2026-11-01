@@ -38,7 +38,11 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class SorterMenu extends AbstractContainerMenu {
     public static final int BUTTON_SWAP = 0;
-    /** Button ids for the Precision Sorter's switches: {@link SorterSettings#BLACKLIST} and {@link SorterSettings#MATCH_COMPONENTS}. */
+    /**
+     * Button ids for the Precision Sorter's switches - {@link SorterSettings#BLACKLIST} and
+     * {@link SorterSettings#MATCH_COMPONENTS} - and either sorter's Keep Out row turned round
+     * ({@link SorterSettings#KEEP_OUT_OTHERS}): this plus the flag.
+     */
     public static final int BUTTON_FLAG = 1;
     /** The tag picker: opened, closed (the sample and ticks let go), and its ticks put in the filter. */
     public static final int BUTTON_PICKER_OPEN = 10;
@@ -425,7 +429,7 @@ public class SorterMenu extends AbstractContainerMenu {
     }
 
     /** Puts {@code entry} in the first free slot of {@code target}; with none free, says so and returns false. */
-    private static boolean put(Player player, Container target, int size, ItemStack entry, boolean deny) {
+    private boolean put(Player player, Container target, int size, ItemStack entry, boolean deny) {
         for (int i = 0; i < size; i++) {
             if (target.getItem(i).isEmpty()) {
                 target.setItem(i, entry);
@@ -433,7 +437,8 @@ public class SorterMenu extends AbstractContainerMenu {
             }
         }
         if (!player.level().isClientSide()) {
-            player.sendOverlayMessage(Component.translatable(deny ? "message.nookworks.sorter.deny_full" : "message.nookworks.sorter.filter_full"));
+            player.sendOverlayMessage(Component.translatable(!deny ? "message.nookworks.sorter.filter_full"
+                    : this.flag(SorterSettings.KEEP_OUT_OTHERS) ? "message.nookworks.sorter.allow_full" : "message.nookworks.sorter.deny_full"));
         }
         return false;
     }
@@ -532,8 +537,9 @@ public class SorterMenu extends AbstractContainerMenu {
         if (this.pickerButton(player, id)) {
             return true;
         }
-        if (id == BUTTON_FLAG + SorterSettings.BLACKLIST || id == BUTTON_FLAG + SorterSettings.MATCH_COMPONENTS) {
-            if (this.settings == null || !this.tier.configurable) {
+        boolean keepOutOthers = id == BUTTON_FLAG + SorterSettings.KEEP_OUT_OTHERS; // the Keep Out row's sign: either sorter
+        if (id == BUTTON_FLAG + SorterSettings.BLACKLIST || id == BUTTON_FLAG + SorterSettings.MATCH_COMPONENTS || keepOutOthers) {
+            if (this.settings == null || !this.tier.configurable && !keepOutOthers) {
                 return false;
             }
             this.settings.toggle(id - BUTTON_FLAG);

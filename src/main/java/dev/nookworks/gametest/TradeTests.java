@@ -78,6 +78,7 @@ final class TradeTests {
         test("trading_counter_waits_for_a_tick_payment_and_room", TradeTests::waits);
         test("trading_counter_stops_sold_out_and_says_why", TradeTests::soldOut);
         test("trading_counter_prices_at_its_owners_reputation", TradeTests::prices);
+        test("trading_counter_stops_while_prices_are_up_when_told_to", TradeTests::pausesWhenDear);
         test("trading_counter_trades_level_its_villager", 120, TradeTests::levelsUp);
         test("trading_counter_starts_another_villager_with_nothing_ticked", TradeTests::anotherVillager);
         test("trading_counter_drops_ticks_whose_trade_changed", TradeTests::changedList);
@@ -224,6 +225,48 @@ final class TradeTests {
         MerchantOffer wanted = new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(), new ItemStack(Items.BREAD, 1), 0, 12, 1, 0.05F, 4);
         check(helper, TradingCounterBlockEntity.price(wanted, 0) == 9, "demand raises it as vanilla does: 8 + 8 x 4 x 0.05");
         check(helper, TradingCounterBlockEntity.price(wanted, 1000) == 1, "never below one");
+        helper.succeed();
+    }
+
+    /**
+     * "Stop when prices rise" (the user, 2026-10-31): unticked, a trade demand has raised is made at its raised price,
+     * as by hand; ticked, it waits - saying so - until demand falls at a restock and the price is back to its own (the
+     * owner's discount still counting), then trades again. A trade at its price that wants payment is said first.
+     * Kept when saved.
+     */
+    private static void pausesWhenDear(GameTestHelper helper) {
+        UUID owner = UUID.randomUUID();
+        TradingCounterBlockEntity counter = counter(helper, COUNTER, owner);
+        MerchantOffer raised = new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(), new ItemStack(Items.BREAD, 1), 0, 12, 1, 0.05F, 4);
+        MerchantOffer cheap = new MerchantOffer(new ItemCost(Items.EMERALD, 30), Optional.empty(), new ItemStack(Items.APPLE, 1), 0, 12, 1, 0.05F, 0);
+        Villager v = villager(helper, CELL, raised, cheap);
+        check(helper, TradingCounterBlockEntity.dear(raised, 0) && TradingCounterBlockEntity.ownPrice(raised, 0) == 8
+                && !TradingCounterBlockEntity.dear(cheap, 0), "demand has raised the bread to 9 from its own 8; the apple not");
+        counter.toggle(0);
+        counter.setItem(0, new ItemStack(Items.EMERALD, 20));
+        turn(helper, counter);
+        check(helper, counter.status() == Status.TRADING && countIn(counter, Items.EMERALD) == 11, "unticked, it pays the raised 9");
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        TradingCounterMenu menu = new TradingCounterMenu(0, player.getInventory(), counter, counter);
+        check(helper, menu.clickMenuButton(player, TradingCounterMenu.BUTTON_PAUSE_WHEN_DEAR) && counter.pausesWhenDear()
+                && counter.view().pauseWhenDear(), "the screen's box ticks it, and the screen shows it ticked");
+        turn(helper, counter);
+        check(helper, counter.status() == Status.PRICE_UP && countIn(counter, Items.EMERALD) == 11, "ticked, it waits: " + counter.status());
+        counter.toggle(1); // the apple at its own 30, with 11 emeralds: payment is what it waits for now, and says so
+        turn(helper, counter);
+        check(helper, counter.status() == Status.NO_PAYMENT, "a trade at its price wanting payment is said first: " + counter.status());
+        counter.toggle(1);
+        v.getOffers().get(0).updateDemand(); // a restock with one use of twelve: demand 4 + 1 - 11, below nothing
+        check(helper, !TradingCounterBlockEntity.dear(v.getOffers().get(0), 0), "back at its own price");
+        turn(helper, counter);
+        check(helper, counter.status() == Status.TRADING && countIn(counter, Items.EMERALD) == 3, "it trades again, at 8");
+        try (var reporter = new ProblemReporter.ScopedCollector(counter.problemPath(), LogUtils.getLogger())) {
+            var output = TagValueOutput.createWithContext(reporter, helper.getLevel().registryAccess());
+            counter.saveWithoutMetadata(output);
+            var copy = new TradingCounterBlockEntity(counter.getBlockPos(), counter.getBlockState());
+            copy.loadWithComponents(TagValueInput.create(reporter, helper.getLevel().registryAccess(), output.buildResult()));
+            check(helper, copy.pausesWhenDear(), "kept when saved");
+        }
         helper.succeed();
     }
 

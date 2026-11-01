@@ -12,6 +12,41 @@
       "apply": {
         "model": "nookworks:block/stirring_tank_lamp"
       }
+    },
+    {
+      "when": {
+        "port_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 270
+      }
     }
   ]
 }

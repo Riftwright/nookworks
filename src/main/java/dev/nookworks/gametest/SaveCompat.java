@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -306,6 +306,24 @@ final class SaveCompat {
      * What a place from fixture {@code name} is meant to be now, where a version changed it on purpose - each change named
      * here, with its reason, and the fix for old worlds that makes it so.
      */
+    /** The machines that show pipe ports since 1.3 (fluid/PipePorts), and on which sides. */
+    private static final Map<String, String[]> PORTED = ported();
+
+    private static Map<String, String[]> ported() {
+        String[] all = {"down", "east", "north", "south", "up", "west"};
+        String[] low = {"down", "east", "north", "south", "west"};
+        String[] round = {"east", "north", "south", "west"};
+        Map<String, String[]> out = new java.util.HashMap<>();
+        for (String name : new String[] {"electric_furnace", "electrolytic_cell", "generator", "retort", "mercury_tank", "experience_tank"}) {
+            out.put(Nookworks.MODID + ":" + name, all);
+        }
+        for (String name : new String[] {"diesel_generator", "distiller", "water_pump", "stirring_tank"}) {
+            out.put(Nookworks.MODID + ":" + name, low);
+        }
+        out.put(Nookworks.MODID + ":copper_tank", round);
+        return out;
+    }
+
     static JsonObject intended(String name, JsonObject was) {
         JsonObject now = was.deepCopy();
         String state = now.get("state").getAsString();
@@ -340,6 +358,31 @@ final class SaveCompat {
                 properties.put(key, "false");
             }
             StringBuilder out = new StringBuilder(furniture.substring(0, furniture.indexOf('[') + 1));
+            properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
+            now.addProperty("state", out.append(']').toString());
+        }
+        if (state.startsWith(Nookworks.MODID + ":oil_press[") && !state.contains("port_")) {
+            // 1.3: an Oil Press shows a copper port where a Copper Pipe joins its side (oil/OilPressBlock, port_*); one
+            // from before loads with none, and is set right as its chunk loads, by the pipes beside it (none here)
+            now.addProperty("state", state.substring(0, state.length() - 1) + ",port_east=false,port_north=false,port_south=false,port_west=false]");
+        }
+        String machine = now.get("state").getAsString();
+        String block = machine.contains("[") ? machine.substring(0, machine.indexOf('[')) : machine;
+        String[] ports = PORTED.getOrDefault(block, new String[0]);
+        if (ports.length > 0 && !machine.contains("port_")) {
+            // 1.3: the machines whose panels are set back a pixel show a port where a pipe of ours joins them
+            // (fluid/PipePorts, port_*), so the pipe does not stand off them in the air; one from before loads with
+            // none, and is set right as its chunk loads, by the pipes beside it (none here)
+            TreeMap<String, String> properties = new TreeMap<>();
+            if (machine.contains("[")) {
+                for (String pair : machine.substring(machine.indexOf('[') + 1, machine.length() - 1).split(",")) {
+                    properties.put(pair.substring(0, pair.indexOf('=')), pair.substring(pair.indexOf('=') + 1));
+                }
+            }
+            for (String side : ports) {
+                properties.put("port_" + side, "false");
+            }
+            StringBuilder out = new StringBuilder(block + "[");
             properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
             now.addProperty("state", out.append(']').toString());
         }

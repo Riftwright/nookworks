@@ -37,7 +37,7 @@ public final class WorldFeaturesClient {
     private static void open() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.gui.screen() instanceof CreateWorldScreen parent) {
-            minecraft.gui.setScreen(new WorldFeaturesScreen(parent));
+            minecraft.gui.setScreen(WorldFeaturesScreen.creating(parent));
         }
     }
 

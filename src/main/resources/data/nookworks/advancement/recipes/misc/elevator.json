@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "elevator"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:elevator"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

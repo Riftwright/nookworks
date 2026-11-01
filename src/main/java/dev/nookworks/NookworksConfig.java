@@ -41,6 +41,8 @@ public final class NookworksConfig {
     private static final Supplier<String> NEW_MOD_ID = () -> "";
 
     public static final ModConfigSpec.BooleanValue TIMBER_ENABLED;
+    public static final ModConfigSpec.BooleanValue END_SEED_MOD_FLOWERS;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> END_SEED_LEFT_OUT_MODS;
     public static final ModConfigSpec.EnumValue<Activation> TIMBER_ACTIVATION;
     public static final ModConfigSpec.IntValue TIMBER_MAX_BLOCKS;
     public static final ModConfigSpec.BooleanValue TIMBER_STAND_DOWN;
@@ -214,6 +216,14 @@ public final class NookworksConfig {
                 "been in one (a cartographer, who would sell one, lives in a village). 0 never; 1 every trader. The price is the",
                 "trade nookworks:wandering_trader/village_map.")
                 .translation(key("traderVillageMapChance")).defineInRange("traderVillageMapChance", 0.5, 0.0, 1.0);
+
+        END_SEED_MOD_FLOWERS = BUILDER.comment("An End Seed may also open into other mods' flowers - every flower their blocks tag as",
+                "minecraft:small_flowers or minecraft:flowers - with a small flower's or a tall flower's share of the draw. Off, only",
+                "what the nookworks:end_seed data map lists.")
+                .translation(key("endSeedModFlowers")).define("endSeedModFlowers", true);
+        END_SEED_LEFT_OUT_MODS = BUILDER.comment("Mod ids whose flowers an End Seed never opens into (a mod's flower that should not grow wild).")
+                .translation(key("endSeedLeftOutMods")).defineListAllowEmpty("endSeedLeftOutMods", List.of(), NEW_MOD_ID,
+                        o -> o instanceof String);
     }
 
     public static final ModConfigSpec SPEC = BUILDER.build();

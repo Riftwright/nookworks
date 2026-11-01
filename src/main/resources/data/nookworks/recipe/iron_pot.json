@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_pot"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

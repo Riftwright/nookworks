@@ -85,6 +85,9 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
     };
     /** How wide its tooltip's lines run before they wrap. */
     private static final int TIP_W = 180;
+    /** "Stop when prices rise": a tick box and its words over the right column, beside the re-roll button. */
+    private static final int PAUSE_Y = 5;
+    private static final int PAUSE_TEXT_X = RIGHT_X + 12;
 
     private int scroll;
     private boolean draggingBar;
@@ -239,6 +242,11 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
             this.draggingBar = true;
             return true;
         }
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.onPause(event.x(), event.y())) {
+            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, TradingCounterMenu.BUTTON_PAUSE_WHEN_DEAR);
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
+            return true;
+        }
         int row = this.rowAt(event.x(), event.y());
         if (row >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.menu.getCarried().isEmpty()) {
             this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, row);
@@ -287,6 +295,13 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
         this.extractArrow(g, x + TradingCounterMenu.PAY_X + 56, y + TradingCounterMenu.GRID_Y + 22);
         this.extractXp(g, x, y);
         this.extractStatusDot(g, x + LIST_X, y + STATUS_Y + 1);
+        this.extractBox(g, x + RIGHT_X, y + PAUSE_Y, this.view().pauseWhenDear());
+    }
+
+    /** Whether the pointer is over "Stop when prices rise": its box or its words. */
+    private boolean onPause(double mouseX, double mouseY) {
+        int w = 12 + Math.min(RIGHT_W - 12, this.font.width(Component.translatable("gui.nookworks.trading_counter.pause_when_dear")));
+        return this.isHovering(RIGHT_X - 1, PAUSE_Y - 1, w + 2, 11, mouseX, mouseY);
     }
 
     /**
@@ -460,6 +475,8 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
         }
         this.statusCut = MachineStyle.fitText(g, this.font, view.statusOf().text(), LIST_X + 11, STATUS_Y, this.imageWidth - LIST_X * 2 - 11,
                 LABEL, false);
+        MachineStyle.fitText(g, this.font, Component.translatable("gui.nookworks.trading_counter.pause_when_dear"), PAUSE_TEXT_X, PAUSE_Y + 1,
+                RIGHT_W - 12, LABEL, false);
     }
 
     private void fitCentered(GuiGraphicsExtractor g, Component text, int middle, int y, int width) {
@@ -491,6 +508,18 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
             lines.add(left == 0 ? Component.translatable("gui.nookworks.trading_counter.sold_out").withStyle(ChatFormatting.RED)
                     : Component.translatable("gui.nookworks.trading_counter.stock", left, offer.getMaxUses()).withStyle(ChatFormatting.GRAY));
             g.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
+            return;
+        }
+        if (this.onPause(mouseX, mouseY) && this.menu.getCarried().isEmpty()) {
+            // what each way does, the one it is set to in white
+            boolean on = this.view().pauseWhenDear();
+            List<FormattedCharSequence> lines = new ArrayList<>();
+            lines.add(Component.translatable("gui.nookworks.trading_counter.pause_when_dear").getVisualOrderText());
+            lines.addAll(this.font.split(Component.translatable("gui.nookworks.trading_counter.pause_when_dear.on")
+                    .withStyle(on ? ChatFormatting.WHITE : ChatFormatting.GRAY), TIP_W));
+            lines.addAll(this.font.split(Component.translatable("gui.nookworks.trading_counter.pause_when_dear.off")
+                    .withStyle(on ? ChatFormatting.GRAY : ChatFormatting.WHITE), TIP_W));
+            g.setTooltipForNextFrame(this.font, lines, mouseX, mouseY);
             return;
         }
         if (this.statusCut && this.isHovering(LIST_X, STATUS_Y - 2, this.imageWidth - LIST_X * 2, 12, mouseX, mouseY)) {

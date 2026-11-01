@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "hammers"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:netherite_hammer",
+        "nookworks:diamond_hammer"
+      ]
     }
   ],
   "type": "minecraft:smithing_transform",

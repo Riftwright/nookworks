@@ -222,6 +222,14 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
     }
 
     @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.experienceHandler();
+            default -> null;
+        };
+    }
+
+    @Override
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.EXPERIENCE, this.experienceStored(), EXPERIENCE_CAPACITY));
     }

@@ -64,7 +64,9 @@ import net.minecraft.world.timeline.Timelines;
  * paid for, and has room for its goods: one trade, as one made by hand - the stock used, the villager's experience
  * (and a level, in time), its experience orbs, and the reputation a trade gives to whoever set the counter down.</li>
  * <li>At that one's price: their reputation counts (a cured villager's discount), as it would by hand; the Hero of the
- * Village's does not, being theirs only while they are there. Demand raises prices as by hand.</li>
+ * Village's does not, being theirs only while they are there. Demand raises prices as by hand - and with "Stop when
+ * prices rise" ticked in its screen, a trade so raised waits until its price is back down to its own (the user,
+ * 2026-10-31).</li>
  * <li>Stock comes back as vanilla's does: the villager restocks at its workstation in working hours, twice a day at most.
  * Nothing here hurries it. It says when it waits for that, and when the villager has no workstation to restock at.</li>
  * <li>It waits while the villager sleeps, while a player trades with it by hand, under a redstone signal, and where its
@@ -92,7 +94,7 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
     /** What it is doing, or what it waits for: its screen and Jade say so. */
     public enum Status {
         TRADING, NO_VILLAGER, NOT_A_TRADER, SLEEPING, BUSY, HELD, NOT_ALLOWED, NOTHING_TICKED, OUT_OF_STOCK, NO_WORKSTATION,
-        NO_PAYMENT, GOODS_FULL;
+        NO_PAYMENT, GOODS_FULL, PRICE_UP;
 
         public Component text() {
             return Component.translatable("gui.nookworks.trading_counter.status." + this.name().toLowerCase(Locale.ROOT));
@@ -109,6 +111,12 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
     }
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(PAYMENT + GOODS, ItemStack.EMPTY);
+    /**
+     * Whether a trade whose price demand has raised waits until it is back at its own price (the user, 2026-10-31:
+     * 「現在の値段より高くなったら取引をやめる（もとの値段以下になったら取引を再開）」); off, as by hand, it trades at
+     * whatever the price is. Its own price is the base less the owner's discount: only demand's rise counts.
+     */
+    private boolean pauseWhenDear;
     private @Nullable UUID owner;
     /** The villager it serves, and the offers ticked for it - by place in its list, and what each was, to catch a list that changed. */
     private @Nullable UUID villager;
@@ -184,6 +192,28 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
     /** {@code v}'s reputation with whoever set the counter down: what makes their price, as by hand. */
     public int reputation(Villager v) {
         return this.owner == null ? 0 : v.getGossips().getReputation(this.owner, t -> true);
+    }
+
+    public boolean pausesWhenDear() {
+        return this.pauseWhenDear;
+    }
+
+    /** Ticks or unticks "Stop when prices rise": from the screen. */
+    public void togglePauseWhenDear() {
+        this.pauseWhenDear = !this.pauseWhenDear;
+        this.setChanged();
+    }
+
+    /** What {@code offer} asks first at {@code reputation} with no rise from demand: the price it comes back down to. */
+    public static int ownPrice(MerchantOffer offer, int reputation) {
+        ItemCost cost = offer.getItemCostA();
+        int special = -Mth.floor(reputation * offer.getPriceMultiplier());
+        return Mth.clamp(cost.count() + special, 1, cost.itemStack().getMaxStackSize());
+    }
+
+    /** Whether demand has raised {@code offer}'s price above its own at {@code reputation}. */
+    public static boolean dear(MerchantOffer offer, int reputation) {
+        return price(offer, reputation) > ownPrice(offer, reputation);
     }
 
     /**
@@ -293,14 +323,19 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         int reputation = this.reputation(v);
         boolean inStock = false;
         boolean full = false;
+        boolean unpaid = false;
         for (int index : this.ticked) {
             MerchantOffer offer = offers.get(index);
             if (offer.isOutOfStock()) {
                 continue;
             }
             inStock = true;
+            if (this.pauseWhenDear && dear(offer, reputation)) {
+                continue; // dearer than its own price: it waits for demand to fall at the villager's restocks
+            }
             int priceA = price(offer, reputation);
             if (!this.pay(offer, priceA, false)) {
+                unpaid = true;
                 continue;
             }
             ItemStack goods = offer.assemble();
@@ -323,7 +358,8 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         if (!inStock) {
             return v.getBrain().getMemory(MemoryModuleType.JOB_SITE).isPresent() ? Status.OUT_OF_STOCK : Status.NO_WORKSTATION;
         }
-        return full ? Status.GOODS_FULL : Status.NO_PAYMENT;
+        // what holds it up: goods with no room, else payment missing for a trade at its price, else every trade dear
+        return full ? Status.GOODS_FULL : unpaid ? Status.NO_PAYMENT : Status.PRICE_UP;
     }
 
     /** Another villager behind it: its own offers, none ticked, the claim asked again where it stands. */
@@ -544,12 +580,12 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         Villager v = behind(level, this.worldPosition, this.getBlockState());
         if (v == null) {
             return new TradingCounterView(Optional.empty(), 0, 0, new MerchantOffers(), List.of(), List.of(), this.status.ordinal(), 0, false,
-                    Reroll.NO_VILLAGER.ordinal());
+                    Reroll.NO_VILLAGER.ordinal(), this.pauseWhenDear);
         }
         if (!trades(v)) {
             // a child, a nitwit or one with no job yet: named, as it stands there, with no trades - not "no villager"
             return new TradingCounterView(Optional.of(v.getDisplayName()), 0, 0, new MerchantOffers(), List.of(), List.of(),
-                    this.status.ordinal(), 0, false, Reroll.NO_PROFESSION.ordinal());
+                    this.status.ordinal(), 0, false, Reroll.NO_PROFESSION.ordinal(), this.pauseWhenDear);
         }
         MerchantOffers offers = v.getOffers();
         int reputation = this.reputation(v);
@@ -560,7 +596,7 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         boolean same = v.getUUID().equals(this.villager);
         return new TradingCounterView(Optional.of(v.getDisplayName()), v.getVillagerData().level(), v.getVillagerXp(), offers.copy(), prices,
                 same ? List.copyOf(this.ticked) : List.of(), this.status.ordinal(), restocksLeft(level, v),
-                v.getBrain().getMemory(MemoryModuleType.JOB_SITE).isPresent(), rerollable(v).ordinal());
+                v.getBrain().getMemory(MemoryModuleType.JOB_SITE).isPresent(), rerollable(v).ordinal(), this.pauseWhenDear);
     }
 
     @Override
@@ -592,6 +628,9 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         output.store("TickedWhat", com.mojang.serialization.Codec.STRING.listOf(), List.copyOf(this.tickedWhat));
         output.putInt("Status", this.status.ordinal());
         output.putInt("VillagerLevel", this.villagerLevel);
+        if (this.pauseWhenDear) {
+            output.putBoolean("pause_when_dear", true);
+        }
     }
 
     @Override
@@ -601,6 +640,7 @@ public class TradingCounterBlockEntity extends BlockEntity implements WorldlyCon
         ContainerHelper.loadAllItems(input, this.items);
         this.owner = input.read("Owner", UUIDUtil.CODEC).orElse(null);
         this.villager = input.read("Villager", UUIDUtil.CODEC).orElse(null);
+        this.pauseWhenDear = input.getBooleanOr("pause_when_dear", false);
         this.ticked.clear();
         this.tickedWhat.clear();
         // As saved - or as an item's block_entity_data, which any creative player can write - so only places an offer

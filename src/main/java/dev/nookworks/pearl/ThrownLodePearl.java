@@ -33,6 +33,7 @@ import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import dev.nookworks.anchor.WarpAnchors;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 
@@ -124,7 +125,7 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
                 // no room at the lodestone, or the If closed until it is made again: through no fault of the pearl's, so
                 // it comes back as it was, still bound. Into the thrower's hands, not where it landed - in lava, or in
                 // the void, it was lost.
-                boolean keeps = trip == Trip.REFUSED || trip == Trip.NO_ROOM || trip == Trip.IF_CLOSED;
+                boolean keeps = trip == Trip.REFUSED || trip == Trip.NO_ROOM || trip == Trip.IF_CLOSED || trip == Trip.ANCHORED;
                 ItemStack back = keeps ? this.getItem().copyWithCount(1) : new ItemStack(Items.ENDER_PEARL);
                 if (!player.getInventory().add(back)) {
                     // no room for it: at their feet, still - a drop is thrown ahead of them, over the edge they stood at
@@ -159,7 +160,9 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
         /** Another mod forbade it (a dimension change can be cancelled). */
         REFUSED,
         /** Into an If that goes at the next start (an operator's reset): nobody is let in to be left there. */
-        IF_CLOSED
+        IF_CLOSED,
+        /** From or to where a Warp Anchor holds (WarpAnchors): no warping there. */
+        ANCHORED
     }
 
     /**
@@ -188,6 +191,10 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
         if (there.dimension().equals(IfWorld.KEY) && !fromLevel.dimension().equals(IfWorld.KEY)
                 && IfWorld.get(player.level().getServer()).resetPending()) {
             return Trip.IF_CLOSED;
+        }
+        if (WarpAnchors.stops(player, there, spot.get())) {
+            WarpAnchors.stopped(player);
+            return Trip.ANCHORED;
         }
         // Asked as any teleport is, so a claim mod that keeps ender pearls out keeps this one out too (a trip within the
         // dimension raised no event at all, only one to another dimension could be stopped).

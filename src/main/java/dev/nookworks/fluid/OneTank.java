@@ -20,6 +20,10 @@ public class OneTank extends FluidStacksResourceHandler {
         this.capacity = capacity;
     }
 
+    public int capacity() {
+        return this.capacity;
+    }
+
     @Override
     public void deserialize(ValueInput input) {
         super.deserialize(input);

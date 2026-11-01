@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.anchor.WarpAnchorBlock;
 import dev.nookworks.block.CrateBlock;
 import dev.nookworks.block.CreativeGeneratorBlock;
 import dev.nookworks.block.CrusherBlock;
@@ -37,6 +38,7 @@ import dev.nookworks.block.TrashCanBlock;
 import dev.nookworks.block.WallSconceBlock;
 import dev.nookworks.block.WorkbenchBlock;
 import dev.nookworks.darkmatter.DarkMatterBlock;
+import dev.nookworks.decor.TablewareBlock;
 import dev.nookworks.decor.PlacedBottlesBlock;
 import dev.nookworks.experience.AbsorptionPadBlock;
 import dev.nookworks.experience.ExperienceFluids;
@@ -228,6 +230,10 @@ public final class ModBlocks {
     public static final DeferredBlock<dev.nookworks.decor.BookendBlock> BOOKEND = BLOCKS.registerBlock("bookend",
             dev.nookworks.decor.BookendBlock::new, p -> p.mapColor(MapColor.METAL).strength(0.8F)
                     .sound(SoundType.LANTERN).noOcclusion().forceSolidOff().pushReaction(PushReaction.POPPED));
+    /** The Standing Mirror: the If Mirror's Dawnwood frame round a plain glass that reflects (dev.nookworks.decor.StandingMirrorBlock). */
+    public static final DeferredBlock<dev.nookworks.decor.StandingMirrorBlock> STANDING_MIRROR = BLOCKS.registerBlock("standing_mirror",
+            dev.nookworks.decor.StandingMirrorBlock::new, p -> p.mapColor(MapColor.COLOR_ORANGE).strength(2.0F, 3.0F).sound(SoundType.WOOD)
+                    .noOcclusion().pushReaction(PushReaction.POPPED));
     /** Books standing on in a row past a full Bookend, five to a block (dev.nookworks.decor.BookendBlock). No item. */
     public static final DeferredBlock<dev.nookworks.decor.BookendBlock> BOOK_ROW = BLOCKS.registerBlock("book_row",
             p -> new dev.nookworks.decor.BookendBlock(p, false), p -> p.mapColor(MapColor.COLOR_BROWN).strength(0.2F)
@@ -304,6 +310,15 @@ public final class ModBlocks {
     public static final DeferredBlock<DarkMatterBlock> DARK_MATTER = BLOCKS.registerBlock("dark_matter",
             DarkMatterBlock::new, p -> p.mapColor(MapColor.COLOR_BLACK).strength(1.5F).requiresCorrectToolForDrops()
                     .sound(SoundType.AMETHYST));
+    /** Stops warping round it (dev.nookworks.anchor): obsidian's hardness, amethyst's ring, its own faint glow while on. */
+    public static final DeferredBlock<WarpAnchorBlock> WARP_ANCHOR = BLOCKS.registerBlock("warp_anchor",
+            WarpAnchorBlock::new, p -> p.mapColor(MapColor.COLOR_CYAN).strength(5.0F, 1200.0F).requiresCorrectToolForDrops()
+                    .sound(SoundType.AMETHYST).noOcclusion().lightLevel(s -> s.getValue(WarpAnchorBlock.ON) ? WarpAnchorBlock.LIGHT : 0));
+    /** Tableware for decor, up to four to a block (dev.nookworks.decor.TablewareBlock): a glass's ring and a mug's clink. */
+    public static final DeferredBlock<TablewareBlock> WINE_GLASS = BLOCKS.registerBlock("wine_glass", TablewareBlock::new,
+            p -> p.mapColor(MapColor.NONE).strength(0.1F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED));
+    public static final DeferredBlock<TablewareBlock> MUG = BLOCKS.registerBlock("mug", TablewareBlock::new,
+            p -> p.mapColor(MapColor.QUARTZ).strength(0.2F).sound(SoundType.DECORATED_POT).noOcclusion().pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<TrashCanBlock> TRASH_CAN = BLOCKS.registerBlock("trash_can",
             TrashCanBlock::new, p -> metalProperties(p).noOcclusion());
 

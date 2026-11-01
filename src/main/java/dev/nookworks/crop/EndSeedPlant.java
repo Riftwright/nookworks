@@ -1,5 +1,6 @@
 package dev.nookworks.crop;
 
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
 import dev.nookworks.feature.Features;
+import dev.nookworks.NookworksConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +26,7 @@ import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.tags.BlockTags;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
@@ -64,20 +67,73 @@ public record EndSeedPlant(int weight, Map<String, String> properties) {
         return property.getValue(value).map(v -> state.setValue(property, v)).orElse(null);
     }
 
+    /** A small flower's and a tall flower's share of the draw, as the data map gives vanilla's. */
+    public static final int SMALL_FLOWER_WEIGHT = 10;
+    public static final int TALL_FLOWER_WEIGHT = 4;
+
     /**
      * Every plant of the draw, a tall one only where there is room above for its top, and none of a part that is off
-     * (the corn, with the kitchen switched off: its crop would drop corn nothing else gives then).
+     * (the corn, with the kitchen switched off: its crop would drop corn nothing else gives then). Other mods' flowers
+     * too (the user, 2026-10-31), unless the setting leaves them out, or that mod.
      */
     public static List<Entry> fitting(LevelReader level, BlockPos pos) {
+        return fitting(level, pos, modFlowers());
+    }
+
+    /** As {@link #fitting(LevelReader, BlockPos)}, with {@code modFlowers} as the other mods' flowers. Public for tests. */
+    public static List<Entry> fitting(LevelReader level, BlockPos pos, List<Block> modFlowers) {
         List<Entry> fitting = new ArrayList<>();
-        for (var plant : BuiltInRegistries.BLOCK.getDataMap(DATA_MAP).entrySet()) {
+        var listed = BuiltInRegistries.BLOCK.getDataMap(DATA_MAP);
+        for (var plant : listed.entrySet()) {
             Block block = BuiltInRegistries.BLOCK.getValue(plant.getKey());
             BlockState state = block == null ? null : plant.getValue().state(block);
             if (state != null && Features.enabled(block.asItem()) && (!isTall(state) || BloomingCropBlock.roomAbove(level, pos))) {
                 fitting.add(new Entry(state, plant.getValue().weight()));
             }
         }
+        for (Block block : modFlowers) {
+            if (listed.containsKey(block.builtInRegistryHolder().key())) {
+                continue; // the data map has its say on it
+            }
+            BlockState state = block.defaultBlockState();
+            if (!isTall(state) || BloomingCropBlock.roomAbove(level, pos)) {
+                fitting.add(new Entry(state, isTall(state) ? TALL_FLOWER_WEIGHT : SMALL_FLOWER_WEIGHT));
+            }
+        }
         return fitting;
+    }
+
+    /**
+     * Other mods' flowers an End Seed may open into: blocks of neither Minecraft nor Nookworks that their mod tags as
+     * small flowers or flowers, but for mods the setting leaves out, and none with the setting off. A flower that does
+     * not stand on farmland or dirt is never set down ({@link #open}), and the sprout draws again another day.
+     */
+    public static List<Block> modFlowers() {
+        if (!NookworksConfig.END_SEED_MOD_FLOWERS.getAsBoolean()) {
+            return List.of();
+        }
+        List<Map.Entry<String, Block>> tagged = new ArrayList<>();
+        for (var tag : List.of(BlockTags.SMALL_FLOWERS, BlockTags.FLOWERS)) {
+            for (var holder : BuiltInRegistries.BLOCK.getTagOrEmpty(tag)) {
+                tagged.add(Map.entry(holder.unwrapKey().map(key -> key.identifier().getNamespace()).orElse("minecraft"), holder.value()));
+            }
+        }
+        return modFlowers(tagged, NookworksConfig.END_SEED_LEFT_OUT_MODS.get());
+    }
+
+    /**
+     * Of {@code tagged} (each flower with the mod it is of, as the flower tags list them), the ones an End Seed may open
+     * into: once each, none of Minecraft's or ours, none of a mod in {@code leftOut}. Public for tests.
+     */
+    public static List<Block> modFlowers(List<Map.Entry<String, Block>> tagged, Collection<?> leftOut) {
+        List<Block> flowers = new ArrayList<>();
+        for (var flower : tagged) {
+            String mod = flower.getKey();
+            if (!mod.equals("minecraft") && !mod.equals(Nookworks.MODID) && !leftOut.contains(mod) && !flowers.contains(flower.getValue())) {
+                flowers.add(flower.getValue());
+            }
+        }
+        return flowers;
     }
 
     /** One of {@code pool}, by weight. */

@@ -41,6 +41,7 @@
     "nookworks:horizontal_item_warp_sender",
     "nookworks:hub_stone",
     "nookworks:if_mirror",
+    "nookworks:standing_mirror",
     "nookworks:iron_pot",
     "nookworks:iron_storage_barrel",
     "nookworks:iron_workbench",
@@ -116,6 +117,14 @@
     "nookworks:red_corrugated_sheet",
     "nookworks:green_corrugated_sheet",
     "nookworks:blue_corrugated_sheet",
-    "nookworks:white_corrugated_sheet"
+    "nookworks:white_corrugated_sheet",
+    "nookworks:warp_anchor",
+    "nookworks:stone_brick_chimney",
+    "nookworks:nether_brick_chimney",
+    "nookworks:cobblestone_chimney",
+    "nookworks:brick_flue",
+    "nookworks:stone_brick_flue",
+    "nookworks:nether_brick_flue",
+    "nookworks:cobblestone_flue"
   ]
 }

@@ -71,6 +71,7 @@ public final class NookworksGameTests {
         RopeSignalTests.register();
         FixTests.register();
         R18FixTests.register();
+        R19FixTests.register();
         BotPathTests.register();
         BotRulesTests.register();
         BotDigTests.register();
@@ -109,6 +110,7 @@ public final class NookworksGameTests {
         R8VinesTests.register();
         R8CounterRerollTests.register();
         R8WorldFeaturesTests.register();
+        PartGraphTests.register();
         R8DieselGeneratorTests.register();
         R8PebblesTests.register();
         R8RopeBannersTests.register();
@@ -127,6 +129,13 @@ public final class NookworksGameTests {
         CameraTests.register();
         BiodieselTests.register();
         EndSeedTests.register();
+        WarpAnchorTests.register();
+        TablewareTests.register();
+        OilPressPortTests.register();
+        HandOutTests.register();
+        SortDirectionTests.register();
+        SorterAllowTests.register();
+        GaugePouringTests.register();
         QuenchingTests.register();
         DecorTests.register();
         R15Tests.register();

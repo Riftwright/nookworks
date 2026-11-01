@@ -91,7 +91,8 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         if (!this.menu.tier().configurable) {
             return;
         }
-        for (int i = 0; i < SorterSettings.COUNT; i++) {
+        // the three switches along the bottom: the Keep Out row's turning round is its sign's, not a button here (r19)
+        for (int i = 0; i < FLAG_KEYS.length; i++) {
             int flag = i;
             int x = this.leftPos + 8 + flag * 54;
             int y = this.topPos + this.rowsBottom() + 30;
@@ -119,13 +120,13 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
                 Component.empty(), () -> this.pick(SorterMenu.BUTTON_REGISTER_DENY)) {
             @Override
             protected MutableComponent createNarrationMessage() {
-                return wrapDefaultNarrationMessage(Component.translatable("gui.nookworks.sorter.picker.deny"));
+                return wrapDefaultNarrationMessage(Component.translatable(SorterScreen.this.row("gui.nookworks.sorter.picker.deny")));
             }
 
             @Override
             protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
                 super.extractContents(g, mouseX, mouseY, a);
-                Component label = Component.translatable("gui.nookworks.sorter.picker.deny");
+                Component label = Component.translatable(SorterScreen.this.row("gui.nookworks.sorter.picker.deny"));
                 int w = 14 + 4 + SorterScreen.this.font.width(label);
                 int x = this.getX() + (this.getWidth() - w) / 2;
                 SorterScreen.this.drawKeepOut(g, x, this.getY() + 1);
@@ -239,6 +240,13 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             this.draggingBar = true;
             return true;
         }
+        // the Keep Out row's sign: the row turned round, letting in only what is in it, or back
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && !this.menu.picking() && this.menu.getCarried().isEmpty()
+                && this.isHovering(7, SorterMenu.denyY(this.menu.tier()) + 1, 16, 16, event.x(), event.y())) {
+            this.press(SorterMenu.BUTTON_FLAG + SorterSettings.KEEP_OUT_OTHERS);
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
+            return true;
+        }
         int row = this.rowAt(event.x(), event.y());
         if (row >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             this.pick(row == 0 ? SorterMenu.BUTTON_CHOOSE_MOD : SorterMenu.BUTTON_CHOOSE + row - 1);
@@ -313,7 +321,11 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
                 continue;
             }
             if (i >= SorterMenu.DENY_SLOT && i < SorterMenu.DENY_SLOT + SorterBlockEntity.DENY_SLOTS) {
-                MachineStyle.denySlot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
+                if (this.lettingIn()) {
+                    MachineStyle.allowSlot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
+                } else {
+                    MachineStyle.denySlot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
+                }
             } else if (i == SorterMenu.GEAR_SLOT) {
                 MachineStyle.fittingSlot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1, slot.hasItem());
                 if (!slot.hasItem()) {
@@ -417,7 +429,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     /** What a tag or mod entry catches - or in the Keep Out row, keeps out - in place of its sample's own tooltip. */
     @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
-        String entry = isDenySlot(this.hoveredSlot) ? "gui.nookworks.sorter.tag_entry.deny" : "gui.nookworks.sorter.tag_entry";
+        String entry = isDenySlot(this.hoveredSlot) ? this.row("gui.nookworks.sorter.tag_entry.deny") : "gui.nookworks.sorter.tag_entry";
         TagKey<Item> tag = SorterTags.of(stack);
         if (tag != null) {
             return tagTooltip(tag, entry);
@@ -466,7 +478,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
                 lines.add(Component.translatable("gui.nookworks.sorter.picker.taken").withStyle(ChatFormatting.DARK_GRAY));
             }
             if (tag == null ? this.menu.hasDenyModEntryFor(mod) : this.menu.hasDenyEntryFor(tag)) {
-                lines.add(Component.translatable("gui.nookworks.sorter.picker.taken_deny").withStyle(ChatFormatting.DARK_GRAY));
+                lines.add(Component.translatable(this.row("gui.nookworks.sorter.picker.taken_deny")).withStyle(ChatFormatting.DARK_GRAY));
             }
             graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
             return;
@@ -478,8 +490,8 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         }
         if (this.menu.picking() && this.registerDeny.isHovered()) {
             // what it does; switched off, why
-            String key = this.registerDeny.active ? "gui.nookworks.sorter.picker.deny.tooltip"
-                    : this.menu.freeDenySlots() == 0 ? "gui.nookworks.sorter.picker.deny_full" : "gui.nookworks.sorter.picker.choose";
+            String key = this.registerDeny.active ? this.row("gui.nookworks.sorter.picker.deny.tooltip")
+                    : this.menu.freeDenySlots() == 0 ? this.row("gui.nookworks.sorter.picker.deny_full") : "gui.nookworks.sorter.picker.choose";
             graphics.setTooltipForNextFrame(this.font, this.font.split(Component.translatable(key), 200), mouseX, mouseY);
             return;
         }
@@ -489,10 +501,14 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         boolean onEmptyDeny = this.hoveredSlot != null && this.hoveredSlot.index >= SorterMenu.DENY_SLOT
                 && this.hoveredSlot.index < SorterMenu.DENY_SLOT + SorterBlockEntity.DENY_SLOTS && !this.hoveredSlot.hasItem();
         if (!this.menu.picking() && this.menu.getCarried().isEmpty() && (onMark || onEmptyDeny)) {
-            List<Component> lines = new ArrayList<>(List.of(Component.translatable("gui.nookworks.sorter.deny"),
-                    Component.translatable("gui.nookworks.sorter.deny.tooltip").withStyle(ChatFormatting.GRAY)));
+            String rowKey = this.row("gui.nookworks.sorter.deny");
+            List<Component> lines = new ArrayList<>(List.of(Component.translatable(rowKey),
+                    Component.translatable(rowKey + ".tooltip").withStyle(ChatFormatting.GRAY)));
             if (this.menu.tier().configurable) { // a whole tag or mod, from the picker
-                lines.add(Component.translatable("gui.nookworks.sorter.deny.tooltip.tags").withStyle(ChatFormatting.GRAY));
+                lines.add(Component.translatable(rowKey + ".tooltip.tags").withStyle(ChatFormatting.GRAY));
+            }
+            if (onMark) { // the sign turns the row round
+                lines.add(Component.translatable(rowKey + ".switch").withStyle(ChatFormatting.YELLOW));
             }
             graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
             return;
@@ -584,21 +600,38 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
      * fourteen pixels wide.
      */
     void drawKeepOut(GuiGraphicsExtractor g, int x, int y) {
-        int red = 0xFFD2483A;
-        int shade = 0xFF7A2A22;
+        // turned round, the row lets in only what is in it: a green ring with a tick in it, not a no-entry sign
+        boolean in = this.lettingIn();
+        int colour = in ? 0xFF3E9A34 : 0xFFD2483A;
+        int shade = in ? 0xFF24601E : 0xFF7A2A22;
         for (int py = 0; py < 14; py++) {
             for (int px = 0; px < 14; px++) {
                 double dx = px - 6.5;
                 double dy = py - 6.5;
                 double r = Math.sqrt(dx * dx + dy * dy);
                 boolean ring = r >= 4.9 && r <= 7.0;
-                boolean bar = r < 5.0 && Math.abs(dx - dy) <= 1.3;
-                if (ring || bar) {
+                boolean mark = in ? tick(px, py) : r < 5.0 && Math.abs(dx - dy) <= 1.3;
+                if (ring || mark) {
                     // the lower right of the ring a shade darker, as the slots' edges are lit from the top left
-                    g.fill(x + px, y + py, x + px + 1, y + py + 1, ring && dx + dy > 6.5 ? shade : red);
+                    g.fill(x + px, y + py, x + px + 1, y + py + 1, ring && dx + dy > 6.5 ? shade : colour);
                 }
             }
         }
+    }
+
+    /** The tick in the letting-in sign: a short stroke down to the right, then a long one up, two pixels thick. */
+    private static boolean tick(int px, int py) {
+        return px >= 3 && px <= 5 && (py == px + 3 || py == px + 4) || px >= 6 && px <= 10 && (py == 14 - px || py == 15 - px);
+    }
+
+    /** Whether the Keep Out row is turned round: what is in it is all that is drawn in. */
+    private boolean lettingIn() {
+        return this.menu.flag(SorterSettings.KEEP_OUT_OTHERS);
+    }
+
+    /** A Keep Out text's key as it reads for the row's way round: its "allow" one when the row lets in only what is in it. */
+    private String row(String denyKey) {
+        return this.lettingIn() ? denyKey.replace("deny", "allow") : denyKey;
     }
 
     /**

@@ -6,6 +6,8 @@ they are thrown and, once all six are, the If beyond; this draws the glass as it
 - block/if_mirror_frame.png      polished Dawnwood: the posts, rails, feet, crest and the glass's wooden back
 - block/if_mirror_glass_top.png, if_mirror_glass_bottom.png   the silvered glass, upper and lower half
 - item/if_mirror.png             the mirror in the slot, its glass onto the If's dawn
+- item/standing_mirror.png       the Standing Mirror in the slot: the same frame, its glass plain silver (the Standing
+                                 Mirror's blocks are the If Mirror's models; StandingMirrorRenderer draws its reflection)
 
 and the mirror's two models, its blockstate and its item model. Run from the repo root:
 python tools/textures/gen_if_mirror.py
@@ -93,8 +95,11 @@ def glass_halves(g):
     return top, bottom
 
 
-def item():
-    """The mirror upright in the slot: its two posts on their feet, the crest, and the glass onto the If's dawn."""
+def item(dawn=True):
+    """
+    The mirror upright in the slot: its two posts on their feet, the crest, and the glass - onto the If's dawn for the
+    If Mirror, plain silver with its glints for the Standing Mirror.
+    """
     img = Image.new("RGBA", (16, 16), CLEAR)
     for y in range(1, 15):
         for x in (3, 12):
@@ -108,6 +113,17 @@ def item():
         px(img, x, 0, WOOD[3])  # the crest
     for x in (2, 3, 4, 11, 12, 13):
         px(img, x, 15, WOOD[1])  # the feet
+    if not dawn:
+        for y in range(2, 13):
+            for x in range(5, 11):
+                px(img, x, y, SILVER[3] if y < 6 else SILVER[2])
+        for i in range(6):  # a glint down from the upper right, and a thin one beside it
+            for x, y in ((10 - i, 2 + i), (10 - i, 4 + i)):
+                if 5 <= x <= 10 and 2 <= y <= 12:
+                    px(img, x, y, SILVER[4])
+        for y in range(2, 13):
+            px(img, 5, y, SILVER[1])
+        return texkit.outline(img)
     for y in range(2, 13):
         t = (y - 2) / 10
         for x in range(5, 11):
@@ -181,6 +197,7 @@ def main():
     top.save(BLOCK / "if_mirror_glass_top.png")
     bottom.save(BLOCK / "if_mirror_glass_bottom.png")
     item().save(ITEM / "if_mirror.png")
+    item(dawn=False).save(ITEM / "standing_mirror.png")
     models()
     print("wrote the If Mirror's textures, models and blockstate")
 

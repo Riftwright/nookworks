@@ -1,8 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "mob_bottle"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mob_bottle"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:spawn_egg_brewer"
+      ],
+      "any": true
     }
   ],
   "criteria": {

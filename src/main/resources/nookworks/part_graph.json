@@ -1,0 +1,8046 @@
+{
+ "_comment": "Written by tools/part_graph.py from the mod's data - do not edit. Every way to each item of ours; dev.nookworks.feature.PartGraph works out from it what can be had with parts of the mod switched off.",
+ "items": [
+  "nookworks:absorption_pad",
+  "nookworks:acacia_bench",
+  "nookworks:acacia_chair",
+  "nookworks:acacia_desk",
+  "nookworks:acacia_stool",
+  "nookworks:acacia_support",
+  "nookworks:acacia_wall_shelf",
+  "nookworks:advanced_magnet",
+  "nookworks:baler",
+  "nookworks:bamboo_bench",
+  "nookworks:bamboo_chair",
+  "nookworks:bamboo_desk",
+  "nookworks:bamboo_stool",
+  "nookworks:bamboo_support",
+  "nookworks:bamboo_wall_shelf",
+  "nookworks:barter_terminal",
+  "nookworks:beetroot_nukazuke",
+  "nookworks:biodiesel_bottle",
+  "nookworks:biodiesel_bucket",
+  "nookworks:birch_bench",
+  "nookworks:birch_chair",
+  "nookworks:birch_desk",
+  "nookworks:birch_stool",
+  "nookworks:birch_support",
+  "nookworks:birch_wall_shelf",
+  "nookworks:blue_corrugated_sheet",
+  "nookworks:boiled_egg",
+  "nookworks:bookend",
+  "nookworks:brass_ingot",
+  "nookworks:brass_mesh",
+  "nookworks:brass_workbench",
+  "nookworks:bread_dough",
+  "nookworks:breadcrumbs",
+  "nookworks:breaded_pork",
+  "nookworks:brick_flue",
+  "nookworks:brown_rice",
+  "nookworks:building_wand",
+  "nookworks:camera",
+  "nookworks:carrot_nukazuke",
+  "nookworks:caustic_soda",
+  "nookworks:charred_lump",
+  "nookworks:cherry_bench",
+  "nookworks:cherry_chair",
+  "nookworks:cherry_desk",
+  "nookworks:cherry_stool",
+  "nookworks:cherry_support",
+  "nookworks:cherry_wall_shelf",
+  "nookworks:chimney",
+  "nookworks:cobblestone_chimney",
+  "nookworks:cobblestone_flue",
+  "nookworks:compressor",
+  "nookworks:condenser",
+  "nookworks:cooked_rice",
+  "nookworks:copper_amalgam",
+  "nookworks:copper_hammer",
+  "nookworks:copper_pipe",
+  "nookworks:copper_tank",
+  "nookworks:corn",
+  "nookworks:corn_kernels",
+  "nookworks:corn_potage",
+  "nookworks:corrugated_sheet",
+  "nookworks:crate",
+  "nookworks:cream_stew",
+  "nookworks:creative_generator",
+  "nookworks:crimson_bench",
+  "nookworks:crimson_chair",
+  "nookworks:crimson_desk",
+  "nookworks:crimson_stool",
+  "nookworks:crimson_support",
+  "nookworks:crimson_wall_shelf",
+  "nookworks:crude_salt",
+  "nookworks:crusher",
+  "nookworks:daemon_door",
+  "nookworks:dark_matter",
+  "nookworks:dark_oak_bench",
+  "nookworks:dark_oak_chair",
+  "nookworks:dark_oak_desk",
+  "nookworks:dark_oak_stool",
+  "nookworks:dark_oak_support",
+  "nookworks:dark_oak_wall_shelf",
+  "nookworks:dawnwood_bench",
+  "nookworks:dawnwood_boat",
+  "nookworks:dawnwood_button",
+  "nookworks:dawnwood_chair",
+  "nookworks:dawnwood_chest_boat",
+  "nookworks:dawnwood_desk",
+  "nookworks:dawnwood_door",
+  "nookworks:dawnwood_fence",
+  "nookworks:dawnwood_fence_gate",
+  "nookworks:dawnwood_hanging_sign",
+  "nookworks:dawnwood_leaves",
+  "nookworks:dawnwood_log",
+  "nookworks:dawnwood_planks",
+  "nookworks:dawnwood_pressure_plate",
+  "nookworks:dawnwood_shelf",
+  "nookworks:dawnwood_sign",
+  "nookworks:dawnwood_slab",
+  "nookworks:dawnwood_stairs",
+  "nookworks:dawnwood_stool",
+  "nookworks:dawnwood_support",
+  "nookworks:dawnwood_trapdoor",
+  "nookworks:dawnwood_wall_shelf",
+  "nookworks:dawnwood_wood",
+  "nookworks:deepslate_gravel",
+  "nookworks:destination_panel",
+  "nookworks:diamond_hammer",
+  "nookworks:diamond_sorter",
+  "nookworks:diamond_sorter_gear",
+  "nookworks:diamond_storage_barrel",
+  "nookworks:diamond_storage_upgrade",
+  "nookworks:dice",
+  "nookworks:diesel_generator",
+  "nookworks:distillation_column",
+  "nookworks:distiller",
+  "nookworks:donut",
+  "nookworks:dried_fish",
+  "nookworks:drive_wheel",
+  "nookworks:duct",
+  "nookworks:electric_furnace",
+  "nookworks:electrolytic_cell",
+  "nookworks:elevator",
+  "nookworks:end_gravel",
+  "nookworks:end_seed",
+  "nookworks:energy_cable",
+  "nookworks:experience_bucket",
+  "nookworks:experience_pipe",
+  "nookworks:experience_tank",
+  "nookworks:exposed_corrugated_sheet",
+  "nookworks:exposed_scrap_bale",
+  "nookworks:filament_bulb",
+  "nookworks:fine_paper",
+  "nookworks:fireproof_coating",
+  "nookworks:flour",
+  "nookworks:french_fries",
+  "nookworks:fried_egg",
+  "nookworks:fried_fish",
+  "nookworks:fried_rice",
+  "nookworks:generator",
+  "nookworks:glazed_flower_pot",
+  "nookworks:gold_amalgam",
+  "nookworks:gold_sorter",
+  "nookworks:gold_sorter_gear",
+  "nookworks:gold_storage_barrel",
+  "nookworks:gold_storage_upgrade",
+  "nookworks:golden_hammer",
+  "nookworks:green_corrugated_sheet",
+  "nookworks:grill",
+  "nookworks:grilled_corn",
+  "nookworks:hand_quern",
+  "nookworks:hanging_planter_green",
+  "nookworks:hanging_planter_pink",
+  "nookworks:hook",
+  "nookworks:horizontal_item_warp_receiver",
+  "nookworks:horizontal_item_warp_sender",
+  "nookworks:hub_stone",
+  "nookworks:if_mirror",
+  "nookworks:iron_amalgam",
+  "nookworks:iron_hammer",
+  "nookworks:iron_pot",
+  "nookworks:iron_storage_barrel",
+  "nookworks:iron_storage_upgrade",
+  "nookworks:iron_workbench",
+  "nookworks:item_sorter",
+  "nookworks:item_warp_receiver",
+  "nookworks:item_warp_sender",
+  "nookworks:jungle_bench",
+  "nookworks:jungle_chair",
+  "nookworks:jungle_desk",
+  "nookworks:jungle_stool",
+  "nookworks:jungle_support",
+  "nookworks:jungle_wall_shelf",
+  "nookworks:karaage",
+  "nookworks:label",
+  "nookworks:laser",
+  "nookworks:liquid_experience_bottle",
+  "nookworks:lode_pearl",
+  "nookworks:machine_chassis",
+  "nookworks:magnet",
+  "nookworks:magnet_chest",
+  "nookworks:mangrove_bench",
+  "nookworks:mangrove_chair",
+  "nookworks:mangrove_desk",
+  "nookworks:mangrove_stool",
+  "nookworks:mangrove_support",
+  "nookworks:mangrove_wall_shelf",
+  "nookworks:mercury_bucket",
+  "nookworks:mercury_pipe",
+  "nookworks:mercury_tank",
+  "nookworks:methanol",
+  "nookworks:mixed_amalgam",
+  "nookworks:mob_bottle",
+  "nookworks:motor",
+  "nookworks:mug",
+  "nookworks:nested_timer",
+  "nookworks:nether_brick_chimney",
+  "nookworks:nether_brick_flue",
+  "nookworks:nether_grit",
+  "nookworks:netherite_hammer",
+  "nookworks:netherite_sorter",
+  "nookworks:netherite_sorter_gear",
+  "nookworks:netherite_storage_barrel",
+  "nookworks:netherite_storage_upgrade",
+  "nookworks:noodle_maker",
+  "nookworks:nook_dowsing_rod",
+  "nookworks:nourished_soil",
+  "nookworks:nukadoko",
+  "nookworks:oak_bench",
+  "nookworks:oak_chair",
+  "nookworks:oak_desk",
+  "nookworks:oak_stool",
+  "nookworks:oak_support",
+  "nookworks:oak_wall_shelf",
+  "nookworks:oil_cake",
+  "nookworks:oil_can",
+  "nookworks:oil_lamp",
+  "nookworks:oil_press",
+  "nookworks:onion",
+  "nookworks:oxidized_corrugated_sheet",
+  "nookworks:oxidized_scrap_bale",
+  "nookworks:pale_oak_bench",
+  "nookworks:pale_oak_chair",
+  "nookworks:pale_oak_desk",
+  "nookworks:pale_oak_stool",
+  "nookworks:pale_oak_support",
+  "nookworks:pale_oak_wall_shelf",
+  "nookworks:pancake",
+  "nookworks:pancake_batter",
+  "nookworks:patched_sheet_metal",
+  "nookworks:pebbles",
+  "nookworks:planter",
+  "nookworks:plate",
+  "nookworks:poplar_bench",
+  "nookworks:poplar_chair",
+  "nookworks:poplar_desk",
+  "nookworks:poplar_stool",
+  "nookworks:poplar_support",
+  "nookworks:poplar_wall_shelf",
+  "nookworks:poster",
+  "nookworks:precision_sorter",
+  "nookworks:printing_press",
+  "nookworks:range_hood",
+  "nookworks:rare_seed",
+  "nookworks:raw_udon",
+  "nookworks:raw_zinc",
+  "nookworks:recycler",
+  "nookworks:red_corrugated_sheet",
+  "nookworks:red_hot_velarium_ingot",
+  "nookworks:reinforced_rod",
+  "nookworks:repair_box",
+  "nookworks:retort",
+  "nookworks:rice_bale",
+  "nookworks:rice_bran",
+  "nookworks:rice_polisher",
+  "nookworks:risen_dough",
+  "nookworks:rope",
+  "nookworks:salmon_onigiri",
+  "nookworks:salt",
+  "nookworks:salt_onigiri",
+  "nookworks:sconce",
+  "nookworks:scrap",
+  "nookworks:scrap_bale",
+  "nookworks:sifter",
+  "nookworks:sight_glass",
+  "nookworks:soap",
+  "nookworks:spawn_egg_brewer",
+  "nookworks:spawner_controller",
+  "nookworks:spawner_link_receiver",
+  "nookworks:spawner_link_sender",
+  "nookworks:spruce_bench",
+  "nookworks:spruce_chair",
+  "nookworks:spruce_desk",
+  "nookworks:spruce_stool",
+  "nookworks:spruce_support",
+  "nookworks:spruce_wall_shelf",
+  "nookworks:standing_mirror",
+  "nookworks:stir_fried_vegetables",
+  "nookworks:stirring_tank",
+  "nookworks:stone_brick_chimney",
+  "nookworks:stone_brick_flue",
+  "nookworks:stone_hammer",
+  "nookworks:stone_maker",
+  "nookworks:stony_dirt",
+  "nookworks:stripped_dawnwood_log",
+  "nookworks:stripped_dawnwood_wood",
+  "nookworks:sulfur_dust",
+  "nookworks:sunflower_seeds",
+  "nookworks:tamagoyaki",
+  "nookworks:tempered_velarium_ingot",
+  "nookworks:thin_chain",
+  "nookworks:thin_rope",
+  "nookworks:tonkatsu",
+  "nookworks:trading_counter",
+  "nookworks:trash_can",
+  "nookworks:udon",
+  "nookworks:udon_dough",
+  "nookworks:unlit_copper_lantern",
+  "nookworks:unlit_exposed_copper_lantern",
+  "nookworks:unlit_lantern",
+  "nookworks:unlit_oxidized_copper_lantern",
+  "nookworks:unlit_soul_lantern",
+  "nookworks:unlit_waxed_copper_lantern",
+  "nookworks:unlit_waxed_exposed_copper_lantern",
+  "nookworks:unlit_waxed_oxidized_copper_lantern",
+  "nookworks:unlit_waxed_weathered_copper_lantern",
+  "nookworks:unlit_weathered_copper_lantern",
+  "nookworks:valve",
+  "nookworks:vegetable_oil_bottle",
+  "nookworks:vegetable_oil_bucket",
+  "nookworks:vegetable_soup",
+  "nookworks:velarium_axe",
+  "nookworks:velarium_block",
+  "nookworks:velarium_boots",
+  "nookworks:velarium_chestplate",
+  "nookworks:velarium_hammer",
+  "nookworks:velarium_helmet",
+  "nookworks:velarium_hoe",
+  "nookworks:velarium_ingot",
+  "nookworks:velarium_leggings",
+  "nookworks:velarium_nugget",
+  "nookworks:velarium_pickaxe",
+  "nookworks:velarium_shovel",
+  "nookworks:velarium_sorter_gear",
+  "nookworks:velarium_storage_barrel",
+  "nookworks:velarium_storage_upgrade",
+  "nookworks:velarium_sword",
+  "nookworks:ventilation_fan",
+  "nookworks:warp_anchor",
+  "nookworks:warped_bench",
+  "nookworks:warped_chair",
+  "nookworks:warped_desk",
+  "nookworks:warped_stool",
+  "nookworks:warped_support",
+  "nookworks:warped_wall_shelf",
+  "nookworks:water_pump",
+  "nookworks:waxed_corrugated_sheet",
+  "nookworks:waxed_exposed_corrugated_sheet",
+  "nookworks:waxed_exposed_scrap_bale",
+  "nookworks:waxed_oxidized_corrugated_sheet",
+  "nookworks:waxed_oxidized_scrap_bale",
+  "nookworks:waxed_scrap_bale",
+  "nookworks:waxed_weathered_corrugated_sheet",
+  "nookworks:waxed_weathered_scrap_bale",
+  "nookworks:weathered_corrugated_sheet",
+  "nookworks:weathered_scrap_bale",
+  "nookworks:white_corrugated_sheet",
+  "nookworks:white_rice",
+  "nookworks:wine_glass",
+  "nookworks:wood_chips",
+  "nookworks:wood_pulp",
+  "nookworks:wood_vinegar",
+  "nookworks:wooden_tray",
+  "nookworks:wool_shears",
+  "nookworks:wrench",
+  "nookworks:zinc_ingot"
+ ],
+ "always": [
+  "nookworks:creative_generator",
+  "nookworks:diamond_sorter",
+  "nookworks:gold_sorter",
+  "nookworks:netherite_sorter"
+ ],
+ "sources": [
+  {
+   "how": "amalgamation minecraft:cobbled_deepslate",
+   "out": [
+    "nookworks:mixed_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:cobblestone",
+   "out": [
+    "nookworks:mixed_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:copper_ore",
+   "out": [
+    "nookworks:copper_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:deepslate",
+   "out": [
+    "nookworks:mixed_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:deepslate_copper_ore",
+   "out": [
+    "nookworks:copper_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:deepslate_gold_ore",
+   "out": [
+    "nookworks:gold_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:deepslate_iron_ore",
+   "out": [
+    "nookworks:iron_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:gold_ore",
+   "out": [
+    "nookworks:gold_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:iron_ore",
+   "out": [
+    "nookworks:iron_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:nether_gold_ore",
+   "out": [
+    "nookworks:gold_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:netherrack",
+   "out": [
+    "nookworks:mixed_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:raw_copper",
+   "out": [
+    "nookworks:copper_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:raw_gold",
+   "out": [
+    "nookworks:gold_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:raw_iron",
+   "out": [
+    "nookworks:iron_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "amalgamation minecraft:stone",
+   "out": [
+    "nookworks:mixed_amalgam"
+   ],
+   "in": [
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "an End Seed opens",
+   "out": [
+    "nookworks:corn"
+   ],
+   "in": [
+    [
+     "nookworks:end_seed"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "crushing #minecraft:logs_that_burn",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/boats",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/buttons",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/doors",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/fence_gates",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/fences",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/hanging_signs",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/planks",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/pressure_plates",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/shelves",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/signs",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/stairs",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing #nookworks:pulpable/trapdoors",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:bamboo_block",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:bamboo_mosaic",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:barrel",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:bookshelf",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:bow",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:bread",
+   "out": [
+    "nookworks:breadcrumbs"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:cartography_table",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:chest",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:chiseled_sulfur",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:cobbled_deepslate",
+   "out": [
+    "nookworks:deepslate_gravel"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:composter",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:crafting_table",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:end_stone",
+   "out": [
+    "nookworks:end_gravel"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:fletching_table",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:jukebox",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:ladder",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:lectern",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:loom",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:netherrack",
+   "out": [
+    "nookworks:nether_grit"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:note_block",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:polished_sulfur",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:smithing_table",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:sulfur",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:sulfur_bricks",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:trapped_chest",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wheat",
+   "out": [
+    "nookworks:flour"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_axe",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_hoe",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_pickaxe",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_shovel",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_spear",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:wooden_sword",
+   "out": [
+    "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "distillation nookworks:copper_amalgam",
+   "out": [
+    "nookworks:velarium_nugget"
+   ],
+   "in": [
+    [
+     "nookworks:copper_amalgam"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
+   ],
+   "if": []
+  },
+  {
+   "how": "distillation nookworks:gold_amalgam",
+   "out": [
+    "nookworks:velarium_nugget"
+   ],
+   "in": [
+    [
+     "nookworks:gold_amalgam"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
+   ],
+   "if": []
+  },
+  {
+   "how": "distillation nookworks:iron_amalgam",
+   "out": [
+    "nookworks:velarium_nugget"
+   ],
+   "in": [
+    [
+     "nookworks:iron_amalgam"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
+   ],
+   "if": []
+  },
+  {
+   "how": "distillation nookworks:mixed_amalgam",
+   "out": [
+    "nookworks:velarium_nugget"
+   ],
+   "in": [
+    [
+     "nookworks:mixed_amalgam"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
+   ],
+   "if": []
+  },
+  {
+   "how": "distillation nookworks:wood_vinegar",
+   "out": [
+    "nookworks:methanol"
+   ],
+   "in": [
+    [
+     "nookworks:wood_vinegar"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
+   ],
+   "if": []
+  },
+  {
+   "how": "drop nookworks:dawnwood_leaves",
+   "out": [
+    "nookworks:rare_seed"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_leaves"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "drop nookworks:iron_pot",
+   "out": [
+    "nookworks:grill"
+   ],
+   "in": [
+    [
+     "nookworks:iron_pot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "drying #c:foods/raw_fish",
+   "out": [
+    "nookworks:dried_fish"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:thin_rope"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis #c:dusts/salt",
+   "out": [
+    "nookworks:caustic_soda"
+   ],
+   "in": [
+    [
+     "nookworks:salt"
+    ],
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis #c:raw_materials/zinc",
+   "out": [
+    "nookworks:zinc_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:raw_zinc"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_exposed_copper_lantern",
+   "out": [
+    "nookworks:unlit_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_exposed_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_oxidized_copper_lantern",
+   "out": [
+    "nookworks:unlit_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_oxidized_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_waxed_exposed_copper_lantern",
+   "out": [
+    "nookworks:unlit_waxed_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_waxed_exposed_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_waxed_oxidized_copper_lantern",
+   "out": [
+    "nookworks:unlit_waxed_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_waxed_oxidized_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_waxed_weathered_copper_lantern",
+   "out": [
+    "nookworks:unlit_waxed_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_waxed_weathered_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "electrolysis nookworks:unlit_weathered_copper_lantern",
+   "out": [
+    "nookworks:unlit_copper_lantern"
+   ],
+   "in": [
+    [
+     "nookworks:unlit_weathered_copper_lantern"
+    ]
+   ],
+   "at": [
+    "nookworks:electrolytic_cell"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: a Rare Seed grows into a Dawnwood",
+   "out": [
+    "nookworks:dawnwood_leaves",
+    "nookworks:dawnwood_log"
+   ],
+   "in": [
+    [
+     "nookworks:rare_seed"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: a Sealed Retort fills them with what its work gives",
+   "out": [
+    "nookworks:experience_bucket",
+    "nookworks:liquid_experience_bottle"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: a lantern put out by hand",
+   "out": [
+    "nookworks:unlit_copper_lantern",
+    "nookworks:unlit_exposed_copper_lantern",
+    "nookworks:unlit_lantern",
+    "nookworks:unlit_oxidized_copper_lantern",
+    "nookworks:unlit_soul_lantern",
+    "nookworks:unlit_waxed_copper_lantern",
+    "nookworks:unlit_waxed_exposed_copper_lantern",
+    "nookworks:unlit_waxed_oxidized_copper_lantern",
+    "nookworks:unlit_waxed_weathered_copper_lantern",
+    "nookworks:unlit_weathered_copper_lantern"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: an Absorption Pad gathers experience into a tank, which fills them",
+   "out": [
+    "nookworks:experience_bucket",
+    "nookworks:liquid_experience_bottle"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:absorption_pad",
+    "nookworks:experience_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: an Electric Furnace fills them with what its smelting gives",
+   "out": [
+    "nookworks:experience_bucket",
+    "nookworks:liquid_experience_bottle"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:electric_furnace"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: an axe strips the log",
+   "out": [
+    "nookworks:stripped_dawnwood_log"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: an axe strips the wood",
+   "out": [
+    "nookworks:stripped_dawnwood_wood"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_wood"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: an ender pearl used on a lodestone",
+   "out": [
+    "nookworks:lode_pearl"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: an ingot heated",
+   "out": [
+    "nookworks:red_hot_velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: corn kernels grow corn",
+   "out": [
+    "nookworks:corn"
+   ],
+   "in": [
+    [
+     "nookworks:corn_kernels"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: dough rises on a tray",
+   "out": [
+    "nookworks:risen_dough"
+   ],
+   "in": [
+    [
+     "nookworks:bread_dough"
+    ]
+   ],
+   "at": [
+    "nookworks:wooden_tray"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: quenched in oil",
+   "out": [
+    "nookworks:tempered_velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:red_hot_velarium_ingot"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: the Printing Press prints labels on fine paper",
+   "out": [
+    "nookworks:label"
+   ],
+   "in": [
+    [
+     "nookworks:fine_paper"
+    ]
+   ],
+   "at": [
+    "nookworks:printing_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: the Rice Polisher",
+   "out": [
+    "nookworks:rice_bran",
+    "nookworks:white_rice"
+   ],
+   "in": [
+    [
+     "nookworks:brown_rice"
+    ]
+   ],
+   "at": [
+    "nookworks:rice_polisher"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: the Stirring Tank stirs oil into biodiesel, a bucket or bottle drawing it off",
+   "out": [
+    "nookworks:biodiesel_bottle",
+    "nookworks:biodiesel_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:methanol"
+    ],
+    [
+     "nookworks:caustic_soda"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: waxing",
+   "out": [
+    "nookworks:waxed_corrugated_sheet",
+    "nookworks:waxed_exposed_corrugated_sheet",
+    "nookworks:waxed_oxidized_corrugated_sheet",
+    "nookworks:waxed_weathered_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: waxing",
+   "out": [
+    "nookworks:waxed_exposed_scrap_bale",
+    "nookworks:waxed_oxidized_scrap_bale",
+    "nookworks:waxed_scrap_bale",
+    "nookworks:waxed_weathered_scrap_bale"
+   ],
+   "in": [
+    [
+     "nookworks:scrap_bale"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: weathering",
+   "out": [
+    "nookworks:exposed_corrugated_sheet",
+    "nookworks:oxidized_corrugated_sheet",
+    "nookworks:weathered_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: weathering",
+   "out": [
+    "nookworks:exposed_scrap_bale",
+    "nookworks:oxidized_scrap_bale",
+    "nookworks:weathered_scrap_bale"
+   ],
+   "in": [
+    [
+     "nookworks:scrap_bale"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "milling minecraft:bread",
+   "out": [
+    "nookworks:breadcrumbs"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:hand_quern"
+   ],
+   "if": []
+  },
+  {
+   "how": "milling minecraft:wheat",
+   "out": [
+    "nookworks:flour"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:hand_quern"
+   ],
+   "if": []
+  },
+  {
+   "how": "noodle_making nookworks:udon_dough",
+   "out": [
+    "nookworks:raw_udon"
+   ],
+   "in": [
+    [
+     "nookworks:udon_dough"
+    ]
+   ],
+   "at": [
+    "nookworks:noodle_maker"
+   ],
+   "if": []
+  },
+  {
+   "how": "pickling minecraft:beetroot",
+   "out": [
+    "nookworks:beetroot_nukazuke"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:nukadoko"
+   ],
+   "if": []
+  },
+  {
+   "how": "pickling minecraft:carrot",
+   "out": [
+    "nookworks:carrot_nukazuke"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:nukadoko"
+   ],
+   "if": []
+  },
+  {
+   "how": "pressing minecraft:melon_seeds",
+   "out": [
+    "nookworks:oil_cake",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:oil_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "pressing minecraft:pumpkin_seeds",
+   "out": [
+    "nookworks:oil_cake",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:oil_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "pressing nookworks:corn_kernels",
+   "out": [
+    "nookworks:oil_cake",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:corn_kernels"
+    ]
+   ],
+   "at": [
+    "nookworks:oil_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "pressing nookworks:rice_bran",
+   "out": [
+    "nookworks:oil_cake",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:rice_bran"
+    ]
+   ],
+   "at": [
+    "nookworks:oil_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "pressing nookworks:sunflower_seeds",
+   "out": [
+    "nookworks:oil_cake",
+    "nookworks:vegetable_oil_bottle",
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:sunflower_seeds"
+    ]
+   ],
+   "at": [
+    "nookworks:oil_press"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe minecraft:yellow_dye_from_sunflower",
+   "out": [
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:absorption_pad",
+   "out": [
+    "nookworks:absorption_pad"
+   ],
+   "in": [
+    [
+     "nookworks:magnet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_bench",
+   "out": [
+    "nookworks:acacia_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_chair",
+   "out": [
+    "nookworks:acacia_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_desk",
+   "out": [
+    "nookworks:acacia_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_stool",
+   "out": [
+    "nookworks:acacia_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_support",
+   "out": [
+    "nookworks:acacia_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:acacia_wall_shelf",
+   "out": [
+    "nookworks:acacia_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:advanced_magnet",
+   "out": [
+    "nookworks:advanced_magnet"
+   ],
+   "in": [
+    [
+     "nookworks:magnet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:baler",
+   "out": [
+    "nookworks:baler"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_bench",
+   "out": [
+    "nookworks:bamboo_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_chair",
+   "out": [
+    "nookworks:bamboo_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_desk",
+   "out": [
+    "nookworks:bamboo_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_stool",
+   "out": [
+    "nookworks:bamboo_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_support",
+   "out": [
+    "nookworks:bamboo_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bamboo_wall_shelf",
+   "out": [
+    "nookworks:bamboo_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:barter_terminal",
+   "out": [
+    "nookworks:barter_terminal"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:biodiesel_bottle",
+   "out": [
+    "nookworks:biodiesel_bottle"
+   ],
+   "in": [
+    [
+     "nookworks:biodiesel_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:biodiesel_bucket",
+   "out": [
+    "nookworks:biodiesel_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:biodiesel_bottle"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_bench",
+   "out": [
+    "nookworks:birch_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_chair",
+   "out": [
+    "nookworks:birch_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_desk",
+   "out": [
+    "nookworks:birch_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_stool",
+   "out": [
+    "nookworks:birch_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_support",
+   "out": [
+    "nookworks:birch_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:birch_wall_shelf",
+   "out": [
+    "nookworks:birch_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:blue_corrugated_sheet",
+   "out": [
+    "nookworks:blue_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet",
+     "nookworks:exposed_corrugated_sheet",
+     "nookworks:oxidized_corrugated_sheet",
+     "nookworks:waxed_corrugated_sheet",
+     "nookworks:waxed_exposed_corrugated_sheet",
+     "nookworks:waxed_oxidized_corrugated_sheet",
+     "nookworks:waxed_weathered_corrugated_sheet",
+     "nookworks:weathered_corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bookend",
+   "out": [
+    "nookworks:bookend"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brass_mesh",
+   "out": [
+    "nookworks:brass_mesh"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brass_workbench",
+   "out": [
+    "nookworks:brass_workbench"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:bread_dough",
+   "out": [
+    "nookworks:bread_dough"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:breaded_pork",
+   "out": [
+    "nookworks:breaded_pork"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:breadcrumbs"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brick_flue",
+   "out": [
+    "nookworks:brick_flue"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brown_rice_from_rice_bale",
+   "out": [
+    "nookworks:brown_rice"
+   ],
+   "in": [
+    [
+     "nookworks:rice_bale"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:building_wand",
+   "out": [
+    "nookworks:building_wand"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:camera",
+   "out": [
+    "nookworks:camera"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:charred_lump_from_campfire_cooking",
+   "out": [
+    "nookworks:charred_lump"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:charred_lump_from_smelting",
+   "out": [
+    "nookworks:charred_lump"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:charred_lump_from_smoking",
+   "out": [
+    "nookworks:charred_lump"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_bench",
+   "out": [
+    "nookworks:cherry_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_chair",
+   "out": [
+    "nookworks:cherry_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_desk",
+   "out": [
+    "nookworks:cherry_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_stool",
+   "out": [
+    "nookworks:cherry_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_support",
+   "out": [
+    "nookworks:cherry_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cherry_wall_shelf",
+   "out": [
+    "nookworks:cherry_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:chimney",
+   "out": [
+    "nookworks:chimney"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cobblestone_chimney",
+   "out": [
+    "nookworks:cobblestone_chimney"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:cobblestone_flue",
+   "out": [
+    "nookworks:cobblestone_flue"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:compressor",
+   "out": [
+    "nookworks:compressor"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:condenser",
+   "out": [
+    "nookworks:condenser"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:copper_hammer",
+   "out": [
+    "nookworks:copper_hammer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:copper_pipe",
+   "out": [
+    "nookworks:copper_pipe"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:copper_tank",
+   "out": [
+    "nookworks:copper_tank"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:sight_glass"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:corn_kernels",
+   "out": [
+    "nookworks:corn_kernels"
+   ],
+   "in": [
+    [
+     "nookworks:corn"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:corrugated_sheet",
+   "out": [
+    "nookworks:corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:scrap"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crate",
+   "out": [
+    "nookworks:crate"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_bench",
+   "out": [
+    "nookworks:crimson_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_chair",
+   "out": [
+    "nookworks:crimson_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_desk",
+   "out": [
+    "nookworks:crimson_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_stool",
+   "out": [
+    "nookworks:crimson_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_support",
+   "out": [
+    "nookworks:crimson_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crimson_wall_shelf",
+   "out": [
+    "nookworks:crimson_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:crusher",
+   "out": [
+    "nookworks:crusher"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:daemon_door",
+   "out": [
+    "nookworks:daemon_door"
+   ],
+   "in": [
+    [
+     "nookworks:zinc_ingot"
+    ],
+    [
+     "nookworks:dawnwood_door"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_matter",
+   "out": [
+    "nookworks:dark_matter"
+   ],
+   "in": [
+    [
+     "nookworks:charred_lump"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_bench",
+   "out": [
+    "nookworks:dark_oak_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_chair",
+   "out": [
+    "nookworks:dark_oak_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_desk",
+   "out": [
+    "nookworks:dark_oak_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_stool",
+   "out": [
+    "nookworks:dark_oak_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_support",
+   "out": [
+    "nookworks:dark_oak_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_wall_shelf",
+   "out": [
+    "nookworks:dark_oak_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_bench",
+   "out": [
+    "nookworks:dawnwood_bench"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_slab"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_boat",
+   "out": [
+    "nookworks:dawnwood_boat"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_button",
+   "out": [
+    "nookworks:dawnwood_button"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_chair",
+   "out": [
+    "nookworks:dawnwood_chair"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_chest_boat",
+   "out": [
+    "nookworks:dawnwood_chest_boat"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_boat"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_desk",
+   "out": [
+    "nookworks:dawnwood_desk"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_door",
+   "out": [
+    "nookworks:dawnwood_door"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_fence",
+   "out": [
+    "nookworks:dawnwood_fence"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_fence_gate",
+   "out": [
+    "nookworks:dawnwood_fence_gate"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_hanging_sign",
+   "out": [
+    "nookworks:dawnwood_hanging_sign"
+   ],
+   "in": [
+    [
+     "nookworks:stripped_dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_planks",
+   "out": [
+    "nookworks:dawnwood_planks"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_log",
+     "nookworks:dawnwood_wood",
+     "nookworks:stripped_dawnwood_log",
+     "nookworks:stripped_dawnwood_wood"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_pressure_plate",
+   "out": [
+    "nookworks:dawnwood_pressure_plate"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_shelf",
+   "out": [
+    "nookworks:dawnwood_shelf"
+   ],
+   "in": [
+    [
+     "nookworks:stripped_dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_sign",
+   "out": [
+    "nookworks:dawnwood_sign"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_slab",
+   "out": [
+    "nookworks:dawnwood_slab"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_stairs",
+   "out": [
+    "nookworks:dawnwood_stairs"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_stool",
+   "out": [
+    "nookworks:dawnwood_stool"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_support",
+   "out": [
+    "nookworks:dawnwood_support"
+   ],
+   "in": [
+    [
+     "nookworks:stripped_dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_trapdoor",
+   "out": [
+    "nookworks:dawnwood_trapdoor"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_wall_shelf",
+   "out": [
+    "nookworks:dawnwood_wall_shelf"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_trapdoor"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dawnwood_wood",
+   "out": [
+    "nookworks:dawnwood_wood"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:destination_panel",
+   "out": [
+    "nookworks:destination_panel"
+   ],
+   "in": [
+    [
+     "nookworks:zinc_ingot"
+    ],
+    [
+     "nookworks:dawnwood_planks"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diamond_hammer",
+   "out": [
+    "nookworks:diamond_hammer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diamond_sorter_gear",
+   "out": [
+    "nookworks:diamond_sorter_gear"
+   ],
+   "in": [
+    [
+     "nookworks:gold_sorter_gear"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diamond_storage_barrel",
+   "out": [
+    "nookworks:diamond_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:gold_storage_barrel"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diamond_storage_barrel_from_upgrade",
+   "out": [
+    "nookworks:diamond_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:gold_storage_barrel"
+    ],
+    [
+     "nookworks:diamond_storage_upgrade"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diamond_storage_upgrade",
+   "out": [
+    "nookworks:diamond_storage_upgrade"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dice",
+   "out": [
+    "nookworks:dice"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:diesel_generator",
+   "out": [
+    "nookworks:diesel_generator"
+   ],
+   "in": [
+    [
+     "nookworks:copper_tank"
+    ],
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:generator"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:distillation_column",
+   "out": [
+    "nookworks:distillation_column"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:distiller",
+   "out": [
+    "nookworks:distiller"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:drive_wheel",
+   "out": [
+    "nookworks:drive_wheel"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:duct",
+   "out": [
+    "nookworks:duct"
+   ],
+   "in": [
+    [
+     "nookworks:zinc_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:electric_furnace",
+   "out": [
+    "nookworks:electric_furnace"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:electrolytic_cell",
+   "out": [
+    "nookworks:electrolytic_cell"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:elevator",
+   "out": [
+    "nookworks:elevator"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:energy_cable",
+   "out": [
+    "nookworks:energy_cable"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:experience_pipe",
+   "out": [
+    "nookworks:experience_pipe"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:experience_tank",
+   "out": [
+    "nookworks:experience_tank"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:filament_bulb",
+   "out": [
+    "nookworks:filament_bulb"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:fine_paper",
+   "out": [
+    "nookworks:fine_paper"
+   ],
+   "in": [
+    [
+     "nookworks:wood_pulp"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:fireproof_coating",
+   "out": [
+    "nookworks:fireproof_coating"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:fried_egg",
+   "out": [
+    "nookworks:fried_egg"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:fried_egg_from_campfire_cooking",
+   "out": [
+    "nookworks:fried_egg"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:fried_egg_from_smoking",
+   "out": [
+    "nookworks:fried_egg"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:generator",
+   "out": [
+    "nookworks:generator"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:glazed_flower_pot",
+   "out": [
+    "nookworks:glazed_flower_pot"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:gold_sorter_gear",
+   "out": [
+    "nookworks:gold_sorter_gear"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:gold_storage_barrel",
+   "out": [
+    "nookworks:gold_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:iron_storage_barrel"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:gold_storage_barrel_from_upgrade",
+   "out": [
+    "nookworks:gold_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:iron_storage_barrel"
+    ],
+    [
+     "nookworks:gold_storage_upgrade"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:gold_storage_upgrade",
+   "out": [
+    "nookworks:gold_storage_upgrade"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:golden_hammer",
+   "out": [
+    "nookworks:golden_hammer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:green_corrugated_sheet",
+   "out": [
+    "nookworks:green_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet",
+     "nookworks:exposed_corrugated_sheet",
+     "nookworks:oxidized_corrugated_sheet",
+     "nookworks:waxed_corrugated_sheet",
+     "nookworks:waxed_exposed_corrugated_sheet",
+     "nookworks:waxed_oxidized_corrugated_sheet",
+     "nookworks:waxed_weathered_corrugated_sheet",
+     "nookworks:weathered_corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:grill",
+   "out": [
+    "nookworks:grill"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:grilled_corn",
+   "out": [
+    "nookworks:grilled_corn"
+   ],
+   "in": [
+    [
+     "nookworks:corn"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:grilled_corn_from_campfire_cooking",
+   "out": [
+    "nookworks:grilled_corn"
+   ],
+   "in": [
+    [
+     "nookworks:corn"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:grilled_corn_from_smoking",
+   "out": [
+    "nookworks:grilled_corn"
+   ],
+   "in": [
+    [
+     "nookworks:corn"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:hand_quern",
+   "out": [
+    "nookworks:hand_quern"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:hanging_planter_green",
+   "out": [
+    "nookworks:hanging_planter_green"
+   ],
+   "in": [
+    [
+     "nookworks:glazed_flower_pot"
+    ],
+    [
+     "nookworks:thin_rope"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:hanging_planter_pink",
+   "out": [
+    "nookworks:hanging_planter_pink"
+   ],
+   "in": [
+    [
+     "nookworks:glazed_flower_pot"
+    ],
+    [
+     "nookworks:thin_rope"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:hook",
+   "out": [
+    "nookworks:hook"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:horizontal_item_warp_receiver",
+   "out": [
+    "nookworks:horizontal_item_warp_receiver"
+   ],
+   "in": [
+    [
+     "nookworks:item_warp_receiver"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:horizontal_item_warp_sender",
+   "out": [
+    "nookworks:horizontal_item_warp_sender"
+   ],
+   "in": [
+    [
+     "nookworks:item_warp_sender"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:hub_stone",
+   "out": [
+    "nookworks:hub_stone"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:if_mirror",
+   "out": [
+    "nookworks:if_mirror"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ],
+    [
+     "nookworks:dice"
+    ],
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_hammer",
+   "out": [
+    "nookworks:iron_hammer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_pot",
+   "out": [
+    "nookworks:iron_pot"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_storage_barrel",
+   "out": [
+    "nookworks:iron_storage_barrel"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_storage_barrel_from_upgrade",
+   "out": [
+    "nookworks:iron_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:iron_storage_upgrade"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_storage_upgrade",
+   "out": [
+    "nookworks:iron_storage_upgrade"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:iron_workbench",
+   "out": [
+    "nookworks:iron_workbench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:item_sorter",
+   "out": [
+    "nookworks:item_sorter"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:item_warp_receiver",
+   "out": [
+    "nookworks:item_warp_receiver"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:item_warp_sender",
+   "out": [
+    "nookworks:item_warp_sender"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_bench",
+   "out": [
+    "nookworks:jungle_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_chair",
+   "out": [
+    "nookworks:jungle_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_desk",
+   "out": [
+    "nookworks:jungle_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_stool",
+   "out": [
+    "nookworks:jungle_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_support",
+   "out": [
+    "nookworks:jungle_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:jungle_wall_shelf",
+   "out": [
+    "nookworks:jungle_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:laser",
+   "out": [
+    "nookworks:laser"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:machine_chassis",
+   "out": [
+    "nookworks:machine_chassis"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:machine_chassis_from_scrap_bale",
+   "out": [
+    "nookworks:machine_chassis"
+   ],
+   "in": [
+    [
+     "nookworks:exposed_scrap_bale",
+     "nookworks:oxidized_scrap_bale",
+     "nookworks:scrap_bale",
+     "nookworks:waxed_exposed_scrap_bale",
+     "nookworks:waxed_oxidized_scrap_bale",
+     "nookworks:waxed_scrap_bale",
+     "nookworks:waxed_weathered_scrap_bale",
+     "nookworks:weathered_scrap_bale"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:magnet",
+   "out": [
+    "nookworks:magnet"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:magnet_chest",
+   "out": [
+    "nookworks:magnet_chest"
+   ],
+   "in": [
+    [
+     "nookworks:magnet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_bench",
+   "out": [
+    "nookworks:mangrove_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_chair",
+   "out": [
+    "nookworks:mangrove_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_desk",
+   "out": [
+    "nookworks:mangrove_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_stool",
+   "out": [
+    "nookworks:mangrove_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_support",
+   "out": [
+    "nookworks:mangrove_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mangrove_wall_shelf",
+   "out": [
+    "nookworks:mangrove_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mercury_pipe",
+   "out": [
+    "nookworks:mercury_pipe"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mercury_tank",
+   "out": [
+    "nookworks:mercury_tank"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mob_bottle",
+   "out": [
+    "nookworks:mob_bottle"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:motor",
+   "out": [
+    "nookworks:motor"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:mug",
+   "out": [
+    "nookworks:mug"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nested_timer",
+   "out": [
+    "nookworks:nested_timer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nether_brick_chimney",
+   "out": [
+    "nookworks:nether_brick_chimney"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nether_brick_flue",
+   "out": [
+    "nookworks:nether_brick_flue"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:netherite_hammer_smithing",
+   "out": [
+    "nookworks:netherite_hammer"
+   ],
+   "in": [
+    [
+     "nookworks:diamond_hammer"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:netherite_sorter_gear_smithing",
+   "out": [
+    "nookworks:netherite_sorter_gear"
+   ],
+   "in": [
+    [
+     "nookworks:diamond_sorter_gear"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:netherite_storage_barrel_from_upgrade",
+   "out": [
+    "nookworks:netherite_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:diamond_storage_barrel"
+    ],
+    [
+     "nookworks:netherite_storage_upgrade"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:netherite_storage_barrel_smithing",
+   "out": [
+    "nookworks:netherite_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:diamond_storage_barrel"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:netherite_storage_upgrade",
+   "out": [
+    "nookworks:netherite_storage_upgrade"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:noodle_maker",
+   "out": [
+    "nookworks:noodle_maker"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nook_dowsing_rod",
+   "out": [
+    "nookworks:nook_dowsing_rod"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nourished_soil",
+   "out": [
+    "nookworks:nourished_soil"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:nukadoko",
+   "out": [
+    "nookworks:nukadoko"
+   ],
+   "in": [
+    [
+     "nookworks:rice_bran"
+    ],
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_bench",
+   "out": [
+    "nookworks:oak_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_chair",
+   "out": [
+    "nookworks:oak_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_desk",
+   "out": [
+    "nookworks:oak_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_stool",
+   "out": [
+    "nookworks:oak_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_support",
+   "out": [
+    "nookworks:oak_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oak_wall_shelf",
+   "out": [
+    "nookworks:oak_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oil_can",
+   "out": [
+    "nookworks:oil_can"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bottle"
+    ],
+    [
+     "nookworks:sulfur_dust"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oil_lamp",
+   "out": [
+    "nookworks:oil_lamp"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:oil_press",
+   "out": [
+    "nookworks:oil_press"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_bench",
+   "out": [
+    "nookworks:pale_oak_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_chair",
+   "out": [
+    "nookworks:pale_oak_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_desk",
+   "out": [
+    "nookworks:pale_oak_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_stool",
+   "out": [
+    "nookworks:pale_oak_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_support",
+   "out": [
+    "nookworks:pale_oak_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pale_oak_wall_shelf",
+   "out": [
+    "nookworks:pale_oak_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pancake",
+   "out": [
+    "nookworks:pancake"
+   ],
+   "in": [
+    [
+     "nookworks:pancake_batter"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pancake_batter",
+   "out": [
+    "nookworks:pancake_batter"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pancake_from_campfire_cooking",
+   "out": [
+    "nookworks:pancake"
+   ],
+   "in": [
+    [
+     "nookworks:pancake_batter"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pancake_from_smoking",
+   "out": [
+    "nookworks:pancake"
+   ],
+   "in": [
+    [
+     "nookworks:pancake_batter"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:patched_sheet_metal",
+   "out": [
+    "nookworks:patched_sheet_metal"
+   ],
+   "in": [
+    [
+     "nookworks:scrap"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pebbles",
+   "out": [
+    "nookworks:pebbles"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pebbles_from_cobblestone_stonecutting",
+   "out": [
+    "nookworks:pebbles"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:planter",
+   "out": [
+    "nookworks:planter"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:plate",
+   "out": [
+    "nookworks:plate"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_bench",
+   "out": [
+    "nookworks:poplar_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_chair",
+   "out": [
+    "nookworks:poplar_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_desk",
+   "out": [
+    "nookworks:poplar_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_stool",
+   "out": [
+    "nookworks:poplar_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_support",
+   "out": [
+    "nookworks:poplar_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poplar_wall_shelf",
+   "out": [
+    "nookworks:poplar_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:poster_safety_cross",
+   "out": [
+    "nookworks:poster"
+   ],
+   "in": [
+    [
+     "nookworks:fine_paper"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/biodiesel",
+   "out": [
+    "nookworks:biodiesel_bottle"
+   ],
+   "in": [
+    [
+     "nookworks:methanol"
+    ],
+    [
+     "nookworks:caustic_soda"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/boiled_egg",
+   "out": [
+    "nookworks:boiled_egg"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/cooked_rice",
+   "out": [
+    "nookworks:cooked_rice"
+   ],
+   "in": [
+    [
+     "nookworks:white_rice"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/corn_potage",
+   "out": [
+    "nookworks:corn_potage"
+   ],
+   "in": [
+    [
+     "nookworks:corn"
+    ],
+    [
+     "nookworks:onion"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/cream_stew",
+   "out": [
+    "nookworks:cream_stew"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:onion"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/donut",
+   "out": [
+    "nookworks:donut"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/french_fries",
+   "out": [
+    "nookworks:french_fries"
+   ],
+   "in": [
+    [
+     "nookworks:salt"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/fried_fish",
+   "out": [
+    "nookworks:fried_fish"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/fried_fish_in_flour",
+   "out": [
+    "nookworks:fried_fish"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/fried_rice",
+   "out": [
+    "nookworks:fried_rice"
+   ],
+   "in": [
+    [
+     "nookworks:cooked_rice"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/karaage",
+   "out": [
+    "nookworks:karaage"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/karaage_in_flour",
+   "out": [
+    "nookworks:karaage"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/soap",
+   "out": [
+    "nookworks:soap"
+   ],
+   "in": [
+    [
+     "nookworks:caustic_soda"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/stir_fried_vegetables",
+   "out": [
+    "nookworks:stir_fried_vegetables"
+   ],
+   "in": [
+    [
+     "nookworks:salt"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/tamagoyaki",
+   "out": [
+    "nookworks:tamagoyaki"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/tonkatsu",
+   "out": [
+    "nookworks:tonkatsu"
+   ],
+   "in": [
+    [
+     "nookworks:breaded_pork"
+    ],
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/udon",
+   "out": [
+    "nookworks:udon"
+   ],
+   "in": [
+    [
+     "nookworks:raw_udon"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/vegetable_soup",
+   "out": [
+    "nookworks:vegetable_soup"
+   ],
+   "in": [
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:pot/vegetable_soup_with_onion",
+   "out": [
+    "nookworks:vegetable_soup"
+   ],
+   "in": [
+    [
+     "nookworks:onion"
+    ],
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [
+    "nookworks:iron_pot"
+   ],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:precision_sorter",
+   "out": [
+    "nookworks:precision_sorter"
+   ],
+   "in": [
+    [
+     "nookworks:hub_stone"
+    ],
+    [
+     "nookworks:item_sorter"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:printing_press",
+   "out": [
+    "nookworks:printing_press"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ],
+    [
+     "nookworks:fine_paper"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:range_hood",
+   "out": [
+    "nookworks:range_hood"
+   ],
+   "in": [
+    [
+     "nookworks:duct"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:recycler",
+   "out": [
+    "nookworks:recycler"
+   ],
+   "in": [
+    [
+     "nookworks:crusher"
+    ],
+    [
+     "nookworks:compressor"
+    ],
+    [
+     "nookworks:baler"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:red_corrugated_sheet",
+   "out": [
+    "nookworks:red_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet",
+     "nookworks:exposed_corrugated_sheet",
+     "nookworks:oxidized_corrugated_sheet",
+     "nookworks:waxed_corrugated_sheet",
+     "nookworks:waxed_exposed_corrugated_sheet",
+     "nookworks:waxed_oxidized_corrugated_sheet",
+     "nookworks:waxed_weathered_corrugated_sheet",
+     "nookworks:weathered_corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:red_hot_velarium_ingot",
+   "out": [
+    "nookworks:red_hot_velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot",
+     "nookworks:red_hot_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:red_hot_velarium_ingot_from_blasting",
+   "out": [
+    "nookworks:red_hot_velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot",
+     "nookworks:red_hot_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:reinforced_rod",
+   "out": [
+    "nookworks:reinforced_rod"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:repair_box",
+   "out": [
+    "nookworks:repair_box"
+   ],
+   "in": [
+    [
+     "nookworks:experience_tank"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:retort",
+   "out": [
+    "nookworks:retort"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:rice_bale",
+   "out": [
+    "nookworks:rice_bale"
+   ],
+   "in": [
+    [
+     "nookworks:brown_rice"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:rice_polisher",
+   "out": [
+    "nookworks:rice_polisher"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:rope",
+   "out": [
+    "nookworks:rope"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:salmon_onigiri",
+   "out": [
+    "nookworks:salmon_onigiri"
+   ],
+   "in": [
+    [
+     "nookworks:cooked_rice"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:salt_onigiri",
+   "out": [
+    "nookworks:salt_onigiri"
+   ],
+   "in": [
+    [
+     "nookworks:cooked_rice"
+    ],
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:sconce",
+   "out": [
+    "nookworks:sconce"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:scrap_bale",
+   "out": [
+    "nookworks:scrap_bale"
+   ],
+   "in": [
+    [
+     "nookworks:scrap"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:scrap_from_scrap_bale",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:exposed_scrap_bale",
+     "nookworks:oxidized_scrap_bale",
+     "nookworks:scrap_bale",
+     "nookworks:waxed_exposed_scrap_bale",
+     "nookworks:waxed_oxidized_scrap_bale",
+     "nookworks:waxed_scrap_bale",
+     "nookworks:waxed_weathered_scrap_bale",
+     "nookworks:weathered_scrap_bale"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:sifter",
+   "out": [
+    "nookworks:sifter"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:sight_glass",
+   "out": [
+    "nookworks:sight_glass"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:copper_pipe"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:soap_without_a_pot",
+   "out": [
+    "nookworks:soap"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bottle"
+    ],
+    [
+     "nookworks:caustic_soda"
+    ]
+   ],
+   "at": [],
+   "if": [
+    {
+     "part": "kitchen",
+     "is": false
+    }
+   ]
+  },
+  {
+   "how": "recipe nookworks:spawn_egg_brewer",
+   "out": [
+    "nookworks:spawn_egg_brewer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spawner_controller",
+   "out": [
+    "nookworks:spawner_controller"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spawner_link_receiver",
+   "out": [
+    "nookworks:spawner_link_receiver"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spawner_link_sender",
+   "out": [
+    "nookworks:spawner_link_sender"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_bench",
+   "out": [
+    "nookworks:spruce_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_chair",
+   "out": [
+    "nookworks:spruce_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_desk",
+   "out": [
+    "nookworks:spruce_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_stool",
+   "out": [
+    "nookworks:spruce_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_support",
+   "out": [
+    "nookworks:spruce_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:spruce_wall_shelf",
+   "out": [
+    "nookworks:spruce_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:standing_mirror",
+   "out": [
+    "nookworks:standing_mirror"
+   ],
+   "in": [
+    [
+     "nookworks:dawnwood_planks"
+    ],
+    [
+     "nookworks:mercury_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stirring_tank",
+   "out": [
+    "nookworks:stirring_tank"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stone_brick_chimney",
+   "out": [
+    "nookworks:stone_brick_chimney"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stone_brick_flue",
+   "out": [
+    "nookworks:stone_brick_flue"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stone_hammer",
+   "out": [
+    "nookworks:stone_hammer"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stone_maker",
+   "out": [
+    "nookworks:stone_maker"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stony_dirt",
+   "out": [
+    "nookworks:stony_dirt"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:stripped_dawnwood_wood",
+   "out": [
+    "nookworks:stripped_dawnwood_wood"
+   ],
+   "in": [
+    [
+     "nookworks:stripped_dawnwood_log"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:thin_chain",
+   "out": [
+    "nookworks:thin_chain"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:thin_rope",
+   "out": [
+    "nookworks:thin_rope"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:trading_counter",
+   "out": [
+    "nookworks:trading_counter"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:trash_can",
+   "out": [
+    "nookworks:trash_can"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:udon_dough",
+   "out": [
+    "nookworks:udon_dough"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ],
+    [
+     "nookworks:salt"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:valve",
+   "out": [
+    "nookworks:valve"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:copper_pipe"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:vegetable_oil_bottle",
+   "out": [
+    "nookworks:vegetable_oil_bottle"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:vegetable_oil_bucket",
+   "out": [
+    "nookworks:vegetable_oil_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:vegetable_oil_bottle"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_axe",
+   "out": [
+    "nookworks:velarium_axe"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_block",
+   "out": [
+    "nookworks:velarium_block"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_boots",
+   "out": [
+    "nookworks:velarium_boots"
+   ],
+   "in": [
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_chestplate",
+   "out": [
+    "nookworks:velarium_chestplate"
+   ],
+   "in": [
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_hammer",
+   "out": [
+    "nookworks:velarium_hammer"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_helmet",
+   "out": [
+    "nookworks:velarium_helmet"
+   ],
+   "in": [
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_hoe",
+   "out": [
+    "nookworks:velarium_hoe"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_ingot_from_block",
+   "out": [
+    "nookworks:velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_block"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_ingot_from_nuggets",
+   "out": [
+    "nookworks:velarium_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_nugget"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_leggings",
+   "out": [
+    "nookworks:velarium_leggings"
+   ],
+   "in": [
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_nugget",
+   "out": [
+    "nookworks:velarium_nugget"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_pickaxe",
+   "out": [
+    "nookworks:velarium_pickaxe"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_shovel",
+   "out": [
+    "nookworks:velarium_shovel"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_sorter_gear",
+   "out": [
+    "nookworks:velarium_sorter_gear"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_ingot"
+    ],
+    [
+     "nookworks:hub_stone"
+    ],
+    [
+     "nookworks:netherite_sorter_gear"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_storage_barrel",
+   "out": [
+    "nookworks:velarium_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:netherite_storage_barrel"
+    ],
+    [
+     "nookworks:velarium_block"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_storage_barrel_from_upgrade",
+   "out": [
+    "nookworks:velarium_storage_barrel"
+   ],
+   "in": [
+    [
+     "nookworks:netherite_storage_barrel"
+    ],
+    [
+     "nookworks:velarium_storage_upgrade"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_storage_upgrade",
+   "out": [
+    "nookworks:velarium_storage_upgrade"
+   ],
+   "in": [
+    [
+     "nookworks:velarium_block"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:velarium_sword",
+   "out": [
+    "nookworks:velarium_sword"
+   ],
+   "in": [
+    [
+     "nookworks:reinforced_rod"
+    ],
+    [
+     "nookworks:tempered_velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:ventilation_fan",
+   "out": [
+    "nookworks:ventilation_fan"
+   ],
+   "in": [
+    [
+     "nookworks:duct"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warp_anchor",
+   "out": [
+    "nookworks:warp_anchor"
+   ],
+   "in": [
+    [
+     "nookworks:dark_matter"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_bench",
+   "out": [
+    "nookworks:warped_bench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_chair",
+   "out": [
+    "nookworks:warped_chair"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_desk",
+   "out": [
+    "nookworks:warped_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_stool",
+   "out": [
+    "nookworks:warped_stool"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_support",
+   "out": [
+    "nookworks:warped_support"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:warped_wall_shelf",
+   "out": [
+    "nookworks:warped_wall_shelf"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:water_pump",
+   "out": [
+    "nookworks:water_pump"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:white_corrugated_sheet",
+   "out": [
+    "nookworks:white_corrugated_sheet"
+   ],
+   "in": [
+    [
+     "nookworks:corrugated_sheet",
+     "nookworks:exposed_corrugated_sheet",
+     "nookworks:oxidized_corrugated_sheet",
+     "nookworks:waxed_corrugated_sheet",
+     "nookworks:waxed_exposed_corrugated_sheet",
+     "nookworks:waxed_oxidized_corrugated_sheet",
+     "nookworks:waxed_weathered_corrugated_sheet",
+     "nookworks:weathered_corrugated_sheet"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wine_glass",
+   "out": [
+    "nookworks:wine_glass"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wooden_tray",
+   "out": [
+    "nookworks:wooden_tray"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wool_shears",
+   "out": [
+    "nookworks:wool_shears"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wrench",
+   "out": [
+    "nookworks:wrench"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:zinc_ingot_from_blasting_raw_zinc",
+   "out": [
+    "nookworks:zinc_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:raw_zinc"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:zinc_ingot_from_smelting_raw_zinc",
+   "out": [
+    "nookworks:zinc_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:raw_zinc"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:activator_rail",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:anvil",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:blast_furnace",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:brush",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:bucket",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:cauldron",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chainmail_boots",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chainmail_chestplate",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chainmail_helmet",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chainmail_leggings",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chest_minecart",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:chipped_anvil",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:compass",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_axe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_boots",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_chestplate",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_helmet",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_hoe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_horse_armor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_leggings",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_nautilus_armor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_pickaxe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_shovel",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_spear",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_sword",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:crafter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:crossbow",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:damaged_anvil",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:detector_rail",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:exposed_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:flint_and_steel",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:furnace_minecart",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:heavy_weighted_pressure_plate",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:hopper",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:hopper_minecart",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_axe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_boots",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_chestplate",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_helmet",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_hoe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_horse_armor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_leggings",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_nautilus_armor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_pickaxe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_shovel",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_spear",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_sword",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:iron_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:lava_bucket",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:milk_bucket",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:minecart",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:oxidized_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:piston",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:powder_snow_bucket",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:rail",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:shears",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:shield",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:smithing_table",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:soul_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:spyglass",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:sticky_piston",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:stonecutter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:tnt_minecart",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:tripwire_hook",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:water_bucket",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_exposed_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_oxidized_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:waxed_weathered_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_bars",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_door",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_lantern",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_copper_trapdoor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling minecraft:weathered_lightning_rod",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:absorption_pad",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:absorption_pad"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:baler",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:baler"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:barter_terminal",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:barter_terminal"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:bookend",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:bookend"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:compressor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:compressor"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:condenser",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:condenser"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:copper_hammer",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:copper_hammer"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:copper_pipe",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:copper_pipe"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:crusher",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:crusher"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:distiller",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:distiller"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:drive_wheel",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:drive_wheel"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:electric_furnace",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:electric_furnace"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:energy_cable",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:energy_cable"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:generator",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:generator"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:grill",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:grill"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:hook",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:hook"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:horizontal_item_warp_receiver",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:horizontal_item_warp_receiver"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:horizontal_item_warp_sender",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:horizontal_item_warp_sender"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:iron_hammer",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:iron_hammer"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:iron_pot",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:iron_pot"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:iron_storage_barrel",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:iron_storage_barrel"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:iron_storage_upgrade",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:iron_storage_upgrade"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:iron_workbench",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:iron_workbench"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:item_sorter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:item_sorter"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:item_warp_receiver",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:item_warp_receiver"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:item_warp_sender",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:item_warp_sender"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:machine_chassis",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:magnet",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:magnet"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:magnet_chest",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:magnet_chest"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:motor",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:motor"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:precision_sorter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:precision_sorter"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:printing_press",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:printing_press"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:recycler",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:recycler"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:retort",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:retort"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:sconce",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:sconce"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:sifter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:sifter"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:spawner_link_receiver",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:spawner_link_receiver"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:spawner_link_sender",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:spawner_link_sender"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:stone_maker",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:stone_maker"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:thin_chain",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:thin_chain"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:trash_can",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:trash_can"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:water_pump",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:water_pump"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:wrench",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:wrench"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "retorting #minecraft:logs_that_burn",
+   "out": [
+    "nookworks:wood_vinegar"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "retorting minecraft:cinnabar",
+   "out": [
+    "nookworks:mercury_bucket",
+    "nookworks:sulfur_dust"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "retorting minecraft:copper_ingot",
+   "out": [
+    "nookworks:brass_ingot"
+   ],
+   "in": [
+    [
+     "nookworks:zinc_ingot"
+    ]
+   ],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "retorting minecraft:water_bucket",
+   "out": [
+    "nookworks:crude_salt"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "retorting nookworks:wood_chips",
+   "out": [
+    "nookworks:wood_pulp"
+   ],
+   "in": [
+    [
+     "nookworks:wood_chips"
+    ],
+    [
+     "nookworks:caustic_soda"
+    ],
+    [
+     "nookworks:sulfur_dust"
+    ]
+   ],
+   "at": [
+    "nookworks:retort"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting minecraft:coarse_dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting minecraft:dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting minecraft:gravel",
+   "out": [
+    "nookworks:raw_zinc"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting minecraft:mud",
+   "out": [
+    "nookworks:brown_rice"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting minecraft:rooted_dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting nookworks:crude_salt",
+   "out": [
+    "nookworks:salt"
+   ],
+   "in": [
+    [
+     "nookworks:crude_salt"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting nookworks:deepslate_gravel",
+   "out": [
+    "nookworks:raw_zinc"
+   ],
+   "in": [
+    [
+     "nookworks:deepslate_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting nookworks:end_gravel",
+   "out": [
+    "nookworks:end_seed"
+   ],
+   "in": [
+    [
+     "nookworks:end_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine minecraft:coarse_dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine minecraft:dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine minecraft:gravel",
+   "out": [
+    "nookworks:raw_zinc"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine minecraft:mud",
+   "out": [
+    "nookworks:brown_rice"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine minecraft:rooted_dirt",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sunflower_seeds"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine nookworks:deepslate_gravel",
+   "out": [
+    "nookworks:raw_zinc"
+   ],
+   "in": [
+    [
+     "nookworks:deepslate_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "trade nookworks_goods",
+   "out": [
+    "nookworks:brown_rice",
+    "nookworks:corn_kernels",
+    "nookworks:dice",
+    "nookworks:glazed_flower_pot",
+    "nookworks:oil_lamp",
+    "nookworks:onion",
+    "nookworks:rare_seed",
+    "nookworks:sconce"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  }
+ ],
+ "expected": {
+  "kitchen": [],
+  "storage": [],
+  "sorting": [],
+  "warps": [],
+  "elevator": [],
+  "magnets": [],
+  "hammers": [],
+  "building_wand": [],
+  "spawner_control": [],
+  "mob_bottle": [],
+  "laser": [],
+  "liquid_experience": [],
+  "printing": [],
+  "dark_matter": [],
+  "lode_pearl": [],
+  "daemon_door": [],
+  "if_world": [],
+  "barter_terminal": [],
+  "trading_counter": [],
+  "recycling": [],
+  "generators": [],
+  "electric_furnace": [],
+  "planter": [],
+  "water_pump": [],
+  "motor": [],
+  "electrolytic_cell": [
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:caustic_soda",
+   "nookworks:fine_paper",
+   "nookworks:label",
+   "nookworks:poster",
+   "nookworks:printing_press",
+   "nookworks:soap",
+   "nookworks:wood_pulp"
+  ],
+  "stone_maker": [],
+  "velarium": [],
+  "machine_chassis": [
+   "nookworks:barter_terminal",
+   "nookworks:beetroot_nukazuke",
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:blue_corrugated_sheet",
+   "nookworks:brass_ingot",
+   "nookworks:brass_mesh",
+   "nookworks:brass_workbench",
+   "nookworks:bread_dough",
+   "nookworks:camera",
+   "nookworks:carrot_nukazuke",
+   "nookworks:caustic_soda",
+   "nookworks:compressor",
+   "nookworks:copper_amalgam",
+   "nookworks:copper_tank",
+   "nookworks:corrugated_sheet",
+   "nookworks:crude_salt",
+   "nookworks:crusher",
+   "nookworks:deepslate_gravel",
+   "nookworks:diesel_generator",
+   "nookworks:distillation_column",
+   "nookworks:electric_furnace",
+   "nookworks:electrolytic_cell",
+   "nookworks:elevator",
+   "nookworks:end_gravel",
+   "nookworks:end_seed",
+   "nookworks:exposed_corrugated_sheet",
+   "nookworks:exposed_scrap_bale",
+   "nookworks:fine_paper",
+   "nookworks:french_fries",
+   "nookworks:generator",
+   "nookworks:gold_amalgam",
+   "nookworks:green_corrugated_sheet",
+   "nookworks:if_mirror",
+   "nookworks:iron_amalgam",
+   "nookworks:label",
+   "nookworks:laser",
+   "nookworks:mercury_bucket",
+   "nookworks:methanol",
+   "nookworks:mixed_amalgam",
+   "nookworks:motor",
+   "nookworks:nether_grit",
+   "nookworks:nukadoko",
+   "nookworks:oil_can",
+   "nookworks:oxidized_corrugated_sheet",
+   "nookworks:oxidized_scrap_bale",
+   "nookworks:patched_sheet_metal",
+   "nookworks:poster",
+   "nookworks:printing_press",
+   "nookworks:raw_udon",
+   "nookworks:recycler",
+   "nookworks:red_corrugated_sheet",
+   "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_rod",
+   "nookworks:retort",
+   "nookworks:risen_dough",
+   "nookworks:salt",
+   "nookworks:salt_onigiri",
+   "nookworks:scrap",
+   "nookworks:scrap_bale",
+   "nookworks:sight_glass",
+   "nookworks:soap",
+   "nookworks:standing_mirror",
+   "nookworks:stir_fried_vegetables",
+   "nookworks:stirring_tank",
+   "nookworks:stone_maker",
+   "nookworks:sulfur_dust",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:trading_counter",
+   "nookworks:udon",
+   "nookworks:udon_dough",
+   "nookworks:valve",
+   "nookworks:vegetable_soup",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_block",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_ingot",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_nugget",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sorter_gear",
+   "nookworks:velarium_storage_barrel",
+   "nookworks:velarium_storage_upgrade",
+   "nookworks:velarium_sword",
+   "nookworks:waxed_corrugated_sheet",
+   "nookworks:waxed_exposed_corrugated_sheet",
+   "nookworks:waxed_exposed_scrap_bale",
+   "nookworks:waxed_oxidized_corrugated_sheet",
+   "nookworks:waxed_oxidized_scrap_bale",
+   "nookworks:waxed_scrap_bale",
+   "nookworks:waxed_weathered_corrugated_sheet",
+   "nookworks:waxed_weathered_scrap_bale",
+   "nookworks:weathered_corrugated_sheet",
+   "nookworks:weathered_scrap_bale",
+   "nookworks:white_corrugated_sheet",
+   "nookworks:wood_chips",
+   "nookworks:wood_pulp",
+   "nookworks:wood_vinegar",
+   "nookworks:wool_shears"
+  ],
+  "sifter": [
+   "nookworks:beetroot_nukazuke",
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:brass_ingot",
+   "nookworks:brass_workbench",
+   "nookworks:bread_dough",
+   "nookworks:camera",
+   "nookworks:carrot_nukazuke",
+   "nookworks:caustic_soda",
+   "nookworks:copper_amalgam",
+   "nookworks:copper_tank",
+   "nookworks:daemon_door",
+   "nookworks:destination_panel",
+   "nookworks:diesel_generator",
+   "nookworks:distillation_column",
+   "nookworks:duct",
+   "nookworks:electrolytic_cell",
+   "nookworks:elevator",
+   "nookworks:end_seed",
+   "nookworks:fine_paper",
+   "nookworks:french_fries",
+   "nookworks:gold_amalgam",
+   "nookworks:iron_amalgam",
+   "nookworks:label",
+   "nookworks:methanol",
+   "nookworks:mixed_amalgam",
+   "nookworks:nukadoko",
+   "nookworks:poster",
+   "nookworks:printing_press",
+   "nookworks:range_hood",
+   "nookworks:raw_udon",
+   "nookworks:raw_zinc",
+   "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_rod",
+   "nookworks:risen_dough",
+   "nookworks:salt",
+   "nookworks:salt_onigiri",
+   "nookworks:sight_glass",
+   "nookworks:soap",
+   "nookworks:stir_fried_vegetables",
+   "nookworks:stirring_tank",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:trading_counter",
+   "nookworks:udon",
+   "nookworks:udon_dough",
+   "nookworks:valve",
+   "nookworks:vegetable_soup",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_block",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_ingot",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_nugget",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sorter_gear",
+   "nookworks:velarium_storage_barrel",
+   "nookworks:velarium_storage_upgrade",
+   "nookworks:velarium_sword",
+   "nookworks:ventilation_fan",
+   "nookworks:wood_pulp",
+   "nookworks:wool_shears",
+   "nookworks:zinc_ingot"
+  ],
+  "crusher": [
+   "nookworks:blue_corrugated_sheet",
+   "nookworks:corrugated_sheet",
+   "nookworks:deepslate_gravel",
+   "nookworks:end_gravel",
+   "nookworks:end_seed",
+   "nookworks:exposed_corrugated_sheet",
+   "nookworks:exposed_scrap_bale",
+   "nookworks:fine_paper",
+   "nookworks:green_corrugated_sheet",
+   "nookworks:label",
+   "nookworks:nether_grit",
+   "nookworks:oxidized_corrugated_sheet",
+   "nookworks:oxidized_scrap_bale",
+   "nookworks:patched_sheet_metal",
+   "nookworks:poster",
+   "nookworks:printing_press",
+   "nookworks:recycler",
+   "nookworks:red_corrugated_sheet",
+   "nookworks:scrap",
+   "nookworks:scrap_bale",
+   "nookworks:waxed_corrugated_sheet",
+   "nookworks:waxed_exposed_corrugated_sheet",
+   "nookworks:waxed_exposed_scrap_bale",
+   "nookworks:waxed_oxidized_corrugated_sheet",
+   "nookworks:waxed_oxidized_scrap_bale",
+   "nookworks:waxed_scrap_bale",
+   "nookworks:waxed_weathered_corrugated_sheet",
+   "nookworks:waxed_weathered_scrap_bale",
+   "nookworks:weathered_corrugated_sheet",
+   "nookworks:weathered_scrap_bale",
+   "nookworks:white_corrugated_sheet",
+   "nookworks:wood_chips",
+   "nookworks:wood_pulp"
+  ],
+  "retort": [
+   "nookworks:beetroot_nukazuke",
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:brass_ingot",
+   "nookworks:brass_mesh",
+   "nookworks:brass_workbench",
+   "nookworks:bread_dough",
+   "nookworks:camera",
+   "nookworks:carrot_nukazuke",
+   "nookworks:caustic_soda",
+   "nookworks:copper_amalgam",
+   "nookworks:copper_tank",
+   "nookworks:crude_salt",
+   "nookworks:diesel_generator",
+   "nookworks:distillation_column",
+   "nookworks:electrolytic_cell",
+   "nookworks:elevator",
+   "nookworks:fine_paper",
+   "nookworks:french_fries",
+   "nookworks:gold_amalgam",
+   "nookworks:if_mirror",
+   "nookworks:iron_amalgam",
+   "nookworks:label",
+   "nookworks:mercury_bucket",
+   "nookworks:methanol",
+   "nookworks:mixed_amalgam",
+   "nookworks:nukadoko",
+   "nookworks:poster",
+   "nookworks:printing_press",
+   "nookworks:raw_udon",
+   "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_rod",
+   "nookworks:risen_dough",
+   "nookworks:salt",
+   "nookworks:salt_onigiri",
+   "nookworks:sight_glass",
+   "nookworks:soap",
+   "nookworks:standing_mirror",
+   "nookworks:stir_fried_vegetables",
+   "nookworks:stirring_tank",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:trading_counter",
+   "nookworks:udon",
+   "nookworks:udon_dough",
+   "nookworks:valve",
+   "nookworks:vegetable_soup",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_block",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_ingot",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_nugget",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sorter_gear",
+   "nookworks:velarium_storage_barrel",
+   "nookworks:velarium_storage_upgrade",
+   "nookworks:velarium_sword",
+   "nookworks:wood_pulp",
+   "nookworks:wood_vinegar",
+   "nookworks:wool_shears"
+  ],
+  "stirring_tank": [
+   "nookworks:copper_amalgam",
+   "nookworks:gold_amalgam",
+   "nookworks:iron_amalgam",
+   "nookworks:mixed_amalgam",
+   "nookworks:red_hot_velarium_ingot",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_block",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_ingot",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_nugget",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sorter_gear",
+   "nookworks:velarium_storage_barrel",
+   "nookworks:velarium_storage_upgrade",
+   "nookworks:velarium_sword"
+  ],
+  "distiller": [
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:methanol",
+   "nookworks:red_hot_velarium_ingot",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_block",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_ingot",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_nugget",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sorter_gear",
+   "nookworks:velarium_storage_barrel",
+   "nookworks:velarium_storage_upgrade",
+   "nookworks:velarium_sword"
+  ],
+  "oil_press": [
+   "nookworks:biodiesel_bottle",
+   "nookworks:biodiesel_bucket",
+   "nookworks:donut",
+   "nookworks:french_fries",
+   "nookworks:fried_fish",
+   "nookworks:fried_rice",
+   "nookworks:karaage",
+   "nookworks:oil_cake",
+   "nookworks:oil_can",
+   "nookworks:soap",
+   "nookworks:stir_fried_vegetables",
+   "nookworks:tamagoyaki",
+   "nookworks:tempered_velarium_ingot",
+   "nookworks:tonkatsu",
+   "nookworks:vegetable_oil_bottle",
+   "nookworks:vegetable_oil_bucket",
+   "nookworks:velarium_axe",
+   "nookworks:velarium_boots",
+   "nookworks:velarium_chestplate",
+   "nookworks:velarium_hammer",
+   "nookworks:velarium_helmet",
+   "nookworks:velarium_hoe",
+   "nookworks:velarium_leggings",
+   "nookworks:velarium_pickaxe",
+   "nookworks:velarium_shovel",
+   "nookworks:velarium_sword"
+  ]
+ }
+}

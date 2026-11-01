@@ -16,6 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools/textures"))
 from gen_machine_faces import LAMPS  # noqa: E402  (where each machine's lamp is drawn)
+sys.path.insert(0, str(ROOT / "tools"))
+import gen_pipe_ports  # noqa: E402
 
 MODELS = ROOT / "src/main/resources/assets/nookworks/models/block"
 STATES = ROOT / "src/main/resources/assets/nookworks/blockstates"
@@ -196,6 +198,7 @@ def write(name, data):
 
 
 def write_state(name, data):
+    data = gen_pipe_ports.with_ports(name, data)  # the pipe ports, on the machines that show them
     (STATES / f"{name}.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
@@ -513,10 +516,11 @@ def spawn_egg_brewer():
     base.update({"up": "base", "down": "base"})
     parts = [solid([1, 0, 1], [15, 2, 15], textures=base, cull=("down",), name="plate")]
     parts += round_column(2, 9, 10, "vessel")
-    parts += round_column(3, 4, 12, "foot band")
+    # the foot band and the stopper stand out past what is under them, so their undersides show
+    parts += round_column(3, 4, 12, "foot band", skip=())
     parts += round_column(9, 10, 8, "shoulder")
     parts += round_column(10, 12, 4, "neck", skip=("down", "up"))
-    parts += round_column(12, 13, 6, "stopper")
+    parts += round_column(12, 13, 6, "stopper", skip=())
     parts.append(solid([7, 13, 7], [9, 16, 9], textures={**{s: "shard" for s in SIDES}, "up": "shard"}, skip=("down",),
                        cull=("up",), name="amethyst"))
     parts.append(solid([1, 2, 7], [2, 12, 9], skip=("down",), name="rod"))
@@ -621,11 +625,13 @@ def copper_tank_states():
     return {"multipart": parts}
 
 
-def stub(z0, z1):
-    """A short length of the Copper Pipe's barrel running out of a fitting's end, north-south, to meet the line."""
+def stub(z0, z1, end):
+    """A short length of the Copper Pipe's barrel running out of a fitting's end, north-south, to meet the line. Its
+    open end (on side {@code end}) shows the pipe's bore: with no pipe beside it, that end is seen."""
     barrel = {"texture": "#copper", "uv": [4, 0, 12, z1 - z0]}
     return box([4, 4, z0], [12, 12, z1], {"up": dict(barrel), "down": dict(barrel), "east": dict(barrel, rotation=90),
-                                           "west": dict(barrel, rotation=90)}, name="stub")
+                                           "west": dict(barrel, rotation=90),
+                                           end: {"texture": "#bore", "uv": [4, 4, 12, 12]}}, name="stub")
 
 
 def brass(frm, to, skip=(), name=None):
@@ -637,14 +643,14 @@ def sight_glass_model():
     Sight Glass, lying north-south (the blockstate turns it to its axis): pipe stubs at both ends, brass flanges,
     four brass rods between them at the corners, and the glass chamber. Its liquid is a model of its own.
     """
-    parts = [stub(0, 2), stub(14, 16),
+    parts = [stub(0, 2, "north"), stub(14, 16, "south"),
              brass([2, 2, 2], [14, 14, 4], name="flange"), brass([2, 2, 12], [14, 14, 14], name="flange")]
     for x0, y0 in ((2, 2), (12, 2), (2, 12), (12, 12)):
         parts.append(brass([x0, y0, 4], [x0 + 2, y0 + 2, 12], skip=("north", "south"), name="rod"))
     parts.append(box([3, 3, 4], [13, 13, 12], {f: face("#glass") for f in ("up", "down", "east", "west")}, name="glass"))
     return {"parent": "minecraft:block/block",
             "textures": {"particle": nw("brass_fitting"), "brass": nw("brass_fitting"), "glass": nw("sight_glass_glass"),
-                         "copper": nw("copper_pipe")},
+                         "copper": nw("copper_pipe"), "bore": nw("copper_pipe_end")},
             "elements": parts}
 
 
@@ -699,7 +705,7 @@ def valve_model(open_):
     handle = [7, 15, 2], [9, 16, 14]
     if not open_:
         handle = [2, 15, 7], [14, 16, 9]
-    parts = [stub(0, 2), stub(14, 16),
+    parts = [stub(0, 2, "north"), stub(14, 16, "south"),
              brass([3, 3, 2], [13, 13, 4], name="flange"), brass([3, 3, 12], [13, 13, 14], name="flange"),
              brass([4, 3, 4], [12, 13, 12], skip=("north", "south"), name="body"),
              brass([5, 13, 5], [11, 14, 11], skip=("down",), name="bonnet"),
@@ -707,7 +713,7 @@ def valve_model(open_):
              box(handle[0], handle[1], {f: face("#handle") for f in SIDES + ("up", "down")}, name="handle")]
     return {"parent": "minecraft:block/block",
             "textures": {"particle": nw("brass_fitting"), "brass": nw("brass_fitting"), "copper": nw("copper_pipe"),
-                         "stem": nw("black_iron"), "handle": nw("valve_handle")},
+                         "bore": nw("copper_pipe_end"), "stem": nw("black_iron"), "handle": nw("valve_handle")},
             "elements": parts}
 
 

@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "electric_furnace"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:electric_furnace",
+        "nookworks:machine_chassis"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

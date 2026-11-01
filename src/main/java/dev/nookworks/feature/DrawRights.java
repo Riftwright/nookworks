@@ -92,7 +92,7 @@ public final class DrawRights {
         if (answer != null && answer.until() > now && answer.owner().equals(owner)) {
             return answer.let();
         }
-        boolean let = Permission.mayBreak(level, at, Permission.actor(level, owner));
+        boolean let = Permission.mayTake(level, at, Permission.actor(level, owner));
         this.answers.put(at.immutable(), new Answer(owner, now + ASK_EVERY - Math.floorMod(at.hashCode(), ASK_EVERY / 5), let));
         return let;
     }

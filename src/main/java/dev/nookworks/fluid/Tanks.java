@@ -156,6 +156,19 @@ public final class Tanks {
         return level.getCapability(Capabilities.Fluid.BLOCK, up, Direction.DOWN);
     }
 
+    /**
+     * A copy of {@code tank} that a player's own hand may fill and draw from, past its fill and drain rules but holding
+     * only what it holds and no more than it holds: a bucket clicked on its gauge (GaugePouring), which writes what the
+     * copy holds back with {@link #set}.
+     */
+    public static OneTank byHand(OneTank tank) {
+        OneTank copy = (OneTank) tank(tank.capacity(), fluid -> tank.isValid(0, FluidResource.of(fluid)), true, true, () -> {});
+        if (tank.getAmountAsInt(0) > 0) {
+            copy.set(0, tank.getResource(0), tank.getAmountAsInt(0));
+        }
+        return copy;
+    }
+
     /** What {@code tank} holds, as a stack (empty when it is dry): for keeping in the machine's item. */
     public static FluidStack held(FluidStacksResourceHandler tank) {
         return tank.getAmountAsInt(0) <= 0 ? FluidStack.EMPTY : tank.getResource(0).toStack(tank.getAmountAsInt(0));

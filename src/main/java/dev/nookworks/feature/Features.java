@@ -5,10 +5,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
+
+import org.jspecify.annotations.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,6 +36,10 @@ import net.minecraft.world.item.ItemStack;
  * <p>
  * A part or an item can need another part as well (the file's {@code _needs}): the Barter Terminal takes its piglin in
  * by a Mob Bottle, the Absorption Pad is made with a Magnet. With that part off it goes too, as if switched off itself.
+ * <p>
+ * And an item that nothing reaches any more with the parts that are off - caustic soda with the Electrolytic Cell off,
+ * and the paper made with it - goes too ({@link PartGraph}, the user, 2026-11-01): every part can be switched off, and
+ * what it takes with it is worked out, not listed. The parts list shows it before it is saved.
  */
 public final class Features {
     private static final JsonObject FILE = file();
@@ -39,6 +47,15 @@ public final class Features {
     public static final Map<String, List<Identifier>> PARTS = parts();
     /** What a part (by name) or an item (by id) needs on besides its own part. */
     public static final Map<String, List<String>> NEEDS = needs();
+    /** The part each item of a part is of, by id. */
+    private static final Map<String, String> PART_OF = partOf();
+    /** How the parts list groups the parts, each group's parts in order (the file's {@code _groups}). */
+    public static final Map<String, List<String>> GROUPS = groups();
+
+    /** The items lost, as worked out at {@code generation} of the parts' state ({@link WorldFeatures#generation()}). */
+    private record Lost(int generation, Set<String> items) {}
+
+    private static volatile @Nullable Lost lostNow;
 
     private Features() {}
 
@@ -81,6 +98,27 @@ public final class Features {
         return Collections.unmodifiableMap(needs);
     }
 
+    private static Map<String, String> partOf() {
+        Map<String, String> map = new HashMap<>();
+        PARTS.forEach((part, ids) -> ids.forEach(id -> map.put(id.toString(), part)));
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static Map<String, List<String>> groups() {
+        Map<String, List<String>> groups = new LinkedHashMap<>();
+        if (FILE.has("_groups")) {
+            for (Map.Entry<String, JsonElement> entry : FILE.getAsJsonObject("_groups").entrySet()) {
+                if (entry.getKey().startsWith("_")) {
+                    continue;
+                }
+                List<String> parts = new ArrayList<>();
+                entry.getValue().getAsJsonArray().forEach(part -> parts.add(part.getAsString()));
+                groups.put(entry.getKey(), List.copyOf(parts));
+            }
+        }
+        return Collections.unmodifiableMap(groups);
+    }
+
     /** Whether the part {@code name} is on; a name that is no part is (for a data pack's condition naming one). */
     public static boolean enabled(String name) {
         return enabled(name, Features::switchedOn);
@@ -109,27 +147,62 @@ public final class Features {
         return null;
     }
 
-    /** Whether {@code item} can be had: of no part, or of a part that is on, and the parts it needs on. */
+    /**
+     * Whether {@code item} can be had: of no part, or of a part that is on, and the parts it needs on; and something
+     * still reaches it ({@link PartGraph}).
+     */
     public static boolean enabled(Item item) {
-        return enabled(item, Features::switchedOn);
+        String id = BuiltInRegistries.ITEM.getKey(item).toString();
+        return enabledByPart(id, Features::switchedOn) && !lost().contains(id);
     }
 
     /** Whether {@code item} can be had, given which parts are switched on. Public for tests. */
     public static boolean enabled(Item item, Predicate<String> switchedOn) {
-        String part = partOf(item);
         String id = BuiltInRegistries.ITEM.getKey(item).toString();
-        return (part == null || enabled(part, switchedOn))
-                && NEEDS.getOrDefault(id, List.of()).stream().allMatch(need -> enabled(need, switchedOn));
+        return enabledByPart(id, switchedOn) && !PartGraph.lost(switchedOn, WorldFeatures.kept()).contains(id);
+    }
+
+    /**
+     * Whether the item {@code id} is not taken by a switch: of no part, or of one that is on, and the parts it needs on
+     * (what it is made from not asked).
+     */
+    public static boolean enabledByPart(String id, Predicate<String> switchedOn) {
+        String part = PART_OF.get(id);
+        List<String> needs = NEEDS.get(id);
+        return (part == null || enabled(part, switchedOn)) && (needs == null || needs.stream().allMatch(need -> enabled(need, switchedOn)));
+    }
+
+    /** Whether the item {@code id} can be had now, as {@link #enabled(Item)} asks it by the item; an id of no item of ours can. */
+    public static boolean available(String id) {
+        return enabledByPart(id, Features::switchedOn) && !lost().contains(id);
+    }
+
+    /**
+     * The items, each still on by its own part, that nothing reaches with the parts now on ({@link PartGraph#lost}),
+     * worked out again only when the parts' state has changed since ({@link WorldFeatures#generation()}): from one look
+     * at it, taken after its generation is read, so a change while it is worked out is not kept under the old one.
+     */
+    public static Set<String> lost() {
+        int generation = WorldFeatures.generation();
+        Lost known = lostNow;
+        if (known != null && known.generation() == generation) {
+            return known.items();
+        }
+        Map<String, Boolean> on = new HashMap<>();
+        PARTS.keySet().forEach(part -> on.put(part, switchedOn(part)));
+        Set<String> items = PartGraph.lost(part -> on.computeIfAbsent(part, Features::switchedOn), WorldFeatures.kept());
+        lostNow = new Lost(generation, items);
+        return items;
     }
 
     public static boolean enabled(ItemStack stack) {
         return stack.isEmpty() || enabled(stack.getItem());
     }
 
-    /** Every item of a part that is off, or that needs one. */
+    /** Every item of ours that cannot be had: of a part that is off, or that needs one, or that nothing reaches any more. */
     public static List<Item> disabledItems() {
         List<Item> items = new ArrayList<>();
-        PARTS.values().forEach(ids -> ids.forEach(id -> BuiltInRegistries.ITEM.getOptional(id).filter(item -> !enabled(item)).ifPresent(items::add)));
+        PartGraph.ITEMS.forEach(id -> BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).filter(item -> !enabled(item)).ifPresent(items::add));
         return items;
     }
 

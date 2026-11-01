@@ -268,6 +268,11 @@ public class MachineMenu extends AbstractContainerMenu {
         return moved;
     }
 
+    /** The machine whose screen this is, or null on a client that was not sent it. */
+    public @Nullable BlockEntity machine() {
+        return this.machine;
+    }
+
     @Override
     public boolean stillValid(Player player) {
         return this.machine == null || Container.stillValidBlockEntity(this.machine, player);

@@ -1,8 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "printing"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:printing_press",
+        "nookworks:machine_chassis",
+        "nookworks:fine_paper"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

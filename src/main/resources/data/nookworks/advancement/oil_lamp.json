@@ -1,4 +1,14 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:vegetable_oil_bucket"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "lamp": {
       "trigger": "minecraft:inventory_changed",

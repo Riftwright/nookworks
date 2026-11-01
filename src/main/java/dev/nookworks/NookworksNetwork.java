@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import dev.nookworks.feature.WorldFeatures;
+import dev.nookworks.feature.WorldPartsEditing;
 import dev.nookworks.machine.LootSummaries;
 import dev.nookworks.recycling.Compressing;
 import dev.nookworks.cooking.IronPotBlockEntity;
@@ -27,6 +28,8 @@ import dev.nookworks.cooking.PotLine;
 import dev.nookworks.registry.ModCreativeTabs;
 import dev.nookworks.travel.DaemonDestinations;
 import dev.nookworks.travel.DaemonTravel;
+import dev.nookworks.machine.GaugePouring;
+import dev.nookworks.machine.MachineMenu;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -120,6 +123,18 @@ public final class NookworksNetwork {
 
         @Override
         public Type<WorldParts> type() {
+            return TYPE;
+        }
+    }
+
+    /** The items the server keeps in whatever its parts switched off take with them ({@link WorldFeatures#kept}). */
+    public record KeptItems(List<String> items) implements CustomPacketPayload {
+        public static final Type<KeptItems> TYPE = new Type<>(Nookworks.id("kept_items"));
+        public static final StreamCodec<ByteBuf, KeptItems> STREAM_CODEC =
+                ByteBufCodecs.stringUtf8(256).apply(ByteBufCodecs.list(1024)).map(KeptItems::new, KeptItems::items);
+
+        @Override
+        public Type<KeptItems> type() {
             return TYPE;
         }
     }
@@ -239,10 +254,11 @@ public final class NookworksNetwork {
         }
     }
 
-    public record SortChest(int containerId, int order) implements CustomPacketPayload {
+    public record SortChest(int containerId, int order, boolean reversed) implements CustomPacketPayload {
         public static final Type<SortChest> TYPE = new Type<>(Nookworks.id("sort_chest"));
         public static final StreamCodec<RegistryFriendlyByteBuf, SortChest> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, SortChest::containerId, ByteBufCodecs.VAR_INT, SortChest::order, SortChest::new);
+                ByteBufCodecs.VAR_INT, SortChest::containerId, ByteBufCodecs.VAR_INT, SortChest::order,
+                ByteBufCodecs.BOOL, SortChest::reversed, SortChest::new);
 
         @Override
         public Type<SortChest> type() {
@@ -315,9 +331,83 @@ public final class NookworksNetwork {
         }
     }
 
+    /**
+     * Client to server: gauge {@code gauge} of the machine screen {@code containerId} clicked with what the cursor holds
+     * (GaugePouring) - a payload of its own, not a menu button id: those are kept clear for nookTechnology (docs/compat.md).
+     */
+    public record PourGauge(int containerId, int gauge) implements CustomPacketPayload {
+        public static final Type<PourGauge> TYPE = new Type<>(Nookworks.id("pour_gauge"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, PourGauge> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, PourGauge::containerId, ByteBufCodecs.VAR_INT, PourGauge::gauge, PourGauge::new);
+
+        @Override
+        public Type<PourGauge> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: show me this world's choice of parts (the mod's settings, in a world). */
+    public record AskWorldParts() implements CustomPacketPayload {
+        public static final Type<AskWorldParts> TYPE = new Type<>(Nookworks.id("ask_world_parts"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, AskWorldParts> STREAM_CODEC = StreamCodec.unit(new AskWorldParts());
+
+        @Override
+        public Type<AskWorldParts> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: the world's file of parts, and whether this player may change it. */
+    public record WorldPartsFile(WorldPartsEditing.View view) implements CustomPacketPayload {
+        public static final Type<WorldPartsFile> TYPE = new Type<>(Nookworks.id("world_parts_file"));
+        private static final StreamCodec<RegistryFriendlyByteBuf, Map<String, Boolean>> PARTS = ByteBufCodecs
+                .<RegistryFriendlyByteBuf, String, Boolean, Map<String, Boolean>>map(LinkedHashMap::new, ByteBufCodecs.stringUtf8(64), ByteBufCodecs.BOOL, 64);
+        public static final StreamCodec<RegistryFriendlyByteBuf, WorldPartsFile> STREAM_CODEC = StreamCodec.composite(
+                PARTS, WorldPartsEditing.View::parts, PARTS, WorldPartsEditing.View::offered,
+                ByteBufCodecs.BOOL, WorldPartsEditing.View::menu, ByteBufCodecs.BOOL, WorldPartsEditing.View::editable,
+                WorldPartsEditing.View::new).map(WorldPartsFile::new, WorldPartsFile::view);
+
+        @Override
+        public Type<WorldPartsFile> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: this world's new choice of parts, for its next opening. */
+    public record SetWorldParts(Map<String, Boolean> parts) implements CustomPacketPayload {
+        public static final Type<SetWorldParts> TYPE = new Type<>(Nookworks.id("set_world_parts"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, SetWorldParts> STREAM_CODEC = ByteBufCodecs
+                .<RegistryFriendlyByteBuf, String, Boolean, Map<String, Boolean>>map(LinkedHashMap::new,
+                        ByteBufCodecs.stringUtf8(64), ByteBufCodecs.BOOL, 64)
+                .map(SetWorldParts::new, SetWorldParts::parts);
+
+        @Override
+        public Type<SetWorldParts> type() {
+            return TYPE;
+        }
+    }
+
     @SubscribeEvent
     static void register(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
+        registrar.playToServer(PourGauge.TYPE, PourGauge.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof MachineMenu menu
+                    && menu.containerId == payload.containerId()) {
+                GaugePouring.clicked(player, menu, payload.gauge());
+            }
+        });
+        registrar.playToServer(AskWorldParts.TYPE, AskWorldParts.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                WorldPartsEditing.asked(player);
+            }
+        });
+        registrar.playToClient(WorldPartsFile.TYPE, WorldPartsFile.STREAM_CODEC,
+                (payload, context) -> WorldPartsEditing.shown.accept(payload.view()));
+        registrar.playToServer(SetWorldParts.TYPE, SetWorldParts.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                WorldPartsEditing.set(player, payload.parts());
+            }
+        });
         registrar.playToClient(LootTables.TYPE, LootTables.STREAM_CODEC, (payload, context) -> LootSummaries.receive(payload.tables()));
         registrar.playToClient(RecipeChoices.TYPE, RecipeChoices.STREAM_CODEC, (payload, context) -> RecipeChoice.shown.accept(payload));
         registrar.playToServer(PickRecipe.TYPE, PickRecipe.STREAM_CODEC, (payload, context) -> {
@@ -334,6 +424,8 @@ public final class NookworksNetwork {
         registrar.playToClient(Compressible.TYPE, Compressible.STREAM_CODEC, (payload, context) -> Compressing.heard(Set.copyOf(payload.items())));
         registrar.playToClient(StartupSettings.TYPE, StartupSettings.STREAM_CODEC, (payload, context) ->
                 NookworksStartupConfig.mismatch(payload.values()).ifPresent(message -> context.player().sendSystemMessage(message)));
+        registrar.playToClient(KeptItems.TYPE, KeptItems.STREAM_CODEC,
+                (payload, context) -> WorldFeatures.heardKept(payload.items(), context.connection().isMemoryConnection()));
         registrar.playToClient(WorldParts.TYPE, WorldParts.STREAM_CODEC, (payload, context) -> {
             WorldFeatures.heard(payload.parts(), context.connection().isMemoryConnection()); // (single player: the same world's)
             ModCreativeTabs.partsKnown();
@@ -354,7 +446,7 @@ public final class NookworksNetwork {
         });
         registrar.playToServer(SortChest.TYPE, SortChest.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && NookworksConfig.CHEST_SORT_ALLOWED.getAsBoolean()) {
-                ChestSorting.sortOpen(player, payload.containerId(), payload.order());
+                ChestSorting.sortOpen(player, payload.containerId(), payload.order(), payload.reversed());
             }
         });
         registrar.playToServer(TakePhoto.TYPE, TakePhoto.STREAM_CODEC, (payload, context) -> {
@@ -378,7 +470,12 @@ public final class NookworksNetwork {
 
     @SubscribeEvent
     static void onDatapackSync(OnDatapackSyncEvent event) {
-        // the world's parts first: the creative tabs and JEI, set going by what follows, show only those
+        // the world's parts first: the creative tabs and JEI, set going by what follows, show only those; and before
+        // them, the items it keeps whatever its parts take with them, which those are worked out with
+        KeptItems kept = new KeptItems(WorldFeatures.kept());
+        event.getRelevantPlayers()
+                .filter((ServerPlayer player) -> player.connection.hasChannel(KeptItems.TYPE))
+                .forEach(player -> PacketDistributor.sendToPlayer(player, kept));
         WorldParts parts = new WorldParts(WorldFeatures.effective());
         event.getRelevantPlayers()
                 .filter((ServerPlayer player) -> player.connection.hasChannel(WorldParts.TYPE))

@@ -228,10 +228,13 @@ def model():
         "up": face("#top"),
         "down": face("#bottom"),
     }))
-    # the brass foot rail along the customer's side, on three posts
-    els.append(box([1, 2, 0], [15, 3, 0.75], {s: face("#brass", uv=[1, 6, 15, 7]) for s in ("north", "up", "down", "east", "west")}))
+    # the brass foot rail along the customer's side, on three posts. The rail stands a quarter pixel off the cabinet's
+    # front and the posts reach only half under it, so the rail's back and the posts' tops and bottoms show in the gaps
+    els.append(box([1, 2, 0], [15, 3, 0.75], {s: face("#brass", uv=[1, 6, 15, 7])
+                                              for s in ("north", "south", "up", "down", "east", "west")}))
     for x in (1.5, 7.5, 13.5):
-        els.append(box([x, 1, 0.5], [x + 1, 2, 1], {s: face("#brass", uv=[0, 8, 1, 9]) for s in ("north", "east", "west")}))
+        els.append(box([x, 1, 0.5], [x + 1, 2, 1], {s: face("#brass", uv=[0, 8, 1, 9])
+                                                    for s in ("north", "east", "west", "up", "down")}))
     # the ledger, lying open at the front left and turned a little toward the customer: leather, then its pages
     turn = {"angle": 22.5, "axis": "y", "origin": [5.5, 15, 6]}
     els.append(box([1.5, 15, 3], [9.5, 15.5, 9], {

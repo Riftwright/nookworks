@@ -26,8 +26,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Duct: square ducting of galvanized sheet steel, spangled grey where the zinc crystallised on it. It joins up with the
- * ducts beside it, the back of a Ventilation Fan, the collar on top of a Range Hood and the side of a Chimney, and
- * carries their smoke (see {@link Ventilation}); where a run of it ends in the open, the smoke comes out.
+ * ducts beside it, the back of a Ventilation Fan, the collar on top of a Range Hood, the side of a Chimney and the top
+ * or bottom of a Flue (closed on its sides), and carries their smoke (see {@link Ventilation}); where a run of it ends in the open, the smoke comes out.
  */
 public class DuctBlock extends Block {
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.PROPERTY_BY_DIRECTION;
@@ -76,6 +76,9 @@ public class DuctBlock extends Block {
 
     /** Whether a duct joins up with {@code neighbour}, lying on its {@code side}. */
     public static boolean joins(BlockState neighbour, Direction side) {
+        if (neighbour.getBlock() instanceof FlueBlock) {
+            return side.getAxis() == Direction.Axis.Y; // open only at its top and bottom (the user, 2026-11-01)
+        }
         if (neighbour.getBlock() instanceof DuctBlock || neighbour.getBlock() instanceof ChimneyBlock) {
             return true;
         }

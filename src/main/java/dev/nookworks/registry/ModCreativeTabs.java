@@ -57,10 +57,12 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.SCONCE.get());
                         output.accept(ModItems.OIL_LAMP.get());
                         output.accept(ModItems.BOOKEND.get());
+                        output.accept(ModItems.STANDING_MIRROR.get());
                         output.accept(ModItems.UNLIT_LANTERN.get());
                         output.accept(ModItems.UNLIT_SOUL_LANTERN.get());
                         ModItems.UNLIT_COPPER_LANTERNS.values().forEach(lantern -> output.accept(lantern.get()));
                         output.accept(ModItems.DARK_MATTER.get());
+                        output.accept(ModItems.WARP_ANCHOR.get());
                         output.accept(GlazedPots.ITEM.get());
                         output.accept(GlazedPots.HANGING_GREEN_ITEM.get());
                         output.accept(GlazedPots.HANGING_PINK_ITEM.get());
@@ -104,10 +106,20 @@ public final class ModCreativeTabs {
                         output.accept(ModCooking.IRON_POT_ITEM.get());
                         output.accept(ModCooking.NUKADOKO_ITEM.get());
                         output.accept(ModKitchen.WOODEN_TRAY_ITEM.get());
+                        output.accept(ModKitchen.PLATE_ITEM.get());
+                        output.accept(ModItems.WINE_GLASS.get());
+                        output.accept(ModItems.MUG.get());
                         output.accept(ModVentilation.RANGE_HOOD_ITEM.get());
                         output.accept(ModVentilation.VENT_FAN_ITEM.get());
                         output.accept(ModVentilation.DUCT_ITEM.get());
                         output.accept(ModVentilation.CHIMNEY_ITEM.get());
+                        output.accept(ModVentilation.STONE_BRICK_CHIMNEY_ITEM.get());
+                        output.accept(ModVentilation.NETHER_BRICK_CHIMNEY_ITEM.get());
+                        output.accept(ModVentilation.COBBLESTONE_CHIMNEY_ITEM.get());
+                        output.accept(ModVentilation.BRICK_FLUE_ITEM.get());
+                        output.accept(ModVentilation.STONE_BRICK_FLUE_ITEM.get());
+                        output.accept(ModVentilation.NETHER_BRICK_FLUE_ITEM.get());
+                        output.accept(ModVentilation.COBBLESTONE_FLUE_ITEM.get());
                         // what the kitchen takes in and makes
                         output.accept(ModOil.VEGETABLE_OIL_BOTTLE.get());
                         output.accept(ModOil.VEGETABLE_OIL_BUCKET.get());

@@ -112,8 +112,11 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
             machines.add(entity);
         } else if (entity instanceof DriveWheelBlockEntity wheel && wheel.axis() == facing.getAxis()) {
             wheels = DriveNetwork.wheels(level, wheel);
-            // counted only as it may turn them: one across a claim's edge it may not is no machine of its eight
-            machines.addAll(DriveNetwork.machines(level, wheels, machine -> DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)));
+            // counted only as it may turn them: one across a claim's edge it may not is no machine of its eight; nor is
+            // one with no work, which took the place of a ninth that had some (2026-10-31, left to me: 「おまかせ」),
+            // and is asked first, so an idle machine across a claim's edge costs the claim mod no question
+            machines.addAll(DriveNetwork.machines(level, wheels, machine -> ((Crankable) machine).wantsTurn()
+                    && DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)));
         }
         long now = level.getGameTime();
         List<BlockEntity> wanting = new ArrayList<>();

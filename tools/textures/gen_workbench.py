@@ -291,13 +291,13 @@ def workbench_model(variant):
         els.append(box([x + 1, 1, z + 1], [x + 3, 12, z + 3], body_faces()))
     # the top
     els.append(box([0, 12, 0], [16, 14, 16], body_faces(up="#top", down="#bottom")))
-    # the apron, each side with its face out and its back in the dark
-    els.append(box([3, 10, 1], [13, 12, 2], body_faces(sides=("north", "south"), inner=("south",))))
-    els.append(box([3, 10, 14], [13, 12, 15], body_faces(sides=("north", "south"), inner=("north",))))
-    els.append(box([1, 10, 3], [2, 12, 13], body_faces(sides=("east", "west"), inner=("east",))))
-    els.append(box([14, 10, 3], [15, 12, 13], body_faces(sides=("east", "west"), inner=("west",))))
-    # the drawer and its pull
-    els.append(box([5, 9, 0.5], [11, 12, 1], body_faces(sides=("north", "east", "west"), down="#bottom")))
+    # the apron, each side with its face out and its back in the dark; its underside shows from below, between the legs
+    els.append(box([3, 10, 1], [13, 12, 2], body_faces(sides=("north", "south"), inner=("south",), down="#bottom")))
+    els.append(box([3, 10, 14], [13, 12, 15], body_faces(sides=("north", "south"), inner=("north",), down="#bottom")))
+    els.append(box([1, 10, 3], [2, 12, 13], body_faces(sides=("east", "west"), inner=("east",), down="#bottom")))
+    els.append(box([14, 10, 3], [15, 12, 13], body_faces(sides=("east", "west"), inner=("west",), down="#bottom")))
+    # the drawer and its pull; the drawer's back shows below the apron, so it is closed in the dark too
+    els.append(box([5, 9, 0.5], [11, 12, 1], body_faces(inner=("south",), down="#bottom")))
     els.append(box([7, 10, 0], [9, 11, 0.5], {s: ("#brass", False) for s in ("north", "east", "west", "up", "down")}))
     # the shelf, and the toolbox on it
     els.append(box([2, 3, 2], [14, 4, 14], body_faces(up="#shelf", down="#bottom")))
@@ -306,8 +306,9 @@ def workbench_model(variant):
     els.append(box([11, 14, 1], [15, 15, 4], {s: ("#vise", False) for s in ("north", "east", "south", "west", "up")}))
     els.append(box([11, 15, 3], [15, 16, 4], {s: ("#vise", False) for s in ("north", "east", "south", "west")} | {"up": ("#steel", False)}))
     els.append(box([11, 15, 1], [15, 16, 2], {s: ("#vise", False) for s in ("north", "east", "south", "west")} | {"up": ("#steel", False)}))
-    els.append(box([12.5, 15, 0], [13.5, 16, 1], {s: ("#steel", False) for s in ("north", "east", "west", "up")}))
-    els.append(box([2, 14, 4], [9, 14.25, 11], {"up": ("#blueprint", False)}))
+    # (the screw stands out past the jaw's front, and the blueprint's edges lie on the top: both show all round)
+    els.append(box([12.5, 15, 0], [13.5, 16, 1], {s: ("#steel", False) for s in ("north", "east", "west", "up", "down")}))
+    els.append(box([2, 14, 4], [9, 14.25, 11], {s: ("#blueprint", False) for s in ("north", "east", "south", "west", "up")}))
     els.append(box([10, 14, 10], [12, 15, 12], {s: ("#steel", False) for s in ("north", "east", "south", "west", "up")}))
     els.append(box([12, 14, 10.5], [15, 14.5, 11.5], {s: ("#handle", False) for s in ("north", "east", "south", "up")}))
     textures = {

@@ -1,5 +1,6 @@
 package dev.nookworks.registry;
 
+import dev.nookworks.cooking.PlateBlock;
 import dev.nookworks.Nookworks;
 import dev.nookworks.cooking.HandQuernBlock;
 import dev.nookworks.cooking.NoodleMakerBlock;
@@ -54,6 +55,10 @@ public final class ModKitchen {
             p -> p.mapColor(MapColor.WOOD).strength(0.5F).sound(SoundType.WOOD).ignitedByLava().noOcclusion().pushReaction(PushReaction.POPPED)
                     .forceSolidOn());
     public static final DeferredItem<BlockItem> WOODEN_TRAY_ITEM = ModItems.ITEMS.registerSimpleBlockItem(WOODEN_TRAY);
+    /** A white glazed plate for the table: one dish served on it (the user, 2026-10-31). */
+    public static final DeferredBlock<PlateBlock> PLATE = ModBlocks.BLOCKS.registerBlock("plate", PlateBlock::new,
+            p -> p.mapColor(MapColor.QUARTZ).strength(0.3F).sound(SoundType.DECORATED_POT).noOcclusion().pushReaction(PushReaction.POPPED));
+    public static final DeferredItem<BlockItem> PLATE_ITEM = ModItems.ITEMS.registerSimpleBlockItem(PLATE);
     public static final DeferredItem<Item> BREAD_DOUGH = ModItems.ITEMS.registerSimpleItem("bread_dough");
     public static final DeferredItem<Item> RISEN_DOUGH = ModItems.ITEMS.registerSimpleItem("risen_dough");
     public static final DeferredItem<Item> UDON_DOUGH = ModItems.ITEMS.registerSimpleItem("udon_dough");

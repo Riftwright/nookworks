@@ -1,0 +1,202 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "k": "nookworks:block/dish_karaage",
+    "lemon": "nookworks:block/dish_lemon",
+    "particle": "nookworks:block/dish_karaage"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        8,
+        2.5,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#k"
+        },
+        "south": {
+          "texture": "#k"
+        },
+        "east": {
+          "texture": "#k"
+        },
+        "west": {
+          "texture": "#k"
+        },
+        "up": {
+          "texture": "#k"
+        },
+        "down": {
+          "texture": "#k"
+        }
+      }
+    },
+    {
+      "from": [
+        8.5,
+        0,
+        5.5
+      ],
+      "to": [
+        11,
+        2.2,
+        8.3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#k"
+        },
+        "south": {
+          "texture": "#k"
+        },
+        "east": {
+          "texture": "#k"
+        },
+        "west": {
+          "texture": "#k"
+        },
+        "up": {
+          "texture": "#k"
+        },
+        "down": {
+          "texture": "#k"
+        }
+      }
+    },
+    {
+      "from": [
+        5.5,
+        0,
+        8.5
+      ],
+      "to": [
+        8.2,
+        2.3,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#k"
+        },
+        "south": {
+          "texture": "#k"
+        },
+        "east": {
+          "texture": "#k"
+        },
+        "west": {
+          "texture": "#k"
+        },
+        "up": {
+          "texture": "#k"
+        },
+        "down": {
+          "texture": "#k"
+        }
+      }
+    },
+    {
+      "from": [
+        8.4,
+        0,
+        8.6
+      ],
+      "to": [
+        11,
+        2.6,
+        11.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#k"
+        },
+        "south": {
+          "texture": "#k"
+        },
+        "east": {
+          "texture": "#k"
+        },
+        "west": {
+          "texture": "#k"
+        },
+        "up": {
+          "texture": "#k"
+        },
+        "down": {
+          "texture": "#k"
+        }
+      }
+    },
+    {
+      "from": [
+        6.8,
+        2.2,
+        6.8
+      ],
+      "to": [
+        9.4,
+        4.4,
+        9.4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#k"
+        },
+        "south": {
+          "texture": "#k"
+        },
+        "east": {
+          "texture": "#k"
+        },
+        "west": {
+          "texture": "#k"
+        },
+        "up": {
+          "texture": "#k"
+        },
+        "down": {
+          "texture": "#k"
+        }
+      }
+    },
+    {
+      "from": [
+        10.6,
+        0,
+        10.8
+      ],
+      "to": [
+        12.6,
+        1.5,
+        12.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lemon"
+        },
+        "south": {
+          "texture": "#lemon"
+        },
+        "east": {
+          "texture": "#lemon"
+        },
+        "west": {
+          "texture": "#lemon"
+        },
+        "up": {
+          "texture": "#lemon"
+        },
+        "down": {
+          "texture": "#lemon"
+        }
+      }
+    }
+  ]
+}

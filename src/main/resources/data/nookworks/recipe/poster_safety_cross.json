@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "printing"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:poster",
+        "nookworks:fine_paper"
+      ]
     }
   ],
   "type": "minecraft:crafting_shapeless",

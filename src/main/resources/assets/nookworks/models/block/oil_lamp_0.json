@@ -211,6 +211,24 @@
             16
           ]
         },
+        "down": {
+          "texture": "#wick",
+          "uv": [
+            7,
+            10.4,
+            8,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#wick",
+          "uv": [
+            7,
+            10.4,
+            8,
+            10.9
+          ]
+        },
         "east": {
           "texture": "#wick",
           "uv": [

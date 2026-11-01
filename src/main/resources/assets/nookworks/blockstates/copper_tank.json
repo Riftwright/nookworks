@@ -264,6 +264,41 @@
       "apply": {
         "model": "nookworks:block/copper_tank_gauge_other_6"
       }
+    },
+    {
+      "when": {
+        "port_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 270
+      }
     }
   ]
 }

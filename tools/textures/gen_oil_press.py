@@ -241,6 +241,22 @@ def oil_cake():
 
 # ---- Models ----
 
+def port_model():
+    """A copper port where a pipe meets the press, to the north: a collar the pipe's own butts against at the block's
+    edge, the pipe's bore carried in a hand's width, and a short spout turned down into the tray over its rim."""
+    tex = {"particle": "nookworks:block/copper_pipe", "barrel": "nookworks:block/copper_pipe",
+           "collar": "nookworks:block/copper_pipe_collar", "bore": "nookworks:block/copper_pipe_end"}
+
+    def el(frm, to, faces):
+        return {"from": frm, "to": to, "faces": {f: {"texture": t} for f, t in faces.items()}}
+    side = {"east": "#barrel", "west": "#barrel", "up": "#barrel", "down": "#barrel"}
+    return {"parent": "minecraft:block/block", "textures": tex, "elements": [
+        el([3, 3, 0], [13, 13, 1], dict(side, north="#bore", south="#collar")),
+        el([4, 4, 1], [12, 12, 3], dict(side, south="#barrel")),
+        el([5, 2, 3], [11, 10, 5], {"north": "#barrel", "south": "#barrel", "east": "#barrel", "west": "#barrel", "up": "#barrel",
+                                   "down": "#bore"})]}
+
+
 def write_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes((json.dumps(data, indent=2) + "\n").encode("utf8"))
@@ -372,7 +388,15 @@ def main():
     write_json(ASSETS / "models/block/oil_press.json", press_model())
     for part in ("base", "crank", "axle"):
         write_json(ASSETS / f"models/block/oil_press_{part}.json", press_model(part))
-    write_json(ASSETS / "blockstates/oil_press.json", driven_states("oil_press", oil=True))
+    states = driven_states("oil_press", oil=True)
+    # where a Copper Pipe joins it, a port on the tray's rim (the user, 2026-10-31): drawn to the north, turned to each side
+    write_json(ASSETS / "models/block/oil_press_port.json", port_model())
+    for side, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+        part = {"when": {f"port_{side}": "true"}, "apply": {"model": "nookworks:block/oil_press_port"}}
+        if y:
+            part["apply"]["y"] = y
+        states["multipart"].append(part)
+    write_json(ASSETS / "blockstates/oil_press.json", states)
     for level in (1, 2):
         write_json(ASSETS / f"models/block/oil_press_oil_{level}.json", oil_surface(level))
     write_json(ASSETS / "items/oil_press.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/oil_press"}})

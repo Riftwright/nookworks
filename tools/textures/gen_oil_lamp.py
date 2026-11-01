@@ -139,9 +139,13 @@ def lamp_model(oil, lit):
         top = 1 + 0.45 * oil
         els.append(element([5, 1, 5], [11, top, 11], {"up": {"texture": "#oil", "uv": [5, 5, 11, 11]}}))
     # the wick: from the middle, resting on the south rim and out over it
-    # pixel for pixel: the last 5.6 rows of the pith, its charred end at the lit tip over the rim
+    # pixel for pixel: the last 5.6 rows of the pith, its charred end at the lit tip over the rim. It lies above the
+    # oil (and the bare floor of an empty dish) and its inner end is in the open, so its underside and that end are
+    # drawn too
     wick = {"texture": "#wick", "uv": [7, 10.4, 8, 16]}
-    els.append(element([7.5, 2.8, 7], [8.5, 3.3, 12.6], {"up": dict(wick), "east": {"texture": "#wick", "uv": [0, 0, 5.6, 0.5]},
+    els.append(element([7.5, 2.8, 7], [8.5, 3.3, 12.6], {"up": dict(wick), "down": dict(wick),
+                                                         "north": {"texture": "#wick", "uv": [7, 10.4, 8, 10.9]},
+                                                         "east": {"texture": "#wick", "uv": [0, 0, 5.6, 0.5]},
                                                          "west": {"texture": "#wick", "uv": [0, 0, 5.6, 0.5]},
                                                          "south": {"texture": "#wick", "uv": [7, 15, 8, 15.5]}}))
     if lit:

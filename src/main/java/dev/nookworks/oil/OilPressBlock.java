@@ -9,6 +9,7 @@ import dev.nookworks.block.MachineBlock;
 import dev.nookworks.machine.Drive;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.fluid.PipePorts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,6 +46,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
  * See {@link OilPressBlockEntity}. Right-click with seeds to load it, with a glass bottle or a bucket to pour oil off,
@@ -55,25 +57,42 @@ public class OilPressBlock extends MachineBlock {
     /** How much oil stands in the tray, for the model: none, some (under half the tank), plenty. */
     public static final IntegerProperty OIL =
             IntegerProperty.create("oil", 0, 2);
+    /**
+     * A Copper Pipe joined on that side, for the model: a copper port drawn on the tray's rim where the pipe meets it,
+     * so the pipe no longer ends in the air beside the thin frame (the user, 2026-10-31: 「とりあえずそれでやってみて」).
+     * By world side, not turned with the press.
+     */
+    public static final Map<Direction, BooleanProperty> PORTS = Map.of(Direction.NORTH, PipePorts.PORTS.get(Direction.NORTH),
+            Direction.EAST, PipePorts.PORTS.get(Direction.EAST), Direction.SOUTH, PipePorts.PORTS.get(Direction.SOUTH),
+            Direction.WEST, PipePorts.PORTS.get(Direction.WEST));
     // the tray, and the frame over it with its beam across x - facing north as the model is drawn; turned with it
     private static final Map<Direction, VoxelShape> SHAPES =
             Shapes.rotateHorizontal(Shapes.or(Block.box(1, 0, 1, 15, 4, 15), Block.box(2, 4, 6, 14, 16, 10)));
 
     public OilPressBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-                .setValue(Drive.PROPERTY, Drive.NONE).setValue(OIL, 0));
+        BlockState state = this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(Drive.PROPERTY, Drive.NONE).setValue(OIL, 0);
+        for (BooleanProperty port : PORTS.values()) {
+            state = state.setValue(port, false);
+        }
+        this.registerDefaultState(state);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, Drive.PROPERTY, OIL);
+        PORTS.values().forEach(builder::add);
+    }
+
+    /** {@code state} with a port on each side a Copper Pipe beside it is joined to it. */
+    public static BlockState withPorts(BlockState state, LevelReader level, BlockPos pos) {
+        return PipePorts.withPorts(state, level, pos);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
-                .setValue(Drive.PROPERTY, Drive.at(context.getLevel(), context.getClickedPos()));
+        return withPorts(this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+                .setValue(Drive.PROPERTY, Drive.at(context.getLevel(), context.getClickedPos())), context.getLevel(), context.getClickedPos());
     }
 
     /** A Motor set beside it or taken away: the crank comes off for an axle to the motor, or goes back on. */
@@ -81,17 +100,17 @@ public class OilPressBlock extends MachineBlock {
     protected BlockState updateShape(BlockState state, LevelReader level,
             ScheduledTickAccess ticks, BlockPos pos, Direction side, BlockPos neighbourPos,
             BlockState neighbourState, RandomSource random) {
-        return state.setValue(Drive.PROPERTY, Drive.at(level, pos));
+        return withPorts(state.setValue(Drive.PROPERTY, Drive.at(level, pos)), level, pos);
     }
 
     @Override
     protected BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+        return PipePorts.rotate(state, rotation).setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        return PipePorts.mirror(state, mirror).setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
     @Override

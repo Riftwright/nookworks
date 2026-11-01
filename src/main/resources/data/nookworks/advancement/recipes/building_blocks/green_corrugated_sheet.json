@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "recycling"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:green_corrugated_sheet"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

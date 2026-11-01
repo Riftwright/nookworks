@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:rice_bale",
+        "nookworks:brown_rice"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

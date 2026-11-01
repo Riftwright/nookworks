@@ -248,7 +248,9 @@ def planks_of(wood):
 # joined on that side and the leg there has gone. Turned in the blockstate for the other corners and sides.
 DESK_PARTS = {"top": "top", "leg": "leg_nw", "rail": "apron_north"}
 # how far the north rail runs on past a leg that is not there, as (part, from x, to x)
-DESK_RAIL_ENDS = (("rail_east", 12, 16), ("rail_west", 0, 4))
+# (part, x from, x to, its outer end): the rail run on to the corner, its outer end there kept (a desk joined on that
+# side has no leg at the corner to hide it)
+DESK_RAIL_ENDS = (("rail_east", 12, 16, "east"), ("rail_west", 0, 4, "west"))
 # (y turn, its side, the side clockwise of it, the side anticlockwise) for the north-west leg and the north rail
 DESK_TURNS = ((0, "north", "east", "west"), (90, "east", "south", "north"), (180, "south", "west", "east"),
               (270, "west", "north", "south"))
@@ -259,11 +261,14 @@ def desk_part_templates():
     whole = json.loads((ASSETS / "models/block/template_desk.json").read_text(encoding="utf-8"))
     elements = {e["name"]: e for e in whole["elements"]}
     parts = {part: [elements[name]] for part, name in DESK_PARTS.items()}
-    for part, x0, x1 in DESK_RAIL_ENDS:
+    for part, x0, x1, outer in DESK_RAIL_ENDS:
         end = json.loads(json.dumps(elements["apron_north"]))
         end["name"] = part
         end["from"][0], end["to"][0] = x0, x1
-        end["faces"] = {k: v for k, v in end["faces"].items() if k not in ("east", "west")}  # it meets the next desk's
+        # its inner end butts on the middle rail's end; the outer one meets the next desk's rail, or is seen at the
+        # corner where no leg stands
+        inner = "west" if outer == "east" else "east"
+        end["faces"] = {k: v for k, v in end["faces"].items() if k != inner}
         parts[part] = [end]
     for part, elems in parts.items():
         write(ASSETS / f"models/block/template_desk_{part}.json",

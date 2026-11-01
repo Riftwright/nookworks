@@ -167,6 +167,13 @@ public final class InfoPages {
         info(page, ModVentilation.RANGE_HOOD_ITEM.get(), "range_hood");
         info(page, ModVentilation.DUCT_ITEM.get(), "duct", on, "barter_terminal");
         info(page, ModVentilation.CHIMNEY_ITEM.get(), "chimney");
+        info(page, ModVentilation.STONE_BRICK_CHIMNEY_ITEM.get(), "chimney");
+        info(page, ModVentilation.NETHER_BRICK_CHIMNEY_ITEM.get(), "chimney");
+        info(page, ModVentilation.COBBLESTONE_CHIMNEY_ITEM.get(), "chimney");
+        info(page, ModVentilation.BRICK_FLUE_ITEM.get(), "flue");
+        info(page, ModVentilation.STONE_BRICK_FLUE_ITEM.get(), "flue");
+        info(page, ModVentilation.NETHER_BRICK_FLUE_ITEM.get(), "flue");
+        info(page, ModVentilation.COBBLESTONE_FLUE_ITEM.get(), "flue");
         info(page, ModItems.IRON_STORAGE_UPGRADE.get(), "storage_upgrade");
         info(page, ModItems.GOLD_STORAGE_UPGRADE.get(), "storage_upgrade");
         info(page, ModItems.DIAMOND_STORAGE_UPGRADE.get(), "storage_upgrade");
@@ -182,6 +189,7 @@ public final class InfoPages {
         info(page, ModItems.COPPER_TANK.get(), "copper_tank");
         info(page, ModItems.OIL_LAMP.get(), "oil_lamp");
         info(page, ModItems.BOOKEND.get(), "bookend");
+        info(page, ModItems.STANDING_MIRROR.get(), "standing_mirror");
         // books are laid down sneaking, which nothing in the game says (the bottles have their page): the r18 review
         info(page, Items.BOOK, "placed_book");
         info(page, Items.ENCHANTED_BOOK, "placed_book");
@@ -211,6 +219,10 @@ public final class InfoPages {
         info(page, ModItems.BRASS_MESH.get(), "brass_mesh");
         info(page, ModItems.LODE_PEARL.get(), "lode_pearl");
         info(page, ModItems.DARK_MATTER.get(), "dark_matter");
+        info(page, ModItems.WARP_ANCHOR.get(), "warp_anchor");
+        info(page, ModKitchen.PLATE_ITEM.get(), "plate");
+        info(page, ModItems.WINE_GLASS.get(), "tableware");
+        info(page, ModItems.MUG.get(), "tableware");
         info(page, ModTravel.DAEMON_DOOR_ITEM.get(), "daemon_door");
         info(page, ModTravel.DAEMON_PANEL_ITEM.get(), "daemon_door");
         info(page, ModTravel.IF_MIRROR_ITEM.get(), "if_mirror");

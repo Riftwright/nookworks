@@ -24,6 +24,10 @@ public final class NookworksClientConfig {
     public static final ModConfigSpec.EnumValue<SortOrder> CHEST_SORT_ORDER = BUILDER
             .comment("The order that button sorts in; the button beside it changes it.")
             .translation(key("chestSortOrder")).defineEnum("chestSortOrder", SortOrder.ID, SortOrder.ID, SortOrder.COUNT, SortOrder.MOD);
+    public static final ModConfigSpec.BooleanValue CHEST_SORT_REVERSED = BUILDER
+            .comment("Sort the chests in that order turned round: fewest first, the game's order from its end, the mods Z-A.",
+                    "The button between the order's and Sort switches it; choosing another order puts it back.")
+            .translation(key("chestSortReversed")).define("chestSortReversed", false);
     public static final ModConfigSpec.BooleanValue ENGLISH_SEARCH = BUILDER
             .comment("With JEI installed and the game in a language other than English, JEI's search finds items by their English names",
                     "too (\"sword\" finds every sword), and its item list shows the English name under \"Search Aliases\".")

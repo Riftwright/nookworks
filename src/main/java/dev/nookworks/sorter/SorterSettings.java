@@ -13,7 +13,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  * but entries of their own ({@link SorterTags}), each for the one tag or mod the player picked.
  */
 public final class SorterSettings {
-    public static final int COUNT = 3;
+    public static final int COUNT = 4;
     public static final int BLACKLIST = 0;
     /**
      * The Tags switch of 0.2.0, which made every entry stand for all of its tags at once (an iron ingot caught diamonds,
@@ -21,6 +21,11 @@ public final class SorterSettings {
      */
     public static final int MATCH_TAGS = 1;
     public static final int MATCH_COMPONENTS = 2;
+    /**
+     * The Keep Out row turned round, on both sorters: what is in it is all that is drawn in, everything else kept out
+     * (the user, 2026-10-31: 「ホワイトリストとブラックリストの切り替え」). Switched by a click on the row's sign.
+     */
+    public static final int KEEP_OUT_OTHERS = 3;
 
     private final boolean[] flags = new boolean[COUNT];
 
@@ -78,13 +83,19 @@ public final class SorterSettings {
 
     public void save(ValueOutput output) {
         for (int i = 0; i < COUNT; i++) {
-            output.putBoolean("Flag" + i, this.flags[i]);
+            // the Keep Out row turned round only when it is, by a key of its own (new keys are snake_case): a sorter
+            // that never was saves as it did before
+            if (i != KEEP_OUT_OTHERS) {
+                output.putBoolean("Flag" + i, this.flags[i]);
+            } else if (this.flags[i]) {
+                output.putBoolean("keep_out_others", true);
+            }
         }
     }
 
     public void load(ValueInput input) {
         for (int i = 0; i < COUNT; i++) {
-            this.flags[i] = input.getBooleanOr("Flag" + i, false);
+            this.flags[i] = i == KEEP_OUT_OTHERS ? input.getBooleanOr("keep_out_others", false) : input.getBooleanOr("Flag" + i, false);
         }
     }
 }

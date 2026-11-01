@@ -1,5 +1,7 @@
 package dev.nookworks.registry;
 
+import dev.nookworks.cooking.PlateBlockEntity;
+import dev.nookworks.anchor.WarpAnchorBlockEntity;
 import dev.nookworks.block.entity.DiceBlockEntity;
 import java.util.function.Supplier;
 
@@ -160,10 +162,14 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<dev.nookworks.decor.BookendBlockEntity>> BOOKEND = BLOCK_ENTITY_TYPES.register(
             "bookend", () -> new BlockEntityType<>(dev.nookworks.decor.BookendBlockEntity::new, ModBlocks.BOOKEND.get(),
                     ModBlocks.BOOK_ROW.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.decor.StandingMirrorBlockEntity>> STANDING_MIRROR = BLOCK_ENTITY_TYPES.register(
+            "standing_mirror", () -> new BlockEntityType<>(dev.nookworks.decor.StandingMirrorBlockEntity::new, ModBlocks.STANDING_MIRROR.get()));
     public static final Supplier<BlockEntityType<PlacedBottlesBlockEntity>> PLACED_BOTTLES = BLOCK_ENTITY_TYPES.register(
             "placed_bottles", () -> new BlockEntityType<>(PlacedBottlesBlockEntity::new, ModBlocks.PLACED_BOTTLES.get()));
     public static final Supplier<BlockEntityType<TrayBlockEntity>> TRAY = BLOCK_ENTITY_TYPES.register(
             "wooden_tray", () -> new BlockEntityType<>(TrayBlockEntity::new, ModKitchen.WOODEN_TRAY.get()));
+    public static final Supplier<BlockEntityType<PlateBlockEntity>> PLATE = BLOCK_ENTITY_TYPES.register(
+            "plate", () -> new BlockEntityType<>(PlateBlockEntity::new, ModKitchen.PLATE.get()));
     public static final Supplier<BlockEntityType<OilPressBlockEntity>> OIL_PRESS = BLOCK_ENTITY_TYPES.register("oil_press",
             () -> new BlockEntityType<>(OilPressBlockEntity::new, ModOil.OIL_PRESS.get()));
     public static final Supplier<BlockEntityType<MotorBlockEntity>> MOTOR = BLOCK_ENTITY_TYPES.register("motor",
@@ -191,6 +197,9 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<DarkMatterBlockEntity>> DARK_MATTER =
             BLOCK_ENTITY_TYPES.register("dark_matter",
                     () -> new BlockEntityType<>(DarkMatterBlockEntity::new, ModBlocks.DARK_MATTER.get()));
+    public static final Supplier<BlockEntityType<WarpAnchorBlockEntity>> WARP_ANCHOR =
+            BLOCK_ENTITY_TYPES.register("warp_anchor",
+                    () -> new BlockEntityType<>(WarpAnchorBlockEntity::new, ModBlocks.WARP_ANCHOR.get()));
     public static final Supplier<BlockEntityType<TrashCanBlockEntity>> TRASH_CAN =
             BLOCK_ENTITY_TYPES.register("trash_can",
                     () -> new BlockEntityType<>(TrashCanBlockEntity::new, ModBlocks.TRASH_CAN.get()));

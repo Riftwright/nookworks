@@ -36,7 +36,8 @@
     "client.CreateWorldScreenMixin",
     "client.CreateWorldMoreTabMixin",
     "client.EnchantmentScreenMixin",
-    "client.AbstractContainerScreenMixin"
+    "client.AbstractContainerScreenMixin",
+    "client.ClientLevelMirrorMixin"
   ],
   "injectors": {
     "defaultRequire": 0

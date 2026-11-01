@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import dev.nookworks.machine.Electrolysis;
 import dev.nookworks.registry.ModItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -30,7 +31,7 @@ public class ElectrolysisCategory extends AbstractRecipeCategory<ElectrolysisCat
     static List<Recipe> recipes() {
         List<Recipe> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(holder -> {
-            Electrolysis recipe = holder.getData(Electrolysis.DATA_MAP);
+            Electrolysis recipe = Features.enabled(holder.value()) ? Electrolysis.of(new ItemStack(holder)) : null;
             if (recipe != null) {
                 list.add(new Recipe(new ItemStack(holder), recipe));
             }

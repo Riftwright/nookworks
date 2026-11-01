@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import dev.nookworks.fluid.PipePorts;
 
 /** Mercury Tank: 16 buckets of mercury in an iron flask. Keeps its contents when broken. */
 public class MercuryTankBlockEntity extends BlockEntity implements MercuryHandler, Readout, DrawRights.Owned {
@@ -55,6 +56,7 @@ public class MercuryTankBlockEntity extends BlockEntity implements MercuryHandle
     public void onLoad() {
         super.onLoad();
         SightGlass.showOnLoad(this, this.store::amount, CAPACITY);
+        PipePorts.showOnLoad(this);
     }
 
     public MercuryStore store() {

@@ -19,6 +19,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 /**
  * Electrolytic Cell: a current through water, and what it carries does the work ({@link Electrolysis}).
@@ -153,6 +155,14 @@ public class ElectrolyticCellBlockEntity extends MercuryMachineBlockEntity imple
     @Override
     public MachineLayout layout() {
         return MachineLayout.ELECTROLYTIC_CELL;
+    }
+
+    @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.water;
+            default -> null;
+        };
     }
 
     @Override

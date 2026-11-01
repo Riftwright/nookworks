@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "if_world"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:if_mirror",
+        "nookworks:mercury_bucket"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

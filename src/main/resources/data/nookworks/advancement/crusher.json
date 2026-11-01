@@ -1,4 +1,20 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crusher"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "crusher": {
       "trigger": "minecraft:inventory_changed",

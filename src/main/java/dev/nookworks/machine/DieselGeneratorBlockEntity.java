@@ -199,6 +199,14 @@ public class DieselGeneratorBlockEntity extends MachineBlockEntity implements Ma
     }
 
     @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.fuelTank;
+            default -> null;
+        };
+    }
+
+    @Override
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.BIODIESEL, this.fuelStored(), FUEL_TANK));
     }

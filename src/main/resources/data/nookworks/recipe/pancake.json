@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:pancake",
+        "nookworks:pancake_batter"
+      ]
     }
   ],
   "type": "minecraft:smelting",

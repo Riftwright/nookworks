@@ -1,12 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "magnets"
-    },
-    {
-      "type": "nookworks:feature",
-      "feature": "liquid_experience"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:absorption_pad",
+        "nookworks:magnet"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

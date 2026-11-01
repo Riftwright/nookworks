@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "sorting"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:precision_sorter",
+        "nookworks:item_sorter"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

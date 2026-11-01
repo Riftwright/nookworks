@@ -12,6 +12,7 @@ import java.util.Map;
 import dev.nookworks.Nookworks;
 import dev.nookworks.machine.CrushingRecipe;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.oil.PressingRecipe;
 import dev.nookworks.recycling.CompressorBlockEntity;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.recycling.RecyclerBlock;
@@ -54,6 +55,7 @@ final class RecyclingTests {
     static final TagKey<Item> RECYCLABLE = TagKey.create(Registries.ITEM, Nookworks.id("recyclable"));
     static final TagKey<Item> COMPRESSIBLE = TagKey.create(Registries.ITEM, Nookworks.id("compressible"));
     static final TagKey<Item> SIFTABLE = TagKey.create(Registries.ITEM, Nookworks.id("siftable"));
+    static final TagKey<Item> PRESSABLE = TagKey.create(Registries.ITEM, Nookworks.id("pressable"));
 
     /** The tests that try the recycling part, passed over when a pack switches it off. */
     static final String[] NEED_RECYCLING = {"compressor_packs_nine_into_one", "compressor_waits_for_nine",
@@ -577,7 +579,8 @@ final class RecyclingTests {
 
     /**
      * The tags to sort by match the machines: #nookworks:crushable is what the Crusher takes, #nookworks:recyclable
-     * what the Recycler takes - and a Precision Sorter offers them, however big.
+     * what the Recycler takes, #nookworks:pressable what the Oil Press takes (the user, 2026-10-31: to sort seeds off
+     * to a press) - and a Precision Sorter offers them, however big.
      */
     static void sortingTagsMatch(GameTestHelper helper) {
         List<String> wrong = new ArrayList<>();
@@ -590,9 +593,12 @@ final class RecyclingTests {
             if (stack.is(RECYCLABLE) != (RecyclingRecipe.of(stack) != null)) {
                 wrong.add("recyclable " + id);
             }
+            if (stack.is(PRESSABLE) != (PressingRecipe.of(stack) != null)) {
+                wrong.add("pressable " + id);
+            }
         }
         check(helper, wrong.isEmpty(), "the sorting tags should match the machines; wrong for " + wrong);
-        for (TagKey<Item> tag : List.of(CRUSHABLE, RECYCLABLE, COMPRESSIBLE, SIFTABLE)) {
+        for (TagKey<Item> tag : List.of(CRUSHABLE, RECYCLABLE, COMPRESSIBLE, SIFTABLE, PRESSABLE)) {
             check(helper, SorterTags.sortable(tag), tag.location() + " should be offered to sort by (it holds " + SorterTags.size(tag) + ")");
             check(helper, SorterTags.choices(new ItemStack(BuiltInRegistries.ITEM.get(tag).orElseThrow().get(0).value())).contains(tag),
                     "and among its first item's tags");

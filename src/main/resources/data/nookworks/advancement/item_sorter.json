@@ -1,8 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "sorting"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:item_sorter",
+        "nookworks:precision_sorter"
+      ],
+      "any": true
     }
   ],
   "criteria": {

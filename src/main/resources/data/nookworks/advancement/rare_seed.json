@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "seed": {
       "trigger": "minecraft:inventory_changed",

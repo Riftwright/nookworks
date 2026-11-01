@@ -11,10 +11,14 @@ Run from the repo root:  python tools/textures/gen_experience.py
 """
 import json
 import math
+import sys
 import random
 from pathlib import Path
 
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import gen_pipe_ports  # noqa: E402
 
 import itemkit
 import texkit
@@ -220,6 +224,13 @@ def ring_along_z(z0, z1):
         "up": face([4, 6, 12, 8], texture="#collar"), "down": face([4, 6, 12, 8], texture="#collar")})
 
 
+def end_collar(z0, z1, end):
+    """The collar at an open end of the item's run, closed across that end over the glass and the liquid."""
+    ring = ring_along_z(z0, z1)
+    ring["faces"][end] = face([4, 4, 11, 11], texture="#collar")
+    return ring
+
+
 def glass_model(elements, particle="nookworks:block/experience_pipe"):
     return {"parent": "minecraft:block/block", "render_type": "minecraft:translucent",
             "textures": {"particle": particle, "glass": "nookworks:block/experience_pipe", "liquid": LIQUID,
@@ -257,8 +268,9 @@ def pipe_models():
     # the item: a straight run, north to south
     yield "experience_pipe_inventory", glass_model([
         run_glass(0, 16),
-        liquid([6, 6, 0], [10, 10, 16], ("east", "west", "up", "down", "north", "south")),
-        ring_along_z(0, 2), ring_along_z(14, 16)])
+        # the ends are the collars' faces: the liquid's own ends would lie in the same planes and flicker under them
+        liquid([6, 6, 0], [10, 10, 16], ("east", "west", "up", "down")),
+        end_collar(0, 2, "north"), end_collar(14, 16, "south")])
 
 
 def pad_models():
@@ -266,10 +278,14 @@ def pad_models():
     short upright length of glass standing in a flanged foot, so the pipe meets the pad instead of hanging in
     the air beside it."""
     side = [
-        box([5, 2, 0], [11, 11, 6], {"east": face([0, 0, 6, 9]), "west": face([0, 0, 6, 9]),
-                                     "south": face([0, 0, 6, 9]), "up": face([0, 0, 6, 6])}),
-        liquid([6, 2, 0], [10, 10, 5], ("east", "west", "south", "up")),
+        # the north end shows between the collar and the foot, so the glass, the liquid and the foot are closed
+        # there too; the liquid starts a pixel in, so its end is not drawn on the glass's own plane
+        box([5, 2, 0], [11, 11, 6], {"north": face([0, 0, 6, 9]), "east": face([0, 0, 6, 9]),
+                                     "west": face([0, 0, 6, 9]), "south": face([0, 0, 6, 9]),
+                                     "up": face([0, 0, 6, 6])}),
+        liquid([6, 2, 1], [10, 10, 5], ("north", "east", "west", "south", "up")),
         box([4, 1, 0], [12, 2, 7], {
+            "north": face([4, 6, 12, 7], texture="#collar"),
             "up": face([4, 4, 12, 11], texture="#collar"), "south": face([4, 6, 12, 7], texture="#collar"),
             "east": face([4, 6, 11, 7], texture="#collar"), "west": face([4, 6, 11, 7], texture="#collar")}),
         ring_along_z(0, 2),
@@ -281,8 +297,10 @@ def pad_models():
         liquid([6, 2, 6], [10, 16, 10], sides),
         box([4, 1, 4], [12, 2, 12], {**{d: face([4, 6, 12, 7], texture="#collar") for d in sides},
                                      "up": face([4, 4, 12, 12], texture="#collar")}),
-        box([4, 14, 4], [12, 16, 12], {**{d: face([4, 6, 12, 8], texture="#collar") for d in sides},
-                                       "down": face([4, 4, 12, 12], texture="#collar")}),
+        # the top collar is the pipe's own collar width (7 px), so it runs on into the arm of the pipe above with
+        # no ledge left open between them
+        box([4.5, 14, 4.5], [11.5, 16, 11.5], {**{d: face([4.5, 6, 11.5, 8], texture="#collar") for d in sides},
+                                               "down": face([4.5, 4.5, 11.5, 11.5], texture="#collar")}),
     ]
     yield "absorption_pad_riser_up", glass_model(up, "nookworks:block/absorption_pad")
 
@@ -360,7 +378,7 @@ def write_models():
             tap = "experience_tank_tap" + ("_open" if is_open == "true" else "")
             tank.append({"when": {"facing": side, "open": is_open},
                          "apply": {"model": f"nookworks:block/{tap}", **ROTATIONS[side]}})
-    write_json(STATES / "experience_tank.json", {"multipart": tank})
+    write_json(STATES / "experience_tank.json", gen_pipe_ports.with_ports("experience_tank", {"multipart": tank}))
     write_json(ITEMS / "experience_pipe.json",
                {"model": {"type": "minecraft:model", "model": "nookworks:block/experience_pipe_inventory"}})
     write_json(ITEMS / "experience_tank.json", {"model": {"type": "minecraft:composite", "models": [

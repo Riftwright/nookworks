@@ -1,8 +1,19 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:vegetable_oil_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:tonkatsu"
+      ],
+      "any": true
     }
   ],
   "criteria": {

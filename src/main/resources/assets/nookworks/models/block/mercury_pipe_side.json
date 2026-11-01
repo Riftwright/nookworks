@@ -3,7 +3,8 @@
   "textures": {
     "particle": "nookworks:block/mercury_pipe",
     "barrel": "nookworks:block/mercury_pipe",
-    "collar": "nookworks:block/mercury_pipe_collar"
+    "collar": "nookworks:block/mercury_pipe_collar",
+    "bore": "nookworks:block/mercury_pipe_end"
   },
   "elements": [
     {
@@ -72,6 +73,15 @@
         2
       ],
       "faces": {
+        "north": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
         "east": {
           "texture": "#collar",
           "uv": [
@@ -81,6 +91,15 @@
             8
           ],
           "rotation": 90
+        },
+        "south": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
         },
         "west": {
           "texture": "#collar",

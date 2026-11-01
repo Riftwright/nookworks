@@ -6,6 +6,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
+import dev.nookworks.registry.ModOil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,9 +31,10 @@ public record PressingRecipe(int oil, int turns, float cake) {
     public static final DataMapType<Item, PressingRecipe> DATA_MAP =
             DataMapType.builder(Nookworks.id("pressing"), Registries.ITEM, CODEC).synced(CODEC, false).build();
 
-    /** The recipe for this item, or null when it gives no oil. */
+    /** The recipe for this item, or null when it gives no oil, or the oil cannot be had ({@link Features}). */
     public static @Nullable PressingRecipe of(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        PressingRecipe recipe = stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        return recipe != null && Features.enabled(ModOil.VEGETABLE_OIL_BUCKET.get()) ? recipe : null;
     }
 
     @EventBusSubscriber(modid = Nookworks.MODID)

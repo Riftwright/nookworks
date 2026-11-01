@@ -44,8 +44,50 @@ final class EndSeedTests {
     static void register() {
         test("end_seed_sifts_from_end_gravel_alone", EndSeedTests::siftedFromEndGravel);
         test("end_seed_draws_by_weight", EndSeedTests::drawsByWeight);
+        test("end_seed_takes_other_mods_flowers_as_the_setting_says", EndSeedTests::modFlowers);
         test("end_sprout_opens_into_what_it_draws", EndSeedTests::opensIntoWhatItDraws);
         test("end_sprout_outline_is_as_tall_as_drawn", EndSeedTests::outlineAsDrawn);
+    }
+
+    /**
+     * Other mods' flowers join the draw (the user, 2026-10-31): never one of Minecraft's or ours (the data map has those),
+     * and none with the setting off.
+     */
+    private static void modFlowers(GameTestHelper helper) {
+        var flowers = dev.nookworks.crop.EndSeedPlant.modFlowers();
+        check(helper, flowers.stream().noneMatch(block -> {
+            String mod = block.builtInRegistryHolder().key().identifier().getNamespace();
+            return mod.equals("minecraft") || mod.equals(dev.nookworks.Nookworks.MODID);
+        }), "only other mods' flowers: " + flowers);
+        var setting = dev.nookworks.NookworksConfig.END_SEED_MOD_FLOWERS;
+        boolean was = setting.get();
+        setting.set(false);
+        try {
+            check(helper, dev.nookworks.crop.EndSeedPlant.modFlowers().isEmpty(), "with the setting off, none");
+        } finally {
+            setting.set(was);
+        }
+        // a pack's flowers as the tags would list them (r19: the test above passes with none at all): another mod's go in,
+        // once each though in both tags, a mod left out does not, nor ours or Minecraft's
+        var tagged = List.<Map.Entry<String, Block>>of(
+                Map.entry("othermod", Blocks.SHORT_GRASS), Map.entry("othermod", Blocks.SHORT_GRASS),
+                Map.entry("othermod", Blocks.TALL_GRASS), Map.entry("leftmod", Blocks.DEAD_BUSH),
+                Map.entry("minecraft", Blocks.DANDELION), Map.entry(dev.nookworks.Nookworks.MODID, Blocks.POPPY));
+        var picked = EndSeedPlant.modFlowers(tagged, List.of("leftmod"));
+        check(helper, picked.equals(List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS)), "another mod's flowers, once each, none left out: " + picked);
+        // in the draw: a small one weighed as a small flower, a tall one only with room above for its top
+        BlockPos at = new BlockPos(1, 1, 1);
+        BlockPos above = at.above();
+        var level = helper.getLevel();
+        helper.setBlock(above.above(), Blocks.STONE);
+        var cramped = EndSeedPlant.fitting(level, helper.absolutePos(above), picked);
+        check(helper, cramped.stream().anyMatch(e -> e.state().is(Blocks.SHORT_GRASS) && e.weight() == EndSeedPlant.SMALL_FLOWER_WEIGHT)
+                && cramped.stream().noneMatch(e -> e.state().is(Blocks.TALL_GRASS)), "under a ceiling, the small one and not the tall: " + cramped);
+        helper.setBlock(above.above(), Blocks.AIR);
+        var roomy = EndSeedPlant.fitting(level, helper.absolutePos(above), picked);
+        check(helper, roomy.stream().anyMatch(e -> e.state().is(Blocks.TALL_GRASS) && e.weight() == EndSeedPlant.TALL_FLOWER_WEIGHT),
+                "with room, the tall one too, weighed as a tall flower: " + roomy);
+        helper.succeed();
     }
 
     /**

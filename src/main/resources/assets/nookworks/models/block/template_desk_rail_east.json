@@ -22,6 +22,9 @@
         "north": {
           "texture": "#planks"
         },
+        "east": {
+          "texture": "#planks"
+        },
         "south": {
           "texture": "#planks"
         },

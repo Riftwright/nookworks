@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import dev.nookworks.fluid.PipePorts;
 
 /**
  * Base for Nookworks machines: a few item slots (hopper/pipe accessible as a WorldlyContainer), an FE buffer,
@@ -70,6 +71,13 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
                 savePower(MachineBlockEntity.this);
             }
         };
+    }
+
+    /** A machine that shows its pipes' ports, loaded from a world saved before it did: set right ({@link PipePorts}). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        PipePorts.showOnLoad(this);
     }
 
     /**

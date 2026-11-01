@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "liquid_experience"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:repair_box",
+        "nookworks:experience_tank"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

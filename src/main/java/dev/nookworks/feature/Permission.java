@@ -32,6 +32,8 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 public final class Permission {
     /** Server thread only. */
     private static boolean asking;
+    /** Server thread only: the asking is {@link #mayTake}'s, whose a block is, not whether it may come down. */
+    private static boolean taking;
     private static final GameProfile ANONYMOUS = new GameProfile(UUID.fromString("6e6f6f6b-776f-726b-7300-6d6163686e65"), "[Nookworks]");
 
     /** Someone to ask as for a machine owned by {@code owner} (or by nobody we know). */
@@ -54,13 +56,41 @@ public final class Permission {
         if (!level.mayInteract(actor, pos)) {
             return false;
         }
+        return ask(level, pos, actor, false);
+    }
+
+    /** Posts the break event as a question, {@code take} if it is {@link #mayTake}'s: the flags as they were after. */
+    private static boolean ask(ServerLevel level, BlockPos pos, Player actor, boolean take) {
+        if (!level.mayInteract(actor, pos)) {
+            return false;
+        }
         BlockState state = level.getBlockState(pos);
+        boolean wasAsking = asking;
+        boolean wasTaking = taking;
         asking = true;
+        taking = take; // a question of another's asked inside this one is its own: a mayBreak in a mayTake is no taking
         try {
             return !NeoForge.EVENT_BUS.post(new BreakBlockEvent(level, pos, state, actor)).isCanceled();
         } finally {
-            asking = false;
+            asking = wasAsking;
+            taking = wasTaking;
         }
+    }
+
+    /**
+     * Whether {@code actor} may take from, or put into, the block at {@code pos} as one who could break it: asked as
+     * {@link #mayBreak} is, by the break event, for the claims to answer - but a block's own refusal to come down (a
+     * Storage Barrel too full to break, StorageBreakGuard) is no say in it: that barrel is still its owner's to take
+     * from (nookTechnology's find, 2026-11-01: next to another's block, it read as inside a claim). {@link DrawRights}
+     * asks this.
+     */
+    public static boolean mayTake(ServerLevel level, BlockPos pos, Player actor) {
+        return ask(level, pos, actor, true);
+    }
+
+    /** Whether the asking now ({@link #asking}) is {@link #mayTake}'s: whose a block is, not whether it may come down. */
+    public static boolean taking() {
+        return asking && taking;
     }
 
     /**

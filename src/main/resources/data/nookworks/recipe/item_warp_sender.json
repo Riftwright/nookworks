@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "warps"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:item_warp_sender"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

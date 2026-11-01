@@ -74,6 +74,24 @@ public class StorageMenu extends AbstractContainerMenu {
         }
     };
 
+    /** Whether Sort turns the order round: the barrel's own on the server, the last sent on the client. */
+    private final DataSlot reversed = new DataSlot() {
+        private int local;
+
+        @Override
+        public int get() {
+            return StorageMenu.this.barrel == null ? this.local : StorageMenu.this.barrel.sortReversed() ? 1 : 0;
+        }
+
+        @Override
+        public void set(int value) {
+            this.local = value;
+            if (StorageMenu.this.barrel != null) {
+                StorageMenu.this.barrel.setSortReversed(value != 0);
+            }
+        }
+    };
+
     /** Client side: the tier is sent by the server when the menu opens. */
     public static StorageMenu client(int containerId, Inventory playerInventory, FriendlyByteBuf data) {
         StorageTier tier = data.readEnum(StorageTier.class);
@@ -118,6 +136,7 @@ public class StorageMenu extends AbstractContainerMenu {
         this.addDataSlot(this.stored);
         this.addDataSlot(this.storedHigh);
         this.addDataSlot(this.order);
+        this.addDataSlot(this.reversed);
     }
 
     /** A number only the server can work out: from the barrel there, from the last sync on the client. */
@@ -202,9 +221,10 @@ public class StorageMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         switch (id) {
-            case BUTTON_SORT -> this.inventory.sort(this.sortOrder());
-            case BUTTON_ORDER_NEXT -> this.order.set(this.sortOrder().next().ordinal());
-            case BUTTON_ORDER_BACK -> this.order.set(this.sortOrder().previous().ordinal());
+            case BUTTON_SORT -> this.inventory.sort(this.sortOrder(), this.sortReversed());
+            case BUTTON_ORDER_NEXT -> this.setOrder(this.sortOrder().next());
+            case BUTTON_ORDER_BACK -> this.setOrder(this.sortOrder().previous());
+            case BUTTON_REVERSE -> this.reversed.set(this.sortReversed() ? 0 : 1);
             case BUTTON_GATHER -> this.gather(player);
             default -> this.scroll.set(Math.max(0, Math.min(this.maxScroll(), id)));
         }
@@ -218,6 +238,14 @@ public class StorageMenu extends AbstractContainerMenu {
     public static final int BUTTON_ORDER_BACK = -3;
     /** Shift and a double-click on a barrel slot: every stack of that kind in the barrel goes to the player's inventory. */
     public static final int BUTTON_GATHER = -4;
+    /** The button between the order's and Sort: the order turned round (ascending, descending), or back. */
+    public static final int BUTTON_REVERSE = -5;
+
+    /** Another order, which runs its own way: turned round no more. */
+    private void setOrder(SortOrder order) {
+        this.order.set(order.ordinal());
+        this.reversed.set(0);
+    }
 
     /**
      * Vanilla's shift + double-click moves every stack of a kind from one inventory to the other, but passes over a slot
@@ -258,6 +286,11 @@ public class StorageMenu extends AbstractContainerMenu {
     /** How Sort orders this barrel. */
     public SortOrder sortOrder() {
         return SortOrder.byOrdinal(this.order.get());
+    }
+
+    /** Whether Sort turns that order round. */
+    public boolean sortReversed() {
+        return this.reversed.get() != 0;
     }
 
     /**

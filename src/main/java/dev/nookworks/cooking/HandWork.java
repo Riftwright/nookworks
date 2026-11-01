@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -40,9 +41,10 @@ public record HandWork(Holder<Item> result, int count, int turns) {
         return new ItemStack(this.result, Math.min(this.count, new ItemStack(this.result).getMaxStackSize()));
     }
 
-    /** What {@code type} makes of {@code stack}, or null for nothing. */
+    /** What {@code type} makes of {@code stack}, or null for nothing: nothing that cannot be had ({@link Features}). */
     public static @Nullable HandWork of(DataMapType<Item, HandWork> type, ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(type);
+        HandWork work = stack.isEmpty() ? null : stack.typeHolder().getData(type);
+        return work != null && Features.enabled(work.result().value()) ? work : null;
     }
 
     @EventBusSubscriber(modid = Nookworks.MODID)

@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -31,9 +32,10 @@ public record PicklingRecipe(Holder<Item> result, int time) {
     public static final DataMapType<Item, PicklingRecipe> DATA_MAP =
             DataMapType.builder(Nookworks.id("pickling"), Registries.ITEM, CODEC).synced(CODEC, false).build();
 
-    /** The recipe for this item, or null when it does not pickle. */
+    /** The recipe for this item, or null when it does not pickle, or would make what cannot be had ({@link Features}). */
     public static @Nullable PicklingRecipe of(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        PicklingRecipe recipe = stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        return recipe != null && Features.enabled(recipe.result().value()) ? recipe : null;
     }
 
     @EventBusSubscriber(modid = Nookworks.MODID)

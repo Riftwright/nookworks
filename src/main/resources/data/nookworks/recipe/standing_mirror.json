@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:standing_mirror",
+        "nookworks:mercury_bucket"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": "nookworks:dawnwood_planks",
+    "G": "minecraft:glass_pane",
+    "M": "nookworks:mercury_bucket"
+  },
+  "pattern": [
+    "P P",
+    "PGP",
+    "PMP"
+  ],
+  "result": {
+    "id": "nookworks:standing_mirror"
+  }
+}

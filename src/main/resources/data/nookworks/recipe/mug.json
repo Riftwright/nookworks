@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": "minecraft:white_terracotta"
+  },
+  "pattern": [
+    "T T",
+    " T "
+  ],
+  "result": {
+    "id": "nookworks:mug",
+    "count": 4
+  }
+}

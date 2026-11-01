@@ -103,6 +103,16 @@
     "nookworks:green_corrugated_sheet",
     "nookworks:blue_corrugated_sheet",
     "nookworks:white_corrugated_sheet",
-    "nookworks:bookend"
+    "nookworks:bookend",
+    "nookworks:warp_anchor",
+    "nookworks:stone_brick_chimney",
+    "nookworks:nether_brick_chimney",
+    "nookworks:cobblestone_chimney",
+    "nookworks:brick_flue",
+    "nookworks:stone_brick_flue",
+    "nookworks:nether_brick_flue",
+    "nookworks:cobblestone_flue",
+    "nookworks:plate",
+    "nookworks:mug"
   ]
 }

@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:nukadoko",
+        "nookworks:rice_bran"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": "minecraft:white_terracotta"
+  },
+  "pattern": [
+    "TTT"
+  ],
+  "result": {
+    "id": "nookworks:plate",
+    "count": 6
+  }
+}

@@ -385,6 +385,63 @@
         "model": "nookworks:block/experience_tank_tap_open",
         "y": 270
       }
+    },
+    {
+      "when": {
+        "port_north": "true",
+        "facing": "east|south|west"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true",
+        "facing": "north|south|west"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true",
+        "facing": "north|east|west"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true",
+        "facing": "north|east|south"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "port_up": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "port_down": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "x": 90
+      }
     }
   ]
 }

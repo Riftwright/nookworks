@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:nether_brick_chimney"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "nookworks:blocks/nether_brick_chimney"
+}

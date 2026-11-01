@@ -1,8 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "magnets"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:advanced_magnet",
+        "nookworks:magnet"
+      ],
+      "any": true
     }
   ],
   "criteria": {

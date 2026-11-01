@@ -1,5 +1,8 @@
 package dev.nookworks.machine;
 
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import net.minecraft.world.Container;
@@ -48,6 +51,15 @@ public interface MachineInfo {
     }
 
     /** The tanks the screen shows, in the order its layout places them ({@link MachineLayout#tanks()}); at most four. */
+    /**
+     * The tank behind gauge {@code index} of {@link #guiTanks()}, whole, for a bucket or bottle clicked on the gauge
+     * ({@link GaugePouring}): in and out of any tank, the ones a pipe may not reach too. Null for the block's own fluid
+     * capability; a mercury gauge goes by the machine's mercury store instead.
+     */
+    default @Nullable ResourceHandler<FluidResource> gaugeTank(int index) {
+        return null;
+    }
+
     default List<GuiTank> guiTanks() {
         return List.of();
     }

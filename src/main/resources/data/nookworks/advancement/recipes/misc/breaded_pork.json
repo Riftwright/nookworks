@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:breaded_pork",
+        "nookworks:breadcrumbs"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

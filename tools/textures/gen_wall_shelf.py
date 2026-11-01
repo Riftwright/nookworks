@@ -42,9 +42,11 @@ def iron(frm, to, skip=()):
     return {"from": frm, "to": to, "faces": faces}
 
 
-def bracket(x):
-    """A bracket {@code x} to {@code x + 2} across: down the wall, and out under the board."""
-    return [iron([x, 6, 15], [x + 2, 13, 16], skip=("south", "up")),
+def bracket(x, on_wall=True):
+    """A bracket {@code x} to {@code x + 2} across: down the wall, and out under the board. On a wall its back is
+    against the wall and left out; the item's model (a shelf on its own, {@code on_wall} false) is seen from behind
+    too, so there the back is drawn."""
+    return [iron([x, 6, 15], [x + 2, 13, 16], skip=("south", "up") if on_wall else ("up",)),
             iron([x, 12, 6], [x + 2, 13, 15], skip=("up", "south"))]
 
 
@@ -63,7 +65,7 @@ def main():
         write(f"wall_shelf_bracket_{side}", {"parent": "minecraft:block/block", "ambientocclusion": False,
                                              "textures": {"iron": IRON, "particle": IRON}, "elements": bracket(x)})
     write("template_wall_shelf", {"parent": "minecraft:block/block", "textures": dict(planks, iron=IRON),
-                                  "elements": board() + bracket(12) + bracket(2)})
+                                  "elements": board() + bracket(12, False) + bracket(2, False)})
     print("wrote the wall shelf's models")
 
 

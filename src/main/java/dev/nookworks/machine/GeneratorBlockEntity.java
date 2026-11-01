@@ -227,6 +227,14 @@ public class GeneratorBlockEntity extends MachineBlockEntity implements MachineI
 
     /** The liquid fuel tank: oil or biodiesel, whichever is in it. */
     @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.fuelTank;
+            default -> null;
+        };
+    }
+
+    @Override
     public List<GuiTank> guiTanks() {
         var fluid = this.fuelTank.getResource(0).getFluid();
         GuiTank.Kind kind = this.fuelStored() <= 0 ? GuiTank.Kind.LIQUID_FUEL

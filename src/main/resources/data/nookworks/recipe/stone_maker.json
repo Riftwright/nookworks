@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "stone_maker"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:stone_maker",
+        "nookworks:machine_chassis"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

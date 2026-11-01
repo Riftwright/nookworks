@@ -6,6 +6,14 @@
         "type": "nookworks:feature",
         "feature": "kitchen"
       }
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:soap",
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:caustic_soda"
+      ]
     }
   ],
   "type": "minecraft:crafting_shapeless",

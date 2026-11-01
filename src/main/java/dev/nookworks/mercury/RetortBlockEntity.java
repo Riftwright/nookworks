@@ -446,6 +446,15 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     /** The experience it keeps, the water it boils and the mercury it frees. */
     @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.experienceHandler();
+            case 1 -> this.water;
+            default -> null;
+        };
+    }
+
+    @Override
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.EXPERIENCE, this.experienceStored(), EXPERIENCE_CAPACITY),
                 new GuiTank(GuiTank.Kind.WATER, this.waterStored(), WATER_TANK), this.mercuryTank());

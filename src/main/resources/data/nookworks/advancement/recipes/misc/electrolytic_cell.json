@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "electrolytic_cell"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:electrolytic_cell",
+        "nookworks:machine_chassis"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

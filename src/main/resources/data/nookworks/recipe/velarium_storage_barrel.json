@@ -1,12 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "storage"
-    },
-    {
-      "type": "nookworks:feature",
-      "feature": "velarium"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_storage_barrel",
+        "nookworks:netherite_storage_barrel",
+        "nookworks:velarium_block"
+      ]
     }
   ],
   "type": "minecraft:crafting_transmute",

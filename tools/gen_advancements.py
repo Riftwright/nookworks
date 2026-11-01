@@ -10,7 +10,11 @@ Velarium" came to ask for all ten pieces together.
 Run from the repo root:  python tools/gen_advancements.py
 """
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import part_graph  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src/main/resources/data/nookworks/advancement"
@@ -170,47 +174,59 @@ TREE = {
     "label": ("printing_press", "label", "task", {"label": has("label")}),
 }
 
-# The part of the mod each advancement is of (src/main/resources/nookworks/features.json): a pack that switches the part
-# off has these not loaded, with every advancement under them. A part's advancements hang from the root or from their
-# own part's, so switching one part off takes none of another's with it.
-FEATURE = {
-    "hammer": "hammers",
-    "storage": "storage", "storage_upgrade": "storage",
-    "magnet": "magnets",
-    "lode_pearl": "lode_pearl",
-    "dark_matter": "dark_matter",
-    "poster": "printing", "printing_press": "printing", "label": "printing",
-    "rice": "kitchen", "white_rice": "kitchen", "cooked_rice": "kitchen", "nukazuke": "kitchen", "tonkatsu": "kitchen",
-    "new_crops": "kitchen", "flour": "kitchen", "bread": "kitchen", "udon": "kitchen",
-    "item_sorter": "sorting", "sorter_gear": "sorting",
-    "experience": "liquid_experience", "repair_box": "liquid_experience",
-    "mob_bottle": "mob_bottle", "spawn_egg_brewer": "mob_bottle",
-    "spawner_controller": "spawner_control",
-    "daemon_door": "daemon_door",
-    "if_world": "if_world",
-    "barter_terminal": "barter_terminal",
-    "trading_counter": "trading_counter",
-    "compressor": "recycling", "recycler": "recycling",
-    # the parts of 2026-10-23; what hung from the Generator and the Electrolytic Cell hangs a step higher (machine_chassis,
-    # brass), so a pack switching those off keeps the rest of the tree
-    "generator": "generators", "diesel_generator": "generators",
-    "electric_furnace": "electric_furnace", "electrolytic_cell": "electrolytic_cell",
-    "velarium_nugget": "velarium", "velarium_ingot": "velarium", "tempered": "velarium", "velarium_gear": "velarium",
-    "too_hot": "velarium",
+# What an advancement asks for that is no item in hand stands for this item of ours: a deed done with it, a block of no
+# item, a place reached through it. Every other advancement stands for the items its criteria name.
+STANDS_FOR = {
+    "seat": CHAIRS,
+    "rice": ["brown_rice"],
+    "mob_bottle": ["mob_bottle"],
+    "wood_vinegar": ["wood_vinegar"],
+    "if_world": ["if_mirror"],
+    "too_hot": ["red_hot_velarium_ingot"],
 }
+
+
+def criterion_items(name, criteria):
+    """The items of ours an advancement stands for (any one of them will do)."""
+    if name in STANDS_FOR:
+        return [f"nookworks:{i}" for i in STANDS_FOR[name]]
+    found = []
+    for criterion in criteria.values():
+        conditions = criterion.get("conditions", {})
+        if criterion["trigger"] == "minecraft:inventory_changed":
+            for predicate in conditions["items"]:
+                items = predicate["items"]
+                for i in items if isinstance(items, list) else [items]:
+                    if i.startswith("#"):
+                        found += [m for m in part_graph.tag_members(i) or [] if m.startswith("nookworks:")]
+                    else:
+                        found.append(i)
+        elif criterion["trigger"] == "minecraft:placed_block" and conditions["location"]["type"] == "minecraft:match_block":
+            found.append(conditions["location"]["blocks"])
+        elif criterion["trigger"] == "minecraft:player_interacted_with_entity":
+            found.append(conditions["item"]["items"])
+        else:
+            raise ValueError(f"{name}: say in STANDS_FOR which item of ours its criterion {criterion['trigger']} stands for")
+    return found
+
+
+def conditions_of(name, can_go):
+    """An advancement's conditions: its parents', then its own - one of the items it stands for can be had - when all of
+    them can go (a part switched off takes the advancement, and every one under it, as nothing it stands for is had)."""
+    if name not in TREE:
+        return []  # the root, kept by hand: always there
+    parent, _, _, criteria = TREE[name]
+    found = conditions_of(parent, can_go)
+    items = [i for i in criterion_items(name, criteria) if i.startswith("nookworks:")]
+    if items and all(i in can_go for i in items):
+        own = {"type": "nookworks:available", "items": sorted(set(items)), "any": True}
+        if own not in found:
+            found.append(own)
+    return found
 
 
 # Shown in the tab only once had: a joke found by doing it
 HIDDEN = {"too_hot"}
-
-
-def features_of(name):
-    """The parts an advancement needs on: its own, and those of everything above it."""
-    if name not in TREE:
-        return []
-    parent = TREE[name][0]
-    own = [FEATURE[name]] if name in FEATURE else []
-    return [f for f in features_of(parent) if f not in own] + own
 
 
 def advancement(parent, icon, frame, criteria):
@@ -220,13 +236,14 @@ def advancement(parent, icon, frame, criteria):
 
 
 def main():
+    can_go = set(part_graph.can_go({"sources": part_graph.sources()}))
     written = 0
     for name, (parent, icon, frame, criteria) in TREE.items():
         data = advancement(parent, icon, frame, criteria)
         data.pop("_frame")
-        features = features_of(name)
-        if features:
-            data = {"neoforge:conditions": [{"type": "nookworks:feature", "feature": f} for f in features], **data}
+        conditions = conditions_of(name, can_go)
+        if conditions:
+            data = {"neoforge:conditions": conditions, **data}
         display = data["display"]
         display["title"] = {"translate": f"advancements.nookworks.{name}.title"}
         display["description"] = {"translate": f"advancements.nookworks.{name}.description"}

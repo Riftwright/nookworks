@@ -1,4 +1,27 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wood_vinegar"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "vinegar": {
       "trigger": "minecraft:impossible"

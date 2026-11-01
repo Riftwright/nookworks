@@ -134,6 +134,7 @@ public class CopperTankBlockEntity extends BlockEntity implements Readout, DrawR
     @Override
     public void onLoad() {
         super.onLoad();
+        PipePorts.showOnLoad(this);
         if (this.level instanceof ServerLevel server) {
             server.getServer().execute(this::show);
         }

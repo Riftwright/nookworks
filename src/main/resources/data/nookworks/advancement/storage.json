@@ -1,8 +1,15 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "storage"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diamond_storage_barrel",
+        "nookworks:gold_storage_barrel",
+        "nookworks:iron_storage_barrel",
+        "nookworks:netherite_storage_barrel",
+        "nookworks:velarium_storage_barrel"
+      ],
+      "any": true
     }
   ],
   "criteria": {

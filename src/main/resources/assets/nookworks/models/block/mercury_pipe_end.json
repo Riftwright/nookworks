@@ -38,6 +38,15 @@
           ],
           "rotation": 90
         },
+        "south": {
+          "texture": "#bore",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
         "west": {
           "texture": "#barrel",
           "uv": [

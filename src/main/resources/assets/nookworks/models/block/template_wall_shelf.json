@@ -96,6 +96,15 @@
             11
           ]
         },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            4,
+            4,
+            6,
+            11
+          ]
+        },
         "east": {
           "texture": "#iron",
           "uv": [
@@ -189,6 +198,15 @@
       ],
       "faces": {
         "north": {
+          "texture": "#iron",
+          "uv": [
+            4,
+            4,
+            6,
+            11
+          ]
+        },
+        "south": {
           "texture": "#iron",
           "uv": [
             4,

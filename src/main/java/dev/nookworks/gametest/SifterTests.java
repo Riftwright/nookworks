@@ -284,10 +284,12 @@ final class SifterTests {
         List<LootSummaries.Drop> off;
         try {
             kitchen.set(false);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             kitchen.clearCache();
             off = LootSummaries.sifted(dirt, false);
         } finally {
             kitchen.set(was);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             kitchen.clearCache();
         }
         check(helper, off.stream().noneMatch(drop -> drop.stack().is(ModCrops.BROWN_RICE.get()) || drop.stack().is(ModKitchen.CORN_KERNELS.get())

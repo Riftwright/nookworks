@@ -18,7 +18,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
  * nothing. It is allowed - a pack's say - but said: in the log when the server starts, to an operator or the
  * single-player world's owner as they join, and on the If's switch, locked by the start-up config
  * (the user, 2026-10-18: 「せめてアラート…入れたほうが親切」). The Create World screen asks before switching it off
- * ({@code WorldFeaturesScreen}).
+ * ({@code WorldFeaturesScreen}). The same holds when the If is on but its mirror can be made no more, the parts it is
+ * made through switched off (the Sealed Retort's mercury): said so, and named among what the parts list warns of.
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class NookOfTheDeadWarning {
@@ -26,21 +27,29 @@ public final class NookOfTheDeadWarning {
     public static final String MOD = "nookofthedead";
     /** The part of ours it needs. */
     public static final String PART = "if_world";
+    /** The item of ours it is reached through. */
+    public static final String MIRROR = "nookworks:if_mirror";
 
     /** Whether Nook of the Dead is installed. */
     public static boolean present() {
         return ModList.get() != null && ModList.get().isLoaded(MOD);
     }
 
-    /** Whether it is installed and the If is off, so it cannot work. */
+    /** Whether it is installed and the If is off, or its mirror can be made no more, so it cannot work. */
     public static boolean stranded() {
-        return present() && !Features.enabled(PART);
+        return present() && (!Features.enabled(PART) || !Features.available(MIRROR));
+    }
+
+    /** What is said of it stranded: the If off, or only its mirror out of reach. */
+    private static String message() {
+        return !Features.enabled(PART) ? "message.nookworks.notd_if_off" : "message.nookworks.notd_mirror_lost";
     }
 
     @SubscribeEvent
     static void onStarted(ServerStartedEvent event) {
         if (stranded()) {
-            Nookworks.LOGGER.warn("Nook of the Dead is installed but Nookworks' If is switched off: its zombie world cannot be reached.");
+            Nookworks.LOGGER.warn("Nook of the Dead is installed but Nookworks' If is switched off, or its mirror can be made no more:"
+                    + " its zombie world cannot be reached.");
         }
     }
 
@@ -50,7 +59,7 @@ public final class NookOfTheDeadWarning {
         if (event.getEntity() instanceof ServerPlayer player && stranded()
                 && (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
                         || player.level().getServer().isSingleplayerOwner(player.nameAndId()))) {
-            player.sendSystemMessage(Component.translatable("message.nookworks.notd_if_off").withStyle(ChatFormatting.YELLOW));
+            player.sendSystemMessage(Component.translatable(message()).withStyle(ChatFormatting.YELLOW));
         }
     }
 

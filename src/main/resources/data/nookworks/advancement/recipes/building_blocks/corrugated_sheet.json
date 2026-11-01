@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "recycling"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:corrugated_sheet",
+        "nookworks:scrap"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

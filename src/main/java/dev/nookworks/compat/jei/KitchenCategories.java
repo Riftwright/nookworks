@@ -104,7 +104,7 @@ public final class KitchenCategories {
     public static List<Pickling> picklingRecipes() {
         List<Pickling> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(h -> {
-            PicklingRecipe r = h.getData(PicklingRecipe.DATA_MAP);
+            PicklingRecipe r = Features.enabled(h.value()) ? PicklingRecipe.of(new ItemStack(h)) : null;
             if (r != null) {
                 list.add(new Pickling(new ItemStack(h), r));
             }
@@ -124,7 +124,7 @@ public final class KitchenCategories {
             HandWork> type) {
         List<HandWorking> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(h -> {
-            var work = h.getData(type);
+            var work = Features.enabled(h.value()) ? HandWork.of(type, new ItemStack(h)) : null;
             if (work != null) {
                 list.add(new HandWorking(new ItemStack(h), work));
             }

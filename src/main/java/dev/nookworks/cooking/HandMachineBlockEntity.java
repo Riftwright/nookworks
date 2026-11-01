@@ -2,10 +2,10 @@ package dev.nookworks.cooking;
 
 import org.jspecify.annotations.Nullable;
 
-import dev.nookworks.experience.Move;
 import dev.nookworks.machine.CrankMotion;
 import dev.nookworks.machine.Crankable;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineStatus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,16 +21,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.item.ItemResource;
 
 /**
  * A kitchen machine worked by its handle, as the Rice Polisher is - by hand or by a Motor ({@link Crankable}): what
  * goes in at the top comes out as its {@link HandWork} entry says once the handle has gone round enough, into a
- * container under it or else one in front. With nowhere to go it gathers inside (a sneaking empty hand takes it out)
- * until there is no more room, and then the handle will not turn, so a Motor on it stops instead of spilling.
+ * container under it, else one in front, else out of its front onto the ground just there ({@link MachineIO#handOut}).
+ * With a block in its way it gathers inside (a sneaking empty hand takes it out) until there is no more room, and then
+ * the handle will not turn, so a Motor on it stops.
  */
 public abstract class HandMachineBlockEntity extends MachineBlockEntity implements Crankable {
     public static final int INPUT = 0;
@@ -120,7 +118,7 @@ public abstract class HandMachineBlockEntity extends MachineBlockEntity implemen
         return super.triggerEvent(id, param);
     }
 
-    /** Hands what it has made on, now and then: to a container below, else in front. */
+    /** Hands what it has made on, now and then: to a container below, else in front, else out of its front. */
     public static void serverTick(Level level, BlockPos pos, BlockState state, HandMachineBlockEntity machine) {
         if (level instanceof ServerLevel server && level.getGameTime() % 8 == 0) {
             machine.pushOut(server);
@@ -129,19 +127,14 @@ public abstract class HandMachineBlockEntity extends MachineBlockEntity implemen
 
     private void pushOut(ServerLevel level) {
         ItemStack stack = this.items.get(OUTPUT);
+        if (stack.isEmpty()) {
+            return;
+        }
+        int before = stack.getCount();
         Direction front = this.getBlockState().getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
-        for (Direction side : new Direction[] {Direction.DOWN, front}) {
-            if (stack.isEmpty() || !level.isLoaded(this.worldPosition.relative(side))) {
-                continue;
-            }
-            ResourceHandler<ItemResource> target = level.getCapability(Capabilities.Item.BLOCK, this.worldPosition.relative(side), side.getOpposite());
-            if (target != null) {
-                int moved = Move.insert(target, ItemResource.of(stack), stack.getCount());
-                if (moved > 0) {
-                    stack.shrink(moved);
-                    this.setChanged();
-                }
-            }
+        MachineIO.handOut(level, this.worldPosition, front, stack);
+        if (stack.getCount() != before) {
+            this.setChanged();
         }
     }
 

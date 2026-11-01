@@ -22,6 +22,9 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 public final class StorageBreakGuard {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     static void onBreak(BreakBlockEvent event) {
+        if (Permission.taking()) {
+            return; // asked only whose it is, to take from it: its size is no claim (nookTechnology's find, 2026-11-01)
+        }
         if (event.getLevel().getBlockEntity(event.getPos()) instanceof StorageBlockEntity storage && storage.tooFullToBreak()) {
             event.setCanceled(true); // the answer to our own asking too: no machine breaks it either
             if (Permission.asking()) {

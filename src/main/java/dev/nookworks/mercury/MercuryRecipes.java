@@ -10,6 +10,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -107,16 +108,21 @@ public final class MercuryRecipes {
     public static final DataMapType<Item, Distillation> DISTILLATION = DataMapType.builder(Nookworks.id("distillation"), Registries.ITEM, Distillation.CODEC)
             .synced(Distillation.CODEC, false).build();
 
+    // none of them makes what cannot be had (a part switched off, or nothing reaching it any more: Features)
+
     public static @Nullable Retorting retorting(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(RETORTING);
+        Retorting recipe = stack.isEmpty() ? null : stack.typeHolder().getData(RETORTING);
+        return recipe != null && Features.enabled(recipe.byproduct().value()) ? recipe : null;
     }
 
     public static @Nullable Amalgamation amalgamation(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(AMALGAMATION);
+        Amalgamation recipe = stack.isEmpty() ? null : stack.typeHolder().getData(AMALGAMATION);
+        return recipe != null && Features.enabled(recipe.result().value()) ? recipe : null;
     }
 
     public static @Nullable Distillation distillation(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(DISTILLATION);
+        Distillation recipe = stack.isEmpty() ? null : stack.typeHolder().getData(DISTILLATION);
+        return recipe != null && recipe.result().map(result -> Features.enabled(result.value())).orElse(true) ? recipe : null;
     }
 
     @EventBusSubscriber(modid = Nookworks.MODID)

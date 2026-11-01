@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "warps"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:horizontal_item_warp_sender",
+        "nookworks:item_warp_sender"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

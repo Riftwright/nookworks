@@ -1,8 +1,79 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "velarium"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mercury_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:copper_amalgam",
+        "nookworks:gold_amalgam",
+        "nookworks:iron_amalgam",
+        "nookworks:mixed_amalgam"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:distiller"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_nugget"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:tempered_velarium_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_axe",
+        "nookworks:velarium_boots",
+        "nookworks:velarium_chestplate",
+        "nookworks:velarium_hammer",
+        "nookworks:velarium_helmet",
+        "nookworks:velarium_hoe",
+        "nookworks:velarium_leggings",
+        "nookworks:velarium_pickaxe",
+        "nookworks:velarium_shovel",
+        "nookworks:velarium_sword"
+      ],
+      "any": true
     }
   ],
   "criteria": {

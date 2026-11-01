@@ -82,25 +82,25 @@ public class NookworksJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(CrushingCategory.TYPE, crushingRecipes());
+        registration.addRecipes(CrushingCategory.TYPE, at(ModItems.CRUSHER.get(), crushingRecipes()));
         registration.addRecipes(RecyclingCategory.TYPE, RecyclingCategory.recipes());
-        registration.addRecipes(ElectrolysisCategory.TYPE, ElectrolysisCategory.recipes());
-        registration.addRecipes(SiftingCategory.TYPE, SiftingCategory.recipes());
-        registration.addRecipes(SpawnEggBrewingCategory.TYPE, on("mob_bottle", brewingRecipes()));
-        registration.addRecipes(MercuryCategories.RETORTING, MercuryCategories.retortRecipes());
-        registration.addRecipes(MercuryCategories.AMALGAMATION, MercuryCategories.amalgamRecipes());
-        registration.addRecipes(MercuryCategories.DISTILLATION, MercuryCategories.distilRecipes());
-        registration.addRecipes(MercuryCategories.MUD, MercuryCategories.mudRecipes());
-        registration.addRecipes(KitchenCategories.POT, on("kitchen", KitchenCategories.potRecipes()));
-        registration.addRecipes(KitchenCategories.PRESSING, KitchenCategories.pressingRecipes());
-        registration.addRecipes(KitchenCategories.PICKLING, on("kitchen", KitchenCategories.picklingRecipes()));
-        registration.addRecipes(KitchenCategories.POLISHING, on("kitchen", KitchenCategories.polishingRecipes()));
-        registration.addRecipes(KitchenCategories.MILLING, on("kitchen", KitchenCategories.handRecipes(HandWork.MILLING)));
+        registration.addRecipes(ElectrolysisCategory.TYPE, at(ModItems.ELECTROLYTIC_CELL.get(), ElectrolysisCategory.recipes()));
+        registration.addRecipes(SiftingCategory.TYPE, at(ModItems.SIFTER.get(), SiftingCategory.recipes()));
+        registration.addRecipes(SpawnEggBrewingCategory.TYPE, at(ModItems.SPAWN_EGG_BREWER.get(), brewingRecipes()));
+        registration.addRecipes(MercuryCategories.RETORTING, at(ModItems.RETORT.get(), MercuryCategories.retortRecipes()));
+        registration.addRecipes(MercuryCategories.AMALGAMATION, at(ModItems.STIRRING_TANK.get(), MercuryCategories.amalgamRecipes()));
+        registration.addRecipes(MercuryCategories.DISTILLATION, at(ModItems.DISTILLER.get(), MercuryCategories.distilRecipes()));
+        registration.addRecipes(MercuryCategories.MUD, at(ModItems.STIRRING_TANK.get(), MercuryCategories.mudRecipes()));
+        registration.addRecipes(KitchenCategories.POT, at(ModCooking.IRON_POT_ITEM.get(), KitchenCategories.potRecipes()));
+        registration.addRecipes(KitchenCategories.PRESSING, at(ModOil.OIL_PRESS_ITEM.get(), KitchenCategories.pressingRecipes()));
+        registration.addRecipes(KitchenCategories.PICKLING, at(ModCooking.NUKADOKO_ITEM.get(), KitchenCategories.picklingRecipes()));
+        registration.addRecipes(KitchenCategories.POLISHING, at(ModCrops.RICE_POLISHER_ITEM.get(), KitchenCategories.polishingRecipes()));
+        registration.addRecipes(KitchenCategories.MILLING, at(ModKitchen.HAND_QUERN_ITEM.get(), KitchenCategories.handRecipes(HandWork.MILLING)));
         registration.addRecipes(KitchenCategories.NOODLE_MAKING,
-                on("kitchen", KitchenCategories.handRecipes(HandWork.NOODLE_MAKING)));
-        registration.addRecipes(PrintingCategory.TYPE, on("printing", PrintingCategory.recipes()));
+                at(ModKitchen.NOODLE_MAKER_ITEM.get(), KitchenCategories.handRecipes(HandWork.NOODLE_MAKING)));
+        registration.addRecipes(PrintingCategory.TYPE, at(ModItems.PRINTING_PRESS.get(), PrintingCategory.recipes()));
         registration.addRecipes(KitchenCategories.DRYING, KitchenCategories.dryingRecipes());
-        registration.addRecipes(KitchenCategories.RISING, on("kitchen", KitchenCategories.risingRecipes()));
+        registration.addRecipes(KitchenCategories.RISING, at(ModKitchen.WOODEN_TRAY_ITEM.get(), KitchenCategories.risingRecipes()));
         InfoPages.each((item, page) -> {
             if (!Features.enabled(item)) {
                 return;
@@ -169,9 +169,12 @@ public class NookworksJeiPlugin implements IModPlugin {
         }
     }
 
-    /** A page's recipes, or none while the part of the mod they are of is switched off ({@link dev.nookworks.feature.Features}). */
-    private static <T> List<T> on(String part, List<T> recipes) {
-        return Features.enabled(part) ? recipes : List.of();
+    /**
+     * A machine's page's recipes, or none while the machine cannot be had: its part switched off, or nothing reaching it
+     * any more ({@link dev.nookworks.feature.Features}).
+     */
+    private static <T> List<T> at(ItemLike machine, List<T> recipes) {
+        return Features.enabled(machine.asItem()) ? recipes : List.of();
     }
 
     /**

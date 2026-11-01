@@ -27,6 +27,8 @@ public final class NookworksStartupConfig {
     public static final ModConfigSpec.BooleanValue WORLD_MENU;
     /** Each part of the mod a pack can switch off ({@link dev.nookworks.feature.Features}), by its name. */
     private static final Map<String, ModConfigSpec.BooleanValue> FEATURES = new LinkedHashMap<>();
+    /** Items of ours had whatever the parts off take with them ({@link dev.nookworks.feature.PartGraph}). */
+    private static final ModConfigSpec.ConfigValue<List<? extends String>> KEEP_ITEMS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -37,9 +39,11 @@ public final class NookworksStartupConfig {
                 "and fungi (the red ones are poisonous), honeycomb, cocoa beans.")
                 .translation("nookworks.configuration.edibleRawFoods").define("edibleRawFoods", true);
         WORLD_MENU = builder.comment("Each new world chooses which parts below it has: a Nookworks button on the Create World screen",
-                "(its More tab), its choice kept in the world's folder (serverconfig/nookworks-features.json) and changed only",
-                "there, with the world closed. A part switched off below is off in every world, and not offered. Off, there is",
-                "no button and every world has the parts below alone, its own choice ignored.")
+                "(its More tab), its choice kept in the world's folder (serverconfig/nookworks-features.json). In a world, its",
+                "owner or an operator can change it from the mod's settings (This World's Parts), for the next time it opens;",
+                "or edit the file with the world closed. A part switched off below is off in every world, and not offered.",
+                "Off, there is no button on the Create World screen and every world has the parts below alone, its own choice",
+                "ignored.")
                 .translation("nookworks.configuration.worldMenu").define("worldMenu", true);
         builder.comment("Parts of the mod a modpack can switch off, in every world (a world can leave out more when it is made:",
                 "worldMenu above). Off, a part's items are made by no recipe, sit in no creative tab, are hidden in JEI and come",
@@ -54,6 +58,12 @@ public final class NookworksStartupConfig {
             }
             FEATURES.put(part, builder.translation("nookworks.configuration.features." + part).define(part, true));
         }
+        KEEP_ITEMS = builder.comment("Items of Nookworks kept whatever the parts switched off take with them: for a pack whose other mods or",
+                        "data packs make them another way (brass from another mod's machine, with the Sealed Retort off). By id, as",
+                        "\"nookworks:brass_ingot\"; what is made from them comes back too.")
+                .translation("nookworks.configuration.features.keepItems")
+                .defineListAllowEmpty("keepItems", List.of(), () -> "nookworks:",
+                        o -> o instanceof String s && s.startsWith("nookworks:") && s.length() <= 128);
         builder.pop();
         SPEC = builder.build();
     }
@@ -121,6 +131,12 @@ public final class NookworksStartupConfig {
         } catch (java.io.IOException | RuntimeException unreadable) {
             return Map.of();
         }
+    }
+
+    /** The items {@code [features] keepItems} names: had whatever the parts switched off take with them. */
+    public static List<String> keptItems() {
+        List<? extends String> kept = KEEP_ITEMS.get();
+        return List.copyOf(kept.size() > 512 ? kept.subList(0, 512) : kept); // as many as its packet carries
     }
 
     /** The setting that switches the part {@code name} on or off, or null for no such part. */

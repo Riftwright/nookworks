@@ -30,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Storage Barrel GUI, in the light grey of vanilla's own containers - a barrel is a barrel, not a machine: six rows at
  * a time with a scrollbar (mouse wheel or drag), item counts shortened to fit a slot (1.2K, 3.4M, 1.0B), a strip under
- * the rows saying how full the barrel is, and a Sort button with the order it sorts in beside it.
+ * the rows saying how full the barrel is, and a Sort button with the order it sorts in beside it, and which way round.
  */
 public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
     private static final int BAR_X = 176;
@@ -68,7 +68,10 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
         this.addRenderableWidget(Button.builder(label,
                 b -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, StorageMenu.BUTTON_SORT))
                 .bounds(sortX, this.topPos + 3, w, 13).build());
-        this.order = this.addRenderableWidget(new OrderButton(sortX - ORDER_W - 2, this.topPos + 3));
+        int turnX = sortX - SortDirectionButton.WIDTH - 2;
+        this.addRenderableWidget(new SortDirectionButton(turnX, this.topPos + 3, this.menu::sortOrder, this.menu::sortReversed,
+                () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, StorageMenu.BUTTON_REVERSE)));
+        this.order = this.addRenderableWidget(new OrderButton(turnX - ORDER_W - 2, this.topPos + 3));
     }
 
     /**
@@ -82,7 +85,8 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
 
         @Override
         public Component getMessage() {
-            return Component.translatable("gui.nookworks.storage.order", Component.translatable(StorageScreen.this.menu.sortOrder().translationKey()));
+            return Component.translatable("gui.nookworks.storage.order", Component.translatable(
+                    StorageScreen.this.menu.sortOrder().translationKey(StorageScreen.this.menu.sortReversed())));
         }
 
         @Override

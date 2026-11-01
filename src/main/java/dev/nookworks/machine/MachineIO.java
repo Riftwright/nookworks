@@ -20,6 +20,7 @@ import dev.nookworks.Nookworks;
 import dev.nookworks.NookworksConfig;
 import dev.nookworks.block.EnergyCableBlock;
 import dev.nookworks.block.PipeSides;
+import dev.nookworks.experience.Move;
 import dev.nookworks.feature.DrawRights;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,18 +28,24 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityInvalidationListener;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
@@ -58,14 +65,16 @@ public final class MachineIO {
     /** Whether a network cut short by the reach has been named in the log yet this run: once is enough to point at it. */
     private static boolean toldOfCut;
 
-    /** Into the container below {@code pos} if there is one (returns what did not fit), otherwise dropped out. */
+    /**
+     * Into the container below {@code pos} if there is one (returns what did not fit), otherwise dropped out where there
+     * is room ({@link #popOut}); with no room below or on top, all of it comes back and waits in the machine.
+     */
     public static ItemStack deliverBelow(ServerLevel level, BlockPos pos, ItemStack stack) {
         var handler = level.getCapability(Capabilities.Item.BLOCK, pos.below(), Direction.UP);
         if (handler != null) {
             return ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
         }
-        popOut(level, pos, stack.copy());
-        return ItemStack.EMPTY;
+        return dropOut(level, pos, stack.copy()) ? ItemStack.EMPTY : stack;
     }
 
     /** Into the container below {@code pos} if there is one; what did not go in, or all of it with none, comes back. */
@@ -74,12 +83,96 @@ public final class MachineIO {
         return handler == null ? stack : ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
     }
 
-    /** Drops below the block if that space is open, otherwise on top. */
+    /**
+     * What a machine worked by its handle has made, sent on much as a dropper sends what it holds (the user, 2026-10-31:
+     * 「ドロッパーみたいに、よこにアイテムポイする方式に」 - an Oil Press with a pipe under it for its oil still has its cakes
+     * gathered): into a container under it, as before, else into one in front of it, else out of its front - the spout
+     * or chute each is drawn with - dropping onto the ground just in front, for a hopper set in the floor there or a
+     * Magnet Chest to gather. {@code stack} is shrunk by what went; with a block in front that is neither a container nor
+     * open where things come out, the rest waits in the machine. Nothing goes into a chunk not loaded.
+     */
+    public static void handOut(ServerLevel level, BlockPos pos, Direction front, ItemStack stack) {
+        for (Direction side : new Direction[] {Direction.DOWN, front}) {
+            BlockPos next = pos.relative(side);
+            if (stack.isEmpty() || !level.isLoaded(next)) {
+                continue;
+            }
+            var target = level.getCapability(Capabilities.Item.BLOCK, next, side.getOpposite());
+            if (target != null) {
+                stack.shrink(Move.insert(target, ItemResource.of(stack), stack.getCount()));
+            } else if (side == front && mouthOpen(level, next, front)) {
+                // out of the spout, a fifth of a block up, with a little push: it drops in the block in front, not two or
+                // three blocks off as a dropper throws (seen in the game: a press on a pipe sent its cakes four blocks)
+                var random = level.getRandom();
+                double push = random.triangle(0.07, 0.015);
+                level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5 + front.getStepX() * 0.65, pos.getY() + 0.2,
+                        pos.getZ() + 0.5 + front.getStepZ() * 0.65, stack.copy(), front.getStepX() * push + random.triangle(0.0, 0.015),
+                        0.1, front.getStepZ() * push + random.triangle(0.0, 0.015)));
+                stack.setCount(0);
+            }
+        }
+    }
+
+    /**
+     * Whether a thing handed out of a machine's front has room to come out into {@code next}: nothing there in the half of
+     * the block nearest the machine, from just over a carpet to half way up. A carpet or a snow layer in front is no wall;
+     * a slab, a stair, a fence or a pipe is.
+     */
+    private static boolean mouthOpen(ServerLevel level, BlockPos next, Direction front) {
+        VoxelShape shape = level.getBlockState(next).getCollisionShape(level, next);
+        if (shape.isEmpty()) {
+            return true;
+        }
+        double x0 = front.getStepX() > 0 ? 0.0 : front.getStepX() < 0 ? 0.5 : 0.0;
+        double z0 = front.getStepZ() > 0 ? 0.0 : front.getStepZ() < 0 ? 0.5 : 0.0;
+        double x1 = front.getStepX() != 0 ? x0 + 0.5 : 1.0;
+        double z1 = front.getStepZ() != 0 ? z0 + 0.5 : 1.0;
+        return !Shapes.joinIsNotEmpty(shape, Shapes.box(x0, 0.1, z0, x1, 0.5, z1), BooleanOp.AND);
+    }
+
+    /**
+     * Drops it out of the block where there is room ({@link #dropOut}); with none, on top all the same, as before 1.3:
+     * for a caller that has nowhere to keep it. Kept as it was for other mods (nookTechnology 0.1.1 calls it, by this
+     * signature); ours call {@link #dropOut} and keep what finds no room.
+     */
     public static void popOut(ServerLevel level, BlockPos pos, ItemStack stack) {
-        BlockPos below = pos.below();
-        boolean openBelow = level.getBlockState(below).getCollisionShape(level, below).isEmpty();
-        double y = openBelow ? pos.getY() - 0.4 : pos.getY() + 1.1;
-        level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, y, pos.getZ() + 0.5, stack, 0.0, 0.0, 0.0));
+        if (!dropOut(level, pos, stack)) {
+            level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, stack, 0.0, 0.0, 0.0));
+        }
+    }
+
+    /**
+     * Drops below the block if that space is open, otherwise on top if that is, otherwise beside it, the first side
+     * open (as the Recycler does); false, and nothing dropped, with all of them closed. It was dropped on top whatever
+     * stood there, so with a block on top as well (stone over a Crusher standing on stone, a Vacuum Distiller's column)
+     * it came out inside that block and was pushed out of it wherever it could go (nookTechnology's find, 2026-11-01).
+     */
+    public static boolean dropOut(ServerLevel level, BlockPos pos, ItemStack stack) {
+        Vec3 at = null;
+        if (open(level, pos.below())) {
+            at = new Vec3(pos.getX() + 0.5, pos.getY() - 0.4, pos.getZ() + 0.5);
+        } else if (open(level, pos.above())) {
+            at = new Vec3(pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5);
+        } else {
+            for (Direction side : Direction.Plane.HORIZONTAL) {
+                BlockPos beside = pos.relative(side);
+                // not into lava, fire or water beside it, which only an open cell under it ever took before
+                if (level.isLoaded(beside) && open(level, beside) && level.getFluidState(beside).isEmpty()
+                        && !level.getBlockState(beside).is(BlockTags.FIRE)) {
+                    at = new Vec3(beside.getX() + 0.5, beside.getY() + 0.1, beside.getZ() + 0.5);
+                    break;
+                }
+            }
+        }
+        if (at == null) {
+            return false;
+        }
+        level.addFreshEntity(new ItemEntity(level, at.x, at.y, at.z, stack, 0.0, 0.0, 0.0));
+        return true;
+    }
+
+    private static boolean open(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
     }
 
     /**

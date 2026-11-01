@@ -44,6 +44,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.item.context.BlockPlaceContext;
 
 /**
  * Copper Tank (see {@link CopperTankBlockEntity}): a banded copper vessel on a frame plinth, its sight glasses
@@ -56,11 +62,35 @@ public class CopperTankBlock extends BaseEntityBlock {
     public CopperTankBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(LineContent.PROPERTY, LineContent.EMPTY).setValue(SightGlass.LEVEL, 0));
+        this.registerDefaultState(PipePorts.none(this.defaultBlockState()));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LineContent.PROPERTY, SightGlass.LEVEL);
+        PipePorts.add(builder, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return PipePorts.withPorts(this.defaultBlockState(), context.getLevel(), context.getClickedPos());
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return PipePorts.rotate(state, rotation);
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return PipePorts.mirror(state, mirror);
+    }
+
+    /** A pipe joined or taken away beside it: the port on that side shown or not ({@link PipePorts}). */
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction side,
+            BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+        return PipePorts.updated(super.updateShape(state, level, ticks, pos, side, neighbourPos, neighbourState, random), side, neighbourState);
     }
 
     @Override
@@ -147,7 +177,7 @@ public class CopperTankBlock extends BaseEntityBlock {
     }
 
     /** The fluid a filled bottle pours: water, oil, biodiesel; null for anything else. */
-    static @Nullable Fluid bottleOf(ItemStack stack) {
+    public static @Nullable Fluid bottleOf(ItemStack stack) {
         if (stack.is(Items.POTION) && stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
             return Fluids.WATER;
         }
@@ -161,7 +191,7 @@ public class CopperTankBlock extends BaseEntityBlock {
     }
 
     /** A bottle of what the tank holds, or empty for a fluid there is no bottle of. */
-    static ItemStack filledBottle(Fluid fluid) {
+    public static ItemStack filledBottle(Fluid fluid) {
         if (fluid.isSame(Fluids.WATER)) {
             return PotionContents.createItemStack(Items.POTION, Potions.WATER);
         }

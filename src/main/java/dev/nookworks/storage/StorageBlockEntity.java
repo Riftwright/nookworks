@@ -51,6 +51,8 @@ public class StorageBlockEntity extends BlockEntity implements MenuProvider {
     private final StorageInventory inventory;
     /** How the Sort button orders this barrel, chosen in its screen. */
     private SortOrder sortOrder = SortOrder.DEFAULT;
+    /** Whether Sort turns its order round; put back as the order runs by itself when another order is chosen. */
+    private boolean sortReversed;
 
     private final ContainerOpenersCounter openers =
             new ContainerOpenersCounter() {
@@ -130,6 +132,17 @@ public class StorageBlockEntity extends BlockEntity implements MenuProvider {
     public void setSortOrder(SortOrder order) {
         if (order != this.sortOrder) {
             this.sortOrder = order;
+            this.setChanged();
+        }
+    }
+
+    public boolean sortReversed() {
+        return this.sortReversed;
+    }
+
+    public void setSortReversed(boolean reversed) {
+        if (reversed != this.sortReversed) {
+            this.sortReversed = reversed;
             this.setChanged();
         }
     }
@@ -284,6 +297,9 @@ public class StorageBlockEntity extends BlockEntity implements MenuProvider {
         if (this.sortOrder != SortOrder.DEFAULT) {
             output.putString("SortOrder", this.sortOrder.name());
         }
+        if (this.sortReversed) {
+            output.putBoolean("sort_reversed", true);
+        }
         output.storeNullable("CustomName", ComponentSerialization.CODEC, this.name);
     }
 
@@ -293,6 +309,7 @@ public class StorageBlockEntity extends BlockEntity implements MenuProvider {
         input.child("Storage").ifPresent(this.inventory::deserialize);
         String order = input.getStringOr("SortOrder", SortOrder.DEFAULT.name());
         this.sortOrder = Arrays.stream(SortOrder.values()).filter(o -> o.name().equals(order)).findFirst().orElse(SortOrder.DEFAULT);
+        this.sortReversed = input.getBooleanOr("sort_reversed", false);
         this.name = parseCustomNameSafe(input, "CustomName");
     }
 
@@ -311,5 +328,6 @@ public class StorageBlockEntity extends BlockEntity implements MenuProvider {
         // a picked block copy is an empty barrel: with the order left in it, it counted as holding something and went
         // into no other barrel or shulker box
         output.discard("SortOrder");
+        output.discard("sort_reversed");
     }
 }

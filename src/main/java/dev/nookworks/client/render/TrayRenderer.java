@@ -34,8 +34,9 @@ import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 /**
  * Draws what is on a Wooden Tray, laid out by how much there is - one in the middle, two side by side, three or four
  * in rows - turned to face whoever set the tray down. Bread Dough is a ball of dough ({@code block/dough_ball}) that
- * swells as it rises, and risen, the proofed ball ({@code block/dough_ball_risen}); food lies flat, as on a campfire,
- * and a block stands up on it.
+ * swells as it rises, and risen, the proofed ball ({@code block/dough_ball_risen}); udon, tonkatsu, karaage and donuts
+ * are set out as the dishes themselves ({@link DishModels}); other food lies flat, as on a campfire, and a block stands
+ * up on it.
  */
 public class TrayRenderer implements BlockEntityRenderer<TrayBlockEntity, TrayRenderer.State> {
     public static final StandaloneModelKey<BlockStateModelPart> BALL = new StandaloneModelKey<>(() -> Nookworks.MODID + ":dough_ball");
@@ -58,13 +59,14 @@ public class TrayRenderer implements BlockEntityRenderer<TrayBlockEntity, TrayRe
         event.register(RISEN_BALL, SimpleUnbakedStandaloneModel.simpleModelWrapper(Nookworks.id("block/dough_ball_risen")));
     }
 
-    enum Kind { ITEM, DOUGH, RISEN }
+    enum Kind { ITEM, DOUGH, RISEN, DISH }
 
     public static final class State extends BlockEntityRenderState {
         Direction facing = Direction.SOUTH;
         final List<ItemStackRenderState> items = new ArrayList<>();
         final List<Kind> kinds = new ArrayList<>();
         final List<Float> rise = new ArrayList<>();
+        final List<@Nullable StandaloneModelKey<BlockStateModelPart>> dishes = new ArrayList<>();
     }
 
     private final ItemModelResolver itemModels;
@@ -87,6 +89,7 @@ public class TrayRenderer implements BlockEntityRenderer<TrayBlockEntity, TrayRe
         state.items.clear();
         state.kinds.clear();
         state.rise.clear();
+        state.dishes.clear();
         int seed = (int) tray.getBlockPos().asLong();
         long now = tray.getLevel() == null ? 0 : tray.getLevel().getGameTime();
         for (int slot = 0; slot < TrayBlockEntity.SLOTS; slot++) {
@@ -97,7 +100,10 @@ public class TrayRenderer implements BlockEntityRenderer<TrayBlockEntity, TrayRe
             ItemStackRenderState item = new ItemStackRenderState();
             this.itemModels.updateForTopItem(item, stack, ItemDisplayContext.FIXED, tray.getLevel(), null, seed + slot);
             state.items.add(item);
-            state.kinds.add(stack.is(ModKitchen.BREAD_DOUGH.get()) ? Kind.DOUGH : stack.is(ModKitchen.RISEN_DOUGH.get()) ? Kind.RISEN : Kind.ITEM);
+            var dish = DishModels.of(stack);
+            state.dishes.add(dish);
+            state.kinds.add(stack.is(ModKitchen.BREAD_DOUGH.get()) ? Kind.DOUGH : stack.is(ModKitchen.RISEN_DOUGH.get()) ? Kind.RISEN
+                    : dish != null ? Kind.DISH : Kind.ITEM);
             state.rise.add(tray.rise(slot, now, partialTicks));
         }
     }
@@ -119,6 +125,11 @@ public class TrayRenderer implements BlockEntityRenderer<TrayBlockEntity, TrayRe
             switch (state.kinds.get(i)) {
                 case DOUGH, RISEN -> this.ball(state, i, n, pose, collector);
                 case ITEM -> this.item(state, i, n, pose, collector);
+                case DISH -> {
+                    // set out as the dish itself, a little smaller when it shares the tray (the user, 2026-10-31)
+                    pose.rotate(Axis.YP.rotationDegrees(TWIST[i]));
+                    DishModels.draw(state.dishes.get(i), n == 1 ? 1.0F : 0.72F, state.lightCoords, pose, collector);
+                }
             }
             pose.popPose();
         }

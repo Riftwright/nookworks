@@ -1,4 +1,14 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:biodiesel_bottle",
+        "nookworks:methanol",
+        "nookworks:caustic_soda"
+      ]
+    }
+  ],
   "type": "nookworks:pot",
   "ingredients": [
     {

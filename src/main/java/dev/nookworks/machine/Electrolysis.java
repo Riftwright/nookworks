@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -36,8 +37,10 @@ public record Electrolysis(Holder<Item> result, int count, float bonusChance, in
     public static final DataMapType<Item, Electrolysis> DATA_MAP =
             DataMapType.builder(Nookworks.id("electrolysis"), Registries.ITEM, CODEC).synced(CODEC, false).build();
 
+    /** The work for {@code stack}, or null for none: none that makes what cannot be had ({@link Features}). */
     public static @Nullable Electrolysis of(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        Electrolysis recipe = stack.isEmpty() ? null : stack.typeHolder().getData(DATA_MAP);
+        return recipe != null && Features.enabled(recipe.result().value()) ? recipe : null;
     }
 
     /** What a run makes: no more than a stack of it, whatever a datapack asks. */

@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    }
+  ],
   "criteria": {
     "machine_chassis": {
       "trigger": "minecraft:inventory_changed",

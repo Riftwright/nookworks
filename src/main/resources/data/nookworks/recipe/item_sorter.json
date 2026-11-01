@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "sorting"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:item_sorter"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

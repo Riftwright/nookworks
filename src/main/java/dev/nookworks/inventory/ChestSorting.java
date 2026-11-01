@@ -54,11 +54,16 @@ public final class ChestSorting {
 
     /** A sort asked for from a client's screen: only of the menu it has open, by the menu's own rules of reach. */
     public static boolean sortOpen(ServerPlayer player, int containerId, int order) {
+        return sortOpen(player, containerId, order, false);
+    }
+
+    /** As {@link #sortOpen(ServerPlayer, int, int)}, the order turned round if {@code reversed}. */
+    public static boolean sortOpen(ServerPlayer player, int containerId, int order, boolean reversed) {
         AbstractContainerMenu menu = player.containerMenu;
         if (player.isSpectator() || menu.containerId != containerId || !menu.stillValid(player)) {
             return false;
         }
-        return sort(menu, player, orderOf(order));
+        return sort(menu, player, orderOf(order), reversed);
     }
 
     /** Whether the menu's container is something that stores things, not a screen's stand-in (see the class). */
@@ -73,6 +78,11 @@ public final class ChestSorting {
 
     /** Sorts the container of {@code menu} in {@code order}. False, with nothing moved, if it may not be done. */
     public static boolean sort(AbstractContainerMenu menu, Player player, SortOrder order) {
+        return sort(menu, player, order, false);
+    }
+
+    /** As {@link #sort(AbstractContainerMenu, Player, SortOrder)}, the order turned round if {@code reversed}. */
+    public static boolean sort(AbstractContainerMenu menu, Player player, SortOrder order, boolean reversed) {
         if (!sortable(menu) || !storage(menu)) {
             return false;
         }
@@ -91,7 +101,7 @@ public final class ChestSorting {
         }
         List<SortOrder.Lot> lots = new ArrayList<>();
         counts.forEach((resource, count) -> lots.add(new SortOrder.Lot(resource, count, 0L)));
-        lots.sort(order.comparator());
+        lots.sort(order.comparator(reversed));
 
         List<ItemStack> sorted = new ArrayList<>(size);
         for (SortOrder.Lot lot : lots) {

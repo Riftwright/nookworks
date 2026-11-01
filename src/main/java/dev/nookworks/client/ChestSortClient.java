@@ -32,10 +32,12 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import dev.nookworks.client.gui.SortDirectionButton;
 
 /**
- * The Sort button on vanilla's chest and shulker box screens ({@link ChestSorting}), with the order button beside it,
- * where a Storage Barrel's screen has them: the top right of the panel. The order is this player's own, kept with the
+ * The Sort button on vanilla's chest and shulker box screens ({@link ChestSorting}), with the order button and the
+ * ascending/descending one ({@link SortDirectionButton}) beside it, where a Storage Barrel's screen has them: the top
+ * right of the panel. The order is this player's own, kept with the
  * client settings, since a vanilla chest has nowhere to keep one. Not added when a mod that sorts inventories is
  * installed, so a chest never has two Sort buttons, nor when it is switched off in the settings. A title too long for
  * the room left beside the buttons is cut short with an ellipsis (mixin client/AbstractContainerScreenMixin), and its
@@ -84,9 +86,11 @@ public final class ChestSortClient {
         int y = screen.getTopPos() + 3;
         int containerId = screen.getMenu().containerId;
         event.addListener(Button.builder(label, b -> ClientPacketDistributor.sendToServer(
-                new NookworksNetwork.SortChest(containerId, order().ordinal()))).bounds(x, y, w, 13).build());
-        event.addListener(new OrderButton(x - ORDER_W - 2, y));
-        TITLE_ROOM.put(screen, x - ORDER_W - 2 - screen.getLeftPos() - TITLE_X - 3);
+                new NookworksNetwork.SortChest(containerId, order().ordinal(), reversed()))).bounds(x, y, w, 13).build());
+        int turnX = x - SortDirectionButton.WIDTH - 2;
+        event.addListener(new SortDirectionButton(turnX, y, ChestSortClient::order, ChestSortClient::reversed, ChestSortClient::turn));
+        event.addListener(new OrderButton(turnX - ORDER_W - 2, y));
+        TITLE_ROOM.put(screen, turnX - ORDER_W - 2 - screen.getLeftPos() - TITLE_X - 3);
     }
 
     /** The room {@code screen}'s title has before the buttons, or 0 if it has none of ours. */
@@ -115,11 +119,23 @@ public final class ChestSortClient {
         return ChestSorting.ORDERS.contains(order) ? order : ChestSorting.ORDERS.getFirst();
     }
 
-    /** Steps the order by {@code by} among the chest's orders, and keeps it. */
+    /** Whether the chest's Sort turns its order round. */
+    private static boolean reversed() {
+        return NookworksClientConfig.CHEST_SORT_REVERSED.getAsBoolean();
+    }
+
+    /** Turns the order round, or back, and keeps it. */
+    private static void turn() {
+        NookworksClientConfig.CHEST_SORT_REVERSED.set(!reversed());
+        NookworksClientConfig.CHEST_SORT_REVERSED.save();
+    }
+
+    /** Steps the order by {@code by} among the chest's orders, and keeps it; the new one runs its own way. */
     private static void step(int by) {
         List<SortOrder> orders = ChestSorting.ORDERS;
         int at = orders.indexOf(order());
         NookworksClientConfig.CHEST_SORT_ORDER.set(orders.get(Math.floorMod(at + by, orders.size())));
+        NookworksClientConfig.CHEST_SORT_REVERSED.set(false);
         NookworksClientConfig.CHEST_SORT_ORDER.save();
     }
 
@@ -131,7 +147,7 @@ public final class ChestSortClient {
 
         @Override
         public Component getMessage() {
-            return Component.translatable("gui.nookworks.storage.order", Component.translatable(order().translationKey()));
+            return Component.translatable("gui.nookworks.storage.order", Component.translatable(order().translationKey(reversed())));
         }
 
         @Override

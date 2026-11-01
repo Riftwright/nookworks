@@ -1,5 +1,7 @@
 package dev.nookworks.registry;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -49,9 +51,9 @@ public final class ModConditions {
 
     /**
      * {@code {"type": "nookworks:feature", "feature": "kitchen"}} holds while that part of the mod is on
-     * ({@link dev.nookworks.feature.Features}): on every recipe that makes an item of the part, and on its advancements.
-     * In the world whose data packs are loading: its own choice ({@link dev.nookworks.feature.WorldFeatures}) is in force
-     * by then.
+     * ({@link dev.nookworks.feature.Features}), for a data pack's own files (ours carry {@link Available} since 1.3, which
+     * also knows what nothing reaches any more). In the world whose data packs are loading: its own choice
+     * ({@link dev.nookworks.feature.WorldFeatures}) is in force by then.
      */
     public record Feature(String feature) implements ICondition {
         public static final MapCodec<Feature> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -72,9 +74,33 @@ public final class ModConditions {
         }
     }
 
+    /**
+     * {@code {"type": "nookworks:available", "items": ["nookworks:soap", "nookworks:caustic_soda"]}} holds while every item
+     * named can be had (with {@code "any": true}, one of them): of no part switched off, and still reached by something
+     * ({@link Features#available}). tools/gen_feature_conditions.py puts one on each recipe of ours whose result can go
+     * (the result, and the items of ours it names), and on its recipe-book unlock; tools/gen_advancements.py puts one on
+     * each advancement (any of what it asks for, with its parents'). In the world whose data packs are loading.
+     */
+    public record Available(List<String> items, boolean any) implements ICondition {
+        public static final MapCodec<Available> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.STRING.listOf().fieldOf("items").forGetter(Available::items),
+                Codec.BOOL.optionalFieldOf("any", false).forGetter(Available::any)).apply(i, Available::new));
+
+        @Override
+        public boolean test(IContext context) {
+            return this.any ? this.items.stream().anyMatch(Features::available) : this.items.stream().allMatch(Features::available);
+        }
+
+        @Override
+        public MapCodec<? extends ICondition> codec() {
+            return CODEC;
+        }
+    }
+
     static {
         CONDITIONS.register("setting", () -> Setting.CODEC);
         CONDITIONS.register("feature", () -> Feature.CODEC);
+        CONDITIONS.register("available", () -> Available.CODEC);
     }
 
     private ModConditions() {}

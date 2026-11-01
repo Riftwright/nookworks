@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "building_wand"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:building_wand"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

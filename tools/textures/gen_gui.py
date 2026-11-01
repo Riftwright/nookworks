@@ -9,6 +9,8 @@
 - textures/gui/sort_orders.png: 32x8. The Storage Barrel's sort orders, drawn as the button's own lettering is (white
   with a dark shadow one pixel down and right): bars falling away (most first), a # (item ID), a folder (grouped by
   mod) and a clock (last added first).
+- textures/gui/sort_directions.png: 16x8. The button beside them, which way round the order runs, lettered the same:
+  ascending (an arrow up beside bars growing down the icon) and descending (an arrow down beside bars shrinking).
 
 Original pixel art. Run from the repo root:  python tools/textures/gen_gui.py
 """
@@ -162,13 +164,33 @@ CLOCK = [
     ".o...o.",
     "..ooo..",
 ]
+# ascending and descending: the arrow, and bars short to long (or long to short) beside it
+ASCENDING = [
+    ".o.....",
+    "ooo.o..",
+    ".o.....",
+    ".o..oo.",
+    ".o.....",
+    ".o..ooo",
+    ".o.....",
+]
+DESCENDING = [
+    ".o.....",
+    ".o..ooo",
+    ".o.....",
+    ".o..oo.",
+    ".o.....",
+    "ooo.o..",
+    ".o.....",
+]
 LETTER = (224, 224, 224, 255)
 SHADOW = (56, 56, 56, 255)
 
 
-def sort_orders():
-    img = Image.new("RGBA", (32, 8), CLEAR)
-    for i, glyph in enumerate((COUNT, HASH, FOLDER, CLOCK)):
+def lettered(glyphs):
+    """Glyphs side by side, 8 px apart, each in the buttons' lettering with its shadow."""
+    img = Image.new("RGBA", (8 * len(glyphs), 8), CLEAR)
+    for i, glyph in enumerate(glyphs):
         for dx, dy, colour in ((1, 1, SHADOW), (0, 0, LETTER)):
             for y, row in enumerate(glyph):
                 for x, ch in enumerate(row):
@@ -177,12 +199,21 @@ def sort_orders():
     return img
 
 
+def sort_orders():
+    return lettered((COUNT, HASH, FOLDER, CLOCK))
+
+
+def sort_directions():
+    return lettered((ASCENDING, DESCENDING))
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     steel().save(OUT / "steel.png")
     icons().save(OUT / "icons.png")
     sort_orders().save(OUT / "sort_orders.png")
-    print("wrote the machine screens' steel and gauge icons, and the barrel's sort order icons")
+    sort_directions().save(OUT / "sort_directions.png")
+    print("wrote the machine screens' steel and gauge icons, and the barrel's sort order and direction icons")
 
 
 if __name__ == "__main__":

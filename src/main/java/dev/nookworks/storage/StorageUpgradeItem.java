@@ -112,6 +112,7 @@ public class StorageUpgradeItem extends Item {
         List<StorageContents.Entry> entries = new ArrayList<>();
         List<ItemStack> refused = new ArrayList<>();
         SortOrder order = SortOrder.DEFAULT;
+        boolean reversed = false;
         Component name;
         if (level.getBlockEntity(pos) instanceof BarrelBlockEntity barrel) {
             if (player == null ? barrel.isLocked() : !barrel.canOpen(player)) {
@@ -137,6 +138,7 @@ public class StorageUpgradeItem extends Item {
         } else if (level.getBlockEntity(pos) instanceof StorageBlockEntity storage) {
             entries.addAll(storage.inventory().toContents().entries());
             order = storage.sortOrder();
+            reversed = storage.sortReversed();
             name = storage.customName();
             storage.inventory().load(StorageContents.EMPTY);
         } else {
@@ -146,6 +148,7 @@ public class StorageUpgradeItem extends Item {
         if (level.getBlockEntity(pos) instanceof StorageBlockEntity upgraded) {
             upgraded.inventory().load(new StorageContents(List.copyOf(entries)));
             upgraded.setSortOrder(order);
+            upgraded.setSortReversed(reversed);
             upgraded.setCustomName(name);
             upgraded.setChanged();
             upgraded.updateLock();

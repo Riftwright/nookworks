@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "dark_matter"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:dark_matter"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

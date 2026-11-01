@@ -61,6 +61,8 @@ public final class ModItems {
 
     public static final DeferredItem<BlockItem> OIL_LAMP = ITEMS.registerSimpleBlockItem(ModBlocks.OIL_LAMP);
     public static final DeferredItem<BlockItem> BOOKEND = ITEMS.registerSimpleBlockItem(ModBlocks.BOOKEND);
+    public static final DeferredItem<net.minecraft.world.item.DoubleHighBlockItem> STANDING_MIRROR = ITEMS.registerItem("standing_mirror",
+            p -> new net.minecraft.world.item.DoubleHighBlockItem(ModBlocks.STANDING_MIRROR.get(), p), p -> p.useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> UNLIT_LANTERN = ITEMS.registerSimpleBlockItem(ModBlocks.UNLIT_LANTERN);
     public static final DeferredItem<BlockItem> UNLIT_SOUL_LANTERN = ITEMS.registerSimpleBlockItem(ModBlocks.UNLIT_SOUL_LANTERN);
     /** The unlit copper lanterns' items, by the lit one's id, in vanilla's order (four weathering, then four waxed). */
@@ -229,6 +231,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> REPAIR_BOX = ITEMS.registerSimpleBlockItem(ModBlocks.REPAIR_BOX);
     public static final DeferredItem<BlockItem> TRASH_CAN = ITEMS.registerSimpleBlockItem(ModBlocks.TRASH_CAN);
     public static final DeferredItem<BlockItem> DARK_MATTER = ITEMS.registerSimpleBlockItem(ModBlocks.DARK_MATTER);
+    public static final DeferredItem<BlockItem> WARP_ANCHOR = ITEMS.registerSimpleBlockItem(ModBlocks.WARP_ANCHOR);
+    public static final DeferredItem<BlockItem> WINE_GLASS = ITEMS.registerSimpleBlockItem(ModBlocks.WINE_GLASS);
+    public static final DeferredItem<BlockItem> MUG = ITEMS.registerSimpleBlockItem(ModBlocks.MUG);
     /** Cooked food cooked again: what Dark Matter is made of. */
     public static final DeferredItem<Item> CHARRED_LUMP = ITEMS.registerSimpleItem("charred_lump");
 

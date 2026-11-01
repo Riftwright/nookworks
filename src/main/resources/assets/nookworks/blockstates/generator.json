@@ -1,34 +1,135 @@
 {
-  "variants": {
-    "facing=south,lit=false": {
-      "model": "nookworks:block/generator"
+  "multipart": [
+    {
+      "when": {
+        "facing": "south",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/generator"
+      }
     },
-    "facing=west,lit=false": {
-      "model": "nookworks:block/generator",
-      "y": 90
+    {
+      "when": {
+        "facing": "west",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/generator",
+        "y": 90
+      }
     },
-    "facing=north,lit=false": {
-      "model": "nookworks:block/generator",
-      "y": 180
+    {
+      "when": {
+        "facing": "north",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/generator",
+        "y": 180
+      }
     },
-    "facing=east,lit=false": {
-      "model": "nookworks:block/generator",
-      "y": 270
+    {
+      "when": {
+        "facing": "east",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/generator",
+        "y": 270
+      }
     },
-    "facing=south,lit=true": {
-      "model": "nookworks:block/generator_lit"
+    {
+      "when": {
+        "facing": "south",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/generator_lit"
+      }
     },
-    "facing=west,lit=true": {
-      "model": "nookworks:block/generator_lit",
-      "y": 90
+    {
+      "when": {
+        "facing": "west",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/generator_lit",
+        "y": 90
+      }
     },
-    "facing=north,lit=true": {
-      "model": "nookworks:block/generator_lit",
-      "y": 180
+    {
+      "when": {
+        "facing": "north",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/generator_lit",
+        "y": 180
+      }
     },
-    "facing=east,lit=true": {
-      "model": "nookworks:block/generator_lit",
-      "y": 270
+    {
+      "when": {
+        "facing": "east",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/generator_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "port_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "port_up": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "port_down": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "x": 90
+      }
     }
-  }
+  ]
 }

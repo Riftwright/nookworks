@@ -365,6 +365,8 @@ public final class AgentInput {
             }
             // resource packs again, as F3+T: textures rebuilt by processResources show without a restart
             case "reload" -> mc.reloadResourcePacks();
+            // the world's parts list, as Mods > Nookworks > Config > This World's Parts... opens it
+            case "parts" -> net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new dev.nookworks.NookworksNetwork.AskWorldParts());
             // every item of the creative tab on a flat colour, for the guide site's icons (IconSheetScreen)
             // iconsheet [list] <page> [green]
             case "iconsheet" -> {

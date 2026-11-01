@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "sorting"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:gold_sorter_gear"
+      ]
     }
   ],
   "type": "minecraft:crafting_shaped",

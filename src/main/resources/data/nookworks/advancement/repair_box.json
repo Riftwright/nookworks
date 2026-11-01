@@ -1,8 +1,18 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "liquid_experience"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:experience_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:repair_box"
+      ],
+      "any": true
     }
   ],
   "criteria": {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import dev.nookworks.machine.LootSummaries;
 import dev.nookworks.mercury.MercuryRecipes;
 import dev.nookworks.mercury.StirringTankBlockEntity;
@@ -46,7 +47,7 @@ public final class MercuryCategories {
     public static List<Retort> retortRecipes() {
         List<Retort> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(h -> {
-            var r = h.getData(MercuryRecipes.RETORTING);
+            var r = Features.enabled(h.value()) ? MercuryRecipes.retorting(new ItemStack(h)) : null;
             if (r != null) {
                 list.add(new Retort(new ItemStack(h), r));
             }
@@ -57,7 +58,7 @@ public final class MercuryCategories {
     public static List<Amalgam> amalgamRecipes() {
         List<Amalgam> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(h -> {
-            var r = h.getData(MercuryRecipes.AMALGAMATION);
+            var r = Features.enabled(h.value()) ? MercuryRecipes.amalgamation(new ItemStack(h)) : null;
             if (r != null) {
                 list.add(new Amalgam(new ItemStack(h), r));
             }
@@ -68,7 +69,7 @@ public final class MercuryCategories {
     public static List<Distil> distilRecipes() {
         List<Distil> list = new ArrayList<>();
         BuiltInRegistries.ITEM.listElements().forEach(h -> {
-            var r = h.getData(MercuryRecipes.DISTILLATION);
+            var r = Features.enabled(h.value()) ? MercuryRecipes.distillation(new ItemStack(h)) : null;
             if (r != null) {
                 list.add(new Distil(new ItemStack(h), r));
             }

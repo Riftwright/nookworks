@@ -192,9 +192,9 @@ final class R15PlaythroughTests {
     }
 
     /**
-     * With nothing under it to take them, the methanol comes out into the world - on top, the ground under it being solid,
-     * which with the tower on it is inside the column, and the column pushes it out - and every one of the eight is
-     * still there a few seconds on.
+     * With nothing under it to take them, the methanol comes out into the world - beside it, the ground under it being
+     * solid and the column on top (it was set down inside the column, which pushed it out: MachineIO.dropOut, 2026-11-01)
+     * - and every one of the eight is still there a few seconds on.
      */
     private static void methanolOnTheGround(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 2, 3);

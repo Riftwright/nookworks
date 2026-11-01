@@ -292,6 +292,13 @@ public final class MachineStyle {
         g.fill(x + 1, y + 1, x + 17, y + 17, 0xFF2A2326);
     }
 
+    /** A slot of the Keep Out row turned round, what alone is let in: as {@link #denySlot}, in green. */
+    public static void allowSlot(GuiGraphicsExtractor g, int x, int y) {
+        g.fill(x, y, x + 18, y + 18, 0xFF3B7A32);
+        g.fill(x, y, x + 17, y + 17, EDGE);
+        g.fill(x + 1, y + 1, x + 17, y + 17, 0xFF232A24);
+    }
+
     /** A slot for a part the machine is fitted with (the Sifter's mesh): framed in brass; empty, it shows the part faded. */
     public static void fittingSlot(GuiGraphicsExtractor g, int x, int y, boolean filled) {
         filterSlot(g, x, y);

@@ -109,12 +109,17 @@ public class StorageInventory extends ItemStacksResourceHandler {
         this.sort(SortOrder.DEFAULT);
     }
 
-    /**
-     * Sorts the barrel: every kind of item gathered into as few slots as it fits in, in the given order, identical
-     * items with different components (names, enchantments, damage) kept apart as they must be. Nothing is added or
-     * lost: it only moves what is there, and each lot keeps when it was last added to.
-     */
+    /** Sorts the barrel in the given order, as it runs by itself (see {@link #sort(SortOrder, boolean)}). */
     public void sort(SortOrder by) {
+        this.sort(by, false);
+    }
+
+    /**
+     * Sorts the barrel: every kind of item gathered into as few slots as it fits in, in the given order - turned round
+     * if {@code reversed} - identical items with different components (names, enchantments, damage) kept apart as they
+     * must be. Nothing is added or lost: it only moves what is there, and each lot keeps when it was last added to.
+     */
+    public void sort(SortOrder by, boolean reversed) {
         Map<ItemResource, long[]> totals = new LinkedHashMap<>();
         for (int i = 0; i < this.stacks.size(); i++) {
             ItemStack stack = this.stacks.get(i);
@@ -126,7 +131,7 @@ public class StorageInventory extends ItemStacksResourceHandler {
         }
         List<SortOrder.Lot> lots = new ArrayList<>();
         totals.forEach((resource, lot) -> lots.add(new SortOrder.Lot(resource, lot[0], lot[1])));
-        lots.sort(by.comparator());
+        lots.sort(by.comparator(reversed));
         List<ItemStack> sorted = new ArrayList<>();
         List<Long> times = new ArrayList<>();
         this.packInto(lots, sorted, times, false);

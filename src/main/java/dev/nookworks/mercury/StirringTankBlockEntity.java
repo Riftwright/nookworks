@@ -338,6 +338,16 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
 
     /** The water for mud, the biodiesel it makes, the oil it takes and the mercury for amalgam. */
     @Override
+    public ResourceHandler<FluidResource> gaugeTank(int index) {
+        return switch (index) {
+            case 0 -> this.water;
+            case 1 -> this.biodiesel;
+            case 2 -> this.oil;
+            default -> null;
+        };
+    }
+
+    @Override
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.WATER, this.waterStored(), WATER_TANK),
                 new GuiTank(GuiTank.Kind.BIODIESEL, this.biodieselStored(), BIODIESEL_TANK),

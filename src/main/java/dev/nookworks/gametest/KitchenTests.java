@@ -203,7 +203,7 @@ final class KitchenTests {
 
     /**
      * The Hand Quern grinds a wheat to flour in three turns, into the chest under it; the Noodle Maker cuts a dough into
-     * two noodles in four. With nothing in, the handle turns nothing.
+     * two noodles in four, kept inside while a block stands in front of it. With nothing in, the handle turns nothing.
      */
     private static void handMachines(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
@@ -223,6 +223,7 @@ final class KitchenTests {
                 "three turns: a wheat is flour, in the barrel below");
 
         BlockPos makerPos = new BlockPos(3, 2, 1);
+        helper.setBlock(makerPos.north(), Blocks.STONE); // a block in front of it, where the noodles come out
         helper.setBlock(makerPos, ModKitchen.NOODLE_MAKER.get());
         var maker = helper.getBlockEntity(makerPos, HandMachineBlockEntity.class);
         maker.setItem(HandMachineBlockEntity.INPUT, new ItemStack(ModKitchen.UDON_DOUGH.get()));
@@ -230,7 +231,7 @@ final class KitchenTests {
             maker.turn(level);
         }
         check(helper, maker.getItem(HandMachineBlockEntity.OUTPUT).is(ModKitchen.RAW_UDON.get())
-                && maker.getItem(HandMachineBlockEntity.OUTPUT).getCount() == 2, "four turns: two raw udon, kept inside with nowhere to go");
+                && maker.getItem(HandMachineBlockEntity.OUTPUT).getCount() == 2, "four turns: two raw udon, kept inside with a block in front");
         check(helper, maker.takeOut().getCount() == 2, "a sneaking hand takes them out");
         helper.succeed();
     }

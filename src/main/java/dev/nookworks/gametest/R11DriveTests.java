@@ -70,6 +70,7 @@ final class R11DriveTests {
         NookworksGameTests.test(NEED_KITCHEN[1], 80, R11DriveTests::wheelTurnsTheQuernFromAbove);
         NookworksGameTests.test("one_motor_turns_two_presses_by_a_belt", 120, R11DriveTests::oneMotorTwoPresses);
         NookworksGameTests.test("one_motor_turns_eight_machines_at_most", 120, R11DriveTests::eightMachinesAtMost);
+        NookworksGameTests.test("an_idle_machine_takes_no_place_among_a_motors_eight", 120, R11DriveTests::idleTakesNoPlace);
         NookworksGameTests.test("belts_are_tied_only_where_they_run_true", R11DriveTests::beltsRunTrue);
         NookworksGameTests.test("a_belt_takes_two_rope_a_block_and_gives_them_back", R11DriveTests::beltPaidAndGivenBack);
         NookworksGameTests.test("a_belt_snaps_when_something_is_set_in_its_way", 100, R11DriveTests::beltSnaps);
@@ -117,8 +118,9 @@ final class R11DriveTests {
         return polisher.turns() > 0 || polisher.getItem(RicePolisherBlockEntity.INPUT).getCount() < 16;
     }
 
+    /** A quern: part way through a wheat, or a wheat gone (it was given sixteen; what it grinds is thrown out in front). */
     private static boolean worked(HandMachineBlockEntity machine) {
-        return machine.turns() > 0 || !machine.getItem(HandMachineBlockEntity.OUTPUT).isEmpty();
+        return machine.turns() > 0 || machine.getItem(HandMachineBlockEntity.INPUT).getCount() < 16;
     }
 
     /** Ties a belt with no one paying for it (a player-less tie still keeps what it would cost, to give back). */
@@ -295,6 +297,38 @@ final class R11DriveTests {
         }).thenExecuteAfter(10, () -> {
             int spent = at[0] - motor.energyStored();
             check(helper, spent == DriveNetwork.MOST_MACHINES * cost * 10, "eight machines' power: " + spent + " FE in ten ticks");
+        }).thenSucceed();
+    }
+
+    /**
+     * The same line, the two nearest presses with nothing to press: they no longer take two of the eight places, and the
+     * ninth and tenth, which have work, are turned (2026-10-31, left to me).
+     */
+    private static void idleTakesNoPlace(GameTestHelper helper) {
+        List<OilPressBlockEntity> presses = new ArrayList<>();
+        for (int x = 0; x <= 6; x += 2) {
+            presses.add(press(helper, new BlockPos(x, 2, 1)));
+            presses.add(press(helper, new BlockPos(x, 2, 3)));
+        }
+        presses.get(0).setItem(OilPressBlockEntity.INPUT, ItemStack.EMPTY);
+        presses.get(1).setItem(OilPressBlockEntity.INPUT, ItemStack.EMPTY);
+        OilPressBlockEntity farA = press(helper, new BlockPos(6, 4, 1));
+        OilPressBlockEntity farB = press(helper, new BlockPos(6, 4, 3));
+        List<DriveWheelBlockEntity> line = new ArrayList<>();
+        DriveWheelBlockEntity ofMotor = wheel(helper, new BlockPos(0, 4, 2), Direction.SOUTH);
+        for (int x = 0; x <= 6; x += 2) {
+            line.add(wheel(helper, new BlockPos(x, 2, 2), Direction.SOUTH));
+        }
+        DriveWheelBlockEntity last = wheel(helper, new BlockPos(6, 4, 2), Direction.SOUTH);
+        motor(helper, new BlockPos(0, 4, 1), Direction.SOUTH);
+        check(helper, tie(helper, ofMotor, line.get(0)) == null, "the motor's wheel is belted down to the line");
+        for (int i = 0; i + 1 < line.size(); i++) {
+            check(helper, tie(helper, line.get(i), line.get(i + 1)) == null, "the line is belted");
+        }
+        check(helper, tie(helper, line.get(line.size() - 1), last) == null, "and up to the last wheel");
+        helper.startSequence().thenExecuteAfter(30, () -> {
+            check(helper, presses.subList(2, presses.size()).stream().allMatch(R11DriveTests::worked), "the six with work are turned");
+            check(helper, worked(farA) && worked(farB), "and the ninth and tenth, the two idle ones taking no place");
         }).thenSucceed();
     }
 

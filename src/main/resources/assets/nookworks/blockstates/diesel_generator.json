@@ -73,6 +73,50 @@
         "model": "nookworks:block/diesel_generator_lamp",
         "y": 270
       }
+    },
+    {
+      "when": {
+        "port_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "port_down": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port",
+        "x": 90
+      }
     }
   ]
 }

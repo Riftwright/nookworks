@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.decor.ChevalMirrorBlock;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.travel.DaemonDestinations;
 import net.minecraft.core.BlockPos;
@@ -50,31 +51,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * home; a second in either place is refused, saying where the first is. Its glass shows the faces as they are thrown,
  * and once all six are, the world beyond (the client draws both, from {@link IfMirrorBlockEntity}).
  */
-public class IfMirrorBlock extends HorizontalDirectionalBlock implements EntityBlock {
-    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-    /** The frame standing on its feet: a thin upright through the middle, the feet wider below. */
-    private static final Map<Direction, VoxelShape> LOWER = Shapes.rotateHorizontal(Shapes.or(Block.box(1, 0, 6.5, 15, 16, 9.5),
-            Block.box(1, 0, 4, 3, 1, 12), Block.box(13, 0, 4, 15, 1, 12)));
-    private static final Map<Direction, VoxelShape> UPPER = Shapes.rotateHorizontal(Block.box(1, 0, 6.5, 15, 16, 9.5));
-
+public class IfMirrorBlock extends ChevalMirrorBlock implements EntityBlock {
     public IfMirrorBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF);
-    }
-
-    @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return (state.getValue(HALF) == DoubleBlockHalf.LOWER ? LOWER : UPPER).get(state.getValue(FACING));
-    }
-
-    /** The lower half of the mirror whose half is at {@code pos}. */
-    public static BlockPos lower(BlockState state, BlockPos pos) {
-        return state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
     }
 
     /**
@@ -85,7 +64,7 @@ public class IfMirrorBlock extends HorizontalDirectionalBlock implements EntityB
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (pos.getY() >= level.getMaxY() || !level.getBlockState(pos.above()).canBeReplaced(context)) {
+        if (super.getStateForPlacement(context) == null) {
             return null;
         }
         if (level instanceof ServerLevel server) {
@@ -100,12 +79,12 @@ public class IfMirrorBlock extends HorizontalDirectionalBlock implements EntityB
                 return null;
             }
         }
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return super.getStateForPlacement(context);
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity by, ItemStack stack) {
-        level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
+        super.setPlacedBy(level, pos, state, by, stack);
         if (level instanceof ServerLevel server) {
             IfMirrors.placed(server, pos);
             if (by instanceof Player player) {
@@ -115,46 +94,6 @@ public class IfMirrorBlock extends HorizontalDirectionalBlock implements EntityB
                         : Component.translatable("message.nookworks.if_mirror.throw"));
             }
         }
-    }
-
-    /** The two halves stand together: either gone, the other goes (no drop from the upper). */
-    @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction,
-            BlockPos neighbourPos, BlockState neighbour, RandomSource random) {
-        DoubleBlockHalf half = state.getValue(HALF);
-        if (direction.getAxis() == Direction.Axis.Y && half == DoubleBlockHalf.LOWER == (direction == Direction.UP)) {
-            return neighbour.is(this) && neighbour.getValue(HALF) != half ? state : Blocks.AIR.defaultBlockState();
-        }
-        if (half == DoubleBlockHalf.LOWER && direction == Direction.DOWN && !state.canSurvive(level, pos)) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        return super.updateShape(state, level, ticks, pos, direction, neighbourPos, neighbour, random);
-    }
-
-    @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            BlockState below = level.getBlockState(pos.below());
-            return below.is(this) && below.getValue(HALF) == DoubleBlockHalf.LOWER;
-        }
-        return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
-    }
-
-    /**
-     * Broken from its upper half by a player who takes no drops (in creative), the lower half goes with it unbroken, as a
-     * door's does. In survival the upper half drops nothing and the lower one, losing it, breaks and drops the mirror.
-     */
-    @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide() && state.getValue(HALF) == DoubleBlockHalf.UPPER && player.preventsBlockDrops()) {
-            BlockPos below = pos.below();
-            BlockState lower = level.getBlockState(below);
-            if (lower.is(this)) {
-                level.setBlock(below, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-                level.levelEvent(player, 2001, below, Block.getId(lower));
-            }
-        }
-        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -212,15 +151,5 @@ public class IfMirrorBlock extends HorizontalDirectionalBlock implements EntityB
             }
         }
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
-    }
-
-    @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 }

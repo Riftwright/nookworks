@@ -1,5 +1,7 @@
 package dev.nookworks.client.gui;
 
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +21,7 @@ import dev.nookworks.mercury.RetortBlockEntity;
 import dev.nookworks.mercury.RetortBottles;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.registry.ModItems;
+import dev.nookworks.NookworksNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.input.MouseButtonEvent;
 
 /**
  * The screen of every FE machine, drawn from its {@link MachineLayout}: a recessed bay holding power down the left, the
@@ -296,6 +300,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 if (spot.flow() != MachineLayout.Flow.NONE) {
                     lines.add(Component.translatable(k + "flow." + spot.flow().name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
                 }
+                if (this.menu.tankKind(i) != GuiTank.Kind.NETHER_AIR) {
+                    lines.add(Component.translatable(k + "pour").withStyle(ChatFormatting.GRAY));
+                }
                 String hint = "gui.nookworks.machine.hint." + layout.name().toLowerCase(Locale.ROOT) + "." + i;
                 if (Language.getInstance().has(hint)) {
                     lines.add(Component.translatable(hint).withStyle(ChatFormatting.GRAY));
@@ -329,6 +336,25 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             }
         }
         return lines;
+    }
+
+    /**
+     * A bucket or bottle on the cursor clicked on a tank's gauge pours into it or draws out of it (GaugePouring), the
+     * server deciding. Only on the gauge itself, as drawn - not its icon, nor anything round it.
+     */
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && !this.menu.getCarried().isEmpty()) {
+            MachineLayout layout = this.layout();
+            for (int i = 0; i < layout.tanks().size(); i++) {
+                if (this.menu.tankKind(i) != GuiTank.Kind.NETHER_AIR
+                        && this.isHovering(layout.tanks().get(i).x(), GAUGE_Y, TANK_W, GAUGE_H, event.x(), event.y())) {
+                    ClientPacketDistributor.sendToServer(new NookworksNetwork.PourGauge(this.menu.containerId, i));
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(event, doubleClick);
     }
 
     private boolean overGauge(MachineLayout layout, int mouseX, int mouseY) {

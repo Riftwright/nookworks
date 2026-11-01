@@ -82,6 +82,7 @@ final class WorkshopTests {
         NookworksGameTests.test("the_wandering_trader_has_a_village_map_for_one_who_never_found_a_village", 400, WorkshopTests::villageMap);
         NookworksGameTests.test("shader_packs_sway_our_leaves_as_oak", WorkshopTests::shaderAliases);
         NookworksGameTests.test("smoke_goes_up_the_hood_and_out_of_the_chimney", WorkshopTests::smoke);
+        NookworksGameTests.test("smoke_goes_up_through_a_flue_in_the_roof", WorkshopTests::smokeThroughFlue);
     }
 
     private static void use(GameTestHelper helper, ServerPlayer player, ItemStack stack, BlockPos pos) {
@@ -312,6 +313,53 @@ final class WorkshopTests {
                     + " at " + helper.getBlockState(fan.south()));
             helper.succeed();
         });
+    }
+
+    /**
+     * The Flue Brick (the user, 2026-10-31) is part of the chimney: a hood's smoke goes up a flue straight over it and on
+     * up a stone brick chimney stacked on that, out of its top; a duct run up into a flue from below goes the same way;
+     * and a flue with nothing on it lets the smoke out of its own top. A chimney under a flue has no pot. A flue is
+     * closed on its sides (the user, 2026-11-01): a duct beside it does not join it.
+     */
+    private static void smokeThroughFlue(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pot = new BlockPos(2, 2, 2);
+        helper.setBlock(pot, ModCooking.IRON_POT.get());
+        helper.setBlock(pot.above(2), ModVentilation.RANGE_HOOD.get());
+        helper.setBlock(pot.above(3), ModVentilation.BRICK_FLUE.get());
+        helper.setBlock(pot.above(4), ModVentilation.STONE_BRICK_CHIMNEY.get());
+        helper.setBlock(pot.above(5), ModVentilation.STONE_BRICK_CHIMNEY.get());
+        BlockPos other = new BlockPos(6, 2, 2);
+        helper.setBlock(other, ModCooking.IRON_POT.get());
+        helper.setBlock(other.above(2), ModVentilation.RANGE_HOOD.get());
+        helper.setBlock(other.above(3), ModVentilation.DUCT.get());
+        helper.setBlock(other.above(4), ModVentilation.COBBLESTONE_FLUE.get());
+        for (BlockPos p : new BlockPos[] {pot.above(3), pot.above(4), pot.above(5), other.above(3), other.above(4)}) {
+            BlockPos at = helper.absolutePos(p);
+            level.setBlock(at, Block.updateFromNeighbourShapes(level.getBlockState(at), level, at), 3);
+        }
+        check(helper, !helper.getBlockState(pot.above(4)).getValue(ChimneyBlock.TOP) && helper.getBlockState(pot.above(5)).getValue(ChimneyBlock.TOP),
+                "the chimney on the flue has its pot at the top");
+        var outlets = Ventilation.outlets(level, Ventilation.intakeFor(level, helper.absolutePos(pot)));
+        BlockPos top = helper.absolutePos(pot.above(5));
+        check(helper, outlets.size() == 1 && outlets.get(0).distanceTo(new Vec3(top.getX() + 0.5, top.getY() + 1.05, top.getZ() + 0.5)) < 0.01,
+                "the hood's smoke goes up the flue and out of the chimney: " + outlets);
+        check(helper, DuctBlock.connections(helper.getBlockState(other.above(3))).containsAll(List.of(Direction.DOWN, Direction.UP)),
+                "a duct joins the flue over it");
+        var through = Ventilation.outlets(level, Ventilation.intakeFor(level, helper.absolutePos(other)));
+        BlockPos flueTop = helper.absolutePos(other.above(4));
+        check(helper, through.size() == 1 && through.get(0).distanceTo(new Vec3(flueTop.getX() + 0.5, flueTop.getY() + 1.05, flueTop.getZ() + 0.5)) < 0.01,
+                "up a duct into a flue with nothing on it, the smoke comes out of the flue's top: " + through);
+        BlockPos beside = other.above(4).east();
+        helper.setBlock(beside, ModVentilation.DUCT.get());
+        BlockPos at = helper.absolutePos(beside);
+        level.setBlock(at, Block.updateFromNeighbourShapes(level.getBlockState(at), level, at), 3);
+        check(helper, !DuctBlock.connections(helper.getBlockState(beside)).contains(Direction.WEST)
+                && !DuctBlock.joins(helper.getBlockState(other.above(4)), Direction.WEST), "a duct beside a flue does not join its side");
+        BlockPos flue = helper.absolutePos(other.above(4));
+        var sideways = new Ventilation.Intake(flue.west(), Vec3.atCenterOf(flue.west()), flue, Direction.EAST);
+        check(helper, Ventilation.outlets(level, sideways).isEmpty(), "nor does a fan blowing into its side send smoke up it");
+        helper.succeed();
     }
 
     private WorkshopTests() {}

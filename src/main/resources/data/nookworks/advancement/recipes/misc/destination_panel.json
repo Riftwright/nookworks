@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "daemon_door"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:destination_panel"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

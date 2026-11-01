@@ -136,7 +136,8 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
     /**
      * Into the container below, or dropped where there is room for it: below the body, else on top of the intake (not
      * at the body's top as a one-block machine's, which is inside the intake), else - a hopper feeding the intake from
-     * above - beside the body, the first side open; with none, on top all the same.
+     * above - beside the body, the first side open; with none, it waits in the machine (it was set down on top all the
+     * same, inside the block there: nookTechnology's find of 2026-11-01, in MachineIO.dropOut).
      */
     private static ItemStack deliver(ServerLevel level, BlockPos pos, ItemStack stack) {
         ItemStack rest = MachineIO.intoBelow(level, pos, stack);
@@ -154,6 +155,9 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
                     at = pos.relative(side);
                     break;
                 }
+            }
+            if (!open(level, at)) {
+                return stack;
             }
         }
         level.addFreshEntity(new ItemEntity(level, at.getX() + 0.5, at.getY() + 0.1, at.getZ() + 0.5, stack.copy(), 0.0, 0.0, 0.0));

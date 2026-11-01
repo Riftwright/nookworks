@@ -101,13 +101,16 @@ final class CompatSweepTests {
         Set<Holder<Enchantment>> off;
         try {
             hammers.set(true);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             on = EnchantmentHelper.getAvailableEnchantmentResults(30, new ItemStack(Items.BOOK), Stream.of(earthmover)).stream()
                     .map(e -> e.enchantment()).collect(Collectors.toSet());
             hammers.set(false);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             off = EnchantmentHelper.getAvailableEnchantmentResults(30, new ItemStack(Items.BOOK), Stream.of(earthmover)).stream()
                     .map(e -> e.enchantment()).collect(Collectors.toSet());
         } finally {
             hammers.set(was);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
         }
         check(helper, on.contains(earthmover), "with the hammers on, a book can get Earthmover");
         check(helper, off.isEmpty(), "with the hammers off, it is not offered");
@@ -123,11 +126,14 @@ final class CompatSweepTests {
         boolean cornOff;
         try {
             kitchen.set(true);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             cornOn = EndSeedPlant.fitting(helper.getLevel(), at).stream().anyMatch(e -> e.state().is(ModKitchen.CORN_CROP.get()));
             kitchen.set(false);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
             cornOff = EndSeedPlant.fitting(helper.getLevel(), at).stream().anyMatch(e -> e.state().is(ModKitchen.CORN_CROP.get()));
         } finally {
             kitchen.set(was);
+            dev.nookworks.feature.WorldFeatures.changed(); // what parts switched off take along is worked out again
         }
         check(helper, cornOn, "with the kitchen on, an End Seed may grow corn");
         check(helper, !cornOff, "with it off, never");

@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "mob_bottle"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:spawn_egg_brewer"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

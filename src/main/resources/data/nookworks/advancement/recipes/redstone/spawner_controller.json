@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "spawner_control"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:spawner_controller"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

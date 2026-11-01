@@ -6,16 +6,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.Features;
 import dev.nookworks.registry.ModRecycling;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
@@ -67,7 +68,8 @@ public record RecyclingRecipe(float metal, Kind kind) {
         if (stack.isEmpty() || holdsThings(stack)) {
             return null;
         }
-        return stack.typeHolder().getData(DATA_MAP);
+        RecyclingRecipe recipe = stack.typeHolder().getData(DATA_MAP);
+        return recipe != null && Features.enabled(recipe.result()) ? recipe : null; // no scrap that cannot be had
     }
 
     /**

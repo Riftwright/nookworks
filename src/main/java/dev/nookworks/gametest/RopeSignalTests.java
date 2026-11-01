@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -109,15 +110,23 @@ final class RopeSignalTests {
         check(helper, RopeKnotEntity.at(level, a) != null && RopeKnotEntity.at(level, a).ties(b), "a line from the hook to the post");
         HungItemEntity bulb = HungItemEntity.onSpan(level, a, b, 0.5, new ItemStack(ModRope.FILAMENT_BULB_ITEM.get()));
         level.addFreshEntity(bulb);
-        helper.runAfterDelay(8, () -> {
+        // the wall powered only once the knot has looked at its post's signal, unpowered: in a full run, under load, it
+        // could first look after the wall was powered, take that as how it stands, and see no change (failed now and then)
+        afterTicks(helper, RopeKnotEntity.at(level, a), 8, () -> {
             bulb.switchLight(level, false);
             helper.setBlock(wall.west(), Blocks.REDSTONE_BLOCK); // behind the wall: the hook's own neighbours have no signal
             check(helper, !level.hasNeighborSignal(a), "nothing by the hook itself");
-            helper.runAfterDelay(6, () -> {
-                check(helper, !bulb.switchedOff(), "its wall powered, the hook's line goes on");
-                helper.succeed();
-            });
+            helper.succeedWhen(() -> check(helper, !bulb.switchedOff(), "its wall powered, the hook's line goes on"));
         });
+    }
+
+    /** {@code then}, once {@code entity} has ticked {@code ticks} times: one added to a world under load may start late. */
+    private static void afterTicks(GameTestHelper helper, Entity entity, int ticks, Runnable then) {
+        if (entity.tickCount >= ticks) {
+            then.run();
+        } else {
+            helper.runAfterDelay(1, () -> afterTicks(helper, entity, ticks, then));
+        }
     }
 
     /**

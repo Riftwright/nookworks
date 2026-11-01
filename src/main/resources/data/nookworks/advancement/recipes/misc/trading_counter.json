@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "trading_counter"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:trading_counter"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

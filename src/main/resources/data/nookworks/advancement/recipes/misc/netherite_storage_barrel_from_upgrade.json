@@ -1,8 +1,12 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "storage"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:netherite_storage_barrel",
+        "nookworks:diamond_storage_barrel",
+        "nookworks:netherite_storage_upgrade"
+      ]
     }
   ],
   "parent": "minecraft:recipes/root",

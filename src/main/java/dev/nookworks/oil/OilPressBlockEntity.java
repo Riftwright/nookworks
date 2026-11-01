@@ -9,13 +9,13 @@ import dev.nookworks.fluid.Tanks;
 import dev.nookworks.machine.CrankMotion;
 import dev.nookworks.machine.Crankable;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.machine.SightGlass;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModOil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -36,7 +36,10 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
  * Oil Press: a screw press worked by its handle. Seeds go in (by hand or hopper); each turn of the handle - by hand,
  * or by a Motor set against it - squeezes the one on the plate a little more, and after enough turns it gives up its
  * oil (see {@link PressingRecipe}) and now and then a cake of what is left. The oil gathers in a tank of four buckets,
- * is poured out into bottles and buckets, and runs off by itself into any Copper Pipe, tank or machine beside it.
+ * is poured out into bottles and buckets, and runs off by itself into any Copper Pipe, tank or machine beside or under
+ * it. The cakes go into a container under it, else one in front, else out of the spout at its front onto the ground
+ * just there ({@link MachineIO#handOut}): with a pipe under it for the oil, a hopper in the floor in front or a Magnet
+ * Chest gathers them (the user, 2026-10-31). With a block in the way they wait inside, and at a stack the press stops.
  */
 public class OilPressBlockEntity extends MachineBlockEntity implements Crankable {
     public static final int TANK = 4_000;
@@ -77,7 +80,10 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
         SightGlass.show(this, OilPressBlock.OIL, oilStep(this.stored()));
     }
 
-    /** A press loaded from a world saved before the tray showed its oil: set it right once the chunk is in. */
+    /**
+     * A press loaded from a world saved before the tray showed its oil, or before it showed its pipes' ports (set by
+     * MachineBlockEntity's): set it right once the chunk is in.
+     */
     @Override
     public void onLoad() {
         super.onLoad();
@@ -156,6 +162,7 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
                 } else {
                     cake.grow(1);
                 }
+                this.handOutCakes(level);
             }
             level.playSound(null, this.worldPosition, SoundEvents.HONEY_BLOCK_SLIDE, SoundSource.BLOCKS, 0.6F, 0.8F);
         }
@@ -182,8 +189,24 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, OilPressBlockEntity press) {
-        if (level instanceof ServerLevel server && press.stored() > 0 && server.getGameTime() % 10 == 0) {
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+        if (press.stored() > 0 && server.getGameTime() % 10 == 0) {
             press.push(server, pos);
+        }
+        if (!press.items.get(CAKE).isEmpty() && server.getGameTime() % 8 == 0) {
+            press.handOutCakes(server); // ones that waited for a block in front to go
+        }
+    }
+
+    /** The cakes it holds, sent on: under it, else in front, else out of its spout. */
+    private void handOutCakes(ServerLevel level) {
+        ItemStack cakes = this.items.get(CAKE);
+        int before = cakes.getCount();
+        MachineIO.handOut(level, this.worldPosition, this.getBlockState().getValue(OilPressBlock.FACING), cakes);
+        if (cakes.getCount() != before) {
+            this.setChanged();
         }
     }
 

@@ -1,8 +1,10 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "mob_bottle"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mob_bottle"
+      ]
     }
   ],
   "type": "minecraft:crafting_shapeless",

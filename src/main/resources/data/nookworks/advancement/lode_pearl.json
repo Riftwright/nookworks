@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "lode_pearl"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:lode_pearl"
+      ],
+      "any": true
     }
   ],
   "criteria": {

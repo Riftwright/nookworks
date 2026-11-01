@@ -1,8 +1,22 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "sorting"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:item_sorter",
+        "nookworks:precision_sorter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diamond_sorter_gear",
+        "nookworks:gold_sorter_gear",
+        "nookworks:netherite_sorter_gear",
+        "nookworks:velarium_sorter_gear"
+      ],
+      "any": true
     }
   ],
   "criteria": {

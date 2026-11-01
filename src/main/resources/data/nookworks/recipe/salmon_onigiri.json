@@ -1,8 +1,11 @@
 {
   "neoforge:conditions": [
     {
-      "type": "nookworks:feature",
-      "feature": "kitchen"
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:salmon_onigiri",
+        "nookworks:cooked_rice"
+      ]
     }
   ],
   "type": "minecraft:crafting_shapeless",

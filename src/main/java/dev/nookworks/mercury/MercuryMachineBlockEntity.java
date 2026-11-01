@@ -81,6 +81,11 @@ public abstract class MercuryMachineBlockEntity extends MachineBlockEntity imple
     }
 
     /** The mercury tank; machines with more tanks list them before it, as their layouts place them. */
+    /** Its mercury, for a bucket clicked on its gauge (GaugePouring). */
+    public MercuryStore mercuryStore() {
+        return this.mercury;
+    }
+
     public GuiTank mercuryTank() {
         return new GuiTank(GuiTank.Kind.MERCURY, this.mercury.amount(), this.mercury.capacity());
     }

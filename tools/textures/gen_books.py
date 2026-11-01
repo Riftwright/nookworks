@@ -170,16 +170,18 @@ def book_elements(kind, layer):
     edge_along = {"uv": [0, EDGE_Y + 1, LONG, EDGE_Y + 1.5], "texture": "#side"}
     art = {"uv": [0, 0, WIDE, LONG], "texture": "#cover"}
     elements = [
-        # the lower cover: its underside the cover's art, its edges the leather's
-        box([X0, 0, Z0], [x1, 0.5, z1], {"down": art, "north": edge_across, "south": edge_across, "east": edge_along,
+        # the lower cover: its underside the cover's art, its edges the leather's; its top shows where the pages are
+        # set in from it (the inside of the cover is drawn as the outside)
+        box([X0, 0, Z0], [x1, 0.5, z1], {"down": art, "up": art, "north": edge_across, "south": edge_across, "east": edge_along,
                                          "west": edge_along}),
         # the pages, set in a little from the covers on three sides
         box([X0 + 0.5, 0.5, Z0 + 0.25], [x1 - 0.25, leaf_top, z1 - 0.25], {
             "north": {"uv": [0, 0, WIDE - 0.75, THICK - 1], "texture": "#pages"},
             "south": {"uv": [0, 0, WIDE - 0.75, THICK - 1], "texture": "#pages"},
             "east": {"uv": [0, 3, LONG - 0.5, 3 + THICK - 1], "texture": "#pages"}}),
-        # the spine, closing the fourth side
+        # the spine, closing the fourth side (its inside shows past the pages' ends, set in from the covers)
         box([X0, 0.5, Z0], [X0 + 0.5, leaf_top, z1], {"west": {"uv": [0, SPINE_Y, LONG, SPINE_Y + THICK - 1], "texture": "#side"},
+                                                      "east": {"uv": [0, SPINE_Y, LONG, SPINE_Y + THICK - 1], "texture": "#side"},
                                                       "north": {"uv": [0, SPINE_Y, 0.5, SPINE_Y + THICK - 1], "texture": "#side"},
                                                       "south": {"uv": [0, SPINE_Y, 0.5, SPINE_Y + THICK - 1], "texture": "#side"}}),
         # the upper cover
@@ -191,7 +193,9 @@ def book_elements(kind, layer):
         # a ribbon out of the pages at the foot, lying between the covers
         elements.append(box([7.5, middle - 0.1, z1 - 0.25], [8.5, middle + 0.1, z1 + 1.25], {
             "up": {"uv": [12, 0, 13, 1.5], "texture": "#cover"}, "down": {"uv": [12, 0, 13, 1.5], "texture": "#cover"},
-            "south": {"uv": [12, 0, 13, 0.2], "texture": "#cover"}}))
+            "south": {"uv": [12, 0, 13, 0.2], "texture": "#cover"},
+            # its edges, out past the covers
+            "west": {"uv": [12, 0, 13, 0.2], "texture": "#cover"}, "east": {"uv": [12, 0, 13, 0.2], "texture": "#cover"}}))
     if kind == "writable":
         # the quill between the pages, its feather out past the book's side
         elements.append(box([x1 - 1, middle - 0.1, 7.5], [x1 + 3, middle + 0.1, 8.5], {
