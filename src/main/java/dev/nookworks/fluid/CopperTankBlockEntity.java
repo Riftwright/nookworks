@@ -14,10 +14,14 @@ import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -42,11 +46,13 @@ import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
  * it - a pipe, a machine, another tank - a pipe's worth a tick; buckets and bottles by hand. It keeps what it holds
  * when broken.
  */
-public class CopperTankBlockEntity extends BlockEntity implements Readout, DrawRights.Owned {
+public class CopperTankBlockEntity extends BlockEntity implements Readout, DrawRights.Owned, WindowFluid {
     public static final int CAPACITY = 16_000;
     /** What it pours down a tick: as much as a Copper Pipe holds, so a line under it runs full. */
     public static final int POUR = CopperPipeBlockEntity.BUFFER;
     private static final int FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SKIP_ON_PLACE;
+    /** On the client: the liquid its window shows, as the server told it (WindowFluid). */
+    private Fluid windowFluid = Fluids.EMPTY;
 
     /**
      * Who set it down; null for one set down before owners were kept. A stranger's tank set beside a claimed line takes
@@ -188,6 +194,44 @@ public class CopperTankBlockEntity extends BlockEntity implements Readout, DrawR
         this.owner = input.read("Owner", UUIDUtil.CODEC).orElse(null);
         input.child("Fluid").ifPresent(this.fluid::deserialize);
     }
+
+    /** The client is told which liquid is in the window (WindowFluid), with every change of the block's state. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return WindowFluid.tag(this.amount() > 0 ? this.resource().getFluid() : Fluids.EMPTY);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(ValueInput input) {
+        this.told(input);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ValueInput input) {
+        this.told(input);
+    }
+
+    /** On the client: which liquid the window shows; the block drawn again in its colour. */
+    private void told(ValueInput input) {
+        Fluid told = WindowFluid.read(input);
+        if (told != this.windowFluid) {
+            this.windowFluid = told;
+            if (this.level != null) {
+                this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_IMMEDIATE);
+            }
+        }
+    }
+
+    @Override
+    public Fluid windowFluid() {
+        return this.windowFluid;
+    }
+
 
     @Override
     protected void applyImplicitComponents(DataComponentGetter components) {

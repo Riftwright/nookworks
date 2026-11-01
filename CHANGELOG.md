@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 (2026-11-01)
+- 1.3.1: a fix - other mods' liquids in a Copper Tank's or Sight Glass's window in their own colour. Worlds from every earlier version keep everything in them.
+- Fixed: another mod's liquid in a Copper Tank's or Sight Glass's window was drawn in a plain light grey whatever it was, so a black one (nookTechnology's coal tar) looked like an empty glass. It is drawn in its own colour now.
+
 ## 1.3.0 (2026-11-01)
 - 1.3.0: dishes set out on Plates and Wooden Trays, tableware, the Standing Mirror, the Warp Anchor, chimneys in more stone with Flues, pouring at the tanks' gauges, sorting turned round, the sorters' row turned round, the Trading Counter waiting out high prices - and every part of the mod can be switched off, with what goes along shown first. Worlds from every earlier version keep everything in them.
 - Fixed: models that showed a gap or the ground through them from some angles - the ends of valves and sight glasses and of pipe collars, the undersides of the workbenches' aprons and drawer, the oil lamp's wick, the Spawn Egg Brewer's stopper and foot, the Trading Counter's foot rail, placed books, the Absorption Pad's riser, the ends of desk rails at a corner, and the wall shelf in the hand.

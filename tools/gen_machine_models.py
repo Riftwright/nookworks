@@ -609,7 +609,10 @@ def copper_tank_gauge(content, level):
     parts = []
     for side in SIDES:
         if level > 0:
-            parts.append(window_quad(side, 3, y_mid, "#gauge", [0, 0, 4, 2 * level]))
+            liquid = window_quad(side, 3, y_mid, "#gauge", [0, 0, 4, 2 * level])
+            if content == "other":  # another mod's liquid, in its own colour (the block's tint 0, WindowTint)
+                liquid["faces"][side]["tintindex"] = 0
+            parts.append(liquid)
         if level < 6:
             parts.append(window_quad(side, y_mid, 15, "#gauge", [4, 0, 8, 12 - 2 * level]))
     return {"parent": "minecraft:block/block", "textures": {"particle": gauge, "gauge": gauge}, "elements": parts}
@@ -663,7 +666,7 @@ def sight_glass_liquid(content, level, vertical):
     """
     What stands in the chamber at a LEVEL: lying along the line it fills from the chamber's floor up; standing up it
     fills from the bottom of the column. Water is tinted as the water where it stands (the block's tint 0); another
-    mod's fluid is shown in the untinted grey of water.
+    mod's fluid in the grey of water tinted with its own colour (tint 0 too, WindowTint).
     """
     h = STEP_HEIGHT[level]
     if vertical:
@@ -671,7 +674,7 @@ def sight_glass_liquid(content, level, vertical):
     else:
         frm, to = [4, 4.05, 4.05], [12, 4.05 + h - 0.1, 11.95]
     liquid = {"texture": "#liquid"}
-    if content == "water":
+    if content in ("water", "other"):
         liquid["tintindex"] = 0
     element = box(frm, to, {f: dict(liquid) for f in SIDES + ("up", "down")}, name="liquid")
     return {"parent": "minecraft:block/block", "textures": {"particle": LIQUID_TEXTURE[content], "liquid": LIQUID_TEXTURE[content]},

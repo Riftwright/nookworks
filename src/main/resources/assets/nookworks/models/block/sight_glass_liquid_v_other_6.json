@@ -18,22 +18,28 @@
       ],
       "faces": {
         "north": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         },
         "south": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         },
         "west": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         },
         "east": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         },
         "up": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         },
         "down": {
-          "texture": "#liquid"
+          "texture": "#liquid",
+          "tintindex": 0
         }
       },
       "name": "liquid"
