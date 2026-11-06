@@ -15,7 +15,8 @@ public final class CompatHooks {
     /** Each hook, by its class's simple name, and the class of the other mod it goes into. */
     public static final Map<String, String> TARGETS = Map.of(
             "SodiumLevelSliceMixin", "net.caffeinemc.mods.sodium.client.world.LevelSlice",
-            "IrisBlockIdsMixin", "net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings");
+            "IrisBlockIdsMixin", "net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings",
+            "IrisHandLightMixin", "net.irisshaders.iris.uniforms.IdMapUniforms$HeldItemSupplier");
 
     /** The hooks whose class {@code installed} says is there, by name. */
     public static List<String> present(Predicate<String> installed) {

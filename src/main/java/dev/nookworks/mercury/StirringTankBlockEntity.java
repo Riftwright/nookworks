@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import dev.nookworks.experience.Move;
+import dev.nookworks.feature.DrawRights;
+import dev.nookworks.fluid.FluidPipeBlockEntity;
 import dev.nookworks.fluid.Tanks;
 import dev.nookworks.machine.GuiTank;
 import dev.nookworks.machine.MachineInfo;
@@ -17,6 +19,7 @@ import dev.nookworks.registry.ModDataComponents;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModOil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -37,6 +40,8 @@ import net.neoforged.neoforge.transfer.CombinedResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Stirring Tank. Amalgamation: crushed ore or rock is stirred with mercury, which dissolves the metal in it and becomes
@@ -77,6 +82,39 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
     private final ResourceHandler<FluidResource> fluids =
             new CombinedResourceHandler<>(this.water, this.oil, this.biodiesel);
 
+    /**
+     * Whether water or oil has come in through the top: then the top is a feed, and no biodiesel is pushed up into it.
+     * The pipe bringing oil down onto the tank was filled with biodiesel the first time it ran empty, and the oil line
+     * stopped (round two of r21). Forgotten once nothing that holds liquid is above.
+     */
+    private boolean topFeeds;
+    /** {@link #topFeeds} kept with the transaction that set it: a pipe asking what would go in leaves it as it was. */
+    private final SnapshotJournal<Boolean> topFeedsJournal = new SnapshotJournal<>() {
+        @Override
+        protected Boolean createSnapshot() {
+            return StirringTankBlockEntity.this.topFeeds;
+        }
+
+        @Override
+        protected void revertToSnapshot(Boolean snapshot) {
+            StirringTankBlockEntity.this.topFeeds = snapshot;
+        }
+
+        @Override
+        protected void onRootCommit(Boolean before) {
+            if (!before && StirringTankBlockEntity.this.topFeeds) {
+                StirringTankBlockEntity.this.setChanged();
+            }
+        }
+    };
+    /** The tanks as the side above reaches them: what comes in by it makes the top a feed. */
+    private final ResourceHandler<FluidResource> fromAbove = Tanks.noting(this.fluids, transaction -> {
+        if (!this.topFeeds) {
+            this.topFeedsJournal.updateSnapshots(transaction);
+            this.topFeeds = true;
+        }
+    });
+
     /** Batches still to be stirred with the caustic soda last taken from the slot. */
     private int catalystLeft;
 
@@ -87,6 +125,16 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
     /** Water and oil in, biodiesel out, from any side (a pipe only takes what it carries). */
     public ResourceHandler<FluidResource> fluidHandler() {
         return this.fluids;
+    }
+
+    /** {@link #fluidHandler} as {@code side} reaches it: from above, what comes in makes the top a feed. */
+    public ResourceHandler<FluidResource> fluidHandler(@Nullable Direction side) {
+        return side == Direction.UP ? this.fromAbove : this.fluids;
+    }
+
+    /** Whether the top feeds it, so biodiesel stays in until drawn out elsewhere. */
+    public boolean topFeeds() {
+        return this.topFeeds;
     }
 
     public int oilStored() {
@@ -260,14 +308,38 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
 
     /** Out of the top, into a pipe or tank that takes biodiesel. */
     private void pushBiodiesel(ServerLevel level, BlockPos pos) {
-        if (this.biodieselStored() <= 0) {
+        if (this.topFeeds && level.getBlockEntity(pos.above()) == null) {
+            // the feed above is gone: the top is free to send out again (not when a Valve there is shut, or its side
+            // switched off - that is still the feed, and opened again it would be filled; the round-two fix re-check)
+            this.topFeeds = false;
+            this.setChanged();
+        }
+        if (this.biodieselStored() <= 0 || this.topFeeds) {
             return;
         }
         var target = Tanks.above(level, pos);
-        if (target != null) {
+        if (target != null && level.getBlockEntity(pos.above()) instanceof FluidPipeBlockEntity pipe && pipe.stored() <= 0
+                && !this.leadsOn(level, pos, pipe)) {
+            return; // an empty pipe whose line takes no biodiesel anywhere: a feed, or a line not finished yet
+        }
+        // not across a claim's edge into a stranger's tank, as the Water Pump and a Copper Tank ask (r21, 2026-11-06)
+        if (target != null && DrawRights.mayMove(level, pos, this, pos.above(), level.getBlockEntity(pos.above()))) {
             Move.transfer(this.biodiesel, target, this.biodiesel.getResource(0), this.biodieselStored());
         }
     }
+
+    /** {@link FluidPipeBlockEntity#leadsToTakerOf}, for biodiesel, asked once a second at most. */
+    private boolean leadsOn(ServerLevel level, BlockPos pos, FluidPipeBlockEntity pipe) {
+        long now = level.getGameTime();
+        if (now - this.leadsAskedAt >= 20 || now < this.leadsAskedAt) {
+            this.leadsAskedAt = now;
+            this.leads = pipe.leadsToTakerOf(level, this.biodiesel.getResource(0), pos, 512);
+        }
+        return this.leads;
+    }
+
+    private long leadsAskedAt = Long.MIN_VALUE / 2;
+    private boolean leads;
 
     @Override
     protected void heldFluids(Consumer<FluidStack> out) {
@@ -291,6 +363,9 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         this.oil.serialize(output.child("Oil"));
         this.biodiesel.serialize(output.child("Biodiesel"));
         output.putInt("CatalystLeft", this.catalystLeft);
+        if (this.topFeeds) {
+            output.putBoolean("top_feeds", true);
+        }
     }
 
     @Override
@@ -300,6 +375,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         input.child("Oil").ifPresent(this.oil::deserialize);
         input.child("Biodiesel").ifPresent(this.biodiesel::deserialize);
         this.catalystLeft = Math.clamp(input.getIntOr("CatalystLeft", 0), 0, BATCHES_PER_SODA - 1);
+        this.topFeeds = input.getBooleanOr("top_feeds", false);
     }
 
     /**
@@ -330,6 +406,11 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        return takes(slot, stack);
+    }
+
+    /** What slot {@code slot} takes: the machine's rule, and its screen's on the client (MachineMenu). */
+    public static boolean takes(int slot, ItemStack stack) {
         if (slot == CATALYST) {
             return stack.is(ModItems.CAUSTIC_SODA.get());
         }

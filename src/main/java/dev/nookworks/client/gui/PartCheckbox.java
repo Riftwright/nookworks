@@ -26,6 +26,8 @@ public final class PartCheckbox extends AbstractButton {
     /** Vanilla's checkbox: the font's line and 8 px. */
     public static final int SIZE = 17;
     private boolean selected;
+    /** Unticked, but some of what it stands for is on (a group partly on): a dash in the box. */
+    private boolean some;
     private final Changed changed;
 
     public PartCheckbox(Component name, boolean selected, Changed changed) {
@@ -41,6 +43,11 @@ public final class PartCheckbox extends AbstractButton {
     /** Ticks or clears it without telling anyone: the screen set it so itself. */
     public void set(boolean selected) {
         this.selected = selected;
+    }
+
+    /** Shows a dash while unticked (some of a group on, not all: r20, an unticked box read as all off). */
+    public void setSome(boolean some) {
+        this.some = some;
     }
 
     @Override
@@ -65,5 +72,9 @@ public final class PartCheckbox extends AbstractButton {
         Identifier sprite = this.selected ? lit ? SELECTED_HIGHLIGHTED : SELECTED : lit ? HIGHLIGHTED : BOX;
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, this.getX(), this.getY(), SIZE, SIZE,
                 ARGB.white(this.active ? this.alpha : this.alpha * 0.5F));
+        if (!this.selected && this.some) {
+            int colour = ARGB.color(Math.round((this.active ? 1.0F : 0.5F) * 255), 0xE0E0E0);
+            graphics.fill(this.getX() + 4, this.getY() + 7, this.getX() + SIZE - 4, this.getY() + 10, colour);
+        }
     }
 }

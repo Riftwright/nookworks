@@ -1,6 +1,7 @@
 {
   "values": [
     "#c:bosses",
+    "minecraft:creaking",
     "minecraft:elder_guardian",
     "minecraft:warden"
   ]

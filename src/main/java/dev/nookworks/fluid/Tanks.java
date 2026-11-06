@@ -1,5 +1,6 @@
 package dev.nookworks.fluid;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
@@ -134,6 +135,53 @@ public final class Tanks {
             @Override
             public int extract(int index, FluidResource resource, int amount, TransactionContext transaction) {
                 return 0;
+            }
+        };
+    }
+
+    /**
+     * {@code tank}, telling {@code took} of each transaction that puts something into it through this handler - a trial
+     * one (a pipe asking what would go in) too, so what it keeps belongs in that transaction's journal.
+     */
+    public static ResourceHandler<FluidResource> noting(ResourceHandler<FluidResource> tank, Consumer<TransactionContext> took) {
+        return new ResourceHandler<>() {
+            @Override
+            public int size() {
+                return tank.size();
+            }
+
+            @Override
+            public FluidResource getResource(int index) {
+                return tank.getResource(index);
+            }
+
+            @Override
+            public long getAmountAsLong(int index) {
+                return tank.getAmountAsLong(index);
+            }
+
+            @Override
+            public long getCapacityAsLong(int index, FluidResource resource) {
+                return tank.getCapacityAsLong(index, resource);
+            }
+
+            @Override
+            public boolean isValid(int index, FluidResource resource) {
+                return tank.isValid(index, resource);
+            }
+
+            @Override
+            public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
+                int in = tank.insert(index, resource, amount, transaction);
+                if (in > 0) {
+                    took.accept(transaction);
+                }
+                return in;
+            }
+
+            @Override
+            public int extract(int index, FluidResource resource, int amount, TransactionContext transaction) {
+                return tank.extract(index, resource, amount, transaction);
             }
         };
     }

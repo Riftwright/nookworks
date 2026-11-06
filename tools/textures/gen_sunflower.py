@@ -1,5 +1,5 @@
 """Sunflower Seeds and the sunflower crop they grow (the user, 2026-10-12). Original pixel art, drawn flat and finished
-with texkit; vanilla's sunflower is what the crop opens into, so nothing of it is drawn here.
+with texkit.shade; vanilla's sunflower is what the crop opens into, so nothing of it is drawn here.
 
 - item/sunflower_seeds: four seeds lying this way and that, as vanilla's seeds are drawn - each a teardrop, black with
   a pale stripe down one side and a grey sheen down the other, as striped sunflower seeds are; the stripes kept exact
@@ -126,7 +126,7 @@ def main():
                                                              "textures": {"layer0": "nookworks:item/sunflower_seeds"}})
     write_json(ASSETS / "items/sunflower_seeds.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/sunflower_seeds"}})
     for stage in range(3):
-        texkit.finish(crop(stage), 420 + stage, keep=[CLEAR, PETAL], reach=1, **texkit.PLANT).save(tex / f"block/sunflower_crop_stage{stage}.png")
+        texkit.shade(crop(stage), 420 + stage, keep=[CLEAR, PETAL], reach=1, **texkit.PLANT).save(tex / f"block/sunflower_crop_stage{stage}.png")
         write_json(ASSETS / f"models/block/sunflower_crop_stage{stage}.json", {
             "parent": "minecraft:block/cross", "render_type": "minecraft:cutout",
             "textures": {"cross": f"nookworks:block/sunflower_crop_stage{stage}"}})

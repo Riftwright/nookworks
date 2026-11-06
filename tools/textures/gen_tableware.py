@@ -1,15 +1,17 @@
 """Dishes and tableware for 1.3, the cooking update (the user, 2026-10-31). Original pixel art, drawn flat and finished
-with texkit; models, blockstates, item definitions, loot tables and recipes written alongside. Deterministic.
+with texkit.shade (all plain: glaze and food); models, blockstates, item definitions, loot tables and recipes written alongside. Deterministic.
 
 Dishes, set out on a Wooden Tray or a Plate (drawn by DishModels; never straight on the table):
-- dish_udon      udon in a deep navy glazed bowl (the item's bowl), its broth with noodles, green onion and fishcake
-- dish_tonkatsu  a cutlet sliced in five, the cut faces pale, with shredded cabbage behind
-- dish_karaage   five pieces of karaage piled, with a wedge of lemon
-- dish_donut     a ring of dough with a sugar glaze on top
+- dish_udon      udon in a round navy glazed bowl (the item's bowl) under a white rim, fishcake, chopsticks across
+- dish_tonkatsu  a cutlet sliced in five, the cut faces pale, with a heap of shredded cabbage behind and mustard
+- dish_karaage   five pieces of karaage piled on a lettuce leaf, with a wedge of lemon
+- dish_donut     a round ring of dough with a sugar glaze on top
 Tableware:
-- plate          a white glazed plate (one dish on it)
+- plate          a round white glazed plate, its rim raised (one dish on it)
 - wine_glass     a clear glass on a stem, one to four to a block
-- mug            a white glazed mug with a blue band and a handle, one to four to a block
+- mug            a white glazed mug with a blue band, a lip and a handle, one to four to a block
+Redrawn 2026-11-05: round where they were square, in whole pixels as vanilla's round things are (the user found a
+half-pixel version too much: "マイクラらしさを残して").
 
 Run from the repo root:  python tools/textures/gen_tableware.py
 """
@@ -40,7 +42,7 @@ LEMON = [(214, 170, 30), (244, 210, 64), (252, 236, 140)]
 DOUGH = [(150, 92, 40), (186, 122, 58), (214, 154, 80)]
 SUGAR = [(214, 200, 172), (234, 222, 198), (248, 242, 228)]
 BLUE = [(74, 108, 160), (104, 140, 192)]
-GLASS = [(196, 226, 236, 70), (220, 240, 246, 100), (246, 252, 255, 170)]
+GLASS = [(196, 226, 236, 110), (220, 240, 246, 150), (246, 252, 255, 220)]  # firmer since r21: it barely showed
 
 
 def img16():
@@ -69,17 +71,15 @@ def bowl_side():
     for x in range(16):  # the white rim, and a pale line of glaze round the belly
         img.putpixel((x, 0), GLAZE[3] + (255,))
         img.putpixel((x, 7), NAVY[3] + (255,))
-    return texkit.finish(img, 801, keep=[GLAZE[3]], **texkit.SMOOTH)
+    return texkit.shade(img, 801, keep=[GLAZE[3]], **texkit.SMOOTH)
 
 
 def udon_top():
     img = img16()
     for y in range(16):
         for x in range(16):
-            if x in (0, 15) or y in (0, 15):
-                c = GLAZE[3]  # the bowl's rim seen from above
-            elif x in (1, 14) or y in (1, 14):
-                c = NAVY[2]  # its inside, down to the broth
+            if math.hypot(x - 7.5, y - 7.5) > 6.6:
+                c = NAVY[2]  # the bowl's inside, at the edge of the broth under the rim
             else:
                 c = BROTH[1 + (wobble(x, y, 2, 3) == 0)]
                 # thick noodles in loose waves across the bowl, the broth between them
@@ -89,15 +89,39 @@ def udon_top():
             img.putpixel((x, y), c + (255,))
     for x, y in ((4, 4), (5, 4), (9, 10), (10, 10), (11, 9), (5, 11), (6, 11)):
         img.putpixel((x, y), ONION[1] + (255,))
-    for x, y in ((10, 4), (11, 4), (10, 5), (11, 5)):  # a slice of fishcake with its pink swirl
-        img.putpixel((x, y), NARUTO[0] + (255,))
-    img.putpixel((11, 5), NARUTO[1] + (255,))
-    return texkit.finish(img, 802, keep=[GLAZE[3], NARUTO[1]], **texkit.SMOOTH)
+    return texkit.shade(img, 802, **texkit.SMOOTH)
+
+
+def naruto():
+    """The fishcake slice from above, its pink swirl round the middle (laid on a small disc, so drawn round the centre)."""
+    img = fill(img16(), NARUTO, 14, lambda x, y: 0)
+    for x, y in ((7, 6), (8, 6), (9, 7), (9, 8), (8, 9), (7, 9), (6, 8), (6, 7), (7, 7), (8, 8)):
+        img.putpixel((x, y), NARUTO[1] + (255,))
+    return texkit.shade(img, 814, keep=[NARUTO[1]], **texkit.SMOOTH)
+
+
+def lettuce():
+    img = fill(img16(), CABBAGE, 15, lambda x, y: 2 if (x + y) % 5 == 0 or abs(x - y) % 7 == 0 else 1 + (wobble(x, y, 15, 4) == 0))
+    return texkit.shade(img, 815, **texkit.PLANT)
+
+
+def lemon_cut():
+    """A wedge's flesh: pale segments split by white pith, the rind's yellow at the edges."""
+    def p(x, y):
+        if y in (0, 15) or x in (0, 15):
+            return 1
+        return 2 if x % 4 == 0 else 0
+    img = img16()
+    flesh = [(240, 220, 110), LEMON[1], (252, 246, 210)]
+    for y in range(16):
+        for x in range(16):
+            img.putpixel((x, y), flesh[p(x, y)] + (255,))
+    return texkit.shade(img, 816, **texkit.SMOOTH)
 
 
 def katsu_crumb():
-    img = fill(img16(), CRUMB, 3, lambda x, y: 1 + wobble(x, y, 3, 3))
-    return texkit.finish(img, 803, **texkit.ROUGH)
+    img = fill(img16(), CRUMB, 3, lambda x, y: (0 if wobble(x, y, 13, 6) == 0 else 1 + wobble(x // 2, y // 2 + (x // 2) % 2, 3, 3)))  # crumbs in clumps
+    return texkit.shade(img, 803, **texkit.ROUGH)
 
 
 def katsu_cut():
@@ -110,22 +134,22 @@ def katsu_cut():
         for x in range(16):
             i = p(x, y)
             img.putpixel((x, y), (CRUMB[2] if i == 0 else MEAT[i]) + (255,))
-    return texkit.finish(img, 804, **texkit.SMOOTH)
+    return texkit.shade(img, 804, **texkit.SMOOTH)
 
 
 def cabbage():
     img = fill(img16(), CABBAGE, 5, lambda x, y: (x * 3 + y * 7 + wobble(x, y, 5, 3)) % 4)
-    return texkit.finish(img, 805, **texkit.PLANT)
+    return texkit.shade(img, 805, **texkit.PLANT)
 
 
 def karaage():
-    img = fill(img16(), KARAAGE, 6, lambda x, y: 1 + wobble(x, y, 6, 3))
-    return texkit.finish(img, 806, **texkit.ROUGH)
+    img = fill(img16(), KARAAGE, 6, lambda x, y: (0 if wobble(x, y, 16, 5) == 0 else 1 + wobble(x // 2 + (y // 3) % 2, y // 2, 6, 3)))  # craggy crust
+    return texkit.shade(img, 806, **texkit.ROUGH)
 
 
 def lemon():
     img = fill(img16(), LEMON, 7, lambda x, y: 2 if y < 3 else 1 if y < 13 else 0)
-    return texkit.finish(img, 807, **texkit.SMOOTH)
+    return texkit.shade(img, 807, **texkit.SMOOTH)
 
 
 def donut_top():
@@ -133,7 +157,7 @@ def donut_top():
     for x in range(16):
         if wobble(x, 0, 9, 3) == 0:
             img.putpixel((x, 15), DOUGH[2] + (255,))  # the glaze stops short of the edge here and there
-    return texkit.finish(img, 808, **texkit.SMOOTH)
+    return texkit.shade(img, 808, **texkit.SMOOTH)
 
 
 def donut_side():
@@ -142,30 +166,30 @@ def donut_side():
         img.putpixel((x, 0), SUGAR[1] + (255,))
         if wobble(x, 1, 10, 2) == 0:
             img.putpixel((x, 1), SUGAR[0] + (255,))  # a drip of glaze over the side
-    return texkit.finish(img, 809, **texkit.SMOOTH)
+    return texkit.shade(img, 809, **texkit.SMOOTH)
 
 
 def plate_top():
     img = img16()
     for y in range(16):
         for x in range(16):
-            d = max(abs(x - 7.5), abs(y - 7.5))
-            c = GLAZE[1] if d >= 7 else GLAZE[2] if d >= 5.5 else GLAZE[3]  # the rim, its slope, the well
+            d = math.hypot(x - 7.5, y - 7.5)
+            c = GLAZE[2] if d >= 5.2 else GLAZE[1] if d >= 4.2 else GLAZE[3]  # the rim, the shadow at its foot, the well
             img.putpixel((x, y), c + (255,))
-    return texkit.finish(img, 810, **texkit.SMOOTH)
+    return texkit.shade(img, 810, **texkit.SMOOTH)
 
 
 def plate_side():
     img = fill(img16(), GLAZE, 11, lambda x, y: 1 if y > 8 else 2)
-    return texkit.finish(img, 811, **texkit.SMOOTH)
+    return texkit.shade(img, 811, **texkit.SMOOTH)
 
 
 def mug_side():
     img = fill(img16(), GLAZE, 12, lambda x, y: 3)
     for x in range(16):
-        for y in (6, 7):
-            img.putpixel((x, y), BLUE[1 if y == 6 else 0] + (255,))
-    return texkit.finish(img, 812, keep=list(BLUE), **texkit.SMOOTH)
+        for y in (12, 13):  # rows 11-16 are the mug's five pixels: the band a pixel under its rim
+            img.putpixel((x, y), BLUE[1 if y == 12 else 0] + (255,))
+    return texkit.shade(img, 812, keep=list(BLUE), **texkit.SMOOTH)
 
 
 def mug_top():
@@ -174,7 +198,7 @@ def mug_top():
         for x in range(16):
             edge = x in (0, 15) or y in (0, 15)
             img.putpixel((x, y), (GLAZE[3] if edge else (90, 84, 78)) + (255,))  # the rim round the empty inside
-    return texkit.finish(img, 813, keep=[GLAZE[3]], **texkit.SMOOTH)
+    return texkit.shade(img, 813, keep=[GLAZE[3]], **texkit.SMOOTH)
 
 
 def glass():
@@ -190,7 +214,7 @@ TEXTURES = {
     "dish_bowl_side": bowl_side, "dish_udon_top": udon_top, "dish_katsu_crumb": katsu_crumb, "dish_katsu_cut": katsu_cut,
     "dish_cabbage": cabbage, "dish_karaage": karaage, "dish_lemon": lemon, "dish_donut_top": donut_top,
     "dish_donut_side": donut_side, "plate_top": plate_top, "plate_side": plate_side, "mug_side": mug_side,
-    "mug_top": mug_top, "wine_glass": glass,
+    "mug_top": mug_top, "wine_glass": glass, "dish_naruto": naruto, "dish_lettuce": lettuce, "dish_lemon_cut": lemon_cut,
 }
 
 
@@ -224,34 +248,100 @@ def t(name):
     return "nookworks:block/" + name
 
 
+def blob(inside, y0, y1, tex, step=0.5, area=(0, 16, 0, 16), **faces):
+    """Boxes filling the cells of a grid (cells {@code step} wide over {@code area}, x0 x1 z0 z1) whose centres
+    inside(x, z) takes, from y0 to y1: runs along x merged, then rows of the same runs - a round or ring shape in few
+    boxes that do not overlap (overlapping faces would flicker)."""
+    x0, x1, z0, z1 = area
+    rows = []
+    z = z0
+    while z < z1 - 1e-6:
+        runs, start, x = [], None, x0
+        while x <= x1 + 1e-6:
+            hit = x < x1 - 1e-6 and inside(x + step / 2, z + step / 2)
+            if hit and start is None:
+                start = x
+            elif not hit and start is not None:
+                runs.append((start, x))
+                start = None
+            x += step
+        rows.append((z, tuple(runs)))
+        z += step
+    out, i = [], 0
+    while i < len(rows):
+        j = i
+        while j + 1 < len(rows) and rows[j + 1][1] == rows[i][1]:
+            j += 1
+        for a, b in rows[i][1]:
+            out.append(box([a, y0, rows[i][0]], [b, y1, rows[j][0] + step], tex, **faces))
+        i = j + 1
+    return out
+
+
+def disc(cx, cz, r, rin=0.0, sx=1.0):
+    """inside() of a disc (or a ring from rin), round {@code cx, cz}, stretched {@code sx} along x."""
+    return lambda x, z: rin * rin <= ((x - cx) / sx) ** 2 + (z - cz) ** 2 <= r * r
+
+
+def turned(element, angle, axis, origin):
+    element["rotation"] = {"angle": angle, "axis": axis, "origin": [round(v, 3) for v in origin]}
+    return element
+
+
 def models():
     out = {}
-    # a deep bowl narrowing to its foot, the broth just under the rim
-    out["block/dish_udon"] = dish({"side": t("dish_bowl_side"), "top": t("dish_udon_top")}, [
-        box([6.25, 0, 6.25], [9.75, 0.5, 9.75], "side"),
-        box([5.5, 0.5, 5.5], [10.5, 1.5, 10.5], "side"),
-        box([5, 1.5, 5], [11, 4, 11], "side", top="top")])
-    slices = [box([4 + i * 1.65, 0, 5 + (i % 2) * 0.3], [5.5 + i * 1.65, 1.6, 10 + (i % 2) * 0.3], "crumb", cut="cut") for i in range(5)]
-    out["block/dish_tonkatsu"] = dish({"crumb": t("dish_katsu_crumb"), "cut": t("dish_katsu_cut"), "cabbage": t("dish_cabbage")},
-                                      slices + [box([4.5, 0, 10.6], [11.5, 1.4, 12.6], "cabbage")])
-    pieces = [([5, 0, 5], [8, 2.5, 8]), ([8.5, 0, 5.5], [11, 2.2, 8.3]), ([5.5, 0, 8.5], [8.2, 2.3, 11]),
-              ([8.4, 0, 8.6], [11, 2.6, 11.2]), ([6.8, 2.2, 6.8], [9.4, 4.4, 9.4])]
-    out["block/dish_karaage"] = dish({"k": t("dish_karaage"), "lemon": t("dish_lemon")},
-                                     [box(a, b, "k") for a, b in pieces] + [box([10.6, 0, 10.8], [12.6, 1.5, 12.2], "lemon")])
-    ring = [([4, 0, 4], [12, 2.5, 6.5]), ([4, 0, 9.5], [12, 2.5, 12]), ([4, 0, 6.5], [6.5, 2.5, 9.5]), ([9.5, 0, 6.5], [12, 2.5, 9.5])]
+    # a round bowl on a foot, the broth under a white rim, a fishcake on it and chopsticks laid across - in whole
+    # pixels, round as vanilla's round things are
+    udon = blob(disc(8, 8, 2.5), 0, 1, "side", step=1) + blob(disc(8, 8, 4), 1, 4, "side", top="top", step=1) \
+        + blob(disc(8, 8, 4, 3), 4, 4.5, "rim", step=1)
+    udon += [box([9, 4, 6], [11, 4.25, 8], "naruto"),
+             box([4, 4.5, 9], [12, 5, 9.5], "stick"), box([4, 4.5, 10], [12, 5, 10.5], "stick")]
+    out["block/dish_udon"] = dish({"side": t("dish_bowl_side"), "top": t("dish_udon_top"), "rim": t("plate_side"),
+                                   "naruto": t("dish_naruto"), "stick": "minecraft:block/stripped_bamboo_block"}, udon)
+    # five slices side by side, a pixel's gap between them for the pale cut faces, a heap of shredded cabbage behind
+    slices = [box([3.5 + i * 1.9, 0, 4.5 + (i % 2) * 0.5], [5 + i * 1.9, 1.5, 9.5 + (i % 2) * 0.5], "crumb", cut="cut") for i in range(5)]
+    cabbage = blob(disc(8, 11.5, 2, sx=2), 0, 1, "cabbage", step=1, area=(3, 13, 9, 14)) \
+        + blob(disc(8, 11.5, 1, sx=2.5), 1, 2, "cabbage", step=1, area=(3, 13, 9, 14))
+    out["block/dish_tonkatsu"] = dish({"crumb": t("dish_katsu_crumb"), "cut": t("dish_katsu_cut"), "cabbage": t("dish_cabbage"),
+                                       "mustard": t("dish_lemon")},
+                                      slices + cabbage + [box([11.5, 0, 4.5], [12.5, 0.5, 5.5], "mustard")])
+    # five pieces piled on a lettuce leaf, every other one turned, with a wedge of lemon
+    pieces = [((6.5, 6.5), 3, 2.5, 0), ((9.7, 6.6), 2.5, 2.25, 22.5), ((6.6, 9.7), 2.5, 2.25, 22.5),
+              ((9.6, 9.6), 3, 2.5, 0), ((8, 8), 2.5, 2.25, 22.5)]
+    karaage = []
+    for n, ((x, z), w, h, a) in enumerate(pieces):
+        y = 0.25 if n < 4 else 2.5
+        e = box([x - w / 2, y, z - w / 2], [x + w / 2, y + h, z + w / 2], "k")
+        karaage.append(turned(e, a, "y", [x, y, z]) if a else e)
+    leaf = blob(disc(8, 8, 5), 0, 0.25, "leaf", step=1)
+    out["block/dish_karaage"] = dish({"k": t("dish_karaage"), "lemon": t("dish_lemon"), "cut": t("dish_lemon_cut"),
+                                      "leaf": t("dish_lettuce")},
+                                     leaf + karaage + [box([10.5, 0.25, 11], [13, 1.5, 12.5], "lemon", top="cut")])
+    # a round ring of dough under its glaze
     out["block/dish_donut"] = dish({"side": t("dish_donut_side"), "top": t("dish_donut_top")},
-                                   [box(a, b, "side", top="top") for a, b in ring])
-    out["block/plate"] = dish({"side": t("plate_side"), "top": t("plate_top")}, [box([2, 0, 2], [14, 1, 14], "side", top="top")])
+                                   blob(disc(8, 8, 4, 1.5), 0, 2.5, "side", top="top", step=1))
+    # a round plate, its rim standing up round the well where the food sits
+    out["block/plate"] = dish({"side": t("plate_side"), "top": t("plate_top")},
+                              blob(disc(8, 8, 6), 0, 1, "side", top="top", step=1)
+                              + blob(disc(8, 8, 6, 5), 1, 1.5, "side", top="top", step=1))
     spots = {1: [(8, 8)], 2: [(5.5, 7.5), (10.5, 8.5)], 3: [(5.5, 6), (10.5, 6.5), (8, 10.5)], 4: [(5, 5), (11, 5), (5, 11), (11, 11)]}
+    mug_spots = {1: [(8, 8)], 2: [(4.5, 7.5), (11, 8.5)], 3: [(4.5, 5.5), (11, 6), (7.5, 11)], 4: spots[4]}
     for n, places in spots.items():
         glass_el, mug_el = [], []
-        for x, z in places:
-            glass_el += [box([x - 1.5, 0, z - 1.5], [x + 1.5, 0.5, z + 1.5], "g"), box([x - 0.5, 0.5, z - 0.5], [x + 0.5, 3.5, z + 0.5], "g"),
-                         box([x - 1.5, 3.5, z - 1.5], [x + 1.5, 7, z + 1.5], "g")]
-            mug_el += [box([x - 1.5, 0, z - 1.5], [x + 1.5, 4, z + 1.5], "side", top="top"),
-                       box([x + 1.5, 1, z - 0.5], [x + 2.5, 3, z + 0.5], "side")]
+        for k, (x, z) in enumerate(places):
+            near = (x - 3, x + 3, z - 3, z + 3)  # a grid of whole pixels round this spot
+            # a round foot, a thin stem, an open bowl
+            glass_el += blob(disc(x, z, 1.5), 0, 0.5, "g", step=0.5, area=near) + [box([x - 0.5, 0.5, z - 0.5], [x + 0.5, 3.5, z + 0.5], "g")] \
+                + blob(disc(x, z, 1.75, 1.0), 3.5, 7, "g", step=0.5, area=near) + blob(disc(x, z, 1.0), 3.5, 4, "g", step=0.5, area=near)
+            x, z = mug_spots[n][k]  # spaced wider, for the handles
+            near = (x - 3, x + 3, z - 3, z + 3)
+            # a mug (square at this size, as a flower pot is), its dark inside under a white lip, a handle on its right
+            mug_el += blob(disc(x, z, 2.2), 0, 4.5, "side", top="inside", step=1, area=near) \
+                + blob(disc(x, z, 2.2, 1), 4.5, 5, "rim", step=1, area=near) \
+                + [box([x + 2, 3.5, z - 0.5], [x + 3, 4.5, z + 0.5], "side"), box([x + 2, 1, z - 0.5], [x + 3, 2, z + 0.5], "side"),
+                   box([x + 3, 1, z - 0.5], [x + 4, 4.5, z + 0.5], "side")]
         out[f"block/wine_glass_{n}"] = dish({"g": t("wine_glass")}, glass_el, translucent=True)
-        out[f"block/mug_{n}"] = dish({"side": t("mug_side"), "top": t("mug_top")}, mug_el)
+        out[f"block/mug_{n}"] = dish({"side": t("mug_side"), "inside": t("mug_top"), "rim": t("plate_side")}, mug_el)
     return out
 
 

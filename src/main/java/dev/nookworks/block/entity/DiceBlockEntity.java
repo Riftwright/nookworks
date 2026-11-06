@@ -20,6 +20,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.TagValueOutput;
@@ -64,6 +66,21 @@ public class DiceBlockEntity extends BlockEntity {
         this.heard = -1;
         this.setChanged();
         return this.tumble();
+    }
+
+    /**
+     * Set down turned or mirrored by a structure: its last roll forgotten, so it lies in the middle of its block as its
+     * turned state has it, rather than drawn and struck at the spot and pose it was saved with (r21, 2026-11-06).
+     */
+    @Override
+    public void applyStructureRotation(Mirror mirror, Rotation rotation) {
+        if (mirror != Mirror.NONE || rotation != Rotation.NONE) {
+            this.start = -1;
+            this.from = null;
+            this.thrown = null;
+            this.tumble = null;
+            this.setChanged();
+        }
     }
 
     /** The roll under way or last made, or null if none has been made. */

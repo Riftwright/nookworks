@@ -7,6 +7,7 @@ import static dev.nookworks.gametest.StorageTests.pigsAround;
 import static dev.nookworks.gametest.StorageTests.storageTotal;
 import static dev.nookworks.gametest.TransportTests.countIn;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,8 @@ import dev.nookworks.mobcapture.SpawnEggBrewerBlockEntity;
 import dev.nookworks.mobcapture.SpawnEggBrewerMenu;
 import dev.nookworks.poster.PosterVariant;
 import dev.nookworks.poster.PrintingPressBlockEntity;
+import dev.nookworks.recycling.Compressing;
+import dev.nookworks.recycling.CompressorBlockEntity;
 import dev.nookworks.registry.ModBarter;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
@@ -56,11 +59,14 @@ import dev.nookworks.sorter.SorterBlockEntity;
 import dev.nookworks.spawner.SpawnerControllerMenu;
 import dev.nookworks.spawner.SpawnerSettings;
 import dev.nookworks.storage.StorageBlockEntity;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ProblemReporter;
@@ -69,6 +75,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -132,6 +139,9 @@ final class MachineTests {
         test("machine_screens_fit_their_machines", MachineTests::machineScreensFit);
         test("machine_screen_sends_big_numbers", MachineTests::machineScreenBigNumbers);
         test("machine_screen_keeps_outputs_output_only", MachineTests::machineScreenOutputsOnly);
+        test("machine_shift_click_as_furnace", MachineTests::machineShiftClickAsFurnace);
+        test("machine_screen_client_takes_what_the_machine_does", MachineTests::machineScreenClientTakes);
+        test("machine_screens_shift_click_across_inventory", MachineTests::machineScreensShiftAcrossInventory);
         test("repair_box_pair_screen_shows_its_whole_store", MachineTests::repairBoxScreenWholeStore);
         test("printing_press_waits_for_redstone", MachineTests::printingPressWaitsForRedstone);
         test("spawner_controller_redstone_switches_spawners_off", MachineTests::controllerRedstoneOff);
@@ -347,7 +357,8 @@ final class MachineTests {
     /** A Mercury Bucket used on a mercury machine stays in the hand and opens nothing: a line says it goes in a tank. */
     static void mercuryBucketOnMachine(GameTestHelper helper) {
         var player = MockPlayers.inLevel(helper, net.minecraft.world.level.GameType.SURVIVAL);
-        for (var block : List.of(ModBlocks.RETORT.get(), ModBlocks.DISTILLER.get(), ModBlocks.STIRRING_TANK.get())) {
+        // the two that make mercury; the Stirring Tank, which uses it, takes the bucket (round two of r21, R21FixTests)
+        for (var block : List.of(ModBlocks.RETORT.get(), ModBlocks.DISTILLER.get())) {
             BlockPos pos = new BlockPos(1, 1, 1);
             helper.setBlock(pos, block);
             ItemStack bucket = new ItemStack(ModItems.MERCURY_BUCKET.get());
@@ -598,7 +609,10 @@ final class MachineTests {
         helper.succeed();
     }
 
-    /** Shift-clicking fills inputs only: crude salt must not top up the Retort's crude salt output. */
+    /**
+     * Shift-clicking fills inputs only: crude salt must not top up the Retort's crude salt output. Nothing of the Retort
+     * takes it, so it goes to the hotbar, as a furnace's screen moves what does not smelt.
+     */
     static void machineScreenOutputsOnly(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 2, 3);
         helper.setBlock(pos, ModBlocks.RETORT.get());
@@ -611,8 +625,9 @@ final class MachineTests {
         var menu = new MachineMenu(1, player.getInventory(), layout, retort.slots(),
                 MachineMenu.data(retort), retort);
         menu.quickMoveStack(player, layout.slotCount());
-        check(helper, retort.getItem(3).getCount() == 10 && player.getInventory().getItem(9).getCount() == 5,
-                "the output slot took shift-clicked crude salt");
+        check(helper, retort.getItem(3).getCount() == 10, "the output slot took shift-clicked crude salt");
+        check(helper, player.getInventory().getItem(9).isEmpty() && player.getInventory().getItem(0).getCount() == 5,
+                "crude salt went to the hotbar: " + player.getInventory().getItem(0));
         menu.quickMoveStack(player, layout.slotCount() + 1);
         check(helper, retort.getItem(0).is(Items.COPPER_INGOT), "copper shift-clicks into the input");
         // glass bottles into the fill box (the slot with a bottle drawn in it), not the reagents, which take them too...
@@ -627,6 +642,144 @@ final class MachineTests {
         menu.quickMoveStack(player, layout.slotCount() + 2);
         check(helper, retort.getItem(RetortBlockEntity.FILL).isEmpty() && player.getInventory().getItem(11).isEmpty(),
                 "with logs in, bottles go to the reagents");
+        helper.succeed();
+    }
+
+    /**
+     * Shift-clicks as vanilla's furnace (the user, 2026-11-06: 「ぜひバニラと合わせて」): what the machine does not take
+     * goes from the inventory to the hotbar and back; what it takes goes in, or nowhere when there is no room; out of the
+     * machine, its input goes to the inventory first and its result to the hotbar first.
+     */
+    static void machineShiftClickAsFurnace(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 2, 3);
+        helper.setBlock(pos, ModBlocks.CRUSHER.get());
+        var crusher = helper.getBlockEntity(pos, CrusherBlockEntity.class);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        var inventory = player.getInventory();
+        var layout = crusher.layout();
+        var menu = new MachineMenu(1, inventory, layout, crusher.slots(), MachineMenu.data(crusher), crusher);
+        int above = layout.slotCount(); // the inventory's slot 9, the first above the hotbar
+        int hotbar = above + 27; // the hotbar's first
+        check(helper, CrushingRecipe.of(new ItemStack(Items.FEATHER)) == null
+                && CrushingRecipe.of(new ItemStack(Items.COBBLESTONE)) != null, "the Crusher takes cobblestone, not feathers");
+        inventory.setItem(9, new ItemStack(Items.FEATHER, 5));
+        menu.quickMoveStack(player, above);
+        check(helper, inventory.getItem(9).isEmpty() && inventory.getItem(0).is(Items.FEATHER) && crusher.getItem(0).isEmpty(),
+                "a feather goes from the inventory to the hotbar: " + inventory.getItem(0));
+        menu.quickMoveStack(player, hotbar);
+        check(helper, inventory.getItem(0).isEmpty() && inventory.getItem(9).getCount() == 5,
+                "and from the hotbar back to the inventory: " + inventory.getItem(9));
+        inventory.setItem(10, new ItemStack(Items.COBBLESTONE, 64));
+        menu.quickMoveStack(player, above + 1);
+        check(helper, crusher.getItem(0).getCount() == 64 && inventory.getItem(10).isEmpty(), "cobblestone goes in");
+        inventory.setItem(10, new ItemStack(Items.COBBLESTONE, 10));
+        menu.quickMoveStack(player, above + 1);
+        boolean inHotbar = false;
+        for (int i = 0; i < 9; i++) {
+            inHotbar |= inventory.getItem(i).is(Items.COBBLESTONE);
+        }
+        check(helper, inventory.getItem(10).getCount() == 10 && !inHotbar,
+                "with the input full, cobblestone stays where it is, as ore at a full furnace");
+        inventory.setItem(10, ItemStack.EMPTY);
+        menu.quickMoveStack(player, 0);
+        check(helper, crusher.getItem(0).isEmpty() && inventory.getItem(10).getCount() == 64,
+                "the input goes back to the inventory first: " + inventory.getItem(10));
+        crusher.setItem(1, new ItemStack(Items.GRAVEL, 3));
+        menu.quickMoveStack(player, 1);
+        check(helper, crusher.getItem(1).isEmpty() && inventory.getItem(8).getCount() == 3,
+                "the result goes to the hotbar first, from its end: " + inventory.getItem(8));
+        helper.succeed();
+    }
+
+    /**
+     * The client's stand-in for each machine's slots takes what the machine does, item by item, slot by slot, so a
+     * shift-click shows at once where it lands - in the machine, or across the inventory. The Retort is asked empty and
+     * with a charge in (its reagents follow the charge), the Compressor with a kind in one input (one kind a slot).
+     */
+    static void machineScreenClientTakes(GameTestHelper helper) {
+        List<Block> machines = List.of(ModBlocks.GENERATOR.get(), ModBlocks.DIESEL_GENERATOR.get(), ModBlocks.CRUSHER.get(),
+                ModBlocks.STONE_MAKER.get(), ModBlocks.LASER.get(), ModBlocks.PLANTER.get(), ModBlocks.SIFTER.get(),
+                ModBlocks.RETORT.get(), ModBlocks.STIRRING_TANK.get(), ModBlocks.DISTILLER.get(),
+                ModBlocks.ELECTRIC_FURNACE.get(), ModBlocks.ELECTROLYTIC_CELL.get(), ModBarter.BARTER_TERMINAL.get(),
+                ModRecycling.COMPRESSOR.get(), ModRecycling.RECYCLER.get());
+        List<ItemStack> probes = BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(stack -> !stack.isEmpty()).toList();
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Compressing.heard(Compressing.compressible(helper.getLevel())); // what the server tells a client as it joins
+        List<String> wrong = new ArrayList<>();
+        try {
+            for (int i = 0; i < machines.size(); i++) {
+                BlockPos pos = new BlockPos(1 + (i % 5), 2, 1 + (i / 5) * 2);
+                helper.setBlock(pos, machines.get(i));
+                var entity = helper.getBlockEntity(pos, BlockEntity.class);
+                var info = (MachineInfo) entity;
+                compareClientSlots(player, info, entity, probes, wrong, "");
+                if (info instanceof RetortBlockEntity retort) {
+                    retort.setItem(RetortBlockEntity.INPUT, new ItemStack(Items.OAK_LOG, 4));
+                    compareClientSlots(player, info, entity, probes, wrong, " with logs in");
+                } else if (info instanceof CompressorBlockEntity compressor) {
+                    compressor.setItem(CompressorBlockEntity.INPUT, new ItemStack(Items.IRON_NUGGET, 4));
+                    compareClientSlots(player, info, entity, probes, wrong, " with iron nuggets in");
+                }
+            }
+        } finally {
+            Compressing.leftServer();
+        }
+        check(helper, wrong.isEmpty(), wrong.size() + " slots the client judges otherwise, such as " + wrong.stream().limit(6).toList());
+        helper.succeed();
+    }
+
+    private static void compareClientSlots(Player player, MachineInfo info, BlockEntity entity, List<ItemStack> probes,
+            List<String> wrong, String state) {
+        var layout = info.layout();
+        var server = new MachineMenu(1, player.getInventory(), layout, info.slots(), MachineMenu.data(info), entity);
+        var buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeVarInt(layout.ordinal());
+        var client = MachineMenu.client(2, player.getInventory(), buf);
+        for (int slot = 0; slot < layout.slotCount(); slot++) {
+            client.slots.get(slot).set(info.slots().getItem(slot).copy()); // what the menu sends
+        }
+        for (int slot = 0; slot < layout.slotCount(); slot++) {
+            for (ItemStack probe : probes) {
+                if (server.slots.get(slot).mayPlace(probe) != client.slots.get(slot).mayPlace(probe)) {
+                    wrong.add(layout + state + " slot " + slot + ": " + BuiltInRegistries.ITEM.getKey(probe.getItem()));
+                }
+            }
+        }
+    }
+
+    /**
+     * The Spawn Egg Brewer, the Printing Press and the Repair Box shift-click as the machines do: a feather, which none
+     * takes, goes from the inventory to the hotbar and back.
+     */
+    static void machineScreensShiftAcrossInventory(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        var inventory = player.getInventory();
+        BlockPos brewerPos = new BlockPos(1, 2, 1);
+        helper.setBlock(brewerPos, ModBlocks.SPAWN_EGG_BREWER.get());
+        var brewer = helper.getBlockEntity(brewerPos, SpawnEggBrewerBlockEntity.class);
+        BlockPos pressPos = new BlockPos(3, 2, 1);
+        helper.setBlock(pressPos, ModBlocks.PRINTING_PRESS.get());
+        var press = helper.getBlockEntity(pressPos, PrintingPressBlockEntity.class);
+        BlockPos boxPos = new BlockPos(5, 2, 1);
+        helper.setBlock(boxPos, ModBlocks.REPAIR_BOX.get());
+        var box = helper.getBlockEntity(boxPos, RepairBoxBlockEntity.class);
+        var halves = new RepairBoxBlockEntity[] {box};
+        record Screen(String name, AbstractContainerMenu menu, int machineSlots) {}
+        List<Screen> screens = List.of(
+                new Screen("Spawn Egg Brewer", brewer.createMenu(1, inventory, player), brewer.getContainerSize()),
+                new Screen("Printing Press", press.createMenu(2, inventory, player), PrintingPressBlockEntity.SLOTS),
+                new Screen("Repair Box", new RepairBoxMenu(3, inventory, box, RepairBoxBlockEntity.dataFor(halves), halves),
+                        box.getContainerSize()));
+        for (Screen screen : screens) {
+            inventory.setItem(9, new ItemStack(Items.FEATHER, 3));
+            screen.menu().quickMoveStack(player, screen.machineSlots());
+            check(helper, inventory.getItem(9).isEmpty() && inventory.getItem(0).is(Items.FEATHER),
+                    screen.name() + ": a feather goes from the inventory to the hotbar");
+            screen.menu().quickMoveStack(player, screen.machineSlots() + 27);
+            check(helper, inventory.getItem(0).isEmpty() && inventory.getItem(9).getCount() == 3, screen.name() + ": and back");
+            inventory.setItem(9, ItemStack.EMPTY);
+            screen.menu().removed(player);
+        }
         helper.succeed();
     }
 

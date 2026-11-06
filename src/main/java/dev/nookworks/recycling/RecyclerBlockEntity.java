@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -151,8 +152,11 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
         BlockPos at = pos.above(2);
         if (!open(level, at)) {
             for (Direction side : Direction.Plane.HORIZONTAL) {
-                if (open(level, pos.relative(side))) {
-                    at = pos.relative(side);
+                BlockPos beside = pos.relative(side);
+                // as MachineIO.dropOut: not into lava, fire or water beside it, nor a chunk not loaded (round two of r21)
+                if (level.isLoaded(beside) && open(level, beside) && level.getFluidState(beside).isEmpty()
+                        && !level.getBlockState(beside).is(BlockTags.FIRE)) {
+                    at = beside;
                     break;
                 }
             }
@@ -257,6 +261,11 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        return takes(slot, stack);
+    }
+
+    /** What slot {@code slot} takes: the machine's rule, and its screen's on the client (MachineMenu). */
+    public static boolean takes(int slot, ItemStack stack) {
         return slot == INPUT && RecyclingRecipe.of(stack) != null;
     }
 

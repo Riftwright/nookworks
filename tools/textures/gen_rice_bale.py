@@ -1,5 +1,5 @@
 """The Rice Bale (kome-dawara): its textures, its model and its blockstate. Original pixel art, drawn in a few clean
-colours and finished lightly with texkit (SMOOTH, the ropes and the knot kept exact). Deterministic.
+colours and finished lightly with texkit.shade (plain straw, SMOOTH, the ropes and the knot kept exact). Deterministic.
 
 The bale lies on its side, as hay does: a block of golden rice straw, its corners taken off twice so its section is an
 octagon and it reads round - and stacks into a storehouse pile with the gaps showing between the bales. Its stalks run
@@ -139,8 +139,8 @@ def write_json(path, data):
 def main():
     tex = ASSETS / "textures/block"
     keep = ROPE + KNOT
-    texkit.finish(side(), 700, keep=keep, tile=True, **texkit.SMOOTH).save(tex / "rice_bale_side.png")
-    texkit.finish(end(), 701, keep=keep, **texkit.SMOOTH).save(tex / "rice_bale_end.png")
+    texkit.shade(side(), 700, keep=keep, tile=True, **texkit.SMOOTH).save(tex / "rice_bale_side.png")
+    texkit.shade(end(), 701, keep=keep, **texkit.SMOOTH).save(tex / "rice_bale_end.png")
     for gone in ("rice_bale_side_turned", "rice_bale_rope", "rice_bale_knot"):  # the round bale's, before
         (tex / f"{gone}.png").unlink(missing_ok=True)
     write_json(ASSETS / "models/block/rice_bale.json", model())

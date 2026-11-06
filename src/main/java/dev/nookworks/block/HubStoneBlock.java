@@ -113,6 +113,10 @@ public class HubStoneBlock extends Block {
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         if (!movedByPiston) {
             level.updateNeighborsAt(pos, this);
+        }
+        // the blocks beside each neighbour too, a piston's move or not: the piston tells only the neighbours, and a lamp
+        // lit through a stone it powered stayed lit when it was pushed away (r21, 2026-11-06)
+        if (!movedByPiston || state.getValue(POWER) > 0) {
             for (Direction dir : Direction.values()) {
                 level.updateNeighborsAt(pos.relative(dir), this);
             }

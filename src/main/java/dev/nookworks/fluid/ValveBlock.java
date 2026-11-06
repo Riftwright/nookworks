@@ -26,8 +26,9 @@ import net.minecraft.world.phys.BlockHitResult;
  * Valve: a brass valve set in a Copper Pipe line. Open, it is a length of the line; shut, nothing gets through it
  * either way - the line before it backs up and the line after it runs dry. Its handle shows which: along the pipe
  * open, across it shut, as a real quarter-turn valve's does. It is placed open, whatever the signal where it goes, so a
- * new valve never cuts a line by surprise; from then on it is turned by an empty hand, or by redstone as a trapdoor
- * is: a signal coming on opens it and going off shuts it, so a Nested Timer can meter a line.
+ * new valve never cuts a line by surprise; from then on it is turned by a click with anything in hand, as a lever is
+ * (the user, 2026-11-05: a pipe is set against it sneaking), or by redstone as a trapdoor is: a signal coming on opens
+ * it and going off shuts it, so a Nested Timer can meter a line.
  */
 public class ValveBlock extends CopperFittingBlock {
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
@@ -64,10 +65,6 @@ public class ValveBlock extends CopperFittingBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.getMainHandItem().isEmpty()) {
-            // turned by an empty hand: a pipe in hand is set against it, rather than shutting the line by surprise
-            return InteractionResult.PASS;
-        }
         if (!level.isClientSide()) {
             boolean open = !state.getValue(OPEN);
             turn(level, pos, state.setValue(OPEN, open));

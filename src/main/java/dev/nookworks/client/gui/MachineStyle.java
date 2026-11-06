@@ -1,6 +1,10 @@
 package dev.nookworks.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.nookworks.Nookworks;
+import dev.nookworks.compat.jei.CjkLines;
 import dev.nookworks.machine.GuiTank;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineStatus;
@@ -12,6 +16,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -64,6 +69,29 @@ public final class MachineStyle {
     // the Nether's air: crimson, as the motes of a crimson forest
     public static final int NETHER_AIR = 0xFFA8302A;
     public static final int NETHER_AIR_LIT = 0xFFE4724E;
+
+    /** How wide a screen's hover text runs before it breaks: nookTechnology's screens' width, so both read alike (r21). */
+    public static final int TOOLTIP_W = 200;
+
+    /**
+     * {@code lines} broken at {@link #TOOLTIP_W}, Japanese and Chinese between words (CjkLines), each piece in its line's
+     * own style: handed over whole, the game broke them only at the screen's edge, a Japanese line between any two
+     * characters (r21, 2026-11-06).
+     */
+    public static List<FormattedCharSequence> wrap(Font font, List<Component> lines) {
+        List<FormattedCharSequence> broken = new ArrayList<>();
+        for (Component line : lines) {
+            String text = line.getString();
+            if (!CjkLines.needed(text)) {
+                broken.addAll(font.split(line, TOOLTIP_W));
+                continue;
+            }
+            for (String piece : CjkLines.wrap(text, TOOLTIP_W, font::width).split("\n")) {
+                broken.add(Component.literal(piece).withStyle(line.getStyle()).getVisualOrderText());
+            }
+        }
+        return broken;
+    }
 
     public static final int ARROW_W = 24;
     public static final int ARROW_H = 16;
@@ -206,9 +234,18 @@ public final class MachineStyle {
      * stratum above: in 26.2 a fill in the same stratum as an item is drawn under it, not over it.
      */
     public static void ghost(GuiGraphicsExtractor g, ItemStack stack, int x, int y) {
+        ghost(g, stack, x, y, 0xB0);
+    }
+
+    /**
+     * {@link #ghost} with a veil of {@code veilAlpha} (0-255; the usual is 0xB0). A strongly coloured or block-shaped
+     * hint reads better under a lighter one, about 0x90: an orange pumpkin under the usual veil came out brown, taken for
+     * a log (r21, for nookTechnology's Pumpkin Carver).
+     */
+    public static void ghost(GuiGraphicsExtractor g, ItemStack stack, int x, int y, int veilAlpha) {
         g.fakeItem(stack, x, y);
         g.nextStratum();
-        g.fill(x, y, x + 16, y + 16, 0xB0232629);
+        g.fill(x, y, x + 16, y + 16, (Math.clamp(veilAlpha, 0, 255) << 24) | 0x232629);
     }
 
     /**
@@ -450,7 +487,8 @@ public final class MachineStyle {
         int shown = left <= 0 ? 0 : Math.max(1, (int) Math.ceil(rows * Math.min(1.0F, left)));
         for (int r = 0; r < rows; r++) {
             boolean burning = r >= rows - shown;
-            int colour = !burning ? EMPTY : r < 5 ? 0xFFFFD050 : r < 10 ? 0xFFF08A24 : 0xFFE0501C;
+            // unlit in the well's dark, as an empty arrow is (r21: on the bay it was all but invisible)
+            int colour = !burning ? WELL : r < 5 ? 0xFFFFD050 : r < 10 ? 0xFFF08A24 : 0xFFE0501C;
             String row = FLAME[r];
             for (int c = 0; c < row.length(); c++) {
                 if (row.charAt(c) == '#') {
@@ -469,7 +507,7 @@ public final class MachineStyle {
         int span = w - 13;
         if (!firing) {
             for (int i = 0; i < span; i += 4) {
-                g.fill(start + i, y - 1, start + i + 2, y + 1, EMPTY);
+                g.fill(start + i, y - 1, start + i + 2, y + 1, WELL); // idle: the well's dark, as the flame and arrow
             }
             return;
         }

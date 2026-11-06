@@ -24,6 +24,7 @@ import dev.nookworks.client.gui.StorageScreen;
 import dev.nookworks.client.render.LabelIconRenderer;
 import dev.nookworks.client.render.PhotoIconRenderer;
 import dev.nookworks.client.render.RedHotLook;
+import dev.nookworks.client.render.UnlitCampfireLook;
 import dev.nookworks.client.render.RepairBoxItemRenderer;
 import dev.nookworks.darkmatter.DarkMatter;
 import dev.nookworks.experience.ExperienceFluids;
@@ -66,6 +67,7 @@ public class NookworksClient {
         PhotoTextures.init();
         PotLines.init(); // an Iron Pot's contents on the action bar, fitted to the screen
         RedHotLook.register(modEventBus); // a red-hot ingot cooling in a chest, and its heat left
+        UnlitCampfireLook.register(modEventBus); // a campfire item unlit while campfires are set down unlit
         modEventBus.addListener((RegisterSpecialModelRendererEvent event) -> event.register(
                 PhotoIconRenderer.TYPE, PhotoIconRenderer.Unbaked.MAP_CODEC));
         modEventBus.addListener((RegisterConditionalItemModelPropertyEvent event) -> event.register(

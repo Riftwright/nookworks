@@ -8,6 +8,7 @@ Motor: a housing in the machines' dark steel with cooling fins along it, and an 
 like an observer's face) that turns while it runs (client/render/MotorRenderer). Through a window in each side its
 copper coil glows while it runs (motor_casing_on, and a glowing quad over the window: motor_coil_glow).
 Oil Cake: the pressed cake of seed husks left in the press.
+Ours are shaded with texkit.shade: the tray's boards wood, the screw metal, the cake plain.
 
 Run from the repo root:  python tools/textures/gen_oil_press.py
 """
@@ -55,7 +56,8 @@ def basin_top():
             put(img, x, y, OIL_DEEP if y < 5 else RIM_DARK)
     for x, y in ((7, 1), (8, 2), (7, 3), (5, 9), (10, 6), (2, 12), (13, 11)):
         put(img, x, y, OIL_LIGHT if y < 5 else OIL_DEEP)
-    return texkit.finish(img, 21, keep=[OIL_LIGHT + (255,), RIM_DARK + (255,)], **texkit.SMOOTH)
+    return texkit.shade(img, 21, keep=[OIL_LIGHT + (255,), RIM_DARK + (255,)], material={None: "wood", OIL_DEEP: "plain"},
+                        **texkit.SMOOTH)
 
 
 IRON = (150, 150, 158)
@@ -70,7 +72,7 @@ def screw():
         for x in range(16):
             band = (x + y * 2) % 4
             put(img, x, y, IRON_LIGHT if band == 0 else IRON_DARK if band == 2 else IRON)
-    return texkit.finish(img, 22, tile=True, **texkit.SMOOTH)
+    return texkit.shade(img, 22, tile=True, material="metal", **texkit.SMOOTH)
 
 
 # ---- Motor ----

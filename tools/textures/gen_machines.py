@@ -6,7 +6,7 @@ into a machine ends in a copper terminal on its face. (Six pixels of dark hatche
 face read as a rusted girder.) The clips and couplings are small rings a little proud of the cable, as parts of their
 own, so the texture has no direction to get wrong on a face turned one way or another.
 
-- block/energy_cable.png   three swatches: the rubber [0, 0, 16, 8], the clip [0, 8, 8, 16], the copper [8, 8, 16, 16]
+- block/energy_cable.png   (texkit.shade: the rubber plain, clip and copper metal) three swatches: the rubber [0, 0, 16, 8], the clip [0, 8, 8, 16], the copper [8, 8, 16, 16]
 - models/block/energy_cable_core.json, energy_cable_side.json (the arm to the north; the blockstate turns it),
   energy_cable_inventory.json (a length of cable, a coupling at each end)
 
@@ -102,7 +102,8 @@ def write_json(path, data):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    texkit.finish(cable(), 570, keep=(COPPER[3] + (255,), CLIP[2] + (255,)), **texkit.SMOOTH).save(OUT / "energy_cable.png")
+    texkit.shade(cable(), 570, keep=(COPPER[3] + (255,), CLIP[2] + (255,)),
+                 material={**{c: "plain" for c in RUBBER}, None: "metal"}, **texkit.SMOOTH).save(OUT / "energy_cable.png")
     write_json(ASSETS / "models/block/energy_cable_core.json", core())
     write_json(ASSETS / "models/block/energy_cable_side.json", side())
     write_json(ASSETS / "models/block/energy_cable_inventory.json", inventory())

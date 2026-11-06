@@ -14,6 +14,13 @@ public class CrateScreen extends AbstractContainerScreen<CrateMenu> {
         this.inventoryLabelY = this.imageHeight - 94;
     }
 
+    /** Its title over the middle of the grid, as vanilla's dispenser has it (r21: at the left edge). */
+    @Override
+    protected void init() {
+        super.init();
+        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+    }
+
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         super.extractBackground(graphics, mouseX, mouseY, a);

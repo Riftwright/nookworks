@@ -8,8 +8,10 @@ import dev.nookworks.mercury.MercuryNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
@@ -28,11 +30,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Shared behaviour of Nookworks machines: right-click with an item the machine accepts to load it straight in,
- * right-click with an empty hand to open its screen (or, for one without a screen, to see its status in the
- * action bar). Gear - anything with durability, enchantments or a name - is never loaded by a click, even where the
- * machine would take it (a Generator burns a wooden bow): it opens the screen instead, where it can still be put in
- * on purpose.
+ * Shared behaviour of Nookworks machines: a right-click opens a machine's screen whatever is in hand, and nothing goes
+ * in by a click - it is filled through the screen, or by hoppers and pipes (the user, 2026-11-05: 「基本的には何か入れる
+ * 時はGUI開いて入れる、もしくはホッパーなどの物流経由で入れる」). A machine without a screen shows its status in the
+ * action bar to an empty hand; one worked by hand (a Hand Quern, the Oil Press) takes what it works on by a click, but
+ * never gear - anything with durability, enchantments or a name.
  */
 public abstract class MachineBlock extends BaseEntityBlock {
     /**
@@ -119,12 +121,19 @@ public abstract class MachineBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof MachineBlockEntity machine) || !machine.canPlaceItem(0, stack) || isGear(stack)) {
+        // A machine with a screen is filled through it, or by hoppers and pipes: a click opens it whatever is held, as
+        // vanilla's furnace does (the user, 2026-11-05). One worked by hand has none, and takes what goes in by a click.
+        if (!(level.getBlockEntity(pos) instanceof MachineBlockEntity machine) || machine instanceof MachineInfo
+                || !machine.canPlaceItem(0, stack) || isGear(stack)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         ItemStack held = machine.getItem(0);
         if (!held.isEmpty() && (!ItemStack.isSameItemSameComponents(held, stack) || held.getCount() >= held.getMaxStackSize())) {
-            return InteractionResult.TRY_WITH_EMPTY_HAND; // something else is in the slot, or it is full: open the screen
+            // something else is in the slot, or it is full: said, as at a tank (r21: the arm swung and nothing happened)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.machine.will_not_take"));
+            }
+            return Clicks.REFUSED;
         }
         if (!level.isClientSide()) {
             // in creative the hand keeps its stack, as it does feeding a composter or a furnace: a copy goes in
@@ -140,6 +149,8 @@ public abstract class MachineBlock extends BaseEntityBlock {
                 }
                 machine.setChanged();
             }
+            // set in with a soft sound, as on the Grill or a Plate (r21: the hand machines took it in silence)
+            level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }

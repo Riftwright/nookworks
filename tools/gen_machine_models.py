@@ -172,12 +172,20 @@ def model(textures, elements, particle=None):
 
 
 # vanilla's block/block shows a block's north face in the inventory, where its furnace has its front; these machines are
-# drawn with their front to the south, so their items are shown turned half round: the front where a furnace's is
-FRONT_SOUTH_GUI = {"gui": {"rotation": [30, 45, 0], "translation": [0, 0, 0], "scale": [0.625, 0.625, 0.625]}}
+# drawn with their front to the south, so their items are shown turned half round: the front where a furnace's is. Every
+# view is turned, not the inventory's alone - an item frame and a shelf showed the back (r21, 2026-11-06)
+FRONT_SOUTH_GUI = {
+    "gui": {"rotation": [30, 45, 0], "translation": [0, 0, 0], "scale": [0.625, 0.625, 0.625]},
+    "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]},
+    "on_shelf": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+    "thirdperson_righthand": {"rotation": [75, 225, 0], "translation": [0, 2.5, 0], "scale": [0.375, 0.375, 0.375]},
+    "firstperson_righthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.4, 0.4, 0.4]},
+    "firstperson_lefthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.4, 0.4, 0.4]},
+}
 
 
 def front_in_gui(data):
-    """An item showing a machine drawn front-south: its icon turned half round, so the front shows as a furnace's."""
+    """An item showing a machine drawn front-south: turned half round in every view, so the front shows as a furnace's."""
     return {**data, "display": dict(FRONT_SOUTH_GUI)}
 
 

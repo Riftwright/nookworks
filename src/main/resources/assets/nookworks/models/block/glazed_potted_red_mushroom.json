@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "plant": "minecraft:block/red_mushroom",
     "particle": "nookworks:block/glazed_flower_pot",
@@ -191,18 +192,18 @@
     {
       "from": [
         2.6,
-        4,
+        7,
         8
       ],
       "to": [
         13.4,
-        16,
+        19,
         8
       ],
       "rotation": {
         "origin": [
           8,
-          8,
+          11,
           8
         ],
         "axis": "y",
@@ -234,18 +235,18 @@
     {
       "from": [
         8,
-        4,
+        7,
         2.6
       ],
       "to": [
         8,
-        16,
+        19,
         13.4
       ],
       "rotation": {
         "origin": [
           8,
-          8,
+          11,
           8
         ],
         "axis": "y",
@@ -274,6 +275,5 @@
         }
       }
     }
-  ],
-  "ambientocclusion": false
+  ]
 }

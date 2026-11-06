@@ -2,15 +2,28 @@ package dev.nookworks.block;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.experience.Move;
+import dev.nookworks.fluid.Tanks;
 import dev.nookworks.machine.GeneratorBlockEntity;
+import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
+import dev.nookworks.registry.ModOil;
 import dev.nookworks.registry.ModSounds;
 import dev.nookworks.ventilation.Ventilation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,6 +41,10 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import dev.nookworks.fluid.PipePorts;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 /** See {@link GeneratorBlockEntity}. Glows, smokes and shows a firebox while burning. */
 public class GeneratorBlock extends MachineBlock {
@@ -42,6 +59,36 @@ public class GeneratorBlock extends MachineBlock {
         this.registerDefaultState(PipePorts.none(this.defaultBlockState()));
     }
 
+
+    /**
+     * A bottle or bucket of vegetable oil or biodiesel pours into its fuel tank, as at the Diesel Generator; anything else
+     * opens its screen (r21, 2026-11-06: the click opened the screen and poured nothing, as no other tank of ours does).
+     */
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        boolean bottle = stack.is(ModOil.VEGETABLE_OIL_BOTTLE.get()) || stack.is(ModOil.BIODIESEL_BOTTLE.get());
+        Fluid fluid = stack.is(ModOil.BIODIESEL_BOTTLE.get()) ? OilFluids.BIODIESEL.get()
+                : bottle ? OilFluids.SOURCE.get() : FluidUtil.getFirstStackContained(stack).getFluid();
+        if (!(level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator)
+                || fluid != OilFluids.SOURCE.get() && fluid != OilFluids.BIODIESEL.get()) {
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS; // the client does not know how full the tank is: the server decides
+        }
+        boolean poured = bottle ? Move.insertExactly(generator.fluidHandler(), FluidResource.of(fluid), OilFluids.BOTTLE)
+                : FluidUtil.interactWithFluidHandler(player, hand, pos, Tanks.fillOnly(generator.fluidHandler()), null);
+        if (!poured) {
+            player.sendOverlayMessage(Component.translatable("message.nookworks.copper_tank.will_not_take"));
+            return Clicks.REFUSED;
+        }
+        if (bottle) {
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
+            level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.8F, 1.0F);
+        }
+        return InteractionResult.SUCCESS;
+    }
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT, FACING);

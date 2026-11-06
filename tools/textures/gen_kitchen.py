@@ -1,5 +1,5 @@
 """The bakery and the noodle bar, corn and onions: the food, the dough set down to rise, and the models of the Hand
-Quern and the Noodle Maker. All original pixel art, drawn flat and finished with texkit (ITEM for the food, its dark
+Quern and the Noodle Maker. All original pixel art, drawn flat and finished with texkit.shade, all plain (ITEM for the food, its dark
 outline kept exact); the machines are vanilla textures composed in JSON, with our black iron. Deterministic.
 
 - item/bread_dough, risen_dough, udon_dough, raw_udon, pancake_batter; udon, cream_stew, corn_potage (in bowls);
@@ -950,8 +950,8 @@ def main():
             img = texkit.icon(img, 300 + i, keep=[FLOUR_DUST, SUGAR, JUG_RIM] + kept.get(name, []))
         img.save(tex / f"item/{name}.png")
         item_model(name)
-    texkit.finish(dough_skin(DOUGH, 1), 320, tile=True, keep=[FLOUR_DUST], **texkit.SMOOTH).save(tex / "block/bread_dough.png")
-    texkit.finish(dough_skin(RISEN, 2, scored=True), 321, **texkit.SMOOTH).save(tex / "block/risen_dough.png")
+    texkit.shade(dough_skin(DOUGH, 1), 320, tile=True, keep=[FLOUR_DUST], **texkit.SMOOTH).save(tex / "block/bread_dough.png")
+    texkit.shade(dough_skin(RISEN, 2, scored=True), 321, **texkit.SMOOTH).save(tex / "block/risen_dough.png")
     write_json(ASSETS / "models/block/dough_ball.json", ball_model(False))
     write_json(ASSETS / "models/block/dough_ball_risen.json", ball_model(True))
     write_json(ASSETS / "models/block/wooden_tray.json", tray_model())
@@ -967,12 +967,12 @@ def main():
         write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}"}})
     corn_variants = {}
     for stage in range(6):
-        texkit.finish(corn_lower(stage), 330 + stage, **texkit.PLANT).save(tex / f"block/corn_stage{stage}.png")
+        texkit.shade(corn_lower(stage), 330 + stage, **texkit.PLANT).save(tex / f"block/corn_stage{stage}.png")
         write_json(ASSETS / f"models/block/corn_stage{stage}.json", {"parent": "minecraft:block/cross", "render_type": "minecraft:cutout",
                                                                      "textures": {"cross": f"nookworks:block/corn_stage{stage}"}})
         corn_variants[f"age={stage},half=lower"] = {"model": f"nookworks:block/corn_stage{stage}"}
         if stage >= 3:
-            texkit.finish(corn_upper(stage), 340 + stage, **texkit.PLANT).save(tex / f"block/corn_top_stage{stage}.png")
+            texkit.shade(corn_upper(stage), 340 + stage, **texkit.PLANT).save(tex / f"block/corn_top_stage{stage}.png")
             write_json(ASSETS / f"models/block/corn_top_stage{stage}.json", {"parent": "minecraft:block/cross", "render_type": "minecraft:cutout",
                                                                              "textures": {"cross": f"nookworks:block/corn_top_stage{stage}"}})
             corn_variants[f"age={stage},half=upper"] = {"model": f"nookworks:block/corn_top_stage{stage}"}
@@ -980,7 +980,7 @@ def main():
             corn_variants[f"age={stage},half=upper"] = {"model": "nookworks:block/corn_top_stage3"}
     write_json(ASSETS / "blockstates/corn.json", {"variants": corn_variants})
     for stage in range(4):
-        texkit.finish(onions(stage), 350 + stage, keep=[CLEAR], reach=1, **texkit.PLANT).save(tex / f"block/onions_stage{stage}.png")
+        texkit.shade(onions(stage), 350 + stage, keep=[CLEAR], reach=1, **texkit.PLANT).save(tex / f"block/onions_stage{stage}.png")
         write_json(ASSETS / f"models/block/onions_stage{stage}.json", {"parent": "minecraft:block/crop", "render_type": "minecraft:cutout",
                                                                        "textures": {"crop": f"nookworks:block/onions_stage{stage}"}})
     stage_of_age = [0, 0, 1, 1, 2, 2, 2, 3]  # as carrots and potatoes show their eight ages in four pictures

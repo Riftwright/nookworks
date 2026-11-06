@@ -60,7 +60,7 @@ def base():
             elif d < RIM_OUT:
                 light = (x - cx) + (y - cy)  # negative towards the upper left
                 put(x, y, COPPER["light"] if light < -2 else COPPER["dark"] if light > 2 else COPPER["mid"])
-    return texkit.icon(img, 5207, keep=(FACE,))
+    return texkit.icon(img, 5207, keep=(FACE,), material={**{c: "metal" for c in COPPER.values()}, None: "plain"})
 
 
 def needle(img, frame):

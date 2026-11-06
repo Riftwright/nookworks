@@ -1,5 +1,5 @@
 """The cooking: the Grill, the Iron Pot and the food that comes out of them. All original pixel art, drawn flat and
-finished with texkit; and the models and blockstates. Deterministic.
+finished with texkit.shade (texkit.icon for the dishes); and the models and blockstates. Deterministic.
 
 - block/black_iron.png, block/grill_grate.png  the Grill (its legs and frame; its grate, cutout) and the Iron Pot
 - models/block/grill.json (over a campfire), grill_standing.json (on its own), blockstates/, items/
@@ -761,7 +761,7 @@ def _ringed_white(layer, seed):
             if p[3] and p[:3] in BOILED_YOLK:
                 white.putpixel((x, y), PEELED[3] + (255,))
     out = texkit.outline(white)
-    out.alpha_composite(texkit.finish(layer, seed, keep=[PEELED_GLOSS, PEELED[4]] + BOILED_YOLK, **texkit.ICON))
+    out.alpha_composite(texkit.shade(layer, seed, keep=[PEELED_GLOSS, PEELED[4]] + BOILED_YOLK, **texkit.ICON))
     return out
 
 
@@ -850,11 +850,13 @@ def write_json(path, data):
 def main():
     tex = ASSETS / "textures"
     # the mottling is drawn: the finish adds only a little grain, no patches of its own over the drawn ones
-    texkit.finish(black_iron(), 4, tile=True, clusters=0.3, grain=0.03, size=4, reach=1,
-                  keep=[CAST_IRON[0], CAST_IRON[4], CAST_IRON[5]]).save(tex / "block/black_iron.png")
-    texkit.finish(grate(), 5, keep=[CLEAR], **texkit.ROUGH).save(tex / "block/grill_grate.png")
-    texkit.finish(nukadoko_side(), 6, tile=True, keep=[HOOP[0], HOOP[1], STAVE[0]], **texkit.SMOOTH).save(tex / "block/nukadoko_side.png")
-    texkit.finish(nukadoko_top(), 7, keep=[STAVE[0], NUKA_CRUMB, NUKA_HUSK, NUKA_PATTED], **texkit.SMOOTH).save(tex / "block/nukadoko_top.png")
+    texkit.shade(black_iron(), 4, tile=True, clusters=0.3, grain=0.03, size=4, reach=1, material="metal",
+                 keep=[CAST_IRON[0], CAST_IRON[4], CAST_IRON[5]]).save(tex / "block/black_iron.png")
+    texkit.shade(grate(), 5, keep=[CLEAR], material="metal", **texkit.ROUGH).save(tex / "block/grill_grate.png")
+    texkit.shade(nukadoko_side(), 6, tile=True, keep=[HOOP[0], HOOP[1], STAVE[0]],
+                 material={**{c: "metal" for c in HOOP}, None: "wood"}, **texkit.SMOOTH).save(tex / "block/nukadoko_side.png")
+    texkit.shade(nukadoko_top(), 7, keep=[STAVE[0], NUKA_CRUMB, NUKA_HUSK, NUKA_PATTED],
+                 material={**{c: "wood" for c in STAVE}, None: "plain"}, **texkit.SMOOTH).save(tex / "block/nukadoko_top.png")
     write_json(ASSETS / "models/block/nukadoko.json", nukadoko_model())
     write_json(ASSETS / "blockstates/nukadoko.json", {"variants": {"": {"model": "nookworks:block/nukadoko"}}})
     write_json(ASSETS / "items/nukadoko.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/nukadoko"}})

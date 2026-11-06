@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.label.LabelText;
 import dev.nookworks.machine.RedstoneMode;
+import dev.nookworks.menu.ShiftClick;
 import dev.nookworks.photo.CameraItem;
 import dev.nookworks.photo.Photo;
 import dev.nookworks.photo.Photos;
@@ -286,16 +287,21 @@ public class PrintingPressMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         int machineSlots = PrintingPressBlockEntity.SLOTS;
         if (index < machineSlots) {
-            if (!this.moveItemStackTo(stack, machineSlots, this.slots.size(), true)) {
+            boolean output = index == PrintingPressBlockEntity.OUTPUT;
+            if (!this.moveItemStackTo(stack, machineSlots, machineSlots + ShiftClick.INVENTORY_SLOTS, output)) {
                 return ItemStack.EMPTY;
             }
         } else if (PrintingPressBlockEntity.accepts(PrintingPressBlockEntity.PAPER, stack) || Posters.isInk(player.level(), stack)) {
             if (!this.moveItemStackTo(stack, 0, PrintingPressBlockEntity.OUTPUT, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!this.printingLabels()
-                || !this.moveItemStackTo(stack, PrintingPressBlockEntity.SAMPLE, PrintingPressBlockEntity.SAMPLE + 1, false)) {
-            return ItemStack.EMPTY; // anything else is a sample to print labels of, while labels are chosen
+        } else if (this.printingLabels()) {
+            // anything else is a sample to print labels of, while labels are chosen
+            if (!this.moveItemStackTo(stack, PrintingPressBlockEntity.SAMPLE, PrintingPressBlockEntity.SAMPLE + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (!ShiftClick.acrossInventory(stack, index, machineSlots, this::moveItemStackTo)) {
+            return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) {
             slot.setByPlayer(ItemStack.EMPTY);

@@ -19,6 +19,8 @@ import net.minecraft.network.chat.Component;
  */
 public class RedstoneButton extends AbstractButton {
     public static final int SIZE = 14;
+    /** Where it stands on a 176-wide screen: the same place on every screen of ours (r21: four sat 2 px further left). */
+    public static final int X = 156;
 
     private final Supplier<RedstoneMode> mode;
     private final Runnable press;

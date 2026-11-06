@@ -31,7 +31,7 @@ public final class ModMenus {
             () -> IMenuTypeExtension.create(StorageMenu::client));
 
     public static final Supplier<MenuType<SpawnerControllerMenu>> SPAWNER_CONTROLLER = MENUS.register("spawner_controller",
-            () -> IMenuTypeExtension.create((id, inventory, data) -> new SpawnerControllerMenu(id)));
+            () -> IMenuTypeExtension.create((id, inventory, data) -> new SpawnerControllerMenu(id, inventory)));
 
     public static final Supplier<MenuType<SpawnEggBrewerMenu>> SPAWN_EGG_BREWER = MENUS.register("spawn_egg_brewer",
             () -> IMenuTypeExtension.create((id, inventory, data) -> new SpawnEggBrewerMenu(id, inventory)));

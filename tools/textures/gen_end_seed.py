@@ -1,5 +1,5 @@
 """The End Seed and the sprout it grows (the user, 2026-10-12). Original pixel art, drawn flat and finished with
-texkit; what the sprout opens into is vanilla's own plant, so nothing of it is drawn here.
+texkit.shade; what the sprout opens into is vanilla's own plant, so nothing of it is drawn here.
 
 - item/end_seed: one plump seed, end-on to the light, in the End's violet with flecks of gold, and a glint beside
   it - a seed out of the ordinary, from the End's gravel
@@ -125,7 +125,7 @@ def main():
                                                           "textures": {"layer0": "nookworks:item/end_seed"}})
     write_json(ASSETS / "items/end_seed.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/end_seed"}})
     for stage in range(3):
-        texkit.finish(crop(stage), 440 + stage, keep=[CLEAR], reach=1, **texkit.PLANT).save(tex / f"block/end_sprout_stage{stage}.png")
+        texkit.shade(crop(stage), 440 + stage, keep=[CLEAR], reach=1, **texkit.PLANT).save(tex / f"block/end_sprout_stage{stage}.png")
         write_json(ASSETS / f"models/block/end_sprout_stage{stage}.json", {
             "parent": "minecraft:block/cross", "render_type": "minecraft:cutout",
             "textures": {"cross": f"nookworks:block/end_sprout_stage{stage}"}})

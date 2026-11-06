@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "nookworks:campfire_unlit",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "minecraft:block/campfire_off"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/campfire"
+    }
+  }
+}

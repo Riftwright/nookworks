@@ -2,13 +2,17 @@ package dev.nookworks.compat.jei;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.client.gui.MachineScreen;
+import dev.nookworks.client.gui.MachineStyle;
 import dev.nookworks.cooking.HandWork;
 import dev.nookworks.feature.Features;
 import dev.nookworks.label.LabelItem;
 import dev.nookworks.machine.CrushingRecipe;
+import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.mobcapture.MobBottleItem;
 import dev.nookworks.registry.ModCooking;
 import dev.nookworks.registry.ModCrops;
@@ -22,14 +26,18 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.handlers.IGuiClickableArea;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.types.IRecipeType;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IIngredientAliasRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -71,7 +79,10 @@ public class NookworksJeiPlugin implements IModPlugin {
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         registration.registerFromDataComponentTypes(ModItems.POSTER.get(), ModDataComponents.POSTER.get());
         registration.registerFromDataComponentTypes(ModItems.LABEL.get(), ModDataComponents.LABEL.get());
-        registration.registerFromDataComponentTypes(ModItems.MOB_BOTTLE.get(), ModDataComponents.CAPTURED_ENTITY.get());
+        // its mob, and the model an add-on gives its own bottle (nookTechnology's Reinforced Mob Bottle: its own entry in
+        // the list, with its own page; r21)
+        registration.registerFromDataComponentTypes(ModItems.MOB_BOTTLE.get(), ModDataComponents.CAPTURED_ENTITY.get(),
+                DataComponents.ITEM_MODEL);
     }
 
     /** Every item found by its English name too, while the game is in another language (EnglishSearch). */
@@ -159,6 +170,45 @@ public class NookworksJeiPlugin implements IModPlugin {
         station(registration, KitchenCategories.RISING, ModKitchen.WOODEN_TRAY_ITEM.get());
         // the Grill cooks what a campfire cooks, in the same time
         station(registration, RecipeTypes.CAMPFIRE_COOKING, ModCooking.GRILL_ITEM.get());
+    }
+
+    /**
+     * A machine's arrow opens the recipe pages it is the station of, as a furnace's arrow opens smelting, and the
+     * Generator's flame what burns in it (r21, 2026-11-06: nookTechnology's machines did, ours did not).
+     */
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(MachineScreen.class, new IGuiContainerHandler<>() {
+            @Override
+            public Collection<IGuiClickableArea> getGuiClickableAreas(MachineScreen screen, double mouseX, double mouseY) {
+                MachineLayout layout = screen.getMenu().layout();
+                List<IRecipeType<?>> pages = gaugePages(layout);
+                if (pages.isEmpty()) {
+                    return List.of();
+                }
+                int w = layout.gauge() == MachineLayout.Gauge.FLAME ? 16 : MachineStyle.ARROW_W;
+                return List.of(IGuiClickableArea.createBasic(layout.gaugeX(), layout.gaugeY(), w, MachineStyle.ARROW_H,
+                        pages.toArray(IRecipeType<?>[]::new)));
+            }
+        });
+    }
+
+    /** The pages a click on the gauge of a machine with {@code layout} opens; none while its part is switched off. */
+    private static List<IRecipeType<?>> gaugePages(MachineLayout layout) {
+        record Pages(ItemLike machine, List<IRecipeType<?>> types) {}
+        Pages pages = switch (layout) {
+            case CRUSHER -> new Pages(ModItems.CRUSHER.get(), List.of(CrushingCategory.TYPE));
+            case SIFTER -> new Pages(ModItems.SIFTER.get(), List.of(SiftingCategory.TYPE));
+            case RETORT -> new Pages(ModItems.RETORT.get(), List.of(MercuryCategories.RETORTING));
+            case STIRRING_TANK -> new Pages(ModItems.STIRRING_TANK.get(), List.of(MercuryCategories.AMALGAMATION, MercuryCategories.MUD));
+            case DISTILLER -> new Pages(ModItems.DISTILLER.get(), List.of(MercuryCategories.DISTILLATION));
+            case ELECTRIC_FURNACE -> new Pages(ModItems.ELECTRIC_FURNACE.get(), List.of(RecipeTypes.SMELTING));
+            case ELECTROLYTIC_CELL -> new Pages(ModItems.ELECTROLYTIC_CELL.get(), List.of(ElectrolysisCategory.TYPE));
+            case RECYCLER -> new Pages(ModRecycling.RECYCLER_ITEM.get(), List.of(RecyclingCategory.TYPE));
+            case GENERATOR -> new Pages(ModItems.GENERATOR.get(), List.of(RecipeTypes.SMELTING_FUEL));
+            default -> null;
+        };
+        return pages == null || !Features.enabled(pages.machine().asItem()) ? List.of() : pages.types();
     }
 
     /** A station of a part switched off is no station: no Grill or Iron Pot with the kitchen off. */

@@ -19,7 +19,9 @@ import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
  * (minecraft:cooking_fuel, minecraft:compostable) against vanilla's named amounts, as its own items are given them;
  * until then they were NeoForge's furnace_fuels and compostables data maps, and for the wood the vanilla tags it is in.
  * The amounts are the ones those gave: the wood as vanilla's own pieces of each kind, a support as a fence, a bucket of
- * oil or biodiesel 16,000 ticks (a block of coal's), the compost chances 30, 50, 65 and 85 in a hundred.
+ * oil or biodiesel 16,000 ticks (a block of coal's), the compost chances 30, 50, 65 and 85 in a hundred. The wooden
+ * furniture burns as a crafting table does (r21: it caught fire but no furnace took it); a wall shelf, on iron
+ * brackets, does not, nor the Crate, which keeps what it holds when broken: a furnace would burn it with its contents.
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class FuelAndCompost {
@@ -38,7 +40,8 @@ public final class FuelAndCompost {
         burns(event, ContextIntProviders.COOKING_TIME_DRY_PLANTS, "rare_seed"); // a sapling's
         for (String wood : ModWoods.SUPPORT_WOODS) {
             if (!wood.equals("crimson") && !wood.equals("warped")) { // #nookworks:burnable_supports
-                burns(event, ContextIntProviders.COOKING_TIME_WOOD_BLOCKS, wood + "_support");
+                burns(event, ContextIntProviders.COOKING_TIME_WOOD_BLOCKS, wood + "_support", wood + "_chair", wood + "_stool",
+                        wood + "_bench", wood + "_desk");
             }
         }
         burns(event, ContextIntProviders.COOKING_TIME_COAL_BLOCK, "vegetable_oil_bucket", "biodiesel_bucket");

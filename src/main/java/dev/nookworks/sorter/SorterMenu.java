@@ -69,7 +69,8 @@ public class SorterMenu extends AbstractContainerMenu {
     public static final int SAMPLE_Y = 22;
     /** The Keep Out row's first slot, and where the row sits: right of its mark, ending where the filter's rows end. */
     public static final int DENY_SLOT = SAMPLE_SLOT + 1;
-    public static final int DENY_X = 26;
+    /** On the filter's columns 1-8, its mark in column 0 (r21: a pixel right of them, into the bay's rim at the end). */
+    public static final int DENY_X = FILTER_X + 18;
     /** Where what the sorter holds is shown: the right end of the inventory's caption row. */
     public static final int HELD_X = 152;
     /**
@@ -186,7 +187,7 @@ public class SorterMenu extends AbstractContainerMenu {
             }
         });
         for (int i = 0; i < SorterBlockEntity.DENY_SLOTS; i++) {
-            this.addSlot(new Slot(deny, i, DENY_X + i * 18 + 1, denyY(tier) + 1) {
+            this.addSlot(new Slot(deny, i, DENY_X + i * 18, denyY(tier) + 1) {
                 @Override
                 public boolean mayPickup(Player player) {
                     return false;

@@ -9,7 +9,7 @@ vanilla's chain (no vanilla pixels, and not its look: ours is thinner, links of 
   it), the links' holes kept clear. (It was two big links lying corner to corner, which did not look thin.)
 - models/item/thin_chain.json, items/thin_chain.json
 
-The link is hand-shaded, not put through texkit.finish: its wire is a texel thick, every pixel a thin line, which
+The link is hand-shaded, not put through texkit.shade: its wire is a texel thick, every pixel a thin line, which
 texkit leaves without grain anyway - and its patches would only make one end of the link darker than the other, the
 same on every link of every chain, a stripe along it rather than grain. The shades are set by hand instead: the long
 sides lit along their middles and darker into the ends, where the wire turns away.
@@ -125,7 +125,7 @@ def icon():
             c = SHADE
         px(img, x, y, c)
     holes = [(x, y) for y in range(16) for x in range(16) if img.getpixel((x, y))[3] == 0 and (x, y) not in _outside(img)]
-    done = texkit.icon(img, 1471)
+    done = texkit.icon(img, 1471, material="metal")
     for hole in holes:
         done.putpixel(hole, CLEAR)
     return done

@@ -171,7 +171,7 @@ def main():
                                      for y in (0, 90, 180, 270)] for count in range(1, 5)}
     write_json(ASSETS / "blockstates/pebbles.json", {"variants": variants})
     # the grain a stone has, the gleam left exact
-    texkit.icon(itemkit.paint(ICON, GREY), 61, keep=[GREY["5"]]).save(ASSETS / "textures/item/pebbles.png")
+    texkit.icon(itemkit.paint(ICON, GREY), 61, keep=[GREY["5"]], material="stone").save(ASSETS / "textures/item/pebbles.png")
     write_json(ASSETS / "models/item/pebbles.json",
                {"parent": "minecraft:item/generated", "textures": {"layer0": "nookworks:item/pebbles"}})
     write_json(ASSETS / "items/pebbles.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/pebbles"}})

@@ -2,6 +2,7 @@ package dev.nookworks.experience;
 
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.RedstoneMode;
+import dev.nookworks.menu.ShiftClick;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -125,10 +126,12 @@ public class RepairBoxMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         int machineSlots = this.container.getContainerSize();
         if (index < machineSlots) {
-            if (!this.moveItemStackTo(stack, machineSlots, this.slots.size(), true)) {
+            // mended gear is what the box gives back: to the hotbar first, as a furnace's result
+            if (!this.moveItemStackTo(stack, machineSlots, machineSlots + ShiftClick.INVENTORY_SLOTS, true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!this.moveItemStackTo(stack, 0, machineSlots, false)) {
+        } else if (RepairBoxBlockEntity.repairable(stack) ? !this.moveItemStackTo(stack, 0, machineSlots, false)
+                : !ShiftClick.acrossInventory(stack, index, machineSlots, this::moveItemStackTo)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) {

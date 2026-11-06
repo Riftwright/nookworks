@@ -12,7 +12,7 @@ block/dawnwood_sapling                                a young tree: tiers of dro
 block/dawnwood_door_top, dawnwood_door_bottom, dawnwood_trapdoor
 item/dawnwood_door, item/rare_seed
 
-Every face is drawn flat in a few shades, then finished with texkit (which gives each shade its hue-shifted ramp and
+Every face is drawn flat in a few shades, then finished with texkit.shade (wood, the leaves plain; which gives each shade its hue-shifted ramp and
 a little grain, as vanilla's woods are shaded); outlines and the colours that mark something are kept exact.
 
 Run from the repo root:  python tools/textures/gen_dawnwood.py
@@ -108,7 +108,7 @@ def bark():
         px(img, x0 + 1, y0, BARK[5], wrap=True)
         px(img, x0 + 1, y0 + 1, BARK[4], wrap=True)
         px(img, x0, y0 + length, BARK[0], wrap=True)
-    return texkit.finish(img, 21, keep=(BARK[0], INNER), tile=True, clusters=0.45, grain=0.2, size=3)
+    return texkit.shade(img, 21, keep=(BARK[0], INNER), tile=True, material="wood", clusters=0.45, grain=0.2, size=3)
 
 
 def rings(stripped):
@@ -141,7 +141,7 @@ def rings(stripped):
         for i in range(1, n):
             px(img, sx + dx * i, sy + dy * i if i % 2 else sy + dy * (i - 1), SAGE[0])
     keep = (SAGE[0], SAGE[1]) + (() if stripped else tuple(BARK))
-    return texkit.finish(img, 33 if stripped else 31, keep=keep, **texkit.SMOOTH)
+    return texkit.shade(img, 33 if stripped else 31, keep=keep, material="wood", **texkit.SMOOTH)
 
 
 def stripped_side():
@@ -168,7 +168,7 @@ def stripped_side():
     px(img, knot[0], knot[1], SAGE[1])
     px(img, knot[0], knot[1] - 1, SAGE[2])
     px(img, knot[0], knot[1] + 1, SAGE[2])
-    return texkit.finish(img, 41, keep=(SAGE[1],), tile=True, **texkit.SMOOTH)
+    return texkit.shade(img, 41, keep=(SAGE[1],), tile=True, material="wood", strength=0.6, **texkit.SMOOTH)
 
 
 def planks():
@@ -222,7 +222,7 @@ def planks():
         for x in ((j + 6) % 16, (j + 11) % 16):  # and a pixel or two more of the edge catching the light
             if img.getpixel((x, y0))[:3] == lit:
                 px(img, x, y0, palest)
-    return texkit.finish(img, 51, keep=(seam, palest, SAGE[1]), tile=True, clusters=0.4, grain=0.02, size=5, reach=1)
+    return texkit.shade(img, 51, keep=(seam, palest, SAGE[1]), tile=True, material="wood", strength=0.6, clusters=0.4, grain=0.02, size=5, reach=1)
 
 
 # ---------------------------------------------------------------- needles
@@ -283,7 +283,7 @@ def leaves():
                 if all(img.getpixel(p)[3] and img.getpixel(p)[:3] in shaded for p in where):
                     for p in where:
                         img.putpixel(p, CLEAR)
-    return texkit.finish(img, 61, keep=(NEEDLE[5],), tile=True, reach=1, **texkit.PLANT)
+    return texkit.shade(img, 61, keep=(NEEDLE[5],), tile=True, reach=1, material="plain", **texkit.PLANT)
 
 
 def sapling():
@@ -303,7 +303,7 @@ def sapling():
     px(img, 7, 3, NEEDLE[3])
     px(img, 7, 2, NEEDLE[4])
     px(img, 7, 1, NEEDLE[5])
-    return texkit.finish(img, 71, keep=(NEEDLE[5], BARK[1]), reach=1, **texkit.PLANT)
+    return texkit.shade(img, 71, keep=(NEEDLE[5], BARK[1]), reach=1, material="plain", **texkit.PLANT)
 
 
 # ---------------------------------------------------------------- door and trapdoor
@@ -367,7 +367,7 @@ def door(top):
         px(img, 12, 5, (38, 36, 34))
         for x in range(16):
             px(img, x, 15, SAGE[1])
-    return texkit.finish(img, 81 if top else 82, keep=(SAGE[1], (38, 36, 34), (84, 80, 74)), **texkit.SMOOTH)
+    return texkit.shade(img, 81 if top else 82, keep=(SAGE[1], (38, 36, 34), (84, 80, 74)), material="wood", **texkit.SMOOTH)
 
 
 def trapdoor():
@@ -379,12 +379,16 @@ def trapdoor():
     """
     img = Image.new("RGBA", (16, 16))
     for i in range(16):
+        # the frame's inner line, its shaded side: a trapdoor's 3-px edges are read off rows 0-2 (vanilla's template),
+        # and the lattice there left gaps bitten out of every edge (r21, 2026-11-06)
+        for x, y in ((i, 2), (i, 13), (2, i), (13, i)):
+            px(img, x, y, SAGE[2])
         for x, y in ((i, 1), (i, 14), (1, i), (14, i)):
             px(img, x, y, SAGE[3])
         for x, y in ((i, 0), (i, 15), (0, i), (15, i)):
             px(img, x, y, SAGE[1])
-    for y in range(2, 14):
-        for x in range(2, 14):
+    for y in range(3, 13):
+        for x in range(3, 13):
             a, b = (x + y - 15) % 8, (x - y) % 8  # the diagonals through the middle, and every eight pixels out
             if a == 0 or b == 0:
                 px(img, x, y, SAGE[4])  # a strip
@@ -392,7 +396,7 @@ def trapdoor():
                 px(img, x, y, SAGE[2])  # its shaded side
             else:
                 img.putpixel((x, y), CLEAR)
-    return texkit.finish(img, 92, keep=(SAGE[1], SAGE[2], SAGE[4]), **texkit.SMOOTH)
+    return texkit.shade(img, 92, keep=(SAGE[1], SAGE[2], SAGE[4]), material="wood", **texkit.SMOOTH)
 
 
 # The Dawnwood items' colours (itemkit): the sage of its planks with a wider range than a block face needs - a slot

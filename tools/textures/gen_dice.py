@@ -81,7 +81,7 @@ def write_json(path, data):
 
 def main():
     for n in range(1, 7):
-        texkit.finish(face(n), n, keep=[PIP, PIP_RIM, RED, RED_DARK], **texkit.SMOOTH).save(ASSETS / f"textures/block/dice_{n}.png")
+        texkit.shade(face(n), n, material="plain", keep=[PIP, PIP_RIM, RED, RED_DARK], **texkit.SMOOTH).save(ASSETS / f"textures/block/dice_{n}.png")
     write_json(ASSETS / "models/block/dice_1.json", model())
     write_json(ASSETS / "models/block/dice_drawn.json", {"textures": {"particle": "nookworks:block/dice_1"}})
     write_json(ASSETS / "blockstates/dice.json", {"variants": {"": {"model": "nookworks:block/dice_drawn"}}})

@@ -2,7 +2,7 @@
 
 Each is laid out as vanilla lays out a wood's (the block models and the boat model are vanilla's, and read their
 texture by those regions), and filled with Dawnwood's own wood as gen_dawnwood.py draws it: the sage planks and the
-stripped wood, cut to fit, with edges, end grain, iron and shadow drawn here flat and finished with texkit.
+stripped wood, cut to fit, with edges, end grain, iron and shadow drawn here flat and finished with texkit.shade (wood, the iron metal).
 
 block/dawnwood_sign.png           32x32: the board's faces (planks, three boards across), its edges, the post
 block/dawnwood_hanging_sign.png   32x32: the bar it hangs from (stripped wood, iron straps where the chains go round),
@@ -85,7 +85,7 @@ def rect(img, r, c):
 
 def finish_flat(canvas, flat, seed):
     """Finishes what was drawn flat and lays it over the wood already cut in."""
-    canvas.alpha_composite(texkit.finish(flat, seed, keep=tuple(IRON[:1]) + (OUT,), **texkit.SMOOTH))
+    canvas.alpha_composite(texkit.shade(flat, seed, keep=tuple(IRON[:1]) + (OUT,), material={**{c: "metal" for c in IRON}, None: "wood"}, strength=0.6, **texkit.SMOOTH))
     return canvas
 
 
@@ -143,6 +143,15 @@ def hanging_sign():
                 px(flat, x0, y, IRON[1])
                 px(flat, x0 + 2, y, IRON[1])
                 px(flat, x0 + 1, y, IRON[0] if i % 3 == 1 else CLEAR)
+    # the V-chain an attached sign hangs by (vanilla's attached template reads it at x 20-31, y 0-5): two chains from
+    # the board's corners up to meet at the top - left out, an attached sign floated (r21, 2026-11-06)
+    for i, (xl, xr, y) in enumerate(((20, 31, 5), (21, 30, 4), (22, 29, 3), (23, 28, 2), (24, 27, 1), (25, 26, 0))):
+        link = IRON[2] if i % 2 == 0 else IRON[1]
+        px(flat, xl, y, link)
+        px(flat, xr, y, link)
+        if i % 2 == 1:
+            px(flat, xl + 1, y, IRON[0])
+            px(flat, xr - 1, y, IRON[0])
     # the board: a rim a shade darker, lit along the top
     for x0 in (2, 18):
         for x in range(x0, x0 + 14):

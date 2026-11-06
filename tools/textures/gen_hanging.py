@@ -214,7 +214,7 @@ def main():
     tex = ASSETS / "textures"
     glass().save(tex / "block/filament_bulb_glass.png")
     filament().save(tex / "block/filament_bulb_filament.png")
-    texkit.finish(flex(), 601, **texkit.SMOOTH).save(tex / "block/filament_bulb_flex.png")
+    texkit.shade(flex(), 601, material="plain", **texkit.SMOOTH).save(tex / "block/filament_bulb_flex.png")
     filament(COIL_OFF).save(tex / "block/filament_bulb_filament_off.png")
     glass(GLASS_OFF, GLASS_EDGE_OFF, GLINT_OFF).save(tex / "block/filament_bulb_glass_off.png")
     write_json(ASSETS / "models/block/filament_bulb.json", bulb_model())

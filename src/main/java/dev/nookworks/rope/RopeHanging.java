@@ -68,6 +68,9 @@ public final class RopeHanging {
         }
         BlockPos from = pick.knot().getPos();
         if (tooNear(level, from, pick.to(), pick.t(), pick.point(), HungItemEntity.room(stack), HungItemEntity.isBanner(stack))) {
+            if (!level.isClientSide()) { // said why (round two of r21); the same words for a chain
+                player.sendOverlayMessage(Component.translatable("message.nookworks.rope.too_near").withStyle(ChatFormatting.RED));
+            }
             return InteractionResult.FAIL; // too near the post or the next thing: the click is spent, not eaten or thrown
         }
         // where it would hang, as it would hang there: what is in the way is looked for in its own shape

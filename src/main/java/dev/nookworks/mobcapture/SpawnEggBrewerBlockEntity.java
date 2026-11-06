@@ -240,7 +240,8 @@ public class SpawnEggBrewerBlockEntity extends BlockEntity implements WorldlyCon
             // the egg keeps the kind only: what the mob carried falls on top, as it would had it died
             MobBottleItem.spillCarried(server, brewer.items.get(BOTTLE), net.minecraft.world.phys.Vec3.atBottomCenterOf(pos.above()));
         }
-        brewer.items.set(BOTTLE, new ItemStack(ModItems.MOB_BOTTLE.get()));
+        // the bottle back empty, its own components kept (an add-on's stronger bottle stays one), as a terminal hands it back
+        brewer.items.set(BOTTLE, MobBottleItem.emptied(brewer.items.get(BOTTLE)));
         brewer.items.get(EGG).shrink(1);
         ItemStack out = brewer.items.get(OUTPUT);
         if (out.isEmpty()) {

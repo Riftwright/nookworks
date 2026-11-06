@@ -3,6 +3,7 @@ package dev.nookworks.mobcapture;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.machine.RedstoneMode;
+import dev.nookworks.menu.ShiftClick;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -103,14 +104,16 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
         if (index < MACHINE_SLOTS) {
-            if (!this.moveItemStackTo(stack, MACHINE_SLOTS, this.slots.size(), true)) {
+            boolean output = index == SpawnEggBrewerBlockEntity.OUTPUT;
+            if (!this.moveItemStackTo(stack, MACHINE_SLOTS, MACHINE_SLOTS + ShiftClick.INVENTORY_SLOTS, output)) {
                 return ItemStack.EMPTY;
             }
         } else {
             int target = SpawnEggBrewerBlockEntity.isFilledBottle(stack) ? SpawnEggBrewerBlockEntity.BOTTLE
                     : SpawnEggBrewerBlockEntity.isEgg(stack) ? SpawnEggBrewerBlockEntity.EGG
                     : SpawnEggBrewerBlockEntity.isFuel(stack) ? SpawnEggBrewerBlockEntity.FUEL : -1;
-            if (target < 0 || !this.moveItemStackTo(stack, target, target + 1, false)) {
+            if (target < 0 ? !ShiftClick.acrossInventory(stack, index, MACHINE_SLOTS, this::moveItemStackTo)
+                    : !this.moveItemStackTo(stack, target, target + 1, false)) {
                 return ItemStack.EMPTY;
             }
         }

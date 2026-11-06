@@ -77,8 +77,9 @@ def sheet_model(texture, centered=False):
                         # little; the plate brought to the block's middle (it floated mid-screen: the user, 2026-10-20)
                         "firstperson_righthand": {"rotation": [-15, 200, 0], "translation": [1, 0.8, 2.9], "scale": [0.4, 0.4, 0.4]},
                         "firstperson_lefthand": {"rotation": [-15, 200, 0], "translation": [1, 0.8, 2.9], "scale": [0.4, 0.4, 0.4]},
-                        "thirdperson_righthand": {"rotation": [75, 180, 0], "translation": [0, 2.5, -2.5], "scale": [0.4, 0.4, 0.4]},
-                        "thirdperson_lefthand": {"rotation": [75, 180, 0], "translation": [0, 2.5, -2.5], "scale": [0.4, 0.4, 0.4]}}}
+                        # in the fist, the plate's middle where a held block's is (r21: it dangled below the hand)
+                        "thirdperson_righthand": {"rotation": [75, 180, 0], "translation": [0, -0.2, 0.72], "scale": [0.4, 0.4, 0.4]},
+                        "thirdperson_lefthand": {"rotation": [75, 180, 0], "translation": [0, -0.2, 0.72], "scale": [0.4, 0.4, 0.4]}}}
 
 
 def sheet_states(name):
@@ -330,9 +331,20 @@ def compressible():
         if (r.get("type") == "minecraft:crafting_shaped" and len(pattern) == 3 and all(len(row) == 3 for row in pattern)
                 and len(set("".join(pattern))) == 1 and r["result"].get("count", 1) == 1):
             item = r["key"][pattern[0][0]]
-            if not item.startswith("#") and item not in ours:
-                ours.append(item)
+            # a tag (the Rice Bale's #c:crops/rice since r20) counts for what our own copy of it holds
+            for each in tag_values(item) if item.startswith("#") else [item]:
+                if each not in ours:
+                    ours.append(each)
     return [f"minecraft:{i}" for i in VANILLA_NINEFOLD] + ours
+
+
+def tag_values(tag):
+    """The items an item tag of our resources lists (its nested tags left out), or none for a tag we do not ship."""
+    namespace, path = tag[1:].split(":")
+    file = RES / "data" / namespace / "tags/item" / (path + ".json")
+    if not file.exists():
+        return []
+    return [v for v in json.loads(file.read_text(encoding="utf-8"))["values"] if isinstance(v, str) and not v.startswith("#")]
 
 
 def axe_transform(block, into, kind):

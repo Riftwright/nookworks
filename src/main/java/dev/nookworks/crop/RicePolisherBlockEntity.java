@@ -36,6 +36,9 @@ import net.minecraft.world.level.storage.ValueOutput;
  * It takes any {@code #c:crops/rice}, so Farmer's Delight's rice polishes too.
  */
 public class RicePolisherBlockEntity extends MachineBlockEntity implements Crankable {
+    /** The game tick its turn sound last played in (not saved). */
+    private long soundAt = Long.MIN_VALUE;
+
     public static final TagKey<Item> RICE = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "crops/rice"));
     public static final int TURNS = 3;
     public static final int GRAINS_PER_BRAN = 4;
@@ -95,8 +98,11 @@ public class RicePolisherBlockEntity extends MachineBlockEntity implements Crank
         CrankMotion.announce(level, this.worldPosition, this.getBlockState());
         // grain rubbing on grain, a fifth of a second: a grindstone pitched up ran, a turn every half second under a
         // Motor, into one squeal
-        level.playSound(null, this.worldPosition, ModSounds.RICE_POLISHER_TURN.get(), SoundSource.BLOCKS, 1.0F,
-                0.9F + level.getRandom().nextFloat() * 0.2F);
+        if (level.getGameTime() != this.soundAt) { // one sound a tick: nookTechnology's speed gear turns it up to four times at once, and four were a thump (r21)
+            this.soundAt = level.getGameTime();
+            level.playSound(null, this.worldPosition, ModSounds.RICE_POLISHER_TURN.get(), SoundSource.BLOCKS, 1.0F,
+                    0.9F + level.getRandom().nextFloat() * 0.2F);
+        }
         if (++this.turns >= TURNS) {
             this.turns = 0;
             input.shrink(1);
@@ -158,6 +164,12 @@ public class RicePolisherBlockEntity extends MachineBlockEntity implements Crank
             if (!this.items.get(slot).isEmpty()) {
                 out.add(this.removeItemNoUpdate(slot));
             }
+        }
+        // with nothing polished, the brown rice comes back, as a Hand Quern's wheat does: a stack of seed rice put in by
+        // mistake had to be polished through or the machine broken (r21, 2026-11-06)
+        if (out.isEmpty() && !this.items.get(INPUT).isEmpty()) {
+            out.add(this.removeItemNoUpdate(INPUT));
+            this.turns = 0;
         }
         this.setChanged();
         return out;

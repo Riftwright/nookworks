@@ -94,8 +94,9 @@ public class FilamentBulbBlock extends Block {
     }
 
     /**
-     * An empty hand switches it, as a button is pressed - by a player who may build there, as a lantern is put out only by
-     * one (not in adventure mode, not in spawn protection or another's claim).
+     * A click switches it, whatever is in hand, as a lever (the click rules of 2026-11-05; sneak to set a block against
+     * it) - by a player who may build there, as a lantern is put out only by one (not in adventure mode, not in spawn
+     * protection or another's claim).
      */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {

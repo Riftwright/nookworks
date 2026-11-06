@@ -6,23 +6,32 @@ import java.util.List;
 
 import dev.nookworks.feature.Fireproofing;
 import dev.nookworks.feature.Lubrication;
+import dev.nookworks.fluid.CopperFittingBlock;
+import dev.nookworks.fluid.ValveBlock;
+import dev.nookworks.machine.MachineBlockEntity;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.mobcapture.SpawnEggBrewerMenu;
+import dev.nookworks.oil.OilPressBlockEntity;
 import dev.nookworks.poster.PrintingPressMenu;
+import dev.nookworks.registry.ModBarter;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModCooking;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModVentilation;
 import dev.nookworks.sorter.SorterMenu;
 import dev.nookworks.sorter.SorterTier;
 import dev.nookworks.storage.StorageMenu;
+import dev.nookworks.ventilation.VentFanBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -47,6 +56,10 @@ final class ClickTests {
         NookworksGameTests.test("things_go_on_blocks_an_empty_hand_reads", ClickTests::thingsGoOnBlocksAnEmptyHandReads);
         NookworksGameTests.test("screens_fit_a_small_window", ClickTests::screensFitASmallWindow);
         NookworksGameTests.test("a_refused_click_sets_nothing_down", ClickTests::aRefusedClickSetsNothingDown);
+        NookworksGameTests.test("machines_take_nothing_by_a_click", ClickTests::machinesTakeNothingByAClick);
+        NookworksGameTests.test("hand_worked_blocks_take_by_a_click", ClickTests::handWorkedBlocksTakeByAClick);
+        NookworksGameTests.test("toggles_switch_whatever_is_held", ClickTests::togglesSwitchWhateverIsHeld);
+        NookworksGameTests.test("the_wrench_turns_an_empty_valve", ClickTests::theWrenchTurnsAnEmptyValve);
     }
 
     /** A player in the level, with a connection to send it messages and screens, standing clear of the test. */
@@ -88,6 +101,104 @@ final class ClickTests {
         click(helper, player, ropes, at, Direction.EAST);
         check(helper, helper.getBlockState(at.east()).isAir(), "nothing set down beside the refusing rope: " + helper.getBlockState(at.east()));
         check(helper, player.getMainHandItem().getCount() == 2, "the ropes stay in hand: " + player.getMainHandItem());
+        done(helper, player);
+    }
+
+    /** A survival player in the level, standing clear of the test: what a click puts in leaves the hand. */
+    private static ServerPlayer survivor(GameTestHelper helper) {
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        Vec3 aside = helper.absoluteVec(new Vec3(0.5, 8, 0.5));
+        player.snapTo(aside.x, aside.y, aside.z);
+        return player;
+    }
+
+    /**
+     * Nothing goes into a machine with a screen by a click: coal held to a Generator, raw iron to an Electric Furnace or a
+     * Crusher, gold to a Barter Terminal stay in hand, and the click goes on to the empty hand's use, which opens the
+     * screen, as at vanilla's furnace (the user, 2026-11-05). The block's own use is asked straight: a machine's screen
+     * cannot be sent to a test's player.
+     */
+    private static void machinesTakeNothingByAClick(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        var machines = List.of(ModBlocks.GENERATOR.get(), ModBlocks.ELECTRIC_FURNACE.get(), ModBlocks.CRUSHER.get(),
+                ModBarter.BARTER_TERMINAL.get());
+        var held = List.of(Items.COAL, Items.RAW_IRON, Items.IRON_ORE, Items.GOLD_INGOT);
+        for (int i = 0; i < machines.size(); i++) {
+            BlockPos pos = new BlockPos(1 + 2 * i, 2, 1);
+            helper.setBlock(pos, machines.get(i));
+            ItemStack stack = new ItemStack(held.get(i), 3);
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            BlockPos at = helper.absolutePos(pos);
+            InteractionResult result = helper.getBlockState(pos).useItemOn(stack, helper.getLevel(), player, InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(at).relative(Direction.UP, 0.5), Direction.UP, at, false));
+            check(helper, stack.getCount() == 3 && helper.getBlockEntity(pos, MachineBlockEntity.class).isEmpty(),
+                    machines.get(i).getName().getString() + ": nothing went in from " + stack);
+            check(helper, result instanceof InteractionResult.TryEmptyHandInteraction,
+                    machines.get(i).getName().getString() + ": the click goes on to its screen, got " + result);
+        }
+        done(helper, player);
+    }
+
+    /**
+     * What is worked by hand, with no screen, still takes by a click: seeds go into the Oil Press, and gravel is sifted
+     * on the Sifter, one at a time (the user, 2026-11-05: kept, as the put-on blocks are).
+     */
+    private static void handWorkedBlocksTakeByAClick(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        BlockPos press = new BlockPos(1, 2, 1);
+        helper.setBlock(press, ModOil.OIL_PRESS.get());
+        click(helper, player, new ItemStack(ModOil.SUNFLOWER_SEEDS.get(), 4), press, Direction.UP);
+        check(helper, player.getMainHandItem().isEmpty(), "the seeds left the hand: " + player.getMainHandItem());
+        check(helper, helper.getBlockEntity(press, OilPressBlockEntity.class).getItem(OilPressBlockEntity.INPUT).getCount() == 4,
+                "and went into the press");
+
+        BlockPos sifter = new BlockPos(3, 2, 1);
+        helper.setBlock(sifter, ModBlocks.SIFTER.get());
+        click(helper, player, new ItemStack(Blocks.GRAVEL, 3), sifter, Direction.UP);
+        check(helper, player.getMainHandItem().getCount() == 2, "one gravel was sifted by hand: " + player.getMainHandItem());
+        check(helper, player.containerMenu == player.inventoryMenu, "and no screen opened");
+        done(helper, player);
+    }
+
+    /**
+     * A Valve, a Ventilation Fan and an Experience Tank's tap turn at a click with anything in hand, as a lever does; a
+     * pipe is set against a valve sneaking (the user, 2026-11-05).
+     */
+    private static void togglesSwitchWhateverIsHeld(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        BlockPos valve = new BlockPos(1, 2, 1);
+        helper.setBlock(valve, ModBlocks.VALVE.get());
+        click(helper, player, new ItemStack(ModBlocks.COPPER_PIPE.get(), 4), valve, Direction.UP);
+        check(helper, !helper.getBlockState(valve).getValue(ValveBlock.OPEN), "a click with a pipe in hand shut the valve");
+        check(helper, helper.getBlockState(valve.above()).isAir(), "and set no pipe down");
+        player.setShiftKeyDown(true);
+        click(helper, player, new ItemStack(ModBlocks.COPPER_PIPE.get(), 4), valve, Direction.UP);
+        player.setShiftKeyDown(false);
+        check(helper, helper.getBlockState(valve.above()).is(ModBlocks.COPPER_PIPE.get()), "sneaking, the pipe goes on it");
+        check(helper, !helper.getBlockState(valve).getValue(ValveBlock.OPEN), "and the valve stays shut");
+
+        BlockPos fan = new BlockPos(3, 2, 1);
+        helper.setBlock(fan, ModVentilation.VENT_FAN.get());
+        click(helper, player, new ItemStack(Blocks.STONE), fan, Direction.UP);
+        check(helper, helper.getBlockState(fan).getValue(VentFanBlock.SWITCHED), "a click with stone in hand switched the fan on");
+        check(helper, helper.getBlockState(fan.above()).isAir(), "and set no stone down");
+
+        BlockPos xp = new BlockPos(5, 2, 1);
+        helper.setBlock(xp, ModBlocks.EXPERIENCE_TANK.get());
+        click(helper, player, new ItemStack(ModBlocks.EXPERIENCE_PIPE.get()), xp, Direction.NORTH);
+        check(helper, helper.getBlockState(xp).getValue(BlockStateProperties.OPEN), "a click on the tap with a pipe in hand turned it");
+        done(helper, player);
+    }
+
+    /** The wrench turns a Valve with nothing in it, as anything else, rather than opening or shutting it. */
+    private static void theWrenchTurnsAnEmptyValve(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        BlockPos valve = new BlockPos(1, 2, 1);
+        helper.setBlock(valve, ModBlocks.VALVE.get().defaultBlockState().setValue(CopperFittingBlock.AXIS, Direction.Axis.Z));
+        click(helper, player, new ItemStack(ModItems.WRENCH.get()), valve, Direction.UP);
+        check(helper, helper.getBlockState(valve).getValue(CopperFittingBlock.AXIS) != Direction.Axis.Z,
+                "the valve turned: " + helper.getBlockState(valve));
+        check(helper, helper.getBlockState(valve).getValue(ValveBlock.OPEN), "and is still open");
         done(helper, player);
     }
 

@@ -71,7 +71,7 @@ public final class ModCapabilities {
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.PLANTER.get(), (be, side) -> be.energy());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.RETORT.get(), (be, side) -> be.energy());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.STIRRING_TANK.get(), (be, side) -> be.energy());
-        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.STIRRING_TANK.get(), (be, side) -> be.fluidHandler());
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.STIRRING_TANK.get(), (be, side) -> be.fluidHandler(side));
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.GENERATOR.get(), (be, side) -> be.fluidHandler());
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.DIESEL_GENERATOR.get(), (be, side) -> be.fluidHandler());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.DISTILLER.get(), (be, side) -> be.energy());

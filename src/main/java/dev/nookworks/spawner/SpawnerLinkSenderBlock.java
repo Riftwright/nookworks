@@ -2,11 +2,13 @@ package dev.nookworks.spawner;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
+import dev.nookworks.feature.DrawRights;
 import dev.nookworks.registry.ModDataComponents;
 import dev.nookworks.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -129,7 +131,7 @@ public class SpawnerLinkSenderBlock extends Block implements EntityBlock {
             do {
                 stamp = level.getRandom().nextLong();
             } while (stamp == 0); // 0 is the stamp of a sender from before stamps
-            sender.placed(by instanceof Player player ? player.getUUID() : null, stamp);
+            sender.placed(DrawRights.ownerOf(by), stamp); // a machine's fake player of no known player owns nothing (r21)
         }
     }
 
@@ -161,8 +163,9 @@ public class SpawnerLinkSenderBlock extends Block implements EntityBlock {
                 player.sendOverlayMessage(Component.translatable("message.nookworks.spawner_link.not_yours"));
                 return Clicks.REFUSED;
             }
-            if (sender != null) {
-                sender.adopt(player.getUUID());
+            UUID who = DrawRights.ownerOf(player);
+            if (sender != null && who != null) {
+                sender.adopt(who); // a machine's fake player of no known player adopts nothing, as at placing (r21)
             }
             stack.set(ModDataComponents.SPAWNER_LINK.get(), GlobalPos.of(level.dimension(), pos));
             stack.set(ModDataComponents.SPAWNER_LINK_STAMP.get(), sender == null ? 0L : sender.stamp());

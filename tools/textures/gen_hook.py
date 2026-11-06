@@ -366,9 +366,9 @@ if __name__ == "__main__":
     iron().save(block / "hook.png")  # exact: a few flat bands the tiny faces read from
     pictures = {"sweet_berries": (berries_flat, berries_out, 91, SWEET_BERRIES), "glow_berries": (glow_flat, glow_out, 93, GLOW_BERRIES)}
     for kind, (flat, out, seed, keep) in pictures.items():
-        hung = texkit.finish(flat(), seed, keep=keep, **texkit.PLANT)
+        hung = texkit.shade(flat(), seed, keep=keep, material="plain", **texkit.PLANT)
         hung.save(block / f"hook_{kind}.png")
-        texkit.finish(out(), seed + 1, keep=keep, **texkit.PLANT).save(block / f"hook_{kind}_out.png")
+        texkit.shade(out(), seed + 1, keep=keep, material="plain", **texkit.PLANT).save(block / f"hook_{kind}_out.png")
         write_json(ASSETS / f"models/block/hook_wall_{kind}.json", berries_wall(kind))
         write_json(ASSETS / f"models/block/hook_ceiling_{kind}.json", berries_ceiling(kind))
         if kind == "sweet_berries":  # on a rope, the same sprig as on the hook (glow berries hang there as the vine)

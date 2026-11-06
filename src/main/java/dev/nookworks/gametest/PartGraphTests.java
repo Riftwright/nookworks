@@ -16,6 +16,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.AddonImpact;
 import dev.nookworks.feature.Features;
 import dev.nookworks.feature.PartGraph;
 import dev.nookworks.feature.PartsChange;
@@ -45,6 +46,7 @@ final class PartGraphTests {
         test("the_part_table_answers_as_its_tool_does", PartGraphTests::answersAsTheTool);
         test("a_part_switched_off_takes_what_nothing_else_reaches", PartGraphTests::takesWhatNothingElseReaches);
         test("every_part_stands_in_one_group_of_the_list", PartGraphTests::everyPartInOneGroup);
+        test("another_mods_recipes_held_up_by_our_parts_are_counted", PartGraphTests::addonRecipesCounted);
     }
 
     /**
@@ -104,6 +106,35 @@ final class PartGraphTests {
         }
         check(helper, Features.enabled(ModItems.CAUSTIC_SODA.get()) && conditionsHold("fine_paper")
                 && MercuryRecipes.retorting(new ItemStack(ModItems.WOOD_CHIPS.get())) != null, "with the cell on again, all of it is back");
+        helper.succeed();
+    }
+
+    /**
+     * An add-on's recipes carrying our conditions (as nookTechnology's do) are counted for the parts list by mod, as a
+     * change stops them (the user, 2026-11-03: 「Tech使えなくなるよ?的な警告」): one needing the Motor stops with the
+     * Motor off, one needing caustic soda with the Electrolytic Cell off (what nothing reaches counts), and one with ours
+     * under a "not" is left out rather than guessed.
+     */
+    private static void addonRecipesCounted(GameTestHelper helper) {
+        AddonImpact.Gate motor = AddonImpact.gate("tec", JsonParser.parseString(
+                "{\"neoforge:conditions\":[{\"type\":\"nookworks:feature\",\"feature\":\"motor\"}],\"type\":\"minecraft:crafting_shaped\"}"));
+        AddonImpact.Gate soda = AddonImpact.gate("tec", JsonParser.parseString(
+                "{\"neoforge:conditions\":[{\"type\":\"neoforge:and\",\"values\":[{\"type\":\"nookworks:available\",\"items\":[\"nookworks:caustic_soda\"]}]}]}"));
+        AddonImpact.Gate guessed = AddonImpact.gate("tec", JsonParser.parseString(
+                "{\"neoforge:conditions\":[{\"type\":\"neoforge:not\",\"value\":{\"type\":\"nookworks:feature\",\"feature\":\"motor\"}}]}"));
+        AddonImpact.Gate plain = AddonImpact.gate("tec", JsonParser.parseString("{\"type\":\"minecraft:crafting_shaped\"}"));
+        check(helper, motor != null && motor.parts().equals(List.of("motor")) && soda != null && soda.needs().size() == 1,
+                "our conditions are read, through an and");
+        check(helper, guessed == null && plain == null, "a not over ours, or no condition of ours, makes no gate");
+        List<AddonImpact.Gate> gates = List.of(motor, soda);
+        check(helper, AddonImpact.newlyStopped(gates, part -> true, part -> !part.equals("motor"), List.of()).equals(Map.of("tec", 1)),
+                "the Motor off stops the recipe that needs it");
+        check(helper, AddonImpact.newlyStopped(gates, part -> true, part -> !part.equals(CELL), List.of()).equals(Map.of("tec", 1)),
+                "the cell off stops the one needing what only it makes");
+        check(helper, AddonImpact.newlyStopped(gates, part -> true, part -> !part.equals("kitchen"), List.of()).isEmpty(),
+                "an unrelated part stops nothing");
+        check(helper, AddonImpact.newlyStopped(gates, part -> !part.equals("motor"), part -> !part.equals("motor"), List.of()).isEmpty(),
+                "what was stopped already is not counted again");
         helper.succeed();
     }
 

@@ -4,7 +4,14 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.barter.BarterTerminalBlockEntity;
 import dev.nookworks.block.entity.SifterBlockEntity;
+import dev.nookworks.experience.ExperienceBottling;
+import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.mercury.DistillerBlockEntity;
 import dev.nookworks.mercury.RetortBlockEntity;
+import dev.nookworks.mercury.StirringTankBlockEntity;
+import dev.nookworks.recycling.Compressing;
+import dev.nookworks.recycling.CompressorBlockEntity;
+import dev.nookworks.recycling.RecyclerBlockEntity;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,6 +26,8 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipePropertySet;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
@@ -57,33 +66,43 @@ public class MachineMenu extends AbstractContainerMenu {
     /** Client side: the server says which layout. */
     public static MachineMenu client(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         MachineLayout layout = MachineLayout.byId(buf.readVarInt());
-        return new MachineMenu(containerId, inventory, layout, clientSlots(layout), new SimpleContainerData(DATA_COUNT), null);
+        return new MachineMenu(containerId, inventory, layout, clientSlots(layout, inventory.player.level()),
+                new SimpleContainerData(DATA_COUNT), null);
     }
 
     /**
-     * The client's stand-in for the machine's slots. It knows enough of the machine's rules to put a shift-clicked
-     * item where the server will (the Sifter's mesh in the mesh slot, not the input), so the screen does not show a
-     * move that the next sync takes back. Anything it cannot know on the client (recipes, loot tables) it lets
-     * through, and the server has the last word.
+     * The client's stand-in for the machine's slots. It knows each machine's rules, so a shift-clicked item goes where
+     * the server will put it (the Sifter's mesh in the mesh slot, not the input), and what the machine does not take
+     * moves between the inventory and the hotbar at once, instead of showing a move that the next sync takes back (r21:
+     * a shift-click flashed into the wrong slot and snapped back). The rules are the machines' own; those that read the
+     * slots (the Retort, the Compressor) read the ones the server sent, and the Compressor goes by what the server said
+     * presses. The switch names every layout, so a new one cannot be left out.
      */
-    private static Container clientSlots(MachineLayout layout) {
+    private static Container clientSlots(MachineLayout layout, Level level) {
         return new SimpleContainer(layout.slotCount()) {
             @Override
             public boolean canPlaceItem(int slot, ItemStack stack) {
-                if (layout == MachineLayout.BARTER_TERMINAL) {
-                    return slot == BarterTerminalBlockEntity.GOLD ? stack.isPiglinCurrency()
+                return switch (layout) {
+                    case BARTER_TERMINAL -> slot == BarterTerminalBlockEntity.GOLD ? stack.isPiglinCurrency()
                             : slot == BarterTerminalBlockEntity.BOTTLE && BarterTerminalBlockEntity.takesBottle(stack);
-                }
-                if (layout == MachineLayout.SIFTER) {
-                    return slot == SifterBlockEntity.MESH
+                    case SIFTER -> slot == SifterBlockEntity.MESH
                             ? stack.is(ModItems.BRASS_MESH.get())
-                            : slot == SifterBlockEntity.INPUT
-                                    && stack.is(SifterBlockEntity.SIFTABLE);
-                }
-                if (layout == MachineLayout.DIESEL_GENERATOR) {
-                    return DieselGeneratorBlockEntity.mbIn(stack) > 0;
-                }
-                return true;
+                            : slot == SifterBlockEntity.INPUT && stack.is(SifterBlockEntity.SIFTABLE);
+                    case DIESEL_GENERATOR -> DieselGeneratorBlockEntity.mbIn(stack) > 0;
+                    case GENERATOR -> slot != 0 || GeneratorBlockEntity.burns(stack);
+                    case CRUSHER -> slot != 0 || CrushingRecipe.of(stack) != null;
+                    case ELECTROLYTIC_CELL -> slot != 0 || Electrolysis.of(stack) != null;
+                    case ELECTRIC_FURNACE -> slot == ElectricFurnaceBlockEntity.FILL ? ExperienceBottling.fillable(stack)
+                            : slot != ElectricFurnaceBlockEntity.INPUT
+                                    || level.recipeAccess().propertySet(RecipePropertySet.FURNACE_INPUT).test(stack);
+                    case RETORT -> RetortBlockEntity.takes(this, slot, stack);
+                    case COMPRESSOR -> CompressorBlockEntity.takes(this, slot, stack, () -> Compressing.pressesHere(stack));
+                    case STIRRING_TANK -> StirringTankBlockEntity.takes(slot, stack);
+                    case DISTILLER -> DistillerBlockEntity.takes(slot, stack);
+                    case RECYCLER -> RecyclerBlockEntity.takes(slot, stack);
+                    case PLANTER -> PlanterBlockEntity.plantFor(stack) != null;
+                    case STONE_MAKER, LASER -> false;
+                };
             }
         };
     }
@@ -236,10 +255,12 @@ public class MachineMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         int machineSlots = this.layout.slotCount();
         if (index < machineSlots) {
-            if (!this.moveItemStackTo(stack, machineSlots, this.slots.size(), true)) {
+            boolean output = this.layout.spots().get(index).output();
+            if (!this.moveItemStackTo(stack, machineSlots, machineSlots + ShiftClick.INVENTORY_SLOTS, output)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!this.moveIntoInputs(stack)) {
+        } else if (this.takes(stack) ? !this.moveIntoInputs(stack)
+                : !ShiftClick.acrossInventory(stack, index, machineSlots, this::moveItemStackTo)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) {
@@ -248,6 +269,19 @@ public class MachineMenu extends AbstractContainerMenu {
             slot.setChanged();
         }
         return original;
+    }
+
+    /**
+     * Whether some input of the machine takes {@code stack} as it stands now - room or not, as the furnace's input takes
+     * anything that smelts. What none takes moves between the inventory and the hotbar instead ({@link ShiftClick}).
+     */
+    private boolean takes(ItemStack stack) {
+        for (int i = 0; i < this.layout.slotCount(); i++) {
+            if (this.slots.get(i).mayPlace(stack)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

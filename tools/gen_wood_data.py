@@ -179,7 +179,17 @@ def timber(frm, to, along, rotation=None):
         else:
             # a side face's v runs up the block for north/south/east/west, along z for up/down
             turned = (along == "z" and direction in ("east", "west")) or (along == "x" and direction in ("north", "south", "up", "down"))
-            faces[direction] = {"texture": "#side", "rotation": 90} if turned else {"texture": "#side"}
+            if turned:
+                # the face's own size, across (u) and up (v); the texture is taken as wide as the face is high and as
+                # long as it is long, so the turn lays it on square - the default uv, the face's size before the turn,
+                # squashed the grain three to one (r21, 2026-11-06)
+                u_axis = {"north": 0, "south": 0, "east": 2, "west": 2, "up": 0, "down": 0}[direction]
+                v_axis = 2 if direction in ("up", "down") else 1
+                length, height = to[u_axis] - frm[u_axis], to[v_axis] - frm[v_axis]
+                left, top = (16 - height) / 2, (16 - length) / 2
+                faces[direction] = {"texture": "#side", "uv": [left, top, left + height, top + length], "rotation": 90}
+            else:
+                faces[direction] = {"texture": "#side"}
     element = {"from": frm, "to": to, "faces": faces}
     if rotation:
         element["rotation"] = rotation

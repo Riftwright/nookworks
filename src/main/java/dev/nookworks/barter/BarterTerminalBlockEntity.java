@@ -422,7 +422,10 @@ public class BarterTerminalBlockEntity extends MachineBlockEntity implements Mac
             AbstractPiglin taken = takeable.stream().filter(p -> p.getOffhandItem().isEmpty()).findFirst().orElse(takeable.get(0));
             PiglinShelter.letGo(taken);
             taken.setTimeInOverworld(0);
-            ItemStack filled = MobBottleItem.filled(taken);
+            // the empty bottle's own components kept, the mob added to them, as a bottle filled by hand is (r21: a
+            // Reinforced or named bottle came out plain)
+            ItemStack filled = bottle.copyWithCount(1);
+            filled.applyComponents(MobBottleItem.filled(taken).getComponentsPatch());
             level.sendParticles(ParticleTypes.POOF, taken.getX(), taken.getY() + 1, taken.getZ(), 12, 0.3, 0.3, 0.3, 0.02);
             level.playSound(null, taken.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 0.8F);
             taken.discard();

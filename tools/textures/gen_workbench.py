@@ -9,7 +9,7 @@ The body's sides are drawn as elevations - the bench seen square from the front 
 draws it - and every body part takes its slice of them from where it stands, so the legs, apron, drawer and shelf of
 one side are dressed by one drawing. The small things on and under the top have their own materials.
 
-Drawn flat, then finished with texkit. Original work, deterministic.
+Drawn flat, then shaded with texkit.shade (walnut wood, the blueprint plain, the rest metal). Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_workbench.py
 """
 import json
@@ -333,8 +333,13 @@ def write_json(path, data):
     path.write_bytes((json.dumps(data, indent=2) + "\n").encode("utf8"))
 
 
+# texkit.shade's materials: the walnut wood, the blueprint plain, the rest (steel, brass, painted iron) metal
+MATERIAL = {**{c: "wood" for c in (WALNUT_HI, WALNUT, WALNUT_LO, WALNUT_DK)},
+            **{c: "plain" for c in (PAPER_HI, PAPER, PAPER_LO, INK)}, None: "metal"}
+
+
 def save(img, name, seed, preset, keep=()):
-    texkit.finish(img, seed, keep=keep, **preset).save(BLOCK / f"{name}.png")
+    texkit.shade(img, seed, keep=keep, material=MATERIAL, **preset).save(BLOCK / f"{name}.png")
 
 
 def main():

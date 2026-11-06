@@ -6,6 +6,7 @@ import dev.nookworks.block.entity.NestedTimerBlockEntity;
 import dev.nookworks.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -99,8 +100,12 @@ public class NestedTimerBlock extends HorizontalDirectionalBlock implements Enti
     /** Right-click opens the settings. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && player.getAbilities().mayBuild && level.getBlockEntity(pos) instanceof NestedTimerBlockEntity timer) {
-            player.openMenu(timer);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof NestedTimerBlockEntity timer) {
+            if (player.getAbilities().mayBuild) {
+                player.openMenu(timer);
+            } else {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.nested_timer.may_not_build")); // never silent (2026-11-05)
+            }
         }
         return InteractionResult.SUCCESS;
     }

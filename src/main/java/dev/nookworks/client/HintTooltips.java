@@ -71,6 +71,12 @@ public final class HintTooltips {
 
     @SubscribeEvent
     static void onTooltip(ItemTooltipEvent event) {
+        // a campfire item while campfires are set down unlit (r20: nothing in the game said why a new one is out)
+        if (dev.nookworks.feature.UnlitCampfires.unlit(event.getItemStack())) {
+            event.getToolTip().add(Math.min(1, event.getToolTip().size()),
+                    Component.translatable("tooltip.nookworks.hint.unlit_campfire").withStyle(ChatFormatting.GRAY));
+            return;
+        }
         for (Hint hint : HINTS) {
             if (event.getItemStack().is(hint.item().get())) {
                 event.getToolTip().add(Math.min(1, event.getToolTip().size()),
@@ -86,7 +92,7 @@ public final class HintTooltips {
 
     /** Every hint's lang key, for the test that checks each is written. */
     public static List<String> keys() {
-        return HINTS.stream().map(HintTooltips::key).toList();
+        return Stream.concat(HINTS.stream().map(HintTooltips::key), Stream.of("tooltip.nookworks.hint.unlit_campfire")).toList();
     }
 
     private HintTooltips() {}

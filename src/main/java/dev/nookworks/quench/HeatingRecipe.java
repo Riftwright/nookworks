@@ -26,10 +26,14 @@ public class HeatingRecipe extends SmeltingRecipe {
         super(commonInfo, bookInfo, ingredient, result, experience, cookingTime);
     }
 
-    /** A red-hot ingot that has cooled heats again; one still hot does not (a loop through the fire would keep it hot). */
+    /**
+     * A red-hot ingot that has cooled heats again; one still hot does not (a loop through the fire would keep it hot) -
+     * ours or an add-on's on our recipes.
+     */
     @Override
     public boolean matches(SingleRecipeInput input, Level level) {
-        return super.matches(input, level) && !Quenching.isHot(input.item(), level.getGameTime());
+        return super.matches(input, level) && !Quenching.isHot(input.item(), level.getGameTime())
+                && !Quenching.stampedHot(input.item(), level.getGameTime());
     }
 
     @Override

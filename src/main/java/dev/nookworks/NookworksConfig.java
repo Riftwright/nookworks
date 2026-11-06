@@ -184,9 +184,10 @@ public final class NookworksConfig {
 
         STORAGE_BREAK_LIMIT = BUILDER.comment("A Storage Barrel that would spill more stacks than this cannot be broken by hand",
                 "(empty it first): its contents drop when it is broken, and tens of thousands of item entities at once",
-                "would stall the server. Taken away by anything else (a block breaker, an explosion, a /setblock or /fill",
-                "with destroy), such a barrel leaves as one item holding everything, as a shulker box does; a barrel under",
-                "the limit spills. A command that replaces it without destroy takes its contents with it, as with any chest.")
+                "would stall the server. A machine that asks first (nookTechnology's Block Breaker and Quarry) leaves such",
+                "a barrel standing; taken away by anything that does not ask (an explosion, a /setblock or /fill with",
+                "destroy), it leaves as one item holding everything, as a shulker box does; a barrel under the limit",
+                "spills. A command that replaces it without destroy takes its contents with it, as with any chest.")
                 .translation(key("storageBreakStackLimit")).defineInRange("storageBreakStackLimit", 256, 0, 1_000_000);
 
         RAW_FOOD_SICKNESS = BUILDER.comment("Raw meat and fish can make you ill a while later, as food poisoning does: raw chicken always,",
@@ -196,7 +197,8 @@ public final class NookworksConfig {
 
         CAMPFIRES_PLACED_UNLIT = BUILDER.comment("A campfire or soul campfire a player places starts out unlit, as a fire laid and not yet lit:",
                 "flint and steel, a fire charge or a burning arrow lights it. Off, it is lit as soon as it is placed, as in",
-                "vanilla. Campfires already in the world are left as they are.")
+                "vanilla. Campfires already in the world are left as they are. On, a campfire item looks unlit as well and casts no",
+                "light from the hand under a shader pack; off, it is vanilla's burning one.")
                 .translation(key("campfiresPlacedUnlit")).define("campfiresPlacedUnlit", true);
 
         RECIPE_CHOICE = BUILDER.comment("When a crafting grid matches recipes that make different things (two mods' recipes for the same",

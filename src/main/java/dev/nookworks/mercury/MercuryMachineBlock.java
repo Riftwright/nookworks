@@ -8,17 +8,23 @@ import com.mojang.serialization.Codec;
 
 import dev.nookworks.block.Clicks;
 import dev.nookworks.block.MachineBlock;
+import dev.nookworks.fluid.Tanks;
+import dev.nookworks.machine.GaugePouring;
 import dev.nookworks.machine.MachineBlockEntity;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,6 +32,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
@@ -99,6 +107,38 @@ public class MercuryMachineBlock extends MachineBlock {
         return PipePorts.updated(super.updateShape(state, level, ticks, pos, side, neighbourPos, neighbourState, random), side, neighbourState);
     }
 
+    /**
+     * A Mercury Bucket clicked on a machine holding mercury, as at its screen's mercury gauge: poured into one that uses
+     * mercury (the Stirring Tank, the Electrolytic Cell), which buckets do by a click (the click rules of 2026-11-05);
+     * turned down by one that makes it (the Retort, the Distiller), whose mercury goes out into a Mercury Tank. It was
+     * turned down everywhere with "into a Mercury Tank" (round two of r21, and its re-check).
+     */
+    public static InteractionResult pourMercuryBucket(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!(level.getBlockEntity(pos) instanceof MercuryMachineBlockEntity machine)) {
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
+        if (machine.mercuryRole() == MercuryHandler.Role.PRODUCER) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.mercury_bucket.into_tank"));
+            }
+            return Clicks.REFUSED;
+        }
+        if (!level.isClientSide()) {
+            // into its store, as the gauge pours: not through fillMercury, which keeps pipes from routing mercury to a
+            // Stirring Tank busy with biodiesel or mud (the click refused what the gauge took)
+            MercuryStore store = machine.mercuryStore();
+            if (store.fill(GaugePouring.BUCKET, true) < GaugePouring.BUCKET) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.mercury_bucket.no_room", store.amount(), store.capacity()));
+                return Clicks.REFUSED;
+            }
+            store.fill(GaugePouring.BUCKET, false);
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
+            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1.0F, 1.2F); // as at a Mercury Tank
+            level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
     @Override
     public @Nullable SoundEvent workSound(BlockState state) {
         if (!state.hasProperty(MachineBlockEntity.RUNNING) || !state.getValue(MachineBlockEntity.RUNNING)) {
@@ -124,11 +164,7 @@ public class MercuryMachineBlock extends MachineBlock {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
         if (stack.getItem() instanceof MercuryBucketItem) {
-            // said where it goes: the click opened the screen and said nothing, as if missed (play-test, 2026-10-19)
-            if (!level.isClientSide()) {
-                player.sendOverlayMessage(Component.translatable("message.nookworks.mercury_bucket.into_tank"));
-            }
-            return Clicks.REFUSED;
+            return pourMercuryBucket(stack, level, pos, player, hand);
         }
         if (this.kind == Kind.STIRRING_TANK && level.getBlockEntity(pos) instanceof StirringTankBlockEntity tank
                 && ItemAccess.forPlayerInteraction(player, hand).getCapability(Capabilities.Fluid.ITEM) != null) {
@@ -138,6 +174,17 @@ public class MercuryMachineBlock extends MachineBlock {
                 return InteractionResult.SUCCESS;
             }
             player.sendOverlayMessage(Component.translatable("message.nookworks.stirring_tank.will_not_take"));
+            return Clicks.REFUSED;
+        }
+        if (this.kind == Kind.RETORT && level.getBlockEntity(pos) instanceof RetortBlockEntity retort
+                && FluidUtil.getFirstStackContained(stack).getFluid() == Fluids.WATER) {
+            // a water bucket pours into its water tank, as into the Stirring Tank's and the Electrolytic Cell's (r21: the
+            // click opened the screen, the bucket left full); an empty one draws nothing out - the experience is the
+            // screen's to give
+            if (level.isClientSide() || FluidUtil.interactWithFluidHandler(player, hand, pos, Tanks.fillOnly(retort.waterHandler()), null)) {
+                return InteractionResult.SUCCESS;
+            }
+            player.sendOverlayMessage(Component.translatable("message.nookworks.copper_tank.will_not_take"));
             return Clicks.REFUSED;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hit);

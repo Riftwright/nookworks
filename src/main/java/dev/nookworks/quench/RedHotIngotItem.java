@@ -2,11 +2,14 @@ package dev.nookworks.quench;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.Nookworks;
 import dev.nookworks.registry.ModDataComponents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -35,6 +38,13 @@ public class RedHotIngotItem extends Item {
         // dropped by the server alone (no client foresaw it): SERVER_ONLY, so the player's own arm is seen to let go
         if (Quenching.isHot(held, level.getGameTime())) {
             player.hurtServer(level, level.damageSources().source(Quenching.BURN), 2.0F);
+            if (player instanceof ServerPlayer burnt) {
+                // the advancement is this item's to give: the burn's damage type is shared with add-ons' red-hot things
+                AdvancementHolder tooHot = level.getServer().getAdvancements().get(Nookworks.id("too_hot"));
+                if (tooHot != null) {
+                    burnt.getAdvancements().award(tooHot, "burned");
+                }
+            }
             player.sendOverlayMessage(Component.translatable("message.nookworks.red_hot.too_hot").withStyle(ChatFormatting.RED));
             player.drop(held, false, Prediction.SERVER_ONLY);
         } else if (!player.getInventory().add(Quenching.cooled(held))) {

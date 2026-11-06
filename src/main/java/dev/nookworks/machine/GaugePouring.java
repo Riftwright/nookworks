@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import dev.nookworks.experience.Move;
 import dev.nookworks.fluid.CopperTankBlock;
 import dev.nookworks.mercury.MercuryBucketItem;
+import dev.nookworks.mercury.MercuryHandler;
 import dev.nookworks.mercury.MercuryMachineBlockEntity;
 import dev.nookworks.mercury.MercuryStore;
 import dev.nookworks.oil.OilFluids;
@@ -65,7 +66,7 @@ public final class GaugePouring {
         GuiTank.Kind kind = tanks.get(index).kind();
         boolean moved;
         if (kind == GuiTank.Kind.MERCURY) {
-            moved = machine instanceof MercuryMachineBlockEntity mercury && pourMercury(player, menu, mercury.mercuryStore());
+            moved = machine instanceof MercuryMachineBlockEntity mercury && pourMercury(player, menu, mercury);
         } else {
             ResourceHandler<FluidResource> tank = info.gaugeTank(index);
             if (tank == null && machine.getLevel() != null) {
@@ -146,15 +147,19 @@ public final class GaugePouring {
     }
 
     /** A bucket of mercury into {@code store}, or an empty bucket filled from it. */
-    private static boolean pourMercury(Player player, AbstractContainerMenu menu, MercuryStore store) {
+    private static boolean pourMercury(Player player, AbstractContainerMenu menu, MercuryMachineBlockEntity machine) {
+        MercuryStore store = machine.mercuryStore();
         ItemStack carried = menu.getCarried();
         if (carried.getItem() instanceof MercuryBucketItem) {
-            if (store.fill(BUCKET, true) < BUCKET) {
+            // not into a machine that makes mercury (the Retort, the Distiller): its gauge only gives, as a click on it
+            // turns the bucket down (the round-two fix re-check: the two said different things)
+            if (machine.mercuryRole() == MercuryHandler.Role.PRODUCER || store.fill(BUCKET, true) < BUCKET) {
                 return false;
             }
             store.fill(BUCKET, false);
             swapOne(player, menu, new ItemStack(Items.BUCKET));
-            player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 0.8F, 0.8F);
+            // mercury's own sounds, the lava bucket's, as at a Mercury Tank and in the world (r21 round three)
+            player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.PLAYERS, 1.0F, 1.2F);
             return true;
         }
         if (carried.is(Items.BUCKET)) {
@@ -163,7 +168,7 @@ public final class GaugePouring {
             }
             store.drain(BUCKET, false);
             swapOne(player, menu, new ItemStack(ModItems.MERCURY_BUCKET.get()));
-            player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.8F, 0.8F);
+            player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL_LAVA, SoundSource.PLAYERS, 1.0F, 1.2F);
             return true;
         }
         return false;

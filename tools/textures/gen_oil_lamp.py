@@ -50,7 +50,7 @@ def clay():
             px(img, x, y, CLAY[2] if y % 16 < 2 else CLAY[1])
     for _ in range(22):
         px(img, rng.randrange(16), rng.randrange(16), GRIT)
-    return texkit.finish(img, 3, keep=(GRIT,), tile=True, **texkit.ROUGH)
+    return texkit.shade(img, 3, keep=(GRIT,), tile=True, material="stone", **texkit.ROUGH)
 
 
 def wick():
@@ -106,7 +106,7 @@ def oil_surface():
             px(img, x, y, LAMP_OIL[2] if x + y < 13 else LAMP_OIL[1] if x + y < 22 else LAMP_OIL[0])
     for x, y in ((6, 7), (7, 6), (8, 6), (9, 7)):  # the gleam of the sky in it
         px(img, x, y, LAMP_OIL[3])
-    return texkit.finish(img, 4, keep=(LAMP_OIL[3],), clusters=0.3, grain=0.05, size=4, reach=1)
+    return texkit.shade(img, 4, keep=(LAMP_OIL[3],), clusters=0.3, grain=0.05, size=4, reach=1)
 
 
 def flame():

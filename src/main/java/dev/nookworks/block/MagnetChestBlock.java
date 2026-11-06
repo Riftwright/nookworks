@@ -7,6 +7,7 @@ import dev.nookworks.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -62,6 +63,14 @@ public class MagnetChestBlock extends BaseEntityBlock {
             player.openMenu(chest);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /** Its lid shut once no one has it open any more (the openers counter's look again, as a chest's). */
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.getBlockEntity(pos) instanceof MagnetChestBlockEntity chest) {
+            chest.recheckOpen();
+        }
     }
 
     /** Comparators reading it through a block hear that it is gone, as with vanilla's containers. */

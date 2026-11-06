@@ -2,7 +2,6 @@ package dev.nookworks.client.gui;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import dev.nookworks.experience.RepairBoxBlockEntity;
 import dev.nookworks.experience.RepairBoxMenu;
@@ -40,7 +39,7 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + this.imageWidth - 8 - RedstoneButton.SIZE, this.topPos + 3,
+        this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
                 this.menu::redstoneMode,
                 () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, RepairBoxMenu.BUTTON_REDSTONE)));
     }
@@ -126,7 +125,7 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
             lines = List.of(this.statusLine());
         }
         if (lines != null) {
-            graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
+            graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, lines), mouseX, mouseY);
             return;
         }
         super.extractTooltip(graphics, mouseX, mouseY);

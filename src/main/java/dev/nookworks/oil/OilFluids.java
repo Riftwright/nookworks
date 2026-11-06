@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
 import dev.nookworks.fluid.KeptFluid;
+import dev.nookworks.fluid.WadeFluidType;
 import dev.nookworks.registry.ModOil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
@@ -27,25 +28,25 @@ public final class OilFluids {
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Nookworks.MODID);
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Nookworks.MODID);
 
-    public static final Supplier<FluidType> TYPE = FLUID_TYPES.register("vegetable_oil", () -> new FluidType(FluidType.Properties.create()
+    public static final Supplier<FluidType> TYPE = FLUID_TYPES.register("vegetable_oil", () -> new WadeFluidType(FluidType.Properties.create()
             .descriptionId("block.nookworks.vegetable_oil")
             .density(920).viscosity(1_500).temperature(293)
             .canSwim(true).canDrown(true).canPushEntity(true).supportsBoating(false)
             .motionScale(0.004)
             .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY), 0.7F));
 
     public static final Supplier<FlowingFluid> SOURCE = FLUIDS.register("vegetable_oil", () -> new KeptFluid.Source(properties()));
     public static final Supplier<FlowingFluid> FLOWING = FLUIDS.register("flowing_vegetable_oil",
             () -> new KeptFluid.Flowing(properties(), false));
 
-    public static final Supplier<FluidType> BIODIESEL_TYPE = FLUID_TYPES.register("biodiesel", () -> new FluidType(FluidType.Properties.create()
+    public static final Supplier<FluidType> BIODIESEL_TYPE = FLUID_TYPES.register("biodiesel", () -> new WadeFluidType(FluidType.Properties.create()
             .descriptionId("block.nookworks.biodiesel")
             .density(880).viscosity(1_200).temperature(293)
             .canSwim(true).canDrown(true).canPushEntity(true).supportsBoating(false)
             .motionScale(0.005)
             .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY), 0.72F));
     public static final Supplier<FlowingFluid> BIODIESEL = FLUIDS.register("biodiesel", () -> new KeptFluid.Source(biodiesel()));
     public static final Supplier<FlowingFluid> FLOWING_BIODIESEL = FLUIDS.register("flowing_biodiesel",
             () -> new KeptFluid.Flowing(biodiesel(), false));

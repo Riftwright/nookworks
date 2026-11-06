@@ -124,6 +124,11 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        return takes(slot, stack);
+    }
+
+    /** What slot {@code slot} takes: the machine's rule, and its screen's on the client (MachineMenu). */
+    public static boolean takes(int slot, ItemStack stack) {
         return slot == INPUT && MercuryRecipes.distillation(stack) != null;
     }
 

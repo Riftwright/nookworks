@@ -55,6 +55,9 @@ public final class HammerMining {
             return;
         }
         BlockPos origin = event.getPos();
+        if (!ChainBreaking.outermost(player, origin)) {
+            return; // a block another mod breaks for the player inside their own break: no 3x3 of its own
+        }
         if (!Earthmover.hammerHandles(tool, event.getState())) {
             return; // hitting dirt with a plain hammer must not sweep the stone around it
         }

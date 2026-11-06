@@ -2,7 +2,7 @@
 steel, its zinc crystallised into the spangle it has), the rest vanilla textures composed in JSON: bricks and a
 terracotta chimney pot, beaten copper for the hood, black iron for the fan guard. Deterministic.
 
-- block/galvanized_steel.png   spangled sheet steel, with the seam of the sheet folded along one edge
+- block/galvanized_steel.png   spangled sheet steel, with the seam of the sheet folded along one edge (texkit.shade, metal)
 - models/block/ventilation_fan.json (the housing, the guard, the motor and the louvres behind; facing north),
   ventilation_fan_blades.json (turned by client/render/VentFanRenderer), ventilation_fan_item.json (both, for the item)
 - models/block/range_hood.json: a copper canopy in tiers, open underneath, a collar on top
@@ -217,7 +217,7 @@ def write_json(path, data):
 
 
 def main():
-    texkit.finish(galvanized(), 90, tile=True, keep=[ZINC[4], ZINC[1]], **texkit.SMOOTH).save(ASSETS / "textures/block/galvanized_steel.png")
+    texkit.shade(galvanized(), 90, tile=True, keep=[ZINC[4], ZINC[1]], material="metal", **texkit.SMOOTH).save(ASSETS / "textures/block/galvanized_steel.png")
     m = ASSETS / "models/block"
     write_json(m / "ventilation_fan.json", {"parent": "minecraft:block/block", "textures": FAN_TEX, "elements": fan_body()})
     write_json(m / "ventilation_fan_blades.json", {"textures": FAN_TEX, "elements": fan_blades()})

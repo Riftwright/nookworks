@@ -44,7 +44,8 @@ public final class ExplosionAftermath {
         List<Watch> due = new ArrayList<>(WATCHING);
         WATCHING.clear();
         for (Watch watch : due) {
-            if (watch.level().isLoaded(watch.pos()) && watch.level().getBlockState(watch.pos()) != watch.before()) {
+            // gone when the block is another, not when its state changed: a wind charge swings a door or gate open (r21)
+            if (watch.level().isLoaded(watch.pos()) && !watch.level().getBlockState(watch.pos()).is(watch.before().getBlock())) {
                 watch.ifGone().accept(watch.level(), watch.pos());
             }
         }

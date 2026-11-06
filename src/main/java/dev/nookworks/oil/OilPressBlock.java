@@ -161,9 +161,12 @@ public class OilPressBlock extends MachineBlock {
         if (level instanceof ServerLevel server && level.getBlockEntity(pos) instanceof OilPressBlockEntity press) {
             if (!player.isShiftKeyDown()) {
                 press.turn(server);
-            } else if (!press.getItem(OilPressBlockEntity.CAKE).isEmpty()) {
-                ItemStack cakes = press.removeItemNoUpdate(OilPressBlockEntity.CAKE);
+            } else if (!press.getItem(OilPressBlockEntity.CAKE).isEmpty() || !press.getItem(OilPressBlockEntity.INPUT).isEmpty()) {
+                // the cakes, or with none the seeds put in (r21: seeds meant for sowing had to be pressed through)
+                ItemStack cakes = press.getItem(OilPressBlockEntity.CAKE).isEmpty() ? press.takeInput()
+                        : press.removeItemNoUpdate(OilPressBlockEntity.CAKE);
                 press.setChanged();
+                level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
                 if (!player.getInventory().add(cakes)) {
                     player.drop(cakes, false, Prediction.PREDICTED);
                 }

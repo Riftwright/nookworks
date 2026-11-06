@@ -14,7 +14,8 @@ import net.minecraft.world.item.ItemStack;
  * An Iron Pot's contents on the action bar, fitted to the screen it is shown on (the action bar does not wrap: a line
  * wider than the screen is cut at both ends). Whole if it fits: the liquid and its room, each thing with its count.
  * Else shorter: the liquid without the pot's room, a count only where there are two or more. Else as many things as fit
- * and how many kinds more (Jade and the Jade-less readout still list them all).
+ * and how many kinds more (Jade and the Jade-less readout still list them all). Why a pot over the fire cooks nothing
+ * goes last, and is always kept.
  */
 public final class PotLines {
     /** Room left either side of the line, so it does not touch the screen's edges. */
@@ -42,19 +43,25 @@ public final class PotLines {
             case 2 -> "oil";
             default -> "empty";
         };
-        Component whole = line(Component.translatable("nookworks.iron_pot." + liquid, pot.amount(), pot.capacity()), pot.items(), pot.items().size(), false);
+        Component whole = noted(line(Component.translatable("nookworks.iron_pot." + liquid, pot.amount(), pot.capacity()), pot.items(),
+                pot.items().size(), false), pot);
         if (font.width(whole) <= room) {
             return whole;
         }
         Component head = pot.liquid() == 0 ? Component.translatable("nookworks.iron_pot.empty")
                 : Component.translatable("nookworks.iron_pot." + liquid + ".short", pot.amount());
         for (int shown = pot.items().size(); shown > 0; shown--) {
-            Component line = line(head, pot.items(), shown, true);
+            Component line = noted(line(head, pot.items(), shown, true), pot);
             if (font.width(line) <= room) {
                 return line;
             }
         }
-        return line(head, pot.items(), 0, true);
+        return noted(line(head, pot.items(), 0, true), pot);
+    }
+
+    /** {@code line} with why the pot cooks nothing after it, when it says. */
+    private static Component noted(Component line, NookworksNetwork.PotContents pot) {
+        return pot.note().<Component>map(note -> line.copy().append("  ").append(note)).orElse(line);
     }
 
     /** {@code head}, then the first {@code shown} of {@code items} ({@code brief}: a count only from two up), then the rest's number. */

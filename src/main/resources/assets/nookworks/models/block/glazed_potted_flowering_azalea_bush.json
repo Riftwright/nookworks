@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "plant": "minecraft:block/potted_flowering_azalea_bush_plant",
     "side": "minecraft:block/potted_flowering_azalea_bush_side",

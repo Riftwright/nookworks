@@ -3,6 +3,7 @@ package dev.nookworks.ifworld;
 import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.block.Clicks;
 import dev.nookworks.travel.TravelLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,6 +91,7 @@ public final class IfGates {
         BlockPos fire = event.getPos().relative(event.getFace());
         if (PortalShape.findEmptyPortalShape(level, fire, Direction.Axis.X).isPresent()) {
             event.setCanceled(true);
+            event.setCancellationResult(Clicks.REFUSED); // the click ends here: cancelled with PASS, the other hand's item was used next (r21)
             if (level instanceof ServerLevel server) {
                 glitch(server, fire, 3);
             }
@@ -161,6 +163,7 @@ public final class IfGates {
         if (level.dimension().equals(IfWorld.KEY) && event.getItemStack().is(Items.ENDER_EYE)
                 && level.getBlockState(event.getPos()).is(Blocks.END_PORTAL_FRAME)) {
             event.setCanceled(true);
+            event.setCancellationResult(Clicks.REFUSED);
             if (level instanceof ServerLevel server) {
                 glitch(server, event.getPos().above(), 1);
                 event.getEntity().sendOverlayMessage(Component.translatable("message.nookworks.if.sealed"));

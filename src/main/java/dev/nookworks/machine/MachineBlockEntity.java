@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import dev.nookworks.fluid.PipePorts;
 
 /**
@@ -64,13 +65,38 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
         this.items = NonNullList.withSize(slots, ItemStack.EMPTY);
         // What goes in and out a tick follows the settings that raise what machines use and generators make: a machine
         // set to use six times the power took in no more than before, and stood short of it.
-        this.energy = new SimpleEnergyHandler(capacity, maxInsert == 0 ? 0 : Math.max(maxInsert, Math.max(MachineTuning.energy(maxInsert), MachineTuning.workEnergy(maxInsert))),
-                maxExtract == 0 ? 0 : Math.max(maxExtract, MachineTuning.generated(maxExtract))) {
+        // Worked out again at each call: set once, a setting raised in play took effect only after the chunk reloaded
+        // (r21 round three: an Electric Furnace at energyUse 10 ran at half speed)
+        int baseInsert = maxInsert;
+        int baseExtract = maxExtract;
+        this.energy = new SimpleEnergyHandler(capacity, insertCap(baseInsert), extractCap(baseExtract)) {
+            @Override
+            public int insert(int amount, TransactionContext transaction) {
+                this.maxInsert = insertCap(baseInsert);
+                return super.insert(amount, transaction);
+            }
+
+            @Override
+            public int extract(int amount, TransactionContext transaction) {
+                this.maxExtract = extractCap(baseExtract);
+                return super.extract(amount, transaction);
+            }
+
             @Override
             protected void onEnergyChanged(int previousAmount) {
                 savePower(MachineBlockEntity.this);
             }
         };
+    }
+
+    /** What a machine of base intake {@code base} takes in a call, at the settings now. */
+    private static int insertCap(int base) {
+        return base == 0 ? 0 : Math.max(base, Math.max(MachineTuning.energy(base), MachineTuning.workEnergy(base)));
+    }
+
+    /** What a generator of base output {@code base} gives out a call, at the settings now. */
+    private static int extractCap(int base) {
+        return base == 0 ? 0 : Math.max(base, MachineTuning.generated(base));
     }
 
     /** A machine that shows its pipes' ports, loaded from a world saved before it did: set right ({@link PipePorts}). */

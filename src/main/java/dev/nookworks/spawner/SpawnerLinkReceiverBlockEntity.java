@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 /**
  * Holds the paired sender position, which travels with the item (so breaking and re-placing keeps the pairing), and
@@ -70,9 +71,23 @@ public class SpawnerLinkReceiverBlockEntity extends BlockEntity implements DrawR
 
     private record Asked(@Nullable UUID owner, boolean allowed, long at) {}
 
-    // raised with the setting for the power machines use, as what it pays out is
+    // raised with the setting for the power machines use, as what it pays out is - worked out at each call, as a
+    // machine's is (r21: set once, a setting raised in play took effect only after the chunk reloaded)
     private final SimpleEnergyHandler energy = new SimpleEnergyHandler(capacity(),
             Math.max(MAX_INSERT, MachineTuning.energy(MAX_INSERT)), 0) {
+        @Override
+        public int insert(int amount, TransactionContext transaction) {
+            this.capacity = capacity();
+            this.maxInsert = Math.max(MAX_INSERT, MachineTuning.energy(MAX_INSERT));
+            return super.insert(amount, transaction);
+        }
+
+        @Override
+        public long getCapacityAsLong() {
+            this.capacity = capacity();
+            return super.getCapacityAsLong();
+        }
+
         @Override
         protected void onEnergyChanged(int previousAmount) {
             MachineBlockEntity.savePower(SpawnerLinkReceiverBlockEntity.this);

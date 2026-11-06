@@ -49,7 +49,7 @@ def entity():
         px(img, x, 6, PAPER[0])
     for y in range(h):
         px(img, 8, y, PAPER[0])
-    return texkit.finish(img, 11, keep=(PAPER[0],), clusters=0.3, grain=0.04, size=5, reach=1)
+    return texkit.shade(img, 11, material="plain", keep=(PAPER[0],), clusters=0.3, grain=0.04, size=5, reach=1)
 
 
 def item():
@@ -74,7 +74,7 @@ def item():
     px(img, x1 - 2, y0 + 1, FOLD[0])
     px(img, x1 - 2, y0 + 2, FOLD[1])
     px(img, x1 - 1, y0 + 2, FOLD[0])
-    return texkit.finish(img, 12, keep=(OUTLINE, FOLD[0], FOLD[1]), clusters=0.3, grain=0.05, size=4, reach=1)
+    return texkit.shade(img, 12, material="plain", keep=(OUTLINE, FOLD[0], FOLD[1]), clusters=0.3, grain=0.05, size=4, reach=1)
 
 
 def main():

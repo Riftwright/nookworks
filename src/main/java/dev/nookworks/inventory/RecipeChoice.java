@@ -3,9 +3,11 @@ package dev.nookworks.inventory;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.jspecify.annotations.Nullable;
@@ -24,7 +26,10 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -37,18 +42,27 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * table built on vanilla's crafting menu (mixin CraftingMenuMixin); what is left in the grid after crafting - a bucket,
  * a bottle - is the picked recipe's (mixin ResultSlotMixin), where vanilla looked the first one up again.
  */
+@EventBusSubscriber(modid = Nookworks.MODID)
 public final class RecipeChoice {
     /** Mods that let the player pick among recipes themselves: with one installed, ours stands down. */
     private static final List<String> OTHER_CHOOSERS = List.of("polymorph");
     private static final boolean STANDS_DOWN = OTHER_CHOOSERS.stream().anyMatch(ModList.get()::isLoaded);
     /** How many picks a player's choices remember. */
     private static final int REMEMBERED = 48;
-    /** Each player's picks, the newest first. */
-    private static final Map<ServerPlayer, Deque<ResourceKey<Recipe<?>>>> PICKED = new WeakHashMap<>();
+    /**
+     * Each player's picks, the newest first, by who they are: kept on the player object, they were lost once the one that
+     * died (or left the End) was gone, the respawned player being a new object (r21, 2026-11-06). Let go when they leave.
+     */
+    private static final Map<UUID, Deque<ResourceKey<Recipe<?>>>> PICKED = new HashMap<>();
     /** What each player was last told they could make: the menu, and a recipe for each thing, in the order shown. */
     private static final Map<ServerPlayer, Offer> OFFERED = new WeakHashMap<>();
 
     record Offer(int containerId, List<ResourceKey<Recipe<?>>> recipes, int selected) {}
+
+    @SubscribeEvent
+    static void onLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        PICKED.remove(event.getEntity().getUUID());
+    }
 
     /** Where the client takes what it is told (set by client.RecipeChoiceClient; nothing on a server). */
     public static java.util.function.Consumer<NookworksNetwork.RecipeChoices> shown = choices -> {};
@@ -93,7 +107,7 @@ public final class RecipeChoice {
         }
         RecipeHolder<CraftingRecipe> chosen = hint != null && matches.contains(hint) ? hint : null;
         if (chosen == null && distinct.size() > 1) {
-            for (ResourceKey<Recipe<?>> picked : PICKED.getOrDefault(player, new ArrayDeque<>())) {
+            for (ResourceKey<Recipe<?>> picked : PICKED.getOrDefault(player.getUUID(), new ArrayDeque<>())) {
                 chosen = distinct.stream().filter(r -> r.id().equals(picked)).findFirst().orElse(null);
                 if (chosen != null) {
                     break;
@@ -143,7 +157,7 @@ public final class RecipeChoice {
                 || index < 0 || index >= offer.recipes().size() || !(player.containerMenu instanceof AbstractCraftingMenu menu)) {
             return;
         }
-        Deque<ResourceKey<Recipe<?>>> picked = PICKED.computeIfAbsent(player, p -> new ArrayDeque<>());
+        Deque<ResourceKey<Recipe<?>>> picked = PICKED.computeIfAbsent(player.getUUID(), p -> new ArrayDeque<>());
         ResourceKey<Recipe<?>> key = offer.recipes().get(index);
         picked.remove(key);
         picked.addFirst(key);

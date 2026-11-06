@@ -3,6 +3,7 @@ package dev.nookworks.block;
 import dev.nookworks.feature.Permission;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
@@ -149,6 +150,9 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
         }
         BlockPos target = bottomOf(level, pos).below();
         if (level.isOutsideBuildHeight(target) || !level.getBlockState(target).canBeReplaced()) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.rope.no_lower")); // never silent (2026-11-05)
+            }
             return Clicks.REFUSED;
         }
         if (level instanceof ServerLevel server) {

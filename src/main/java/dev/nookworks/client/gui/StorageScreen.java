@@ -131,8 +131,10 @@ public class StorageScreen extends AbstractContainerScreen<StorageMenu> {
         for (Slot slot : this.menu.slots) {
             GuiDraw.slotAt(graphics, this.leftPos, this.topPos, slot.x, slot.y);
         }
-        GuiDraw.well(graphics, this.leftPos + BAR_X, this.trackY(), BAR_W, this.trackH());
+        // a scroll track only where there is something to scroll: on the Iron and Gold barrels, which show all they hold,
+        // an empty track with no thumb read as a control that had failed to draw (r21, 2026-11-06)
         if (this.menu.maxScroll() > 0) {
+            GuiDraw.well(graphics, this.leftPos + BAR_X, this.trackY(), BAR_W, this.trackH());
             GuiDraw.thumb(graphics, this.leftPos + BAR_X + 1, this.thumbY(), BAR_W - 2, this.thumbH(), this.dragging);
         }
         GuiDraw.gauge(graphics, this.leftPos + this.fillX(), this.topPos + this.fillY(), this.fillW(), FILL_H, this.fullness());

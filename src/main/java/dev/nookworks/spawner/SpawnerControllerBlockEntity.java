@@ -248,7 +248,7 @@ public class SpawnerControllerBlockEntity extends BlockEntity implements MenuPro
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new SpawnerControllerMenu(containerId, this.data, this);
+        return new SpawnerControllerMenu(containerId, inventory, this.data, this);
     }
 
     @Override

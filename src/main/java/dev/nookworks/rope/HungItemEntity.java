@@ -773,7 +773,7 @@ public class HungItemEntity extends Entity {
         if (vine != null) {
             return vine;
         }
-        if (!player.getItemInHand(hand).isEmpty() || hand != InteractionHand.MAIN_HAND) {
+        if (!player.getItemInHand(hand).isEmpty() || hand != InteractionHand.MAIN_HAND || this.offHandActs(player, location)) {
             return InteractionResult.PASS;
         }
         if (!player.mayBuild() || !this.level().mayInteract(player, this.blockPosition())) {
@@ -788,6 +788,29 @@ public class HungItemEntity extends Entity {
             this.discard();
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Whether what is in the off hand would do something to this hung thing - light an unlit lantern, bone-meal a bare
+     * piece of vine, trim a growing tip: an empty main hand then leaves the click to it, as at the blocks, rather than
+     * taking the thing down (r21, 2026-11-06).
+     */
+    private boolean offHandActs(Player player, Vec3 location) {
+        ItemStack off = player.getOffhandItem();
+        if (off.isEmpty() || player.isSecondaryUseActive()) {
+            return false;
+        }
+        if (this.isLantern() && this.item().getItem() instanceof BlockItem item && Lanterns.lit(item.getBlock()) != null) {
+            return Lanterns.lighter(off);
+        }
+        if (!isVine(this.item())) {
+            return false;
+        }
+        // bone meal on a bare piece; not shears on a growing tip: the vine's age is the server's alone, and the client
+        // and the server would part ways over it
+        int length = this.vineLength();
+        int piece = Mth.clamp(Mth.floor(this.vineTop() - (this.getY() + location.y)), 0, length - 1);
+        return off.is(Items.BONE_MEAL) && !this.vineBerries(piece);
     }
 
     /**

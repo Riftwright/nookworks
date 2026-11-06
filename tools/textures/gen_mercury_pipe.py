@@ -1,4 +1,4 @@
-"""Generate the Mercury Pipe textures (all original pixel art). Deterministic.
+"""Generate the Mercury Pipe textures (all original pixel art, shaded with texkit.shade as metal). Deterministic.
 
 The pipe is a thick iron tube in the same pale steel as the Mercury Tank, with a dark collar bolted around it
 at every joint and an open bore where a run ends:
@@ -96,5 +96,5 @@ def end():
 if __name__ == "__main__":
     BLOCK.mkdir(parents=True, exist_ok=True)
     for seed, (name, fn) in enumerate((("mercury_pipe", barrel), ("mercury_pipe_collar", collar), ("mercury_pipe_end", end))):
-        texkit.finish(fn(), 550 + seed, keep=(BORE, BORE_RIM, BOLT, BOLT_SHADE), **texkit.SMOOTH).save(BLOCK / f"{name}.png")
+        texkit.shade(fn(), 550 + seed, keep=(BORE, BORE_RIM, BOLT, BOLT_SHADE), material="metal", **texkit.SMOOTH).save(BLOCK / f"{name}.png")
         print("wrote", BLOCK / f"{name}.png")

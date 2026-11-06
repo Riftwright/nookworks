@@ -1,5 +1,6 @@
 package dev.nookworks.rope;
 
+import dev.nookworks.cooking.TrayBlock;
 import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
@@ -250,7 +252,14 @@ public class HookBlock extends FaceAttachedHorizontalDirectionalBlock implements
         }
         if (!level.isClientSide()) {
             level.setBlock(pos, state.setValue(SPRIG, Sprig.NONE), Block.UPDATE_ALL);
-            Block.popResource(level, pos, new ItemStack(sprig.item()));
+            // to the hand, as a Plate gives back: popResource drops nothing with block_drops off (round two of r21)
+            ItemStack back = new ItemStack(sprig.item());
+            if (!player.getInventory().add(back)) {
+                player.drop(back, false, Prediction.PREDICTED);
+            } else {
+                // off the hand, as a Tray gives back: in it, the next click hung them on the hook again (seen on a server)
+                TrayBlock.keepHandEmpty(player.getInventory());
+            }
             level.playSound(null, pos, sprig.taken, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         }

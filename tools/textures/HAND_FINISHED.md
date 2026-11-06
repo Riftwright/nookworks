@@ -13,7 +13,6 @@ recovered from code.
 | `block/hub_stone_off.png` | Hub Stone (the Redstone Cogstone up to 0.2.0) sides, `power=0` | `gen_cogstone.py` (deleted) |
 | `block/hub_stone_on.png` | Hub Stone sides, `power>=1` | `gen_cogstone.py` (deleted) |
 | `block/hub_stone_plate.png` | Hub Stone top and bottom | — |
-| `block/velarium_block.png` | Block of Velarium | `gen_mercury.py: velarium_block()` |
 | `block/experience_tank_side.png` | Experience Tank sides | `gen_experience.py: tank()` |
 | `block/experience_tank_end.png` | Experience Tank top and bottom | — |
 | `block/magnet_chest_front.png` | Magnet Chest sides | `gen_magnet.py` |

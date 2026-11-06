@@ -64,8 +64,12 @@ def main():
     for side, x in (("left", 12), ("right", 2)):
         write(f"wall_shelf_bracket_{side}", {"parent": "minecraft:block/block", "ambientocclusion": False,
                                              "textures": {"iron": IRON, "particle": IRON}, "elements": bracket(x)})
+    # the icon turned so both brackets show under the board, and brought down to the slot's middle (r21: a board high
+    # in the slot with one leg, read as a broken table)
     write("template_wall_shelf", {"parent": "minecraft:block/block", "textures": dict(planks, iron=IRON),
-                                  "elements": board() + bracket(12, False) + bracket(2, False)})
+                                  "elements": board() + bracket(12, False) + bracket(2, False),
+                                  "display": {"gui": {"rotation": [30, 45, 0], "translation": [0, -3, 0],
+                                                      "scale": [0.625, 0.625, 0.625]}}})
     print("wrote the wall shelf's models")
 
 

@@ -3,6 +3,7 @@ package dev.nookworks.cooking;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
+import dev.nookworks.feature.DrawRights;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModCooking;
 import dev.nookworks.ventilation.Ventilation;
@@ -162,6 +163,11 @@ public class GrillBlock extends BaseEntityBlock {
         if (!level.isClientSide()) {
             BlockState pot = ModCooking.IRON_POT.get().onGrill(player.getDirection().getOpposite());
             level.setBlock(pos, pot, Block.UPDATE_ALL);
+            // the setter's, as one set down by hand is (no place event comes of this setBlock): an unowned pot drew from
+            // anyone's pipe line, a claim's included (r21, 2026-11-06)
+            if (level.getBlockEntity(pos) instanceof DrawRights.Owned owned) {
+                owned.setOwner(DrawRights.ownerOf(player));
+            }
             level.playSound(null, pos, pot.getSoundType(level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.9F);
             level.gameEvent(player, GameEvent.BLOCK_PLACE, pos);
             stack.consume(1, player);

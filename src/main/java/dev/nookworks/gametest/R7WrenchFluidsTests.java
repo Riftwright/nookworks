@@ -212,12 +212,17 @@ final class R7WrenchFluidsTests {
         });
     }
 
-    /** A pipe clicked onto a valve's free end is set there, and the valve stays open; an empty hand still turns it. */
+    /**
+     * A pipe clicked sneaking onto a valve's free end is set there, and the valve stays open; an empty hand still turns
+     * it (a plain click with the pipe turns it too since 2026-11-05, as a lever: ClickTests).
+     */
     private static void pipeGoesOnAValve(GameTestHelper helper) {
         BlockPos valve = new BlockPos(2, 2, 3);
         lay(helper, new BlockPos[] {valve}, new BlockState[] {fitting(ModBlocks.VALVE.get(), Direction.Axis.X)});
         ServerPlayer player = clicker(helper);
+        player.setShiftKeyDown(true);
         click(helper, player, new ItemStack(ModBlocks.COPPER_PIPE.get()), valve, Direction.EAST);
+        player.setShiftKeyDown(false);
         check(helper, helper.getBlockState(valve.east()).is(ModBlocks.COPPER_PIPE.get()), "the pipe goes on the valve's end: "
                 + helper.getBlockState(valve.east()));
         check(helper, helper.getBlockState(valve).getValue(ValveBlock.OPEN), "and the valve stays open");

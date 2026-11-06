@@ -1,5 +1,6 @@
 """The Warp Anchor (2026-10-31, the user: 「浮いているエンパ色の四角いブロックに土星みたいな環がついている見た目」, smart enough
-for decor). Original pixel art, drawn flat and finished with texkit. Deterministic.
+for decor). Original pixel art, drawn flat and shaded with texkit.shade (plain: pearl
+and amethyst). Deterministic.
 
 - block/warp_anchor_core.png       the floating cube's face: ender pearl colours, deep teal at the rim through sea-green
                                    to a pale mint eye in the middle, a darker line round the face so the cube's edges read
@@ -46,7 +47,7 @@ def core(colours, edge):
             d = math.hypot(x - 7.1, y - 7.0) / 3.2
             level = max(0, min(len(colours) - 1, int((1 - d) * len(colours))))
             img.putpixel((x, y), colours[level] + (255,))
-    return texkit.finish(img, 731 if colours is PEARL else 732, keep=[edge], **texkit.SMOOTH)
+    return texkit.shade(img, 731 if colours is PEARL else 732, keep=[edge], material="plain", **texkit.SMOOTH)
 
 
 def ring():
@@ -60,7 +61,8 @@ def ring():
             else:
                 c = GOLD[2] if (x + y) % 6 == 0 else GOLD[1]
             img.putpixel((x, y), c + (255,))
-    return texkit.finish(img, 733, keep=list(GOLD), **texkit.SMOOTH)
+    # plain, as a gem; no fall of light, as the strip tiles along the ring
+    return texkit.shade(img, 733, keep=list(GOLD), material="plain", tile=True, light=0, **texkit.SMOOTH)
 
 
 def cube_model(texture):
@@ -115,7 +117,8 @@ def main():
                                             "textures": {"ring": "nookworks:block/warp_anchor_ring",
                                                          "particle": "nookworks:block/warp_anchor_ring"},
                                             "elements": ring_elements()})
-    write(block / "warp_anchor.json", {"textures": {"particle": "nookworks:block/warp_anchor_core"}})
+    # broken, it crumbles into pieces of the ring: the core's face is mostly see-through, and its pieces were too (r21)
+    write(block / "warp_anchor.json", {"textures": {"particle": "nookworks:block/warp_anchor_ring"}})
     # the item: the cube, and the ring tilted as it is seen turning (one bar set at 22.5 degrees about x)
     tilted = [e for e in ring_elements() if "rotation" not in e]  # (an element turns about one axis only: the square four)
     for e in tilted:

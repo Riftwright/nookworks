@@ -14,7 +14,7 @@ walls darken going down to a dark floor; the lid's underside is a lined panel in
 History: first a green sight glass over a brass anvil (read as a face); then, 2026-10-09, the machines' near-black
 steel in hard 1-pixel stripes with a black frame, white corner studs and a neon seam (the user, 2026-10-10: too much
 like pixel art, a poor feel). Now drawn flat in a few colours with soft, irregular shading, and finished with texkit
-as every texture is. The same day: a hammer and wrench crossed on the front went (it did not read), and the
+as every texture is (texkit.shade since 2026-11-05: the brass metal, the leather plain). The same day: a hammer and wrench crossed on the front went (it did not read), and the
 experience's light at the seam (it made the box look as if it did not shut); of five decorations tried - none, straps
 round the box, a fine frame on each face, a nameplate, big corner brackets - the user took the brackets.
 
@@ -59,7 +59,8 @@ FLOOR = [(24, 31, 38), (27, 35, 43)]
 GRIP_U, GRIP_V, MOUNT_U = 64, 0, 84
 FRONT = "south"  # the sheet region the chest model wears on its front, where the lock is
 # enamel is smooth: soft patches a step off, hardly a single pixel out of place
-FINISH = dict(texkit.SMOOTH, clusters=0.9, grain=0.05, size=4)
+FINISH = dict(texkit.SMOOTH, clusters=0.9, grain=0.05, size=4,
+              material={**{c: "plain" for c in (LEATHER_HI, LEATHER, LEATHER_LO)}, None: "metal"})
 
 
 def px(img, x, y, c):
@@ -308,8 +309,8 @@ def sheet(width, lock_w, half=None):
     for part in [lid] + [box_regions(*at) for at in wall_boxes(width, half).values()]:
         for side in ("west", "north", "east", "south"):
             flip(img, part[side])
-    img = texkit.finish(img, 4100 + salt, keep=[BRASS_HI, ENAMEL_HI, ENAMEL_DK, SEAM, LINING_LO] + SHADES + LINING_SHADES
-                        + INSIDE + FLOOR, **FINISH)
+    img = texkit.shade(img, 4100 + salt, keep=[BRASS_HI, ENAMEL_HI, ENAMEL_DK, SEAM, LINING_LO] + SHADES + LINING_SHADES
+                       + INSIDE + FLOOR, **FINISH)
     # Lock: brass, lit on top, drawn after the finish so it stays clean.
     for region in box_regions(0, 0, lock_w, 4, 1).values():
         x, y, w, h = region
@@ -369,7 +370,7 @@ def particle():
     enamel(img, 0, 0, 16, 16, 77)
     bracket(img, 0, 15, 1, -1, 5)
     bracket(img, 15, 0, -1, 1, 5)
-    return texkit.finish(img, 4177, keep=[BRASS_HI] + SHADES, **FINISH)
+    return texkit.shade(img, 4177, keep=[BRASS_HI] + SHADES, **FINISH)
 
 
 if __name__ == "__main__":

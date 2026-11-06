@@ -11,7 +11,7 @@ and its stones round, soft and ringed in a dark line, so a block of it stood out
   the drawing is ours. The stones are cells round points packed close on the face (wrapping, so the block tiles),
   each cut back from its neighbours by a seam of earth and given a rough edge, and lit as a cobblestone is: brightest
   near its upper left edge, darkest near its lower right; the earth just under a stone lies in its shadow. Drawn
-  flat, finished with texkit (ROUGH, tiled); then each material's pixels, darkest to lightest as the finish left them,
+  flat, finished with texkit.shade (ROUGH, tiled; the stones stone, the earth plain); then each material's pixels, darkest to lightest as the finish left them,
   are handed out among its measured shades in vanilla's shares, so the earth has dirt's very tone and the stones
   cobblestone's: no shade or tone either lacks, which is what made the seam.
 - models/block/stony_dirt.json (cube_all), blockstates/stony_dirt.json (turned about y at random, as vanilla's dirt
@@ -139,7 +139,7 @@ def texture():
     rng = random.Random(SEED)
     grid = cells(rng)
     img = flat(grid, rng)
-    done = texkit.finish(img, SEED, tile=True, keep=[STONE[5], DIRT[0]], **texkit.ROUGH)
+    done = texkit.shade(img, SEED, tile=True, keep=[STONE[5], DIRT[0]], material={**{c: "stone" for c in STONE}, None: "plain"}, **texkit.ROUGH)
     return matched(done, grid, rng)
 
 

@@ -31,6 +31,9 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  * the handle will not turn, so a Motor on it stops.
  */
 public abstract class HandMachineBlockEntity extends MachineBlockEntity implements Crankable {
+    /** The game tick its turn sound last played in (not saved). */
+    private long soundAt = Long.MIN_VALUE;
+
     public static final int INPUT = 0;
     public static final int OUTPUT = 1;
     private static final int[] INPUT_SLOTS = {INPUT};
@@ -86,7 +89,10 @@ public abstract class HandMachineBlockEntity extends MachineBlockEntity implemen
         }
         this.status = MachineStatus.RUNNING;
         CrankMotion.announce(level, this.worldPosition, this.getBlockState());
-        level.playSound(null, this.worldPosition, this.turnSound(), SoundSource.BLOCKS, 0.35F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+        if (level.getGameTime() != this.soundAt) { // one sound a tick: nookTechnology's speed gear turns it up to four times at once, and four were a thump (r21)
+            this.soundAt = level.getGameTime();
+            level.playSound(null, this.worldPosition, this.turnSound(), SoundSource.BLOCKS, 0.35F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+        }
         if (++this.turns >= recipe.turns()) {
             this.turns = 0;
             this.items.get(INPUT).shrink(1);

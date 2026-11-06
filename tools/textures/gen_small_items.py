@@ -2,7 +2,7 @@
 
 - item/brass_mesh.png  the Sifter's fine mesh: a round brass hoop with a fine woven screen across it
 - item/lode_pearl.png  an ender pearl bound to a lodestone: the pearl's sea-green, dark at its heart, held in a band
-                       of the lodestone's iron with a rivet; drawn flat, finished with texkit
+                       of the lodestone's iron with a rivet; drawn flat, finished with texkit.shade
 
 Run from the repo root:  python tools/textures/gen_small_items.py
 """
@@ -78,7 +78,8 @@ def lode_pearl():
     img.putpixel((4, 5), PEARL[4] + (255,))
     img.putpixel((10, 7), IRON[4] + (255,))  # a rivet on the band
     img.putpixel((10, 8), IRON[1] + (255,))
-    img = texkit.finish(img, 57, keep=[PEARL[5], IRON[4], IRON[1]], **texkit.ITEM)
+    img = texkit.shade(img, 57, keep=[PEARL[5], IRON[4], IRON[1]],
+                       material={**{c: "metal" for c in IRON}, None: "plain"}, **texkit.ITEM)
     return texkit.outline(img)  # ringed in the pearl's own deep teal
 
 

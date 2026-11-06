@@ -1,9 +1,12 @@
 package dev.nookworks.mobcapture;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -45,6 +48,7 @@ import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
@@ -52,6 +56,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -137,6 +142,14 @@ public class MobBottleItem extends Item {
             // a piglin lets its pocket fall in its death loot, not with its equipment: the gold it was bartering with
             piglin.getInventory().removeAllItems().forEach(stack -> piglin.spawnAtLocation(level, stack));
         }
+        if (living instanceof Enderman enderman && enderman.getCarriedBlock() != null) {
+            // the block an enderman took, as its death lets it fall (r21: brewed into an egg, it was gone)
+            Item block = enderman.getCarriedBlock().getBlock().asItem();
+            if (block != Items.AIR) {
+                enderman.spawnAtLocation(level, new ItemStack(block));
+            }
+            enderman.setCarriedBlock(null);
+        }
         try {
             DROP_EQUIPMENT.invoke(living, level);
         } catch (ReflectiveOperationException e) {
@@ -176,10 +189,11 @@ public class MobBottleItem extends Item {
     }
 
     /**
-     * Runs before the mob's own right-click action, so villagers and the like can be caught too; late among the
-     * handlers of the click, so a claim mod keeping others' animals safe has its say before the bottle does.
+     * Runs before the mob's own right-click action, so villagers and the like can be caught too; last among the
+     * handlers of the click, so a claim mod keeping others' animals safe has its say before the bottle does, and an
+     * add-on's stronger bottle (asked to hear it at LOW) before ours (r21: LOW shared the band with it).
      */
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     static void onInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getItemStack();
         if (stack.is(ModItems.MOB_BOTTLE.get()) && captured(stack) == null && event.getTarget() instanceof Mob) {
@@ -221,6 +235,15 @@ public class MobBottleItem extends Item {
                 && spawnEgg(type).isPresent();
     }
 
+    /**
+     * Whether {@code player} may bottle {@code target}, at any health if {@code anyHealth} (an add-on's stronger bottle,
+     * nookTechnology's Reinforced Mob Bottle): every other refusal stands.
+     */
+    public static Refusal check(Entity target, Player player, boolean anyHealth) {
+        Refusal refusal = check(target, player);
+        return anyHealth && refusal == Refusal.TOO_HEALTHY ? Refusal.NONE : refusal;
+    }
+
     public static Refusal check(Entity target) {
         if (!(target instanceof Mob mob) || !mob.isAlive() || !bottleable(target.getType())) {
             return Refusal.NOT_CAPTURABLE;
@@ -236,11 +259,43 @@ public class MobBottleItem extends Item {
         return mob.getHealth() <= mob.getMaxHealth() / 2.0F ? Refusal.NONE : Refusal.TOO_HEALTHY;
     }
 
+    /** Add-ons' word on which bottles take a mob at any health ({@link #anyHealthWhen}). */
+    private static final List<Predicate<ItemStack>> ANY_HEALTH = new CopyOnWriteArrayList<>();
+
+    /**
+     * For add-ons: bottles {@code test} accepts take a mob at any health wherever a bottle catches by our rules - a
+     * click on a mob, the Trading Counter reaching over to its villager (r21, 2026-11-06: nookTechnology's Reinforced Mob
+     * Bottle took a villager by a click on it, but at the counter only at half health).
+     */
+    public static void anyHealthWhen(Predicate<ItemStack> test) {
+        ANY_HEALTH.add(test);
+    }
+
+    /** Whether an add-on says {@code bottle} takes a mob at any health. */
+    public static boolean takesAnyHealth(ItemStack bottle) {
+        for (Predicate<ItemStack> test : ANY_HEALTH) {
+            if (test.test(bottle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Bottles {@code target} by the bottle's rules, at any health when an add-on says so of the bottle. */
     public static InteractionResult tryCapture(Player player, InteractionHand hand, Entity target) {
+        return tryCapture(player, hand, target, takesAnyHealth(player.getItemInHand(hand)));
+    }
+
+    /**
+     * Bottles {@code target} with the empty bottle in {@code player}'s {@code hand}, as a click does; {@code anyHealth}
+     * takes it however healthy it is (for add-ons, whose own handler runs before ours). The filled bottle keeps the
+     * empty one's components (an add-on's mark, a name), the mob added to them.
+     */
+    public static InteractionResult tryCapture(Player player, InteractionHand hand, Entity target, boolean anyHealth) {
         if (player.level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        Refusal refusal = check(target, player);
+        Refusal refusal = check(target, player, anyHealth);
         ItemStack filled = null;
         if (refusal == Refusal.NONE) {
             // Weighed before anything is done to it (the save leaves out riders, mount and lead): a mob refused as too
@@ -295,6 +350,9 @@ public class MobBottleItem extends Item {
         }
         target.discard(); // gone from the world, whole in the bottle: its gear and pack went in with it
         ItemStack held = player.getItemInHand(hand);
+        ItemStack kept = held.copyWithCount(1);
+        kept.applyComponents(filled.getComponentsPatch());
+        filled = kept;
         if (!player.hasInfiniteMaterials()) {
             held.shrink(1);
         }
@@ -473,8 +531,10 @@ public class MobBottleItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder,
             TooltipFlag flag) {
-        builder.accept(Component.translatable(captured(stack) == null
-                ? "tooltip.nookworks.mob_bottle.empty" : "tooltip.nookworks.mob_bottle.filled").withStyle(ChatFormatting.GRAY));
+        // an add-on's stronger bottle says it takes a mob at any health (r21: it said both, half health and any)
+        builder.accept(Component.translatable(captured(stack) != null ? "tooltip.nookworks.mob_bottle.filled"
+                : takesAnyHealth(stack) ? "tooltip.nookworks.mob_bottle.empty.any_health" : "tooltip.nookworks.mob_bottle.empty")
+                .withStyle(ChatFormatting.GRAY));
         CompoundTag data = capturedData(stack);
         if (data == null) {
             return;

@@ -1,5 +1,9 @@
 """Texkit: the finishing pass every generated texture goes through, so a flat drawing picks up the grain of a
-vanilla texture. Import it from a generator and run `finish(img, seed)` on each image before saving it.
+vanilla texture. Import it from a generator and run `shade(img, seed, material=...)` on each image before saving it.
+
+`shade` (2026-11-04, notes by it below) replaces `finish`: it shades each drawn region in fractions of a step by its
+material instead of rounding noise to whole steps, which left speckle. Every generator has moved to it (2026-11-05);
+`finish`, described next, is kept for compare_finish.py's before/after sheets.
 
 A generator draws with a handful of flat colours - that is how the shapes stay readable. Vanilla textures are drawn
 the same way and then worked over by hand: each colour is really a short ramp of neighbouring shades, the shades
@@ -225,19 +229,264 @@ def retone(img, outline_colour, lit=None, reach=2):
     return out
 
 
-def icon(img, seed, keep=(), **tuning):
-    """An item icon's whole finish: the grain at ICON strength (or {@code tuning}), then the ring. Pixels that are not
-    fully opaque keep their colour exactly."""
+def icon(img, seed, keep=(), material="plain", **tuning):
+    """An item icon's whole finish: shade at ICON strength (or {@code tuning}) by {@code material}, then the ring.
+    Pixels that are not fully opaque keep their colour exactly. (shade since 2026-11-05; finish before.)"""
     img = img.convert("RGBA")
     settings = dict(ICON)
     settings.update(tuning)
-    done = finish(img, seed, keep=keep, **settings)
+    done = shade(img, seed, keep=keep, material=material, **settings)
     src, d = img.load(), done.load()
     for y in range(img.size[1]):
         for x in range(img.size[0]):
             if 0 < src[x, y][3] < 255:
                 d[x, y] = src[x, y]
     return outline(done)
+
+
+# ---- shade: the finish that shades instead of speckling (2026-11-04)
+# finish above rounds its noise to whole ramp steps, so a pixel either stays or jumps a full shade - islands one step
+# off and lone pixels a full step off, the "speckle" the user saw (「まだらに変な点が出るだけ」), and it knows nothing of
+# what a region is, so grain beside rivets read as more rivets. shade (first drawn by Nook Technology's session as a
+# prototype, texfinish.py) works region by region - a region a 4-connected run of one drawn colour - in quarters of a
+# step taken between the ramp's shades, and holds a lone pixel near its own region's neighbours. Each region is shaded
+# as its material is:
+# - metal: lit across from its top left, sunk under the darker frame round it, brushed in faint dashes along its rows,
+#   a few short scratches;
+# - brick: each brick a tone of its own, lit along its top and left edges, shaded along its bottom and right, its face
+#   mottled, a pit or two; mortar: a gritty grain, darker under a brick's lower edge;
+# - wood: each plank a tone of its own, grain along its length, its butt ends darker, its upper edge lit;
+# - stone: each block a tone of its own, patches at two sizes, edges chipped light at the top left, dark at the bottom
+#   right;
+# - plain (food, glaze, cloth, leaves, anything else): soft patches, and a gentle fall of light across a broad face.
+# Small details hardly move.
+
+def _hash(x, y, seed):
+    h = (x * 73856093) ^ (y * 19349663) ^ (seed * 83492791)
+    h = (h * 2654435761) & 0xFFFFFFFF
+    h ^= h >> 15
+    h = (h * 2246822519) & 0xFFFFFFFF
+    h ^= h >> 13
+    return ((h >> 8) & 0xFFFF) / 0xFFFF * 2 - 1
+
+
+def _smooth(x, y, sx, sy, seed, w, h, tile):
+    fx, fy = x / sx, y / sy
+    x0, y0 = math.floor(fx), math.floor(fy)
+    tx, ty = fx - x0, fy - y0
+    tx, ty = tx * tx * (3 - 2 * tx), ty * ty * (3 - 2 * ty)
+    cw, ch = max(1, round(w / sx)), max(1, round(h / sy))
+
+    def at(i, j):
+        if tile:
+            i, j = i % cw, j % ch
+        return _hash(i, j, seed)
+    top = at(x0, y0) + (at(x0 + 1, y0) - at(x0, y0)) * tx
+    bottom = at(x0, y0 + 1) + (at(x0 + 1, y0 + 1) - at(x0, y0 + 1)) * tx
+    return top + (bottom - top) * ty
+
+
+def _shade(shades, t):
+    t = max(-2.0, min(2.0, t))
+    i = min(3, math.floor(t + 2))
+    f = t + 2 - i
+    a, b = shades[i], shades[i + 1]
+    return tuple(round(a[k] + (b[k] - a[k]) * f) for k in range(3))
+
+
+_DASH_TONES = (-0.75, -0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75)
+
+
+def _dash(x, y, seed):
+    """The tone of the brushed dash at (x, y): rows cut into runs of 2 to 5 pixels, each run a tone of its own."""
+    pos, k = -int((_hash(y, 0, seed + 20) * 0.5 + 0.5) * 6), 0
+    while True:
+        n = 4 + int((_hash(y, k, seed + 21) * 0.5 + 0.5) * 5.99)
+        if pos + n > x:
+            break
+        pos += n
+        k += 1
+    return _DASH_TONES[int((_hash(y, k, seed + 22) * 0.5 + 0.5) * 7.99)]
+
+
+def _regions(src, w, h, keep):
+    rid = [[-1] * w for _ in range(h)]
+    regions = []
+    for y in range(h):
+        for x in range(w):
+            if rid[y][x] >= 0 or src[x, y][3] == 0 or src[x, y][:3] in keep:
+                continue
+            c = src[x, y][:3]
+            stack, px = [(x, y)], []
+            rid[y][x] = len(regions)
+            while stack:
+                cx, cy = stack.pop()
+                px.append((cx, cy))
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nx, ny = cx + dx, cy + dy
+                    if 0 <= nx < w and 0 <= ny < h and rid[ny][nx] < 0 and src[nx, ny][3] and src[nx, ny][:3] == c:
+                        rid[ny][nx] = len(regions)
+                        stack.append((nx, ny))
+            regions.append(px)
+    return rid, regions
+
+
+# how far a pixel may stand off its like neighbours, by material
+_LONE = {"metal": 0.3, "brick": 0.4, "mortar": 0.5, "wood": 0.4, "stone": 0.45, "plain": 0.35}
+
+
+def shade(img, seed, clusters=0.6, grain=0.3, size=3, keep=(), tile=False, reach=2, levels=4,
+          light=0.45, bevel=0.45, material="plain", scratches=2, strength=1.0):
+    """
+    Returns a copy of {@code img} shaded as its material is (the module notes). {@code material}: one material for the
+    whole image, or a dict of drawn colour to material (colours not named take the None key's, else "plain"). The
+    tuning of `finish` still applies - {@code clusters} the patches' strength, {@code grain} the single pixels, {@code size} the patch size,
+    {@code reach} how far a shade may go - and {@code light} (the lit-from-the-top-left fall across a broad face),
+    {@code bevel} (a face sunk under a darker frame), {@code scratches} (bright nicks on broad metal), {@code levels}
+    (shades kept to this fraction of a step) and {@code strength} (all of it scaled) are added.
+    """
+    img = img.convert("RGBA")
+    w, h = img.size
+    src = img.load()
+    keep = {tuple(c[:3]) for c in keep}
+    rid, regions = _regions(src, w, h, keep)
+
+    def mat(c):
+        if isinstance(material, dict):
+            return material.get(tuple(c), material.get(None, "plain"))
+        return material
+
+    def other(x, y, dx, dy, r):
+        """Whether the neighbour that way is opaque and of another region."""
+        nx, ny = x + dx, y + dy
+        if tile:
+            nx, ny = nx % w, ny % h
+        return 0 <= nx < w and 0 <= ny < h and src[nx, ny][3] and rid[ny][nx] != r
+
+    def darker(x, y, dx, dy, c):
+        nx, ny = x + dx, y + dy
+        return 0 <= nx < w and 0 <= ny < h and src[nx, ny][3] and _lum(src[nx, ny]) < _lum(c) - 6
+
+    t = [[None] * w for _ in range(h)]
+    mats = []
+    for r, px in enumerate(regions):
+        xs = [p[0] for p in px]
+        ys = [p[1] for p in px]
+        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+        c = src[px[0][0], px[0][1]][:3]
+        m = mat(c)
+        mats.append(m)
+        broad = len(px) >= 10 and x1 - x0 >= 2 and y1 - y0 >= 2
+        own = 0.4 * _hash(r, 7, seed + 30)  # a brick's, a plank's, a stone's own tone
+        along_x = x1 - x0 >= y1 - y0         # a plank's grain runs its long way
+        for x, y in px:
+            v = 0.0
+            if m == "metal":
+                if broad:
+                    u = (x - x0) / max(1, x1 - x0) * 0.4 + (y - y0) / max(1, y1 - y0) * 0.6
+                    v += light * (1 - 2 * u)
+                    if darker(x, y, 0, -1, c):
+                        v -= bevel
+                    elif darker(x, y, 0, -2, c) and y1 - y0 >= 5:
+                        v -= bevel * 0.4
+                    if darker(x, y, -1, 0, c):
+                        v -= bevel * 0.6
+                    if darker(x, y, 0, 1, c):
+                        v += bevel * 0.5
+                    if darker(x, y, 1, 0, c):
+                        v += bevel * 0.25
+                    # brushed: long faint streaks along the rows, a slow wash under them; a pixel's own grain only
+                    # where the tuning asks for grain (a smooth plate is not sand)
+                    v += clusters * 0.3 * _dash(x, y, seed) + clusters * 0.25 * _smooth(x, y, size + 3, size + 3, seed + 3, w, h, tile)
+                    v += 0.25 * grain * _hash(x, y, seed + 4)
+                else:
+                    v += 0.25 * clusters * _smooth(x, y, size, size, seed, w, h, tile) + 0.15 * grain * _hash(x, y, seed + 2)
+            elif m == "plain":
+                # food, glaze, cloth, a leaf: soft patches and, on a broad face, a gentle fall of light
+                if broad:
+                    u = (x - x0) / max(1, x1 - x0) * 0.4 + (y - y0) / max(1, y1 - y0) * 0.6
+                    v += light * 0.6 * (1 - 2 * u)
+                v += clusters * 0.55 * _smooth(x, y, size, size, seed + 70, w, h, tile) + 0.3 * grain * _hash(x, y, seed + 71)
+            elif m == "brick":
+                v += own
+                if other(x, y, 0, -1, r):
+                    v += 0.45
+                elif other(x, y, 0, 1, r):
+                    v -= 0.5
+                if other(x, y, -1, 0, r):
+                    v += 0.2
+                elif other(x, y, 1, 0, r):
+                    v -= 0.3
+                v += 0.45 * _smooth(x, y, 2.0, 2.0, seed + r, w, h, tile) + (0.1 + 0.25 * grain) * _hash(x, y, seed + 4)
+            elif m == "mortar":
+                v += 0.3 * _smooth(x, y, 2.0, 2.0, seed + 5, w, h, tile) + 0.4 * _hash(x, y, seed + 6)
+                if other(x, y, 0, -1, r):
+                    v -= 0.4  # under a brick's lower edge
+            elif m == "wood":
+                v += own
+                a, b = (x, y) if along_x else (y, x)
+                v += 0.45 * _smooth(a, b, 7.0, 1.0, seed + r, w, h, tile)
+                # grain lines wandering along the plank
+                wave = b + 0.9 * _smooth(a, b, 5.0, 3.0, seed + 40 + r, w, h, tile)
+                if abs(((wave + 0.5 * (_hash(r, 3, seed) + 1)) % 3.0) - 1.5) < 0.35:
+                    v -= 0.65
+                if other(x, y, *((-1, 0) if along_x else (0, -1)), r) or other(x, y, *((1, 0) if along_x else (0, 1)), r):
+                    v -= 0.35  # its ends, butted against the next
+                if other(x, y, *((0, -1) if along_x else (-1, 0)), r):
+                    v += 0.3   # its lit long edge
+                v += 0.08 * _hash(x, y, seed + 4)
+            elif m == "stone":
+                v += own
+                v += 0.65 * _smooth(x, y, size, size, seed + r, w, h, tile) + 0.35 * _smooth(x, y, 1.5, 1.5, seed + 50 + r, w, h, tile)
+                if other(x, y, 0, -1, r) or other(x, y, -1, 0, r):
+                    v += 0.5
+                if other(x, y, 0, 1, r) or other(x, y, 1, 0, r):
+                    v -= 0.55
+                v += (0.08 + 0.2 * grain) * _hash(x, y, seed + 4)
+            t[y][x] = v * strength
+    # scratches: a short bright run on broad metal faces
+    k = 0
+    for r, px in enumerate(regions):
+        if mats[r] != "metal" or len(px) < 30:
+            continue
+        for s in range(scratches):
+            k += 1
+            x, y = px[int((_hash(r, s, seed + 9) * 0.5 + 0.5) * (len(px) - 1))]
+            dx = 1 if _hash(r, s, seed + 10) > 0 else -1
+            for i in range(2 + (k % 2)):
+                xx, yy = x + i * dx, y + (i if (s + k) % 2 else 0)
+                if 0 <= xx < w and 0 <= yy < h and rid[yy][xx] == r:
+                    t[yy][xx] += 0.55
+    # brick pits: one or two dark pixels on a brick, left as they are
+    pits = set()
+    for r, px in enumerate(regions):
+        if mats[r] == "brick" and len(px) >= 8:
+            for s in range(1 + (r % 2)):
+                x, y = px[int((_hash(r, s, seed + 60) * 0.5 + 0.5) * (len(px) - 1))]
+                pits.add((x, y))
+    out = img.copy()
+    o = out.load()
+    for y in range(h):
+        for x in range(w):
+            if t[y][x] is None:
+                continue
+            c = src[x, y][:3]
+            v = t[y][x]
+            r = rid[y][x]
+            near = [t[y + dy][x + dx] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                    if 0 <= x + dx < w and 0 <= y + dy < h and t[y + dy][x + dx] is not None and rid[y + dy][x + dx] == r]
+            if len(near) >= 3:
+                m = sum(near) / len(near)
+                lim = _LONE[mats[r]]
+                if abs(v - m) > lim:
+                    v = m + math.copysign(lim, v - m)
+            if (x, y) in pits:
+                v -= 0.75
+            v = max(-reach, min(reach, v))
+            v = round(v * levels) / levels
+            if v:
+                o[x, y] = _shade(ramp(c), v) + (src[x, y][3],)
+    return out
 
 
 def palette_report(img):

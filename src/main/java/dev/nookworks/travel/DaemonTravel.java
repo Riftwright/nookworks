@@ -15,6 +15,7 @@ import dev.nookworks.NookworksNetwork;
 import dev.nookworks.feature.Permission;
 import dev.nookworks.ifworld.IfGates;
 import dev.nookworks.ifworld.IfMirrorBlock;
+import dev.nookworks.ifworld.IfTravel;
 import dev.nookworks.ifworld.IfWorld;
 import dev.nookworks.registry.ModTravel;
 import net.minecraft.core.BlockPos;
@@ -332,7 +333,10 @@ public final class DaemonTravel {
         return true;
     }
 
-    /** Through a return door: to the home door, or with none standing, to the player's respawn point. */
+    /**
+     * Through a return door: to the home door, or with none standing, to the player's respawn point - never into the If,
+     * as the mirror's own fallback (r21: a bed in an If waiting for its reset took them back into it, to be wiped).
+     */
     private static @Nullable TeleportTransition home(ServerPlayer player, DaemonDoors doors) {
         GlobalPos home = doors.home();
         ServerLevel target = home == null ? null : player.level().getServer().getLevel(home.dimension());
@@ -340,15 +344,20 @@ public final class DaemonTravel {
             doors.forget(home.dimension(), home.pos()); // its dimension is gone (the mod that made it taken out)
             DaemonDoorBlockEntity.refreshAll(player.level().getServer()); // the return doors' views with it
         }
+        if (target != null && target.dimension().equals(IfWorld.KEY) && IfWorld.get(player.level().getServer()).resetPending()) {
+            // the home door stands in an If waiting for its reset: no way in, as the mirror and the pearl are refused
+            player.sendOverlayMessage(Component.translatable("message.nookworks.if.reset_pending"));
+            return IfTravel.respawn(player);
+        }
         BlockPos there = target == null ? null : existing(doors, target);
         if (target == null || there == null || !doors.isHome(target.dimension(), there)) {
             player.sendOverlayMessage(Component.translatable("message.nookworks.daemon_door.no_home"));
-            return player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
+            return IfTravel.respawn(player);
         }
         TeleportTransition arrival = arriveAt(target, there);
         if (arrival == null) {
             player.sendOverlayMessage(Component.translatable("message.nookworks.daemon_door.blocked_home"));
-            return player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
+            return IfTravel.respawn(player);
         }
         return arrival;
     }

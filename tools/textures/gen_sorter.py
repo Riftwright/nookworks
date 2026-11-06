@@ -11,7 +11,7 @@ row of sorters shows at a glance which are geared.
 
 It also writes the sorters' models (a cube, a texture a face) and blockstates, and those of 0.2.0's Golden, Diamond and
 Netherite Item Sorters, which show as Item Sorters with that gear for the moment they last.
-Drawn flat, then finished with texkit. Original work, deterministic.
+Drawn flat, then shaded with texkit.shade as metal. Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_sorter.py
 """
 import json
@@ -188,7 +188,7 @@ def main():
             for swapped in (False, True):
                 images["front" + suffix(swapped, gear)] = front(panel, not swapped, precise)
         for name, img in images.items():
-            texkit.finish(img, seed, keep=keep, **texkit.SMOOTH).save(OUT / f"{kind}_sorter_{name}.png")
+            texkit.shade(img, seed, keep=keep, material="metal", **texkit.SMOOTH).save(OUT / f"{kind}_sorter_{name}.png")
             seed += 1
         for gear in ("none",) + tuple(GEARS):
             for swapped in (False, True):

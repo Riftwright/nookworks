@@ -10,10 +10,8 @@ import dev.nookworks.registry.ModSounds;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -31,7 +29,8 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * Ventilation Fan: set into a wall, its guard to the room. Switched on with a click, or by a redstone signal, its
+ * Ventilation Fan: set into a wall, its guard to the room. Switched on with a click - with anything in hand, as a lever
+ * is (the user, 2026-11-05); a block is set against it sneaking - or by a redstone signal, its
  * blades turn and it draws the smoke and steam in front of it off (see {@link Ventilation}) and sends it out behind -
  * into the open, or into the Ducts there. Placed, it faces the one placing it, so it is set from inside the room.
  * <p>
@@ -63,12 +62,6 @@ public class VentFanBlock extends BaseEntityBlock {
         boolean powered = context.getLevel().hasNeighborSignal(context.getClickedPos());
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
                 .setValue(POWERED, powered).setValue(ON, powered);
-    }
-
-    @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
-        return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
     }
 
     @Override

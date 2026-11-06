@@ -816,7 +816,8 @@ final class PlayTests {
 
     /**
      * A shift-clicked cobblestone goes into the Printing Press's sample slot only while labels are what it prints (the
-     * labels page); set to a poster, or to nothing, the press leaves it in the inventory.
+     * labels page); set to a poster, or to nothing, the press does not take it, so it moves from the hotbar to the
+     * inventory above, as on a furnace's screen.
      */
     private static void thePressTakesASampleOnItsLabelsPage(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 1, 2);
@@ -825,18 +826,19 @@ final class PlayTests {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.getInventory().setItem(0, new ItemStack(Items.COBBLESTONE, 5));
         var menu = (PrintingPressMenu) press.createMenu(1, player.getInventory(), player);
-        int hotbar0 = menu.slots.size() - 9;
+        int hotbar0 = PrintingPressBlockEntity.SLOTS + 27; // not the menu's end: an add-on's fitting may follow
         List<Identifier> designs = menu.designs();
         int poster = designs.indexOf(designs.get(2)) + 1; // labels and a photo come first
         menu.clickMenuButton(player, poster);
         menu.quickMoveStack(player, hotbar0);
         check(helper, press.getItem(PrintingPressBlockEntity.SAMPLE).isEmpty(), "set to a poster, it takes no sample");
+        check(helper, player.getInventory().getItem(9).getCount() == 5, "but moves the cobblestone up from the hotbar");
         menu.clickMenuButton(player, designs.indexOf(PrintingPressBlockEntity.LABEL) + 1);
         check(helper, menu.printingLabels(), "labels chosen");
-        menu.quickMoveStack(player, hotbar0);
+        menu.quickMoveStack(player, PrintingPressBlockEntity.SLOTS); // the inventory's slot 9
         check(helper, press.getItem(PrintingPressBlockEntity.SAMPLE).is(Items.COBBLESTONE)
                 && press.getItem(PrintingPressBlockEntity.SAMPLE).getCount() == 1, "on the labels page one goes in as the sample");
-        check(helper, player.getInventory().getItem(0).getCount() == 4, "and the rest stays in hand");
+        check(helper, player.getInventory().getItem(9).getCount() == 4, "and the rest stays where it was");
         helper.succeed();
     }
 

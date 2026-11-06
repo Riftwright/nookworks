@@ -30,7 +30,8 @@
     "TeleportCommandMixin",
     "CampfireBlockMixin",
     "EnchantmentHelperMixin",
-    "EnchantRandomlyFunctionMixin"
+    "EnchantRandomlyFunctionMixin",
+    "ServerPlayerGameModeMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin",

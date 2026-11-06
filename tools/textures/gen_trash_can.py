@@ -3,7 +3,7 @@
 Galvanised steel, as a bin is (the user's pick of two, 2026-10-03): pale zinc with its spangle, the side ribbed and
 lit from above, a band round its shoulder, a bevelled lid. Off, its slot is dark and its band is dull; switched on by
 redstone, the band and the slot glow the red of something that is going to be destroyed. Drawn flat, then shaded by
-texkit as vanilla shades its metal.
+texkit.shade as metal, as vanilla shades its metal.
 
 - trash_can_body.png / _on   the ribbed side of the bin, with the band round its shoulder
 - trash_can_lid.png / _on    the lid seen from above: the slot things go in by
@@ -111,6 +111,6 @@ if __name__ == "__main__":
     faces = {"trash_can_body": body(False), "trash_can_body_on": body(True), "trash_can_lid": lid(False),
              "trash_can_lid_on": lid(True), "trash_can_rim": rim()}
     for seed, (name, image) in enumerate(faces.items(), start=400):
-        done = texkit.finish(image, seed, keep=KEEP, tile=name == "trash_can_rim", **texkit.SMOOTH)
+        done = texkit.shade(image, seed, keep=KEEP, tile=name == "trash_can_rim", material="metal", **texkit.SMOOTH)
         done.save(BLOCK / f"{name}.png")
         print("wrote", BLOCK / f"{name}.png")

@@ -91,7 +91,7 @@ public class NestedTimerScreen extends AbstractContainerScreen<NestedTimerMenu> 
         this.row(graphics, 0, Component.translatable(K + "interval"), time(intervalTicks));
         this.row(graphics, 1, Component.translatable(K + "pulses"), Component.translatable(K + "times", pulseCount));
         boolean single = pulseCount <= 1;
-        this.row(graphics, 2, Component.translatable(K + "gap"), single ? Component.translatable(K + "gap.unused") : time(gapTicks));
+        this.row(graphics, 2, Component.translatable(K + "gap"), single ? Component.translatable(K + "gap.unused") : time(gapTicks), single);
         this.statusCut = MachineStyle.fitText(graphics, this.font, this.status(), 18, STATUS_Y + 2, this.imageWidth - 40,
                 MachineStyle.toneColour(this.tone()), false);
     }
@@ -111,9 +111,14 @@ public class NestedTimerScreen extends AbstractContainerScreen<NestedTimerMenu> 
     }
 
     private void row(GuiGraphicsExtractor graphics, int row, Component name, Component value) {
+        this.row(graphics, row, name, value, false);
+    }
+
+    /** A row; an unused one (the gap with one pulse) dimmed, so it reads as switched off, not as a slider gone wrong (r21). */
+    private void row(GuiGraphicsExtractor graphics, int row, Component name, Component value, boolean unused) {
         int y = ROW_Y + row * ROW_H;
-        graphics.text(this.font, name, 8, y, MachineStyle.TEXT, false);
-        graphics.text(this.font, value, this.imageWidth - 8 - this.font.width(value), y, MachineStyle.TITLE, false);
+        graphics.text(this.font, name, 8, y, unused ? MachineStyle.DIM : MachineStyle.TEXT, false);
+        graphics.text(this.font, value, this.imageWidth - 8 - this.font.width(value), y, unused ? MachineStyle.DIM : MachineStyle.TITLE, false);
     }
 
     private static Component time(int ticks) {

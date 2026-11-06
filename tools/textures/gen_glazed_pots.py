@@ -68,7 +68,7 @@ def pot_side():
                 c = CLAY[0] if x < 10 else CLAY[1]
             px(img, x, y, c)
     # a glaze is glossy: only the lightest of patches in it, no grain; the lip's light and the pooled edge kept clean
-    return texkit.finish(img, 4411, keep=(GLAZE[4], POOLED), clusters=0.3, grain=0.0, size=5, reach=1)
+    return texkit.shade(img, 4411, keep=(GLAZE[4], POOLED), clusters=0.3, grain=0.0, size=5, reach=1)
 
 
 def pot_top():
@@ -82,7 +82,7 @@ def pot_top():
         for x in range(16):
             if 4 < x < 11 and 4 < y < 11:
                 px(soil, x, y, SOIL[1])
-    soil = texkit.finish(soil, 4412, **texkit.ROUGH)
+    soil = texkit.shade(soil, 4412, material="stone", **texkit.ROUGH)
     for y in range(16):
         for x in range(16):
             if 4 < x < 11 and 4 < y < 11:
@@ -146,12 +146,28 @@ def write(path, data):
 
 
 def glazed_model(textures, plant_elements, ao=False):
-    model = {"parent": "minecraft:block/block", "render_type": "minecraft:cutout",
-             "textures": {**textures, **POT_TEXTURES, "particle": POT_TEXTURES["glazed"]},
-             "elements": pot_elements() + plant_elements}
-    if ao is False:
-        model["ambientocclusion"] = False
-    return model
+    # never shaded by ambient occlusion: the pot is ours, solid boxes, and an azalea's leaf box let it darken the pot a
+    # third below every other glazed pot's (r21, 2026-11-06)
+    return {"parent": "minecraft:block/block", "render_type": "minecraft:cutout", "ambientocclusion": False,
+            "textures": {**textures, **POT_TEXTURES, "particle": POT_TEXTURES["glazed"]},
+            "elements": pot_elements() + plant_elements}
+
+
+# Short plants whose picture starts low in the cross: vanilla stands them on its dirt at y 4, ours is drawn at the rim's
+# top, so they are lifted 3 px to stand on it rather than sink into it (r21: a mushroom showed only its cap)
+SHORT = {"potted_red_mushroom", "potted_brown_mushroom", "potted_warped_fungus", "potted_crimson_fungus",
+         "potted_dandelion", "potted_golden_dandelion", "potted_azure_bluet", "potted_open_eyeblossom"}
+
+
+def lifted(elements, by):
+    out = []
+    for e in elements:
+        e = dict(e, **{"from": [e["from"][0], e["from"][1] + by, e["from"][2]], "to": [e["to"][0], e["to"][1] + by, e["to"][2]]})
+        if "rotation" in e:
+            origin = e["rotation"]["origin"]
+            e["rotation"] = dict(e["rotation"], origin=[origin[0], origin[1] + by, origin[2]])
+        out.append(e)
+    return out
 
 
 # The pot's item in a slot: block/block's 0.625 drew the pot (8 across, 7 high) 7 px across, a speck; at full size it is
@@ -179,6 +195,8 @@ def main():
             variant = variant[0] if isinstance(variant, list) else variant
             textures, elements, ao = resolve(jar, variant["model"])
             plant = [e for e in elements if not is_pot(e)]
+            if name in SHORT:
+                plant = lifted(plant, 3)
             write(ASSETS / f"models/block/glazed_{name}.json", glazed_model(
                 {k: (v if ":" in v else "minecraft:" + v) for k, v in textures.items()}, plant, ao))
             write(ASSETS / f"blockstates/glazed_{name}.json", {"variants": {"": {"model": f"nookworks:block/glazed_{name}"}}})

@@ -150,10 +150,10 @@ TREE = {
     "velarium_nugget": ("distilled", "velarium_nugget", "goal", {"nugget": has("velarium_nugget")}),
     "velarium_ingot": ("velarium_nugget", "velarium_ingot", "task", {"ingot": has("velarium_ingot")}),
     "tempered": ("velarium_ingot", "tempered_velarium_ingot", "task", {"tempered": has("tempered_velarium_ingot")}),
-    # hidden until had: a red-hot ingot taken in a bare hand burns (a viewer's idea, 2026-10-23); its burn is its own
-    # damage type, asked by the tag #nookworks:red_hot_ingot
-    "too_hot": ("velarium_ingot", "red_hot_velarium_ingot", "task", {"burned": {"trigger": "minecraft:entity_hurt_player",
-        "conditions": {"damage": {"type": {"tags": [{"id": "nookworks:red_hot_ingot", "expected": True}]}}}}}),
+    # hidden until had: a red-hot ingot taken in a bare hand burns (a viewer's idea, 2026-10-23). Granted by
+    # RedHotIngotItem: the burn's damage type is shared with add-ons' red-hot items (nookTechnology's steel), whose burn
+    # gave this velarium one in the steel era (r21 round three)
+    "too_hot": ("velarium_ingot", "red_hot_velarium_ingot", "task", {"burned": by_the_mod()}),
     "velarium_gear": ("tempered", "velarium_chestplate", "challenge", {"gear": has(*VELARIUM)}),
     # brass, and what is built of it
     "brass": ("retort", "brass_ingot", "task", {"brass": has("brass_ingot")}),

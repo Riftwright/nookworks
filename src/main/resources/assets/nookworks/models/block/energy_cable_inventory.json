@@ -327,5 +327,41 @@
         }
       }
     }
-  ]
+  ],
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        10,
+        100,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        10,
+        100,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
 }

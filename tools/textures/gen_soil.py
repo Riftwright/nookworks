@@ -23,7 +23,7 @@ look.
 - models/block/nourished_soil_<r>.json, nourished_soil_tilled_<r>.json, nourished_soil_tilled_moist_<r>.json
 - blockstates/nourished_soil.json, items/nourished_soil.json (the fresh soil)
 
-Drawn flat with a few colours, then finished with texkit (lightly: the crumbs carry the structure; tiling); the bone
+Drawn flat with a few colours, then finished with texkit.shade, plain (lightly: the crumbs carry the structure; tiling); the bone
 meal is kept exact so it stays crisp. Run from the repo root:  python tools/textures/gen_soil.py
 """
 import json
@@ -172,7 +172,7 @@ def farmland(r, wet):
 
 
 def finish(img, seed):
-    return texkit.finish(img, seed, clusters=0.45, grain=0.12, size=4, keep=KEEP, tile=True)
+    return texkit.shade(img, seed, clusters=0.45, grain=0.12, size=4, keep=KEEP, tile=True, material="plain")
 
 
 def tilled_top(r, wet, seed):

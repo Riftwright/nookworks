@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
@@ -132,7 +133,8 @@ public final class Features {
         return switchedOn.test(name) && NEEDS.getOrDefault(name, List.of()).stream().allMatch(need -> enabled(need, switchedOn));
     }
 
-    private static boolean switchedOn(String name) {
+    /** Whether part {@code name}'s own switch is on now (its needs not asked). */
+    public static boolean switchedOn(String name) {
         return WorldFeatures.switchedOn(name); // the start-up config's switch, and the world's choice under it
     }
 
@@ -153,7 +155,29 @@ public final class Features {
      */
     public static boolean enabled(Item item) {
         String id = BuiltInRegistries.ITEM.getKey(item).toString();
-        return enabledByPart(id, Features::switchedOn) && !lost().contains(id);
+        return enabledByPart(id, Features::switchedOn) && !lost().contains(id) && addOnsHave(item);
+    }
+
+    /** Add-ons' word on their own items ({@link #addOnParts}). */
+    private static final List<Predicate<Item>> ADD_ON_PARTS = new CopyOnWriteArrayList<>();
+
+    /**
+     * For add-ons with parts of their own to switch off: {@code enabled} answers false for an item of theirs a switched-off
+     * part takes (and true for every other item, ours and other mods'). What we hand out by our own tables - sifting, the
+     * Retort's reagents, JEI's pages of our machines - then leaves it out, as it leaves out ours (r21, 2026-11-06:
+     * nookTechnology's Limestone Powder still came out of Crude Salt with its steelworks off).
+     */
+    public static void addOnParts(Predicate<Item> enabled) {
+        ADD_ON_PARTS.add(enabled);
+    }
+
+    private static boolean addOnsHave(Item item) {
+        for (Predicate<Item> test : ADD_ON_PARTS) {
+            if (!test.test(item)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Whether {@code item} can be had, given which parts are switched on. Public for tests. */

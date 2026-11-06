@@ -3,11 +3,14 @@ package dev.nookworks.block;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.machine.ElectrolyticCellBlockEntity;
+import dev.nookworks.mercury.MercuryBucketItem;
+import dev.nookworks.mercury.MercuryMachineBlock;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -90,12 +93,16 @@ public class ElectrolyticCellBlock extends MachineBlock {
         if (stack.is(Items.WATER_BUCKET) && level.getBlockEntity(pos) instanceof ElectrolyticCellBlockEntity cell) {
             if (!level.isClientSide()) {
                 if (!cell.pourBucket()) {
+                    player.sendOverlayMessage(Component.translatable("message.nookworks.copper_tank.will_not_take")); // said (r21)
                     return Clicks.REFUSED;
                 }
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
+        }
+        if (stack.getItem() instanceof MercuryBucketItem) {
+            return MercuryMachineBlock.pourMercuryBucket(stack, level, pos, player, hand); // as on the Stirring Tank (r21)
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }

@@ -49,8 +49,8 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
 
 /**
- * Experience Tank block. A bucket or a bottle fills or empties it. It has a tap low on its front: turn it with an empty
- * hand - a click on the tap itself, not anywhere on the tank - and the tank pours its experience out as a stream of orbs
+ * Experience Tank block. A bucket or a bottle fills or empties it. It has a tap low on its front: turn it with a click
+ * on the tap itself, not anywhere on the tank, whatever is in hand - and the tank pours its experience out as a stream of orbs
  * until it is empty or the tap is turned back, which is how a tank pays out without a machine. Comparators read the
  * fill level.
  */
@@ -176,9 +176,10 @@ public class ExperienceTankBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.getMainHandItem().isEmpty() || !onTap(state, pos, hit.getLocation())) {
-            // The tap is turned by hand, on the tap: a pipe in hand is placed, and a hand laid on the tank anywhere
-            // else leaves the tap as it is, rather than letting the tank run out by surprise.
+        if (!onTap(state, pos, hit.getLocation())) {
+            // The tap is turned by a click on the tap itself, with anything in hand, as a lever is (the user, 2026-11-05):
+            // a click anywhere else on the tank leaves it as it is, rather than letting the tank run out by surprise,
+            // and sets a pipe in hand down against it.
             return InteractionResult.PASS;
         }
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ExperienceTankBlockEntity tank) {

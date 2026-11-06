@@ -36,6 +36,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
@@ -330,7 +331,13 @@ public class IronPotBlock extends BaseEntityBlock {
         }
         if (!pot.dish().isEmpty() && pot.container() != null && stack.is(pot.container())) {
             if (!level.isClientSide()) {
+                Item container = pot.container();
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, pot.serve()));
+                if (hand == InteractionHand.MAIN_HAND && !player.getMainHandItem().is(container)) {
+                    // the last bowl in hand became the dish: off the hand, as a Tray gives back, or the next click put a
+                    // Bowl of Rice back into the pot as an ingredient (round two of r21)
+                    TrayBlock.keepHandEmpty(player.getInventory());
+                }
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.6F, 0.8F);
             }
             return InteractionResult.SUCCESS;
@@ -361,6 +368,16 @@ public class IronPotBlock extends BaseEntityBlock {
         if (!filled.isEmpty()) {
             int mB = stack.is(Items.BUCKET) ? IronPotBlockEntity.CAPACITY : OilFluids.BOTTLE;
             if (!level.isClientSide()) {
+                if (pot.dish().isEmpty() && pot.amount() < OilFluids.BOTTLE && pot.percent() < 0) {
+                    // under a bottle's worth left (an egg boiled out of a bucket's water, oil left from frying): nothing
+                    // took it out and the other liquid was turned down, so the pot could not be emptied - tipped out
+                    // (round two of r21); not while it cooks, which a bottle carried past would have spoilt
+                    pot.drainLiquid(pot.amount());
+                    player.sendOverlayMessage(Component.translatable("nookworks.iron_pot.tipped_out"));
+                    level.playSound(null, pos, stack.is(Items.BUCKET) ? SoundEvents.BUCKET_EMPTY : SoundEvents.BOTTLE_EMPTY,
+                            SoundSource.BLOCKS, 0.5F, 1.2F);
+                    return InteractionResult.SUCCESS;
+                }
                 if (!pot.drainLiquid(mB)) {
                     player.sendOverlayMessage(Component.translatable(pot.dish().isEmpty() ? "nookworks.iron_pot.too_little"
                             : "nookworks.iron_pot.take_dish_first").withStyle(ChatFormatting.RED));
@@ -434,12 +451,16 @@ public class IronPotBlock extends BaseEntityBlock {
                     }
                 }
             }
+            if (!out.isEmpty()) {
+                TrayBlock.keepHandEmpty(player.getInventory()); // as a Tray gives back: the hand stays free for the next click
+            }
             if (out.isEmpty()) {
                 NookworksNetwork.PotContents contents = pot.shown();
                 if (contents != null && player instanceof ServerPlayer to && to.connection.hasChannel(NookworksNetwork.PotContents.TYPE)) {
                     PacketDistributor.sendToPlayer(to, contents); // fitted to the screen there
                 } else {
-                    player.sendOverlayMessage(pot.describe());
+                    Component why = pot.stuck();
+                    player.sendOverlayMessage(why == null ? pot.describe() : pot.describe().copy().append("  ").append(why));
                 }
             } else {
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);

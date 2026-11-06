@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 import dev.nookworks.block.Clicks;
 import dev.nookworks.experience.Move;
 import dev.nookworks.machine.SightGlass;
+import dev.nookworks.mercury.MercuryBucketItem;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModOil;
@@ -115,6 +116,14 @@ public class CopperTankBlock extends BaseEntityBlock {
             InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof CopperTankBlockEntity tank)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
+        if (stack.getItem() instanceof MercuryBucketItem) {
+            // turned down, as at the mercury machines: it has no fluid capability, so it fell through and was poured out
+            // as a pool beside the tank (r21, 2026-11-06)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("message.nookworks.mercury_bucket.into_tank"));
+            }
+            return Clicks.REFUSED;
         }
         Fluid poured = bottleOf(stack);
         if (level.isClientSide() && (poured != null || stack.is(Items.GLASS_BOTTLE)

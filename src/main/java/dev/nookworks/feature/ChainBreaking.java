@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 import dev.nookworks.Nookworks;
@@ -38,6 +39,7 @@ public final class ChainBreaking {
     static void onBreak(BreakBlockEvent event) {
         if (ExtraBreaks.inProgress() || Permission.asking() || event.isCanceled()
                 || !(event.getPlayer() instanceof ServerPlayer player)
+                || !outermost(player, event.getPos())
                 || event.getPlayer() instanceof FakePlayer
                 || !(event.getLevel() instanceof ServerLevel level)
                 || player.preventsBlockDrops()) {
@@ -74,6 +76,40 @@ public final class ChainBreaking {
         }
 
         ExtraBreaks.breakAll(player, tool, targets);
+    }
+
+    /** The blocks being broken through {@code ServerPlayerGameMode.destroyBlock} now, innermost last. Server thread only. */
+    private static final ArrayDeque<Destroying> DESTROYING = new ArrayDeque<>();
+
+    private record Destroying(ServerPlayer player, BlockPos pos) {}
+
+    /** Runs a player's {@code destroyBlock} of {@code pos}, noting it for {@link #byHand} (ServerPlayerGameModeMixin). */
+    public static boolean destroying(ServerPlayer player, BlockPos pos, BooleanSupplier destroy) {
+        DESTROYING.addLast(new Destroying(player, pos.immutable()));
+        try {
+            return destroy.getAsBoolean();
+        } finally {
+            DESTROYING.removeLast();
+        }
+    }
+
+    /**
+     * Whether a break event is the player's own break of that block, not another mod asking about one: an area tool
+     * (Just Hammers' 5x5, GitHub issue #1) posts a break event for each block it takes while the block clicked is being
+     * broken, and felling or vein mining from each of those dug far outside its area.
+     */
+    static boolean byHand(ServerPlayer player, BlockPos pos) {
+        Destroying now = DESTROYING.peekLast();
+        return now != null && now.player() == player && now.pos().equals(pos);
+    }
+
+    /**
+     * Whether it is the player's own break of the block they clicked, not one of the blocks another mod breaks for them
+     * while it is going on (an area or chain tool of its own, FTB Ultimine's run): each of those is a destroyBlock of its
+     * own, inside the first, and set off a hammer's 3x3, a felling or a vein from every block (r21, 2026-11-06).
+     */
+    static boolean outermost(ServerPlayer player, BlockPos pos) {
+        return DESTROYING.size() == 1 && byHand(player, pos);
     }
 
     /**

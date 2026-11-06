@@ -116,6 +116,31 @@ public final class StorageSpill {
         pending.setDirty();
     }
 
+    /**
+     * Takes what is still waiting to come out at {@code pos}, rather than letting it drop over the coming ticks: for a
+     * machine that breaks a barrel and gathers what it spilled (nookTechnology's Quarry and Block Breaker, which caught
+     * the first {@link #PER_TICK} stacks and left the rest to fall down the pit - r21, 2026-11-06). Call it right after
+     * the block is gone, in the same tick.
+     */
+    public static List<ItemStack> takePending(ServerLevel level, BlockPos pos) {
+        Pending pending = pending(level, false);
+        if (pending == null) {
+            return List.of();
+        }
+        List<ItemStack> taken = new ArrayList<>();
+        pending.piles.removeIf(pile -> {
+            if (!pile.pos().equals(pos)) {
+                return false;
+            }
+            taken.addAll(pile.stacks());
+            return true;
+        });
+        if (!taken.isEmpty()) {
+            pending.setDirty();
+        }
+        return taken;
+    }
+
     /** How many stacks are still waiting to come out at {@code pos}, for tests. */
     public static int pending(ServerLevel level, BlockPos pos) {
         Pending pending = pending(level, false);

@@ -125,7 +125,8 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
                 // no room at the lodestone, or the If closed until it is made again: through no fault of the pearl's, so
                 // it comes back as it was, still bound. Into the thrower's hands, not where it landed - in lava, or in
                 // the void, it was lost.
-                boolean keeps = trip == Trip.REFUSED || trip == Trip.NO_ROOM || trip == Trip.IF_CLOSED || trip == Trip.ANCHORED;
+                boolean keeps = trip == Trip.REFUSED || trip == Trip.NO_ROOM || trip == Trip.IF_CLOSED || trip == Trip.ANCHORED
+                        || trip == Trip.BEYOND_BORDER;
                 ItemStack back = keeps ? this.getItem().copyWithCount(1) : new ItemStack(Items.ENDER_PEARL);
                 if (!player.getInventory().add(back)) {
                     // no room for it: at their feet, still - a drop is thrown ahead of them, over the edge they stood at
@@ -162,7 +163,9 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
         /** Into an If that goes at the next start (an operator's reset): nobody is let in to be left there. */
         IF_CLOSED,
         /** From or to where a Warp Anchor holds (WarpAnchors): no warping there. */
-        ANCHORED
+        ANCHORED,
+        /** The lodestone stands beyond the world border (one shrunk since): nobody is set down out there. */
+        BEYOND_BORDER
     }
 
     /**
@@ -183,8 +186,12 @@ public class ThrownLodePearl extends ThrowableItemProjectile {
             return Trip.NO_LODESTONE;
         }
         Optional<Vec3> spot = standingSpot(there, player, lodestone);
+        // not beyond the world border, where a lodestone may be left when the border shrinks (round two of r21)
         if (spot.isEmpty()) {
             return Trip.NO_ROOM;
+        }
+        if (!there.getWorldBorder().isWithinBounds(spot.get().x, spot.get().z)) {
+            return Trip.BEYOND_BORDER; // said as such: it had said "no room" of an open lodestone (the fix re-check)
         }
         BlockPos from = player.blockPosition();
         ServerLevel fromLevel = player.level();

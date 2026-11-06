@@ -2,7 +2,9 @@ package dev.nookworks.client.gui;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
+import dev.nookworks.feature.AddonImpact;
 import dev.nookworks.ifworld.NookOfTheDeadWarning;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,7 +26,8 @@ import net.minecraft.world.item.ItemStack;
  * Asked before a change of parts is saved that takes more with it than the parts switched off (the user, 2026-11-01:
  * 「「これをオフにしたら、これとコレが作れなくなるよ」って警告を出したうえで、オフにすること自体はできる」): every item nothing reaches
  * any more, each with its picture and name, under a line saying so - and, with Nook of the Dead installed and the If's
- * mirror among them, what that costs. Switch off anyway, or go back to the list.
+ * mirror among them, what that costs - and other mods' recipes it stops, counted by mod ({@link AddonImpact}: with the
+ * Motor off most of nookTechnology goes; the user, 2026-11-03). Switch off anyway, or go back to the list.
  */
 public final class PartsLossScreen extends Screen {
     private static final int WIDTH = 310;
@@ -34,13 +37,17 @@ public final class PartsLossScreen extends Screen {
     private final Screen parent;
     private final List<ItemStack> lost;
     private final boolean notd;
+    private final Map<String, Integer> addons;
     private final Runnable confirmed;
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private ScrollableLayout scroll;
     private LinearLayout content;
 
-    /** Over {@code parent}: {@code lost}, by id, would be had no more; {@code confirmed} saves the change. */
-    public PartsLossScreen(Screen parent, List<String> lost, Runnable confirmed) {
+    /**
+     * Over {@code parent}: {@code lost}, by id, would be had no more, and {@code addons} that many of each mod's recipes
+     * stopped; {@code confirmed} saves the change.
+     */
+    public PartsLossScreen(Screen parent, List<String> lost, Map<String, Integer> addons, Runnable confirmed) {
         super(Component.translatable("nookworks.world_features.loss.title"));
         this.parent = parent;
         this.lost = lost.stream()
@@ -49,6 +56,7 @@ public final class PartsLossScreen extends Screen {
                 .sorted(Comparator.comparing(stack -> stack.getHoverName().getString()))
                 .toList();
         this.notd = NookOfTheDeadWarning.present() && lost.contains(NookOfTheDeadWarning.MIRROR);
+        this.addons = addons;
         this.confirmed = confirmed;
     }
 
@@ -57,8 +65,17 @@ public final class PartsLossScreen extends Screen {
         this.layout.addTitleHeader(this.title, this.font);
         LinearLayout content = this.layout.addToContents(LinearLayout.vertical().spacing(6));
         this.content = content;
-        content.addChild(new MultiLineTextWidget(Component.translatable("nookworks.world_features.loss.message", this.lost.size()), this.font)
-                .setMaxWidth(WIDTH));
+        if (!this.addons.isEmpty()) {
+            content.addChild(new MultiLineTextWidget(Component.translatable("nookworks.world_features.loss.addons"), this.font)
+                    .setMaxWidth(WIDTH));
+            this.addons.forEach((mod, count) -> content.addChild(new MultiLineTextWidget(
+                    Component.translatable("nookworks.world_features.loss.addon", AddonImpact.name(mod), count).withStyle(ChatFormatting.GOLD),
+                    this.font).setMaxWidth(WIDTH)));
+        }
+        if (!this.lost.isEmpty()) {
+            content.addChild(new MultiLineTextWidget(Component.translatable("nookworks.world_features.loss.message", this.lost.size()), this.font)
+                    .setMaxWidth(WIDTH));
+        }
         if (this.notd) {
             content.addChild(new MultiLineTextWidget(Component.translatable("nookworks.world_features.loss.notd").withStyle(ChatFormatting.GOLD),
                     this.font).setMaxWidth(WIDTH));

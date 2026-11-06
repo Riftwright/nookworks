@@ -62,19 +62,7 @@
   ],
   "criteria": {
     "burned": {
-      "trigger": "minecraft:entity_hurt_player",
-      "conditions": {
-        "damage": {
-          "type": {
-            "tags": [
-              {
-                "id": "nookworks:red_hot_ingot",
-                "expected": true
-              }
-            ]
-          }
-        }
-      }
+      "trigger": "minecraft:impossible"
     }
   },
   "display": {

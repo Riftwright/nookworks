@@ -29,8 +29,11 @@ public enum MachineStatus {
     UNLOADED(Tone.QUIET),
     /** A Repair Box with gear to mend and no experience to mend it with. */
     NO_EXPERIENCE(Tone.WARN),
-    /** A tank with no room for what the machine makes: pumped water, pressed oil, stirred biodiesel. */
-    TANK_FULL(Tone.QUIET),
+    /**
+     * A tank with no room for what the machine makes: pumped water, pressed oil, stirred biodiesel. Amber, as the machine
+     * stands until someone draws it off, and as nookTechnology's reads (r21: grey here, amber there).
+     */
+    TANK_FULL(Tone.WARN),
     /** A Laser with nothing in its beam to cut, burn or hurt: it waits on a trickle of power, the beam off. */
     STANDBY(Tone.QUIET),
     /** A Laser at a tree, storing the surge to fell it: the beam off until it has it. */

@@ -41,8 +41,11 @@ public final class Earthmover {
         return state.is(BlockTags.MINEABLE_WITH_SHOVEL) || state.is(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    /** Whether this hammer should treat the block as its own: pickaxe blocks always, dirt and wood with Earthmover. */
-    static boolean hammerHandles(ItemStack tool, BlockState state) {
+    /**
+     * Whether this hammer should treat the block as its own: pickaxe blocks always, dirt and wood with Earthmover. Public
+     * for add-ons' hammers.
+     */
+    public static boolean hammerHandles(ItemStack tool, BlockState state) {
         return tool.isCorrectToolForDrops(state) || (has(tool) && isExtraBlock(state));
     }
 

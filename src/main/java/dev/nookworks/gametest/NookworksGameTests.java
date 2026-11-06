@@ -72,6 +72,7 @@ public final class NookworksGameTests {
         FixTests.register();
         R18FixTests.register();
         R19FixTests.register();
+        R21FixTests.register();
         BotPathTests.register();
         BotRulesTests.register();
         BotDigTests.register();
@@ -91,6 +92,7 @@ public final class NookworksGameTests {
         StorageTests.register();
         MobTests.register();
         MercuryTests.register();
+        WadeTests.register();
         InventoryTweakTests.register();
         EarlyReviewTests.register();
         TravelTests.register();
@@ -105,6 +107,7 @@ public final class NookworksGameTests {
         R7StorageRopeTests.register();
         R7TravelIfTests.register();
         R7MobsTests.register();
+        SpawnerPagesTests.register();
         R7KitchenDataCoreTests.register();
         R7ServerPerfTests.register();
         R8VinesTests.register();

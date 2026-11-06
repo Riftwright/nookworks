@@ -3,6 +3,7 @@ package dev.nookworks.mercury;
 import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.fluid.WadeFluidType;
 import dev.nookworks.fluid.KeptFluid;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
@@ -26,14 +27,14 @@ public final class MercuryFluids {
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Nookworks.MODID);
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Nookworks.MODID);
 
-    public static final Supplier<FluidType> TYPE = FLUID_TYPES.register("mercury", () -> new FluidType(FluidType.Properties.create()
+    public static final Supplier<FluidType> TYPE = FLUID_TYPES.register("mercury", () -> new WadeFluidType(FluidType.Properties.create()
             .descriptionId("block.nookworks.mercury")
             .density(13_546).viscosity(1_550).temperature(293)
             .canSwim(false).canDrown(false).canPushEntity(true).supportsBoating(false)
             .pathType(PathType.DAMAGE_CAUTIOUS).adjacentPathType(null)
             .motionScale(0.002)
             .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
-            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)));
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA), 0.5F));
 
     public static final Supplier<FlowingFluid> SOURCE = FLUIDS.register("mercury", () -> new KeptFluid.Source(properties()));
     public static final Supplier<FlowingFluid> FLOWING = FLUIDS.register("flowing_mercury", () -> new KeptFluid.Flowing(properties(), true));

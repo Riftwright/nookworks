@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "plant": "minecraft:block/warped_roots_pot",
     "particle": "nookworks:block/glazed_flower_pot",
@@ -274,6 +275,5 @@
         }
       }
     }
-  ],
-  "ambientocclusion": false
+  ]
 }

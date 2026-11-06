@@ -28,6 +28,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
@@ -95,7 +96,10 @@ public final class CameraView {
         // while an item is in use the game throws attack clicks away; they are the shutter here
         while (mc.options.keyAttack.consumeClick()) {
             ItemStack camera = mc.player.getUseItem();
-            if (!shutter && !mc.player.getCooldowns().isOnCooldown(camera)) {
+            if (!Photos.allowed()) {
+                // photos are off on this server: no shutter, no flash, no frame sent for a photo it would refuse (r21)
+                mc.player.sendOverlayMessage(Component.translatable("item.nookworks.camera.off"));
+            } else if (!shutter && !mc.player.getCooldowns().isOnCooldown(camera)) {
                 shutter = true;
             }
         }
@@ -159,7 +163,9 @@ public final class CameraView {
     /** The world alone through the viewfinder: every other layer of the screen put away. */
     @SubscribeEvent
     static void onLayer(RenderGuiLayerEvent.Pre event) {
-        if (!event.getName().equals(LAYER) && (looking() || shutter)) {
+        // the action bar kept but in the shutter's own frame: the camera's lines (photos off, not kept) are meant for now
+        if (!event.getName().equals(LAYER) && (looking() || shutter)
+                && !(event.getName().equals(VanillaGuiLayers.OVERLAY_MESSAGE) && !shutter)) {
             event.setCanceled(true);
         }
     }

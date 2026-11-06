@@ -8,7 +8,7 @@ left and the bell at the front right, with a few emeralds stacked by the ledger.
 The model's north face is the customer's side: the blockstate turns it to face whoever set the counter down, so the
 villager stands at its back, by the shelves.
 
-Drawn flat, then finished with texkit. Original work, deterministic.
+Drawn flat, then shaded with texkit.shade (wood, brass metal, the ledger and stock plain). Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_trading_counter.py
 """
 import json
@@ -281,8 +281,13 @@ def write_json(path, data):
     path.write_bytes((json.dumps(data, indent=2) + "\n").encode("utf8"))
 
 
+# texkit.shade's materials: the joinery wood, the brass metal, the ledger and the stock plain
+WOOD = (FRAME_HI, FRAME, FRAME_LO, FRAME_DK, PANEL_HI, PANEL, PANEL_LO, TOP_HI, TOP, TOP_LO, TOP_DK)
+MATERIAL = {**{c: "wood" for c in WOOD}, **{c: "metal" for c in (BRASS_HI, BRASS, BRASS_LO, GOLD)}, None: "plain"}
+
+
 def save(img, name, seed, preset, keep=()):
-    texkit.finish(img, seed, keep=keep, **preset).save(BLOCK / f"{NAME}_{name}.png")
+    texkit.shade(img, seed, keep=keep, material=MATERIAL, **preset).save(BLOCK / f"{NAME}_{name}.png")
 
 
 def main():

@@ -29,6 +29,12 @@ import net.neoforged.neoforge.event.level.BlockEvent;
  * lit. Only what a player places - campfires in villages, or set by a command or a structure, are as they were - and
  * any block that is a vanilla campfire or another mod's built on it. A campfire item that names its lit state outright
  * (one copied with its block state in creative) keeps what it says.
+ * <p>
+ * With the setting on, a campfire item is that laid fire in the hand as well ({@link #unlit(ItemStack)}): its icon is
+ * an unlit campfire (items/campfire.json and soul_campfire.json, through UnlitCampfireLook) and under a shader pack it
+ * casts no light from the hand (IrisHandLightMixin), where it lit up the ground round the player until set down. With
+ * it off, all of it is vanilla's (the user, 2026-11-01: 「設定をオフにしたときには完全にバニラの通り、オンにした時には、
+ * しっかり消えた焚火としてアイコンや挙動も含めて扱える」).
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class UnlitCampfires {
@@ -37,6 +43,19 @@ public final class UnlitCampfires {
     /** Whether campfires a player sets down start unlit (the setting, once the server's config is in). */
     public static boolean active() {
         return NookworksConfig.SPEC.isLoaded() && NookworksConfig.CAMPFIRES_PLACED_UNLIT.get();
+    }
+
+    /**
+     * Whether a campfire item stands for an unlit campfire: one that names its lit state says so itself; else it is unlit
+     * while the setting is on. False for anything but a campfire.
+     */
+    public static boolean unlit(ItemStack stack) {
+        if (!(stack.getItem() instanceof BlockItem item) || !(item.getBlock() instanceof CampfireBlock)) {
+            return false;
+        }
+        BlockItemStateProperties props = stack.get(DataComponents.BLOCK_STATE);
+        Boolean lit = props == null ? null : props.get(CampfireBlock.LIT);
+        return lit != null ? !lit : active();
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

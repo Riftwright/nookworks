@@ -1,4 +1,5 @@
-"""Dark Matter and what it is made of. Original pixel art, drawn flat and finished with texkit. Deterministic.
+"""Dark Matter and what it is made of. Original pixel art, drawn flat and shaded with texkit.shade
+(the crust stone, the rest plain). Deterministic.
 
 The block stands in the dark it makes (light 0 all round it), so what is lit of it must give its own light: the body
 is drawn plain and the glow is a second layer the model gives light_emission 15.
@@ -10,8 +11,8 @@ is drawn plain and the glow is a second layer the model gives light_emission 15.
                                      blended). Clear everywhere else.
 - block/dark_matter_beaten.png       the body gone dull, a dead grey-violet, while a light in its disc has beaten it
 - block/dark_matter_glow_dim.png     the shard tips gone cold and grey, the heart still
-- item/charred_lump.png              cooked food cooked again: a black, blistered lump with grey ash on its bumps and a
-                                     dull ember-brown showing in its cracks
+- item/charred_lump.png              cooked food cooked again: a black, blistered lump gone cold - a cinder, its cracks
+                                     dark and grey ash on its bumps (no ember: it is not burning; the user, 2026-11-05)
 - models/block/dark_matter.json, dark_matter_beaten.json  the body, and the glow a hair outside it
 
 Run from the repo root:  python tools/textures/gen_dark_matter.py
@@ -127,7 +128,7 @@ def glow_dim():
 
 
 CHAR = [(12, 10, 10), (28, 25, 24), (48, 44, 42), (78, 74, 70)]
-EMBER = [(74, 30, 16), (116, 52, 24)]
+ASH = [(112, 108, 102), (150, 146, 140)]
 OUTLINE = (6, 5, 5, 255)
 
 
@@ -144,10 +145,13 @@ def charred_lump():
             light = (-(x - bx) - (y - by)) / r  # each bump lit from the upper left
             level = 1 + (1 if light > 0.3 else 0) + (1 if light > 0.85 else 0) - (1 if light < -0.6 else 0)
             img.putpixel((x, y), CHAR[max(0, min(3, level))] + (255,))
-    for (x, y) in [(6, 8), (7, 9), (8, 9), (9, 10), (11, 6), (10, 7), (5, 11), (4, 10)]:  # cracks, the ember still in them
+    for (x, y) in [(6, 8), (7, 9), (8, 9), (9, 10), (11, 6), (10, 7), (5, 11), (4, 10)]:  # cracks, gone dark
         if img.getpixel((x, y))[3]:
-            img.putpixel((x, y), EMBER[rng.randrange(2)] + (255,))
-    img = texkit.finish(img, 34, keep=EMBER, **texkit.ITEM)
+            img.putpixel((x, y), CHAR[0] + (255,))
+    for (x, y) in [(6, 5), (7, 5), (10, 4), (4, 8), (8, 7), (11, 5)]:  # ash on the bumps the fire reached most
+        if img.getpixel((x, y))[3]:
+            img.putpixel((x, y), ASH[rng.randrange(2)] + (255,))
+    img = texkit.shade(img, 34, keep=ASH, material="plain", **texkit.ITEM)
     out = img.copy()
     for y in range(16):
         for x in range(16):
@@ -177,11 +181,12 @@ def write_json(path, data):
 
 
 def main():
-    finish = dict(clusters=0.4, grain=0.1, size=3, reach=1)
-    texkit.finish(body(), 91, keep=[VOID], **finish).save(TEX / "block/dark_matter.png")
+    # the char crust as stone, the shards and the heart plain
+    finish = dict(clusters=0.4, grain=0.1, size=3, reach=1, material={**{c: "stone" for c in CRUST}, None: "plain"})
+    texkit.shade(body(), 91, keep=[VOID], **finish).save(TEX / "block/dark_matter.png")
     glow().save(TEX / "block/dark_matter_glow.png")
     write_json(TEX / "block/dark_matter_glow.png.mcmeta", {"animation": {"frametime": 2, "interpolate": True}})
-    texkit.finish(body(dull=True), 92, **finish).save(TEX / "block/dark_matter_beaten.png")
+    texkit.shade(body(dull=True), 92, **finish).save(TEX / "block/dark_matter_beaten.png")
     glow_dim().save(TEX / "block/dark_matter_glow_dim.png")
     charred_lump().save(TEX / "item/charred_lump.png")
     write_json(ASSETS / "models/block/dark_matter.json",

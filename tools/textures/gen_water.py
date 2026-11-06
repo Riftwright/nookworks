@@ -146,7 +146,7 @@ def pull_flange(lo, hi, depth, band_lo, band_hi, band_to):
 def main():
     for seed, (name, fn) in enumerate((("copper_pipe", pipe_barrel), ("copper_pipe_collar", pipe_collar), ("copper_pipe_end", pipe_end))):
         # finished as vanilla's copper is shaded: the flat copper picked out into close shades, the bore and bolts exact
-        texkit.finish(fn(), 540 + seed, keep=(BORE, BOLT, BOLT_SHADE, WATER, WATER_LIGHT), **texkit.SMOOTH).save(BLOCK / f"{name}.png")
+        texkit.shade(fn(), 540 + seed, keep=(BORE, BOLT, BOLT_SHADE, WATER, WATER_LIGHT), material="metal", **texkit.SMOOTH).save(BLOCK / f"{name}.png")
     textures = {"particle": "nookworks:block/copper_pipe", "barrel": "nookworks:block/copper_pipe",
                 "collar": "nookworks:block/copper_pipe_collar", "bore": "nookworks:block/copper_pipe_end"}
     for part in ("core", "side", "end", "inventory"):

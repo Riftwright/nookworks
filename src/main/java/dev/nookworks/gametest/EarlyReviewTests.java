@@ -139,6 +139,7 @@ final class EarlyReviewTests {
         test("storage_swaps_give_one_stack", EarlyReviewTests::storageSwapsGiveOneStack);
         test("building_wand_stays_bounded", EarlyReviewTests::buildingWandStaysBounded);
         test("mob_bottle_empties_an_allay", EarlyReviewTests::mobBottleEmptiesAnAllay);
+        test("mob_bottle_any_health_for_add_ons", EarlyReviewTests::mobBottleAnyHealthForAddOns);
         test("explosion_takes_only_what_it_breaks", EarlyReviewTests::explosionTakesOnlyWhatItBreaks);
         test("cable_sends_nothing_back", EarlyReviewTests::cableSendsNothingBack);
         test("sifter_leaves_unsiftable_inputs", EarlyReviewTests::sifterLeavesUnsiftableInputs);
@@ -371,6 +372,27 @@ final class EarlyReviewTests {
         var allays = helper.getEntities(EntityTypes.ALLAY);
         check(helper, allays.size() == 1 && allays.get(0).getInventory().countItem(Items.EMERALD) == 7,
                 "it comes back out still holding its seven emeralds");
+        helper.succeed();
+    }
+
+    /**
+     * For an add-on's stronger bottle (nookTechnology's Reinforced Mob Bottle): tryCapture with anyHealth takes a mob at
+     * full health, which the plain call refuses, and the filled bottle keeps the empty one's components.
+     */
+    static void mobBottleAnyHealthForAddOns(GameTestHelper helper) {
+        var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 2, 3));
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack bottle = new ItemStack(ModItems.MOB_BOTTLE.get());
+        bottle.set(DataComponents.CUSTOM_NAME, Component.literal("Strong"));
+        player.setItemInHand(InteractionHand.MAIN_HAND, bottle);
+        check(helper, !MobBottleItem.tryCapture(player, InteractionHand.MAIN_HAND, pig).consumesAction() && pig.isAlive(),
+                "the plain call refuses a pig at full health");
+        check(helper, MobBottleItem.tryCapture(player, InteractionHand.MAIN_HAND, pig, true).consumesAction() && !pig.isAlive(),
+                "with anyHealth it is caught");
+        ItemStack filled = player.getMainHandItem();
+        check(helper, MobBottleItem.captured(filled) == EntityTypes.PIG && MobBottleItem.capturedData(filled) != null,
+                "the bottle holds the pig");
+        check(helper, "Strong".equals(filled.getHoverName().getString()), "and keeps the empty bottle's name");
         helper.succeed();
     }
 

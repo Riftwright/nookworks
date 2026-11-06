@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.block.Clicks;
 import dev.nookworks.block.MachineBlock;
+import dev.nookworks.feature.Permission;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -106,13 +109,20 @@ public class DriveWheelBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    /** Sneaking with an empty hand: its belts come off, back into the hand. */
+    /**
+     * Sneaking with an empty hand: its belts come off, back into the hand - by one who may build, and break there, as a
+     * rope is pulled up or a knot cut (r21: an adventure player stopped a map's machinery so).
+     */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.isShiftKeyDown() || !(level.getBlockEntity(pos) instanceof DriveWheelBlockEntity wheel) || wheel.belts().isEmpty()) {
+        if (!player.isShiftKeyDown() || !player.mayBuild() || !(level.getBlockEntity(pos) instanceof DriveWheelBlockEntity wheel)
+                || wheel.belts().isEmpty()) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide()) {
+        if (level instanceof ServerLevel server) {
+            if (!Permission.mayBreak(server, pos, player)) {
+                return Clicks.REFUSED;
+            }
             wheel.takeOff(player);
         }
         return InteractionResult.SUCCESS;

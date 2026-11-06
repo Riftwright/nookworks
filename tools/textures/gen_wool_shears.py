@@ -7,7 +7,7 @@ through it. Drawn so after three tries the user set aside: blade shears (a bow a
 the arms swelling into a loop), and scissors with finger rings ("ハサミに見えないなぁ…").
 
 - item/wool_shears.png
-and the item models (handheld, as vanilla's shears). Run from the repo root:  python tools/textures/gen_wool_shears.py
+and the item models (generated, as vanilla's shears: r21, they were held as a pickaxe). Run from the repo root:  python tools/textures/gen_wool_shears.py
 """
 import json
 from pathlib import Path
@@ -77,7 +77,7 @@ def write_json(path, data):
 def main():
     icon().save(ASSETS / "textures/item/wool_shears.png")
     write_json(ASSETS / "models/item/wool_shears.json",
-               {"parent": "minecraft:item/handheld", "textures": {"layer0": "nookworks:item/wool_shears"}})
+               {"parent": "minecraft:item/generated", "textures": {"layer0": "nookworks:item/wool_shears"}})
     write_json(ASSETS / "items/wool_shears.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/wool_shears"}})
     print("wrote the Fine Shears")
 

@@ -58,10 +58,22 @@
         },
         "east": {
           "texture": "#side",
+          "uv": [
+            5.5,
+            0.0,
+            10.5,
+            16.0
+          ],
           "rotation": 90
         },
         "west": {
           "texture": "#side",
+          "uv": [
+            5.5,
+            0.0,
+            10.5,
+            16.0
+          ],
           "rotation": 90
         },
         "up": {
@@ -92,10 +104,22 @@
         },
         "east": {
           "texture": "#side",
+          "uv": [
+            6.5,
+            2.0,
+            9.5,
+            14.0
+          ],
           "rotation": 90
         },
         "west": {
           "texture": "#side",
+          "uv": [
+            6.5,
+            2.0,
+            9.5,
+            14.0
+          ],
           "rotation": 90
         },
         "up": {

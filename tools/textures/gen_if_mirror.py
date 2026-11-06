@@ -3,7 +3,8 @@
 The glass is silvered (old mirrors were: tin and mercury). The renderer (IfMirrorRenderer) draws over it the dice as
 they are thrown and, once all six are, the If beyond; this draws the glass as it is before.
 
-- block/if_mirror_frame.png      polished Dawnwood: the posts, rails, feet, crest and the glass's wooden back
+- block/if_mirror_frame.png      polished Dawnwood: the posts, rails, feet, crest and the glass's wooden back (texkit.shade,
+                                 wood)
 - block/if_mirror_glass_top.png, if_mirror_glass_bottom.png   the silvered glass, upper and lower half
 - item/if_mirror.png             the mirror in the slot, its glass onto the If's dawn
 - item/standing_mirror.png       the Standing Mirror in the slot: the same frame, its glass plain silver (the Standing
@@ -56,7 +57,7 @@ def frame():
         shade = WOOD[3] if rng.random() < 0.5 else WOOD[1]
         for i in range(rng.randint(3, 7)):
             px(img, x, (y + i) % 16, shade)
-    return texkit.finish(img, 201, keep=(WOOD[0],), tile=True, clusters=0.5, grain=0.05, size=4, reach=1)
+    return texkit.shade(img, 201, keep=(WOOD[0],), tile=True, material="wood", clusters=0.5, grain=0.05, size=4, reach=1)
 
 
 def glass():

@@ -96,10 +96,14 @@ public class PlacedBottlesBlock extends BaseEntityBlock {
                 : super.updateShape(state, level, ticks, pos, side, neighbourPos, neighbourState, random);
     }
 
-    /** An empty hand takes the last bottle back up, into the inventory; with none left the block goes. */
+    /**
+     * An empty hand takes the last bottle back up, into the inventory; with none left the block goes. Not in adventure
+     * mode, where bottles set out are decoration, as books are (r21: they could be taken where books could not).
+     */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.getMainHandItem().isEmpty() || !(level.getBlockEntity(pos) instanceof PlacedBottlesBlockEntity bottles)) {
+        if (!player.getMainHandItem().isEmpty() || !player.mayBuild()
+                || !(level.getBlockEntity(pos) instanceof PlacedBottlesBlockEntity bottles)) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {

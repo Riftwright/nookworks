@@ -17,7 +17,7 @@ darker boards behind a lighter frame read as set back, where a dark frame round 
   from them - with every face taking the texture of its side by where it lies (no uv given), so the edges show the
   frame drawn round the texture and, where three of them overlap at a corner, the same pixels: nothing flickers.
 
-Drawn flat in a few tones a board, the grain in streaks along each board, then finished with texkit (lightly: sawn
+Drawn flat in a few tones a board, the grain in streaks along each board, then finished with texkit.shade as wood (lightly: sawn
 boards, not stone); the brace and the nails go on after the finish, so its noise does not break them up.
 
 Run from the repo root:  python tools/textures/gen_crate.py
@@ -127,7 +127,7 @@ def side():
     img = Image.new("RGBA", (16, 16))
     frame(img, rng)
     slats(img, rng, SIDE_GAPS)
-    img = texkit.finish(img, SEED, keep=[GAP], **FINISH)
+    img = texkit.shade(img, SEED, keep=[GAP], material="wood", **FINISH)
     brace(img)
     for x, y in ((1, 1), (14, 1), (1, 14), (14, 14), (3, 12), (12, 3)):  # the frame's corners, the brace's ends
         px(img, x, y, NAIL)
@@ -139,7 +139,7 @@ def top():
     img = Image.new("RGBA", (16, 16))
     frame(img, rng)
     slats(img, rng, TOP_GAPS)
-    img = texkit.finish(img, SEED + 1, keep=[GAP], **FINISH)
+    img = texkit.shade(img, SEED + 1, keep=[GAP], material="wood", **FINISH)
     for x, y in ((1, 1), (14, 1), (1, 14), (14, 14)):
         px(img, x, y, NAIL)
     return img

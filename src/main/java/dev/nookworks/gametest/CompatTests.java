@@ -107,11 +107,14 @@ final class CompatTests {
         return planter;
     }
 
-    /** The bottle hears the click on a mob late, so a claim mod keeping others' animals safe can say no before it catches one. */
+    /**
+     * The bottle hears the click on a mob last, so a claim mod keeping others' animals safe can say no before it catches
+     * one, and an add-on's stronger bottle (at LOW) before ours (LOWEST since r21).
+     */
     private static void mobBottleLetsClaimsDecideFirst(GameTestHelper helper) {
         try {
             var handler = MobBottleItem.class.getDeclaredMethod("onInteract", PlayerInteractEvent.EntityInteract.class);
-            check(helper, handler.getAnnotation(SubscribeEvent.class).priority() == EventPriority.LOW, "it listens at low priority");
+            check(helper, handler.getAnnotation(SubscribeEvent.class).priority() == EventPriority.LOWEST, "it listens at the lowest priority");
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
@@ -152,6 +155,8 @@ final class CompatTests {
         check(helper, CompatHooks.present(target -> false).isEmpty(), "no hooks without the mods");
         check(helper, CompatHooks.present(target -> target.startsWith("net.caffeinemc.")).equals(List.of("SodiumLevelSliceMixin")),
                 "Sodium brings its own hook alone");
+        check(helper, CompatHooks.present(target -> target.startsWith("net.irisshaders.")).equals(List.of("IrisBlockIdsMixin", "IrisHandLightMixin")),
+                "Iris brings its two");
         helper.succeed();
     }
 

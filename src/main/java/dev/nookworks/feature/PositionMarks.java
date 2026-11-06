@@ -11,16 +11,19 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.PistonEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
@@ -67,6 +70,27 @@ public final class PositionMarks {
         }
         chunk.setData(this.type, next); // marks the chunk dirty, and re-syncs it if the type syncs
         return true;
+    }
+
+    // ---- forgetting a block gone without a break ----
+
+    /**
+     * A block gone by fire, a Wither, the dragon or decay posts no break event, so its square kept its marks: a placed
+     * log burnt away left its mark, and a tree that later grew through the square was taken there for a wall, felling
+     * only part way (round two of r21). Every change that tells the blocks around comes through here; one that left air,
+     * fire or a liquid forgets the square. Every mark is of the block on its square, so none outlives it.
+     */
+    @SubscribeEvent
+    static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
+        BlockState now = event.getState();
+        if (!(now.isAir() || now.is(BlockTags.FIRE) || now.liquid()) || !(event.getLevel() instanceof Level level) || level.isClientSide()) {
+            return;
+        }
+        for (PositionMarks marks : ALL) {
+            if (marks.has(level, event.getPos())) {
+                marks.set(level, event.getPos(), false);
+            }
+        }
     }
 
     // ---- following blocks through pistons ----

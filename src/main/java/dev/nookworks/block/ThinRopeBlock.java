@@ -91,6 +91,9 @@ public class ThinRopeBlock extends RopeBlock {
     private static InteractionResult hangBulb(ItemStack stack, Level level, BlockPos target, Player player) {
         BlockState bulb = ModRope.FILAMENT_BULB.get().defaultBlockState();
         if (level.isOutsideBuildHeight(target) || !level.getBlockState(target).canBeReplaced() || !bulb.canSurvive(level, target)) {
+            if (!level.isClientSide()) { // said, as for a bottle hung there (round two of r21: the click was spent with no word)
+                player.sendOverlayMessage(Component.translatable("message.nookworks.rope.no_room").withStyle(ChatFormatting.RED));
+            }
             return Clicks.REFUSED;
         }
         if (!level.getEntitiesOfClass(HungItemEntity.class, new AABB(target)).isEmpty()) {

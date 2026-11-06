@@ -18,6 +18,8 @@ slide, and stand off the wall - from one texture laid out below; the block's own
 
 and the door's and panel's blockstates and models, and the item models. Run from the repo root:
 python tools/textures/gen_daemon_door.py
+
+Ours are shaded with texkit.shade: the Dawnwood as wood, the zinc as metal.
 """
 import json
 import random
@@ -136,7 +138,7 @@ def leaf_face(seed, back):
         px(img, 1, y + 2, ZINC_LOW)
         px(img, 2, y + 2, ZINC_SEAM)
     keep = [GLASS, GLASS_SHINE, GLASS_DEEP, ZINC_HI, ZINC_LIT, ZINC, ZINC_LOW, ZINC_SEAM, ZINC_EDGE, ZINC_DARK]
-    return texkit.finish(img, seed, keep=keep, clusters=0.55, grain=0.06, size=3, reach=1)
+    return texkit.shade(img, seed, keep=keep, material="wood", clusters=0.55, grain=0.06, size=3, reach=1)
 
 
 def leaf_side():
@@ -319,7 +321,9 @@ def panel():
     px(img, 15, 0, ZINC)
     px(img, 14, 1, ZINC)
     px(img, 15, 1, ZINC_SEAM)
-    return texkit.finish(img, 141, keep=(WOOD[1], ZINC_HI, (22, 30, 36), ZINC, ZINC_SEAM), clusters=0.4, grain=0.0, size=4, reach=1)
+    return texkit.shade(img, 141, keep=(WOOD[1], ZINC_HI, (22, 30, 36), ZINC, ZINC_SEAM), clusters=0.4, grain=0.0, size=4, reach=1,
+                        material={**{c: "metal" for c in (ZINC_HI, ZINC_LIT, ZINC, ZINC_LOW, ZINC_SEAM, ZINC_EDGE, ZINC_DARK)},
+                                  None: "wood"})
 
 
 def panel_screen():

@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import dev.nookworks.Nookworks;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.block.PipeSides;
+import dev.nookworks.fluid.CopperFittingBlock;
 import dev.nookworks.fluid.FluidPipeBlockEntity;
 import dev.nookworks.furniture.BenchBlock;
 import dev.nookworks.furniture.DeskBlock;
@@ -164,8 +165,11 @@ public class WrenchItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        // A pipe used with the wrench (not sneaking) is flushed: what it holds is let out, so a line can change fluids.
-        if (!backwards && level.getBlockEntity(pos) instanceof FluidPipeBlockEntity pipe) {
+        // A pipe used with the wrench (not sneaking) is flushed: what it holds is let out, so a line can change fluids. A
+        // fitting with nothing in it (a Valve, a Sight Glass) is turned instead, as anything else is, rather than going
+        // on to the valve's own click, which opens or shuts it whatever is in hand.
+        if (!backwards && level.getBlockEntity(pos) instanceof FluidPipeBlockEntity pipe
+                && (pipe.stored() > 0 || !(state.getBlock() instanceof CopperFittingBlock))) {
             if (pipe.stored() <= 0) {
                 return InteractionResult.PASS;
             }

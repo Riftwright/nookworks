@@ -6,6 +6,7 @@ import java.util.List;
 
 import dev.nookworks.NookworksConfig;
 import dev.nookworks.cooking.IronPotBlockEntity;
+import dev.nookworks.feature.UnlitCampfires;
 import dev.nookworks.cooking.PotRecipe;
 import dev.nookworks.registry.ModCooking;
 import net.minecraft.core.BlockPos;
@@ -38,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
 final class EggsAndCampfiresTests {
     static void register() {
         NookworksGameTests.test("a_placed_campfire_is_unlit_until_lit", EggsAndCampfiresTests::placedCampfireIsUnlit);
+        NookworksGameTests.test("a_campfire_item_is_unlit_while_campfires_are_set_down_unlit", EggsAndCampfiresTests::campfireItemUnlit);
         NookworksGameTests.test("an_egg_fries_in_a_furnace_smoker_or_campfire", EggsAndCampfiresTests::eggFries);
         NookworksGameTests.test("the_iron_pot_boils_eggs_and_rolls_tamagoyaki", 900, EggsAndCampfiresTests::potEggs);
         NookworksGameTests.test("egg_dishes_fill_as_the_table_says", EggsAndCampfiresTests::eggDishValues);
@@ -80,6 +82,35 @@ final class EggsAndCampfiresTests {
         BlockPos at = helper.absolutePos(pos);
         player.gameMode.useItemOn(player, helper.getLevel(), stack, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(at).relative(Direction.UP, 0.5), Direction.UP, at, false));
+    }
+
+    /**
+     * With {@code campfiresPlacedUnlit} on, a campfire item stands for an unlit campfire - its icon (items/campfire.json's
+     * condition) and its light in the hand under a shader pack (IrisHandLightMixin) both ask {@link UnlitCampfires#unlit};
+     * with it off, it is vanilla's burning one. One that names its lit state is what it names, either way. The setting
+     * is flipped and put back within this one tick.
+     */
+    private static void campfireItemUnlit(GameTestHelper helper) {
+        ItemStack lit = new ItemStack(Items.CAMPFIRE);
+        lit.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(CampfireBlock.LIT, true));
+        ItemStack out = new ItemStack(Items.SOUL_CAMPFIRE);
+        out.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(CampfireBlock.LIT, false));
+        boolean before = NookworksConfig.CAMPFIRES_PLACED_UNLIT.get();
+        try {
+            NookworksConfig.CAMPFIRES_PLACED_UNLIT.set(true);
+            check(helper, UnlitCampfires.unlit(new ItemStack(Items.CAMPFIRE)) && UnlitCampfires.unlit(new ItemStack(Items.SOUL_CAMPFIRE)),
+                    "with the setting on, a campfire item is unlit");
+            check(helper, !UnlitCampfires.unlit(lit) && UnlitCampfires.unlit(out), "one naming its state is what it names");
+            check(helper, !UnlitCampfires.unlit(new ItemStack(Items.TORCH)) && !UnlitCampfires.unlit(ItemStack.EMPTY),
+                    "nothing else is a campfire");
+            NookworksConfig.CAMPFIRES_PLACED_UNLIT.set(false);
+            check(helper, !UnlitCampfires.unlit(new ItemStack(Items.CAMPFIRE)) && !UnlitCampfires.unlit(new ItemStack(Items.SOUL_CAMPFIRE)),
+                    "with it off, vanilla's burning campfire");
+            check(helper, !UnlitCampfires.unlit(lit) && UnlitCampfires.unlit(out), "and one naming its state still is what it names");
+        } finally {
+            NookworksConfig.CAMPFIRES_PLACED_UNLIT.set(before);
+        }
+        helper.succeed();
     }
 
     /**

@@ -5,6 +5,8 @@ Models: the pipe, the pad's risers and the tank's tap (see write_models)
         (the Experience Tank's own textures are hand-finished; see HAND_FINISHED.md)
 Items:  experience_bucket_fill (overlay on the vanilla bucket)
 
+The brass tap is shaded with texkit.shade as metal.
+
 Liquid experience reads as the green-gold of an XP orb: bright, faintly glowing, slightly syrupy.
 
 Run from the repo root:  python tools/textures/gen_experience.py
@@ -91,7 +93,7 @@ def tap():
     for y in range(6, 10):  # the spout's open end, sampled by the downward face of the nozzle
         for x in range(6, 10):
             img.putpixel((x, y), mouth)
-    return texkit.finish(img, 560, keep=(mouth[:3], lit[:3]), **texkit.SMOOTH)
+    return texkit.shade(img, 560, keep=(mouth[:3], lit[:3]), material="metal", **texkit.SMOOTH)
 
 
 def collar():

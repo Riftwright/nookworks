@@ -8,6 +8,8 @@ import dev.nookworks.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -92,7 +94,11 @@ public class RicePolisherBlock extends MachineBlock {
             if (!player.isShiftKeyDown()) {
                 polisher.turn(server);
             } else {
-                for (ItemStack out : polisher.takeOut()) {
+                var taken = polisher.takeOut();
+                if (!taken.isEmpty()) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
+                }
+                for (ItemStack out : taken) {
                     if (!player.getInventory().add(out)) {
                         player.drop(out, false, Prediction.PREDICTED);
                     }

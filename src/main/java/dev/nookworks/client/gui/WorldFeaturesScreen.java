@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.feature.AddonImpact;
 import dev.nookworks.feature.Features;
 import dev.nookworks.feature.WorldFeatures;
 import dev.nookworks.feature.PartGraph;
@@ -175,6 +176,7 @@ public final class WorldFeaturesScreen extends Screen {
         grid.addChild(new StringWidget(name, this.font), row, 1, grid.newCellSettings().align(0.0F, 0.5F).paddingTop(above));
         this.refresh.add(() -> {
             box.set(this.allChosen(parts));
+            box.setSome(parts.stream().filter(this::free).anyMatch(part -> this.chosen.getOrDefault(part, true)));
             box.active = this.editable && parts.stream().anyMatch(this::free);
             box.setTooltip(Tooltip.create(Component.translatable("nookworks.world_features.group.tooltip")));
         });
@@ -319,7 +321,10 @@ public final class WorldFeaturesScreen extends Screen {
             return;
         }
         List<String> lost = PartsChange.newlyLost(this::wasOn, this::on, WorldFeatures.kept());
-        Runnable save = lost.isEmpty() ? this::apply : () -> this.minecraft.gui.setScreen(new PartsLossScreen(this, lost, this::apply));
+        // other mods' recipes the change stops (nookTechnology's, with the Motor off), counted by mod
+        Map<String, Integer> addons = AddonImpact.newlyStopped(AddonImpact.gates(), this::wasOn, this::on, WorldFeatures.kept());
+        Runnable save = lost.isEmpty() && addons.isEmpty() ? this::apply
+                : () -> this.minecraft.gui.setScreen(new PartsLossScreen(this, lost, addons, this::apply));
         if (NookOfTheDeadWarning.present() && !this.on(NookOfTheDeadWarning.PART) && this.wasOn(NookOfTheDeadWarning.PART)) {
             this.minecraft.gui.setScreen(new ConfirmScreen(yes -> {
                 if (yes) {

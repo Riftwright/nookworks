@@ -215,7 +215,9 @@ final class MobTests {
         BlockPos pos = new BlockPos(3, 1, 3);
         helper.setBlock(pos, ModBlocks.SPAWN_EGG_BREWER.get());
         SpawnEggBrewerBlockEntity brewer = helper.getBlockEntity(pos, SpawnEggBrewerBlockEntity.class);
-        brewer.setItem(SpawnEggBrewerBlockEntity.BOTTLE, MobBottleItem.filled(EntityTypes.ZOMBIE));
+        ItemStack bottle = MobBottleItem.filled(EntityTypes.ZOMBIE);
+        bottle.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Strong"));
+        brewer.setItem(SpawnEggBrewerBlockEntity.BOTTLE, bottle);
         brewer.setItem(SpawnEggBrewerBlockEntity.EGG, new ItemStack(Items.EGG, 2));
         brewer.setItem(SpawnEggBrewerBlockEntity.FUEL, new ItemStack(Items.BLAZE_POWDER));
         for (int i = 0; i < SpawnEggBrewerBlockEntity.BREW_TIME; i++) {
@@ -225,6 +227,8 @@ final class MobTests {
         ItemStack left = brewer.getItem(SpawnEggBrewerBlockEntity.BOTTLE);
         check(helper, left.is(ModItems.MOB_BOTTLE.get()) && MobBottleItem.captured(left) == null && left.getCount() == 1,
                 "the bottle comes back empty");
+        check(helper, "Strong".equals(left.getHoverName().getString()) && left.getMaxStackSize() == 16,
+                "keeping its own components (an add-on's stronger bottle stays one), and stacking again");
         check(helper, brewer.getItem(SpawnEggBrewerBlockEntity.EGG).getCount() == 1, "one egg is used");
         check(helper, brewer.getItem(SpawnEggBrewerBlockEntity.FUEL).isEmpty()
                 && brewer.fuel() == SpawnEggBrewerBlockEntity.BREWS_PER_FUEL - 1, "one blaze powder gives several brews");

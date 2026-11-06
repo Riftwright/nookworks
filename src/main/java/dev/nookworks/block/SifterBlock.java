@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -64,6 +65,11 @@ public class SifterBlock extends BaseEntityBlock {
             return stack.is(SifterBlockEntity.SIFTABLE) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (!SifterBlockEntity.canSift(serverLevel, stack)) {
+            if (stack.is(SifterBlockEntity.SIFTABLE)) {
+                // tagged to sift but with no table to sift by (a pack's tag): said, as the client already took the click
+                player.sendOverlayMessage(Component.translatable("message.nookworks.sifter.nothing"));
+                return Clicks.REFUSED;
+            }
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         ItemStack one = stack.copyWithCount(1);
@@ -77,8 +83,8 @@ public class SifterBlock extends BaseEntityBlock {
         }
         if (one.getItem() instanceof BlockItem blockItem) {
             BlockState sifted = blockItem.getBlock().defaultBlockState();
+            // the block's crumble and its break sound, both from the level event (a sound of its own after it made two)
             level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos.above(), Block.getId(sifted));
-            level.playSound(null, pos, sifted.getSoundType().getBreakSound(), SoundSource.BLOCKS, 0.8F, 1.1F);
         } else { // coarse salt and the like: a rustle of grains, and a few of them
             serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, one.getItem()),
                     pos.getX() + 0.5, pos.getY() + 1.05, pos.getZ() + 0.5, 8, 0.2, 0.05, 0.2, 0.02);

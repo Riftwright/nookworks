@@ -8,7 +8,7 @@
 
 (It used to be smooth stone with black arrows laid over it: a white slab among black machines.)
 It also writes the elevator's model, a cube with a texture a face.
-Drawn flat, then finished with texkit. Original work, deterministic.
+Drawn flat, then shaded with texkit.shade as metal. Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_elevator.py
 """
 import json
@@ -114,7 +114,7 @@ def bottom():
 
 def main():
     for i, (name, img) in enumerate((("elevator_top", top()), ("elevator_side", side()), ("elevator_bottom", bottom()))):
-        texkit.finish(img, 520 + i, keep=KEEP, **texkit.SMOOTH).save(OUT / f"{name}.png")
+        texkit.shade(img, 520 + i, keep=KEEP, material="metal", **texkit.SMOOTH).save(OUT / f"{name}.png")
     faces = {"north": "#side", "east": "#side", "south": "#side", "west": "#side", "up": "#top", "down": "#bottom"}
     model = {"parent": "minecraft:block/block",
              "textures": {"particle": "nookworks:block/elevator_side", "side": "nookworks:block/elevator_side",

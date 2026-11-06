@@ -3,6 +3,7 @@ package dev.nookworks.experience;
 import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.fluid.WadeFluidType;
 import dev.nookworks.fluid.KeptFluid;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
@@ -43,14 +44,14 @@ public final class ExperienceFluids {
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Nookworks.MODID);
 
     public static final Supplier<FluidType> TYPE = FLUID_TYPES.register("liquid_experience",
-            () -> new FluidType(FluidType.Properties.create()
+            () -> new WadeFluidType(FluidType.Properties.create()
                     .descriptionId("block.nookworks.liquid_experience")
                     .density(1_000).viscosity(1_200).temperature(300)
                     .canSwim(true).canDrown(false).canPushEntity(true).supportsBoating(false)
                     .lightLevel(7)
                     .motionScale(0.008)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY), 0.8F));
 
     public static final Supplier<FlowingFluid> SOURCE = FLUIDS.register("liquid_experience",
             () -> new KeptFluid.Source(properties()));

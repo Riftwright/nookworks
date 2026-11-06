@@ -10,6 +10,7 @@ import java.util.List;
 import dev.nookworks.block.SconceBlock;
 import dev.nookworks.block.entity.CrateBlockEntity;
 import dev.nookworks.NookworksConfig;
+import dev.nookworks.feature.ChainBreaking;
 import dev.nookworks.feature.Earthmover;
 import dev.nookworks.feature.Fireproofing;
 import dev.nookworks.feature.PlacedLogs;
@@ -54,6 +55,8 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 /** Tree felling, vein mining and the hammers' 3x3. */
 final class MiningTests {
@@ -77,6 +80,7 @@ final class MiningTests {
         test("vein_runs_on_into_deepslate", MiningTests::veinRunsOnIntoDeepslate);
         test("vein_needs_proper_pickaxe", MiningTests::veinNeedsProperPickaxe);
         test("vein_stops_before_tool_breaks", MiningTests::veinStopsBeforeToolBreaks);
+        test("vein_ignores_another_mods_area_breaks", MiningTests::veinIgnoresAreaBreaks);
         test("crate_placed_in_survival_is_consumed", MiningTests::cratePlacedIsConsumed);
         test("sconce_lit_by_flint_and_snuffed_by_hand", MiningTests::sconceLightAndSnuff);
         test("hammer_mines_3x3_facing_player", MiningTests::hammerMines3x3);
@@ -558,6 +562,42 @@ final class MiningTests {
         check(helper, held.getMaxDamage() - held.getDamageValue() == 1, "pickaxe should end with 1 durability left");
         helper.assertBlockNotPresent(Blocks.COAL_ORE, new BlockPos(2, 1, 3));
         helper.assertBlockPresent(Blocks.COAL_ORE, new BlockPos(3, 1, 3));
+        helper.succeed();
+    }
+
+    /**
+     * GitHub issue #1: Just Hammers posts a break event for each block of its 5x5 while the block clicked is broken;
+     * vein mining or felling from those went far outside the area. Only the player's own break starts one.
+     */
+    static void veinIgnoresAreaBreaks(GameTestHelper helper) {
+        BlockPos stone = new BlockPos(1, 1, 1);
+        BlockPos ore = new BlockPos(3, 1, 3);
+        BlockPos rest = new BlockPos(4, 1, 3);
+        helper.setBlock(stone, Blocks.STONE);
+        helper.setBlock(ore, Blocks.IRON_ORE);
+        helper.setBlock(rest, Blocks.IRON_ORE);
+        BlockPos log = new BlockPos(1, 1, 4);
+        helper.setBlock(log, Blocks.OAK_LOG);
+        helper.setBlock(log.above(), Blocks.OAK_LOG);
+        helper.setBlock(log.above(2), Blocks.OAK_LEAVES);
+        ServerPlayer player = playerWith(helper, new ItemStack(Items.DIAMOND_PICKAXE));
+        ServerLevel level = helper.getLevel();
+        BlockPos oreAt = helper.absolutePos(ore);
+
+        // asked while another block is being broken, as Just Hammers does, and asked outside any break
+        ChainBreaking.destroying(player, helper.absolutePos(stone), () ->
+                !NeoForge.EVENT_BUS.post(new BreakBlockEvent(level, oreAt, level.getBlockState(oreAt), player)).isCanceled());
+        NeoForge.EVENT_BUS.post(new BreakBlockEvent(level, oreAt, level.getBlockState(oreAt), player));
+        helper.assertBlockPresent(Blocks.IRON_ORE, rest);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_AXE));
+        BlockPos logAt = helper.absolutePos(log);
+        NeoForge.EVENT_BUS.post(new BreakBlockEvent(level, logAt, level.getBlockState(logAt), player));
+        helper.assertBlockPresent(Blocks.OAK_LOG, log.above());
+
+        // the player's own break still mines the vein
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        player.gameMode.destroyBlock(oreAt);
+        helper.assertBlockNotPresent(Blocks.IRON_ORE, rest);
         helper.succeed();
     }
 

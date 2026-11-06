@@ -71,15 +71,18 @@ public final class NookworksNetwork {
     }
 
     /**
-     * What an Iron Pot holds, for the action bar: its liquid (0 none, 1 water, 2 oil), how much of what it holds, and the
-     * things in it; the client fits the line to its screen ({@link PotLine}).
+     * What an Iron Pot holds, for the action bar: its liquid (0 none, 1 water, 2 oil), how much of what it holds, the
+     * things in it, and why it cooks nothing over the fire when it says ({@code IronPotBlockEntity.stuck}); the client fits
+     * the line to its screen ({@link PotLine}).
      */
-    public record PotContents(int liquid, int amount, int capacity, List<ItemStack> items) implements CustomPacketPayload {
+    public record PotContents(int liquid, int amount, int capacity, List<ItemStack> items, Optional<Component> note)
+            implements CustomPacketPayload {
         public static final Type<PotContents> TYPE = new Type<>(Nookworks.id("pot_contents"));
         public static final StreamCodec<RegistryFriendlyByteBuf, PotContents> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, PotContents::liquid, ByteBufCodecs.VAR_INT, PotContents::amount,
                 ByteBufCodecs.VAR_INT, PotContents::capacity,
-                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list(IronPotBlockEntity.SLOTS)), PotContents::items, PotContents::new);
+                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list(IronPotBlockEntity.SLOTS)), PotContents::items,
+                ComponentSerialization.TRUSTED_OPTIONAL_STREAM_CODEC, PotContents::note, PotContents::new);
 
         @Override
         public Type<PotContents> type() {
@@ -389,7 +392,9 @@ public final class NookworksNetwork {
 
     @SubscribeEvent
     static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("1");
+        // "2" since 1.4: PotContents carries a note, so a 1.3 client on a 1.4 server (or the reverse) is turned away at
+        // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check)
+        var registrar = event.registrar("2");
         registrar.playToServer(PourGauge.TYPE, PourGauge.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof MachineMenu menu
                     && menu.containerId == payload.containerId()) {

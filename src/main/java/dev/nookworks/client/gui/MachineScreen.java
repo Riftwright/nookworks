@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
 
@@ -47,7 +46,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int TANK_W = 14;
     private static final int DISPLAY_X = 7;
     private static final int DISPLAY_H = 12;
-    private static final int RS_X = 156;
+    private static final int RS_X = RedstoneButton.X;
     private static final int RS_Y = 3;
 
     /** Set while drawing when the status or the title had to be cut short: its tooltip shows the whole. */
@@ -76,6 +75,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     /** Where the title has to stop: at the buttons in the top right corner. */
     private int titleEnd() {
         return this.layout() == MachineLayout.RETORT ? RS_X - RetortBottlesButton.SIZE - 2 : RS_X;
+    }
+
+    /** Where the Laser's beam ends: the screen's edge, or short of a tank (its hover area as long as it is drawn). */
+    private int beamEnd(MachineLayout layout) {
+        return layout.tanks().isEmpty() ? this.imageWidth - 10 : layout.tanks().get(0).x() - 4;
     }
 
     private MachineLayout layout() {
@@ -110,7 +114,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         int gx = x + layout.gaugeX();
         int gy = y + layout.gaugeY();
         float done = this.menu.progressMax() > 0 ? Math.min(1.0F, (float) this.menu.progress() / this.menu.progressMax()) : 0.0F;
-        int beamEnd = layout.tanks().isEmpty() ? this.imageWidth - 10 : layout.tanks().get(0).x() - 4;
+        int beamEnd = this.beamEnd(layout);
         switch (layout.gauge()) {
             case ARROW -> MachineStyle.arrow(g, gx, gy, done);
             case FLAME -> MachineStyle.flame(g, gx, gy, done);
@@ -161,6 +165,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         int titleRoom = this.titleEnd() - 4 - this.titleLabelX;
         this.titleCut = MachineStyle.fitText(g, this.font, this.title, this.titleLabelX, this.titleLabelY, titleRoom, MachineStyle.TITLE, true);
         g.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, MachineStyle.DIM, false);
+        if (this.layout().gauge() == MachineLayout.Gauge.BEAM) {
+            // the beam's reach written under it, not only on hover: the Laser's bay read as empty (r21, 2026-11-06)
+            g.text(this.font, Component.translatable("gui.nookworks.machine.beam", this.menu.progress(), this.menu.progressMax()),
+                    this.layout().gaugeX(), this.layout().gaugeY() + 10, MachineStyle.DIM, false);
+        }
         MachineStatus status = this.menu.status();
         int room = this.imageWidth - 2 * DISPLAY_X - 14;
         this.statusCut = MachineStyle.fitText(g, this.font, this.statusLine(), DISPLAY_X + 11, MachineLayout.STATUS_Y + 2, room,
@@ -252,7 +261,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         List<Component> lines = this.tooltipAt(mouseX, mouseY);
         if (!lines.isEmpty() && this.menu.getCarried().isEmpty()) {
-            g.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
+            g.setTooltipForNextFrame(MachineStyle.wrap(this.font, lines), mouseX, mouseY);
             return;
         }
         super.extractTooltip(g, mouseX, mouseY);
@@ -361,7 +370,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         return switch (layout.gauge()) {
             case ARROW -> this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY);
             case FLAME -> this.isHovering(layout.gaugeX(), layout.gaugeY(), 16, 16, mouseX, mouseY);
-            case BEAM -> this.isHovering(layout.gaugeX(), layout.gaugeY() - 6, 100, 14, mouseX, mouseY);
+            case BEAM -> this.isHovering(layout.gaugeX(), layout.gaugeY() - 6, this.beamEnd(layout) - layout.gaugeX(), 14, mouseX, mouseY);
             case NONE -> false;
         };
     }

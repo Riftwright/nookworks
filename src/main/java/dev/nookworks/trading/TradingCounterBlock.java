@@ -2,6 +2,7 @@ package dev.nookworks.trading;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.feature.DrawRights;
 import dev.nookworks.feature.Permission;
 import dev.nookworks.mobcapture.MobBottleItem;
 import dev.nookworks.registry.ModItems;
@@ -95,8 +96,8 @@ public class TradingCounterBlock extends HorizontalDirectionalBlock implements E
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (placer instanceof Player player && level.getBlockEntity(pos) instanceof TradingCounterBlockEntity counter) {
-            counter.setOwner(player.getUUID());
+        if (placer instanceof Player && level.getBlockEntity(pos) instanceof TradingCounterBlockEntity counter) {
+            counter.setOwner(DrawRights.ownerOf(placer)); // as other owned blocks: a machine's unknown fake player owns nothing
         }
     }
 

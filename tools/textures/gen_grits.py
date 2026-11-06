@@ -1,7 +1,7 @@
 """Deepslate Gravel, Nether Grit and End Gravel: what the Crusher makes of cobbled deepslate, netherrack and End
 Stone, for the Sifter.
 All original pixel art (pebbles packed close, the bed showing only in the cracks between them, drawn from scratch),
-finished with texkit. Deterministic.
+finished with texkit.shade (stone). Deterministic.
 
 Run from the repo root:  python tools/textures/gen_grits.py
 """
@@ -80,7 +80,7 @@ def grit(palette, seed):
                 colour = palette["lit"][tone]
             img.putpixel((x, y), colour + (255,))
     # one shade either way at most: two made near-black pits that showed the tile's repeat
-    return texkit.finish(img, seed, keep=(palette["bed"],), tile=True, **dict(texkit.ROUGH, reach=1))
+    return texkit.shade(img, seed, keep=(palette["bed"],), tile=True, material="stone", **dict(texkit.ROUGH, reach=1))
 
 
 def main():

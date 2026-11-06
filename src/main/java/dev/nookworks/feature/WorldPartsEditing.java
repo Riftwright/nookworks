@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
 import dev.nookworks.Nookworks;
@@ -12,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -49,12 +52,29 @@ public final class WorldPartsEditing {
     public static Map<String, Boolean> inFile(MinecraftServer server) {
         WorldFeatures.Choice chosen = WorldFeatures.menuShown() ? WorldFeatures.read(world(server)) : null;
         Map<String, Boolean> parts = new LinkedHashMap<>();
-        Features.PARTS.keySet().forEach(part -> parts.put(part, chosen != null ? !chosen.leftOut(part) : WorldFeatures.switchedOn(part)));
+        // with no file, a part the start-up config switches off is on as far as the world goes: written as left out, it
+        // stayed off when the pack switched it back on (r21 round three); worlds made on the Create World screen write it on
+        Features.PARTS.keySet().forEach(part -> parts.put(part, chosen != null ? !chosen.leftOut(part)
+                : !WorldFeatures.offered(part) || WorldFeatures.switchedOn(part)));
         return parts;
     }
 
     /** {@code player} asked to see the world's parts. */
+    /** When each player last asked, so a client sending the ask over and over does not read the file each time. */
+    private static final Map<UUID, Long> LAST_ASKED = new WeakHashMap<>();
+    /**
+     * At most one answer a quarter second: a person opens the parts list far less often (r21, 2026-11-06). On the wall
+     * clock, as a paused singleplayer game's time stands still while its screens are open.
+     */
+    private static final long ASK_EVERY_MS = 250;
+
     public static void asked(ServerPlayer player) {
+        long now = Util.getMillis();
+        Long last = LAST_ASKED.get(player.getUUID());
+        if (last != null && now - last >= 0 && now - last < ASK_EVERY_MS) {
+            return;
+        }
+        LAST_ASKED.put(player.getUUID(), now);
         PacketDistributor.sendToPlayer(player, new NookworksNetwork.WorldPartsFile(view(player)));
     }
 

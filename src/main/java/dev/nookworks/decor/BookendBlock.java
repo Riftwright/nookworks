@@ -8,6 +8,7 @@ import dev.nookworks.feature.Permission;
 import dev.nookworks.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -281,6 +282,9 @@ public class BookendBlock extends BaseEntityBlock {
                     .setValue(HINGE, end.getValue(HINGE));
             BlockState there = level.getBlockState(at);
             if (!there.canBeReplaced() || !there.getFluidState().isEmpty() || !row.canSurvive(level, at)) {
+                if (!level.isClientSide()) {
+                    player.sendOverlayMessage(Component.translatable("message.nookworks.bookend.no_room")); // never silent (2026-11-05)
+                }
                 return false;
             }
             if (level.isClientSide()) {

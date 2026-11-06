@@ -10,7 +10,8 @@ Each face is drawn as an elevation: the whole machine seen square from that side
 The models give their parts no UVs of their own, so every part - a vessel set back from the frame, a motor on the lid,
 a flange - takes its slice of the elevation from where it stands; one drawing dresses every part of a side.
 
-Drawn flat, then finished with texkit, which leaves the frame colours exact. Original work, deterministic.
+Drawn flat, then shaded with texkit.shade (casing metal; glass, liquids, glow and screens plain), which leaves the
+frame colours exact. Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_machine_faces.py
 """
 from pathlib import Path
@@ -973,8 +974,18 @@ def lamp_overlay():
     return img
 
 
-def save(img, name, seed, keep=()):
-    img = texkit.finish(img, seed, keep=FRAME_KEEP + tuple(keep), **texkit.SMOOTH)
+def material():
+    """texkit.shade's materials: the casing, brass and copper metal; glass, liquids, glow, screens, paper plain."""
+    plain = (GLASS_DK, GLASS, GLASS_HI, LAMP_OFF, LAMP_ON, GLASS_EDGE, OVEN_DARK, BATH_HI, BATH, BATH_DK,
+             SCREEN_DK, SCREEN, SCREEN_HI, SNOUT, SNOUT_DK, INGOT, INGOT_HI, SOOT)
+    plain += FIRE + WATER + LAVA + PAPER + HAZARD + BREW + EGG + EMPTY_GLASS + SCRAP_BITS + STOP_RED + CREATIVE
+    out = {tuple(c): "plain" for c in plain}
+    out[None] = "metal"
+    return out
+
+
+def save(img, name, seed, keep=(), **tuning):
+    img = texkit.shade(img, seed, keep=FRAME_KEEP + tuple(keep), material=material(), **dict(texkit.SMOOTH, **tuning))
     if name in LAMPS:
         lamp(img, *LAMPS[name])  # after the finish, so the lamp and its bezel stay exact
     img.save(BLOCK / f"{name}.png")
@@ -1382,8 +1393,8 @@ def main():
     save(diesel_generator_back(), "diesel_generator_back", 273, keep=STOP_RED)
     save(diesel_generator_top(), "diesel_generator_top", 274, keep=(SOOT,))
     save(barter_terminal_front(), "barter_terminal_front", 261, keep=(SCREEN_DK, GLASS_HI, GLASS))
-    texkit.finish(barter_terminal_screen(), 262, keep=(SCREEN_DK, SCREEN, SCREEN_HI, SNOUT, SNOUT_DK, INGOT, INGOT_HI),
-                  **texkit.SMOOTH).save(BLOCK / "barter_terminal_screen.png")
+    texkit.shade(barter_terminal_screen(), 262, keep=(SCREEN_DK, SCREEN, SCREEN_HI, SNOUT, SNOUT_DK, INGOT, INGOT_HI),
+                 material=material(), **texkit.SMOOTH).save(BLOCK / "barter_terminal_screen.png")
     save(barter_terminal_side(), "barter_terminal_side", 263)
     save(barter_terminal_top(), "barter_terminal_top", 264)
     save(electrolytic_cell_front(False), "electrolytic_cell_front", 241,
@@ -1420,7 +1431,7 @@ def main():
     save(stone_maker_top(), "stone_maker_top", 172)
     save(printing_press_side(), "printing_press_side", 181, keep=PAPER)
     save(printing_press_top(), "printing_press_top", 182)
-    save(printing_press_roller(), "printing_press_roller", 183)
+    save(printing_press_roller(), "printing_press_roller", 183, tile=True, light=0)  # wraps a roller: no fall of light
     save(machine_chassis(), "machine_chassis", 191)
     save(compressor_side(), "compressor_side", 192, keep=(BOLT,))
     save(compressor_top(), "compressor_top", 193, keep=(BOLT,))

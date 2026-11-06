@@ -34,7 +34,7 @@ public class SpawnEggBrewerScreen extends AbstractContainerScreen<SpawnEggBrewer
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + this.imageWidth - 8 - RedstoneButton.SIZE, this.topPos + 3,
+        this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
                 this.menu::redstoneMode,
                 () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, SpawnEggBrewerMenu.BUTTON_REDSTONE)));
     }

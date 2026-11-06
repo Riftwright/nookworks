@@ -1,7 +1,7 @@
 """The machine screens' textures: the steel their panels are cut from, and the little icons over the gauges.
 
 - textures/gui/steel.png: 64x64, tiles. Dark blue-grey steel with a faint brushed grain running across, finished with
-  texkit (SMOOTH). Kept low in contrast on purpose: text and slots sit on it and must stay easy to read.
+  texkit.shade (plain, light). Kept low in contrast on purpose: text and slots sit on it and must stay easy to read.
 - textures/gui/icons.png: 64x16. Eight 8x8 icons on the top row, one per gauge: energy (a bolt), water, vegetable
   oil, biodiesel, mercury, experience (drops), liquid fuel (a drop with a flame in it) and the Nether's air (a crimson
   puff, the Barter Terminal's). The second row
@@ -48,7 +48,7 @@ def steel():
         for i in range(rng.randint(3, 7)):
             c = tuple(min(255, v + 7) for v in STEEL)
             img.putpixel(((x + i) % 64, y), c + (255,))
-    return texkit.finish(img, 12, tile=True, clusters=0.3, grain=0.0, size=8, reach=1)
+    return texkit.shade(img, 12, tile=True, clusters=0.3, grain=0.0, size=8, reach=1, material="plain", strength=0.6)
 
 
 # 8x8 masks: '#' outline, 'o' body, 'l' light, 'd' shade.

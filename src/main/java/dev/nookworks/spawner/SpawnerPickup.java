@@ -1,13 +1,14 @@
 package dev.nookworks.spawner;
 
 import dev.nookworks.Nookworks;
-import dev.nookworks.item.Hammers;
 import dev.nookworks.registry.ModDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -20,7 +21,9 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 /**
  * A hammer with Silk Touch drops a mined spawner as an item that remembers its mob (a pickaxe still gets
- * nothing). No experience drops then, so placing and re-mining it cannot farm XP.
+ * nothing). No experience drops then, so placing and re-mining it cannot farm XP. The tools are
+ * #nookworks:spawner_pickup_tools, which holds the hammers and which an add-on's tool can join without joining the
+ * hammers' 3x3 (r21, 2026-11-06: nookTechnology's Heavy Hammer broke a spawner every hammer of ours picks up).
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class SpawnerPickup {
@@ -43,8 +46,10 @@ public final class SpawnerPickup {
         event.setDroppedExperience(0);
     }
 
+    public static final TagKey<Item> TOOLS = TagKey.create(Registries.ITEM, Nookworks.id("spawner_pickup_tools"));
+
     public static boolean canPickUp(ServerLevel level, ItemStack tool) {
-        if (!tool.is(Hammers.TAG)) {
+        if (!tool.is(TOOLS)) {
             return false;
         }
         var silk = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH);

@@ -8,15 +8,21 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -34,6 +40,26 @@ public class MagnetChestBlockEntity extends BaseContainerBlockEntity {
     private static final int INTERVAL = 4;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+    /** Opened and shut with a metal lid's sound, as the Repair Box is (r21: it opened in silence). */
+    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+        @Override
+        protected void onOpen(Level level, BlockPos pos, BlockState state) {
+            MagnetChestBlockEntity.this.playSound(SoundEvents.IRON_TRAPDOOR_OPEN);
+        }
+
+        @Override
+        protected void onClose(Level level, BlockPos pos, BlockState state) {
+            MagnetChestBlockEntity.this.playSound(SoundEvents.IRON_TRAPDOOR_CLOSE);
+        }
+
+        @Override
+        protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int previous, int current) {}
+
+        @Override
+        public boolean isOwnContainer(Player player) {
+            return player.containerMenu instanceof ChestMenu menu && menu.getContainer() == MagnetChestBlockEntity.this;
+        }
+    };
 
     public MagnetChestBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAGNET_CHEST.get(), pos, state);
@@ -89,6 +115,38 @@ public class MagnetChestBlockEntity extends BaseContainerBlockEntity {
                 entity.setItem(rest);
             }
         }
+    }
+
+    @Override
+    public void startOpen(ContainerUser user) {
+        if (!this.remove && !user.getLivingEntity().isSpectator()) {
+            this.openersCounter.incrementOpeners(user.getLivingEntity(), this.getLevel(), this.getBlockPos(),
+                    this.getBlockState(), user.getContainerInteractionRange());
+        }
+    }
+
+    @Override
+    public void stopOpen(ContainerUser user) {
+        if (!this.remove && !user.getLivingEntity().isSpectator()) {
+            this.openersCounter.decrementOpeners(user.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    @Override
+    public List<ContainerUser> getEntitiesWithContainerOpen() {
+        return this.openersCounter.getEntitiesWithContainerOpen(this.getLevel(), this.getBlockPos());
+    }
+
+    public void recheckOpen() {
+        if (!this.remove) {
+            this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    private void playSound(SoundEvent event) {
+        BlockPos pos = this.worldPosition;
+        this.level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, event, SoundSource.BLOCKS, 0.5F,
+                this.level.getRandom().nextFloat() * 0.1F + 1.0F);
     }
 
     @Override

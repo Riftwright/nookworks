@@ -87,6 +87,16 @@ public final class Quenching {
         return stack;
     }
 
+    /**
+     * Whether {@code stack}, whatever it is, carries a heating stamp still within {@link #HOT_TICKS}: an add-on's red-hot
+     * ingot heated by our recipes as ours is (nookTechnology's steel). The fire turns it away while it is hot, as it
+     * turns ours away (r21, 2026-11-06: a loop through a furnace kept a red-hot steel ingot hot for ever).
+     */
+    public static boolean stampedHot(ItemStack stack, long now) {
+        Long heated = stack.get(ModDataComponents.HEATED_AT.get());
+        return heated != null && now - heated < HOT_TICKS;
+    }
+
     public static boolean isHot(ItemStack stack, long now) {
         if (!stack.is(ModItems.RED_HOT_VELARIUM_INGOT.get())) {
             return false;

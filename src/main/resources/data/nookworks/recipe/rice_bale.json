@@ -3,15 +3,14 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:rice_bale",
-        "nookworks:brown_rice"
+        "nookworks:rice_bale"
       ]
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "R": "nookworks:brown_rice"
+    "R": "#c:crops/rice"
   },
   "pattern": [
     "RRR",

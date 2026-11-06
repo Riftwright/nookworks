@@ -2,6 +2,7 @@ package dev.nookworks.recycling;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import dev.nookworks.machine.MachineBlockEntity;
 import dev.nookworks.machine.MachineIO;
@@ -15,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -216,23 +218,33 @@ public class CompressorBlockEntity extends MachineBlockEntity implements Machine
      */
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        // the client cannot look the recipe up: it goes by what the server said presses
+        return takes(this, slot, stack, () -> this.level instanceof ServerLevel server ? !resultOf(server, stack).isEmpty()
+                : Compressing.pressesHere(stack));
+    }
+
+    /**
+     * What slot {@code slot} of a Compressor holding {@code items} takes, given whether nine of {@code stack} press
+     * (asked last: a recipe lookup): the machine's rule, and its screen's on the client (MachineMenu), which holds the
+     * slots the server sent.
+     */
+    public static boolean takes(Container items, int slot, ItemStack stack, BooleanSupplier presses) {
         if (!isInput(slot)) {
             return false;
         }
-        ItemStack in = this.items.get(slot);
+        ItemStack in = items.getItem(slot);
         if (!in.isEmpty()) {
             if (!ItemStack.isSameItemSameComponents(in, stack)) {
                 return false;
             }
         } else {
             for (int other : INPUT_SLOTS) {
-                if (other != slot && ItemStack.isSameItemSameComponents(this.items.get(other), stack)) {
+                if (other != slot && ItemStack.isSameItemSameComponents(items.getItem(other), stack)) {
                     return false;
                 }
             }
         }
-        // the client cannot look the recipe up: it goes by what the server said presses
-        return this.level instanceof ServerLevel server ? !resultOf(server, stack).isEmpty() : Compressing.pressesHere(stack);
+        return presses.getAsBoolean();
     }
 
     @Override

@@ -29,6 +29,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -338,6 +339,14 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
+        return takes(this, slot, stack);
+    }
+
+    /**
+     * What slot {@code slot} of a Retort holding {@code items} takes: the machine's rule, and its screen's on the client,
+     * which holds the slots the server sent (MachineMenu), so a shift-click lands there as it will on the server.
+     */
+    public static boolean takes(Container items, int slot, ItemStack stack) {
         if (slot == FILL) {
             return ExperienceBottling.fillable(stack);
         }
@@ -353,12 +362,12 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         // One kind of reagent to a slot. Copper is both the brass charge and one of its reagents, so a hopper of copper
         // would otherwise fill both reagent slots before the zinc arrived, and the zinc could never get in.
         for (int other = FIRST_REAGENT; other < FIRST_REAGENT + REAGENT_SLOTS; other++) {
-            if (other != slot && this.items.get(other).is(stack.getItem())) {
+            if (other != slot && items.getItem(other).is(stack.getItem())) {
                 return false;
             }
         }
         // With a charge loaded, only what its entry cooks with.
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
+        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(items.getItem(INPUT));
         return recipe == null || recipe.reagents().stream().anyMatch(stack::is);
     }
 
@@ -442,6 +451,11 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     public int waterStored() {
         return this.water.getAmountAsInt(0);
+    }
+
+    /** The water tank alone, which a bucket clicked on the Retort pours into. */
+    public ResourceHandler<FluidResource> waterHandler() {
+        return this.water;
     }
 
     /** The experience it keeps, the water it boils and the mercury it frees. */

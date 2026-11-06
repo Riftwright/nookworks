@@ -1,7 +1,7 @@
 """Nested Timer: a smooth stone plate like a repeater's, with a small dark iron meter on it - six red bars rising
 left to right, lit up to the chosen interval - and a redstone lamp at the front that lights with each pulse. The
-plate and the lamp use vanilla textures by name; the meter and its case are ours, drawn flat and finished with
-texkit. Deterministic.
+plate and the lamp use vanilla textures by name; the meter and its case are ours, drawn flat and shaded with
+texkit.shade as metal. Deterministic.
 
 - block/nested_timer_meter_0..5.png  the meter's face, 1-6 bars lit (from 0.5, 1, 2, 5, 30 s and 5 min up)
 - block/nested_timer_side.png        the iron case
@@ -92,10 +92,10 @@ def main():
     tex = ASSETS / "textures/block"
     keep = [GLASS, RED, RED_LIT, RED_OFF]
     for i in range(6):
-        texkit.finish(meter(i), 30 + i, keep=keep, **texkit.SMOOTH).save(tex / f"nested_timer_meter_{i}.png")
+        texkit.shade(meter(i), 30 + i, keep=keep, material="metal", **texkit.SMOOTH).save(tex / f"nested_timer_meter_{i}.png")
         write_json(ASSETS / f"models/block/nested_timer_{i}.json", model(i, False))
         write_json(ASSETS / f"models/block/nested_timer_{i}_on.json", model(i, True))
-    texkit.finish(side(), 40, **texkit.SMOOTH).save(tex / "nested_timer_side.png")
+    texkit.shade(side(), 40, material="metal", **texkit.SMOOTH).save(tex / "nested_timer_side.png")
     variants = {}
     for facing, y in (("south", 0), ("west", 90), ("north", 180), ("east", 270)):
         for i in range(6):

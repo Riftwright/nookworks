@@ -1,5 +1,5 @@
 """The textures of recycling (DECISIONS, "Recycling", 2026-10-18): Scrap, the Baler, and what is built of scrap. Original
-pixel art, drawn flat and finished with texkit. Deterministic.
+pixel art, drawn flat and shaded with texkit.shade as metal. Deterministic.
 
 - Scrap Bale (block/<age>scrap_bale_side, _top): a cube of crushed junk as a scrapyard's baler packs it, bound with
   steel straps (after the user's reference picture) - pressed layers on the sides, a jumble on top, each piece shaded
@@ -418,7 +418,7 @@ def from_map(text, colours):
 
 def save(img, name, seed=None, keep=(), **tuning):
     if seed is not None:
-        img = texkit.finish(img, seed, keep=keep, tile=True, **tuning)
+        img = texkit.shade(img, seed, keep=keep, tile=True, material="metal", **tuning)
     path = TEX / f"block/{name}.png"
     img.save(path)
 
@@ -445,8 +445,8 @@ def main():
         save(img, f"{colour}_corrugated_sheet", 350 + i, clusters=0.4, grain=0, size=5, reach=1)
     for which in range(len(PATCH_DRAWINGS)):
         save(patched(which), f"patched_sheet_metal_{which}", 360 + which, clusters=0.35, grain=0.02, size=5, reach=1)
-    texkit.icon(from_map(SCRAP_ITEM, SCRAP_COLOURS), 370, keep=(SCRAP_COLOURS["K"],)).save(TEX / "item/scrap.png")
-    texkit.icon(from_map(BALER_ITEM, BALER_COLOURS), 371).save(TEX / "item/baler.png")
+    texkit.icon(from_map(SCRAP_ITEM, SCRAP_COLOURS), 370, keep=(SCRAP_COLOURS["K"],), material="metal").save(TEX / "item/scrap.png")
+    texkit.icon(from_map(BALER_ITEM, BALER_COLOURS), 371, material="metal").save(TEX / "item/baler.png")
     print("wrote the recycling textures")
 
 

@@ -146,7 +146,7 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
         this.syncing = false;
         this.letters.visible = this.page == Page.LABELS;
         this.addRenderableWidget(this.letters);
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + this.imageWidth - 8 - RedstoneButton.SIZE, this.topPos + 3,
+        this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
                 this.menu::redstoneMode, () -> this.press(PrintingPressMenu.BUTTON_REDSTONE)));
     }
 
@@ -196,9 +196,12 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
     protected void containerTick() {
         super.containerTick();
         Identifier selected = this.menu.selected();
+        if (!this.menu.running()) {
+            this.looking = false;
+        }
         if (this.settling > 0) {
             this.settling--;
-        } else if (selected != null) { // someone else chose, or a click was taken: the page follows the press
+        } else if (selected != null && !this.looking) { // someone else chose, or a click was taken: the page follows the press
             this.page = pageOf(selected);
         }
         this.menu.labelPage = this.page == Page.LABELS;
@@ -229,6 +232,9 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
         this.press(this.menu.designs().indexOf(id) + 1);
     }
 
+    /** A page opened by a tab while a copy is being made: it stays shown, not the job's, until the job ends. */
+    private boolean looking;
+
     private void openPage(Page page) {
         if (page == this.page) {
             return;
@@ -237,6 +243,10 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
         this.menu.labelPage = page == Page.LABELS;
         this.settling = 10;
         Identifier selected = this.menu.selected();
+        if (this.menu.running()) {
+            this.looking = true; // only looked at while a copy is being made: choosing would stop it, the power spent lost (r21)
+            return;
+        }
         if (page == Page.LABELS) {
             if (!isLabels(selected)) {
                 this.choose(PrintingPressBlockEntity.LABEL); // labels chosen on their page
@@ -834,13 +844,13 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (this.statusCut && this.isHovering(DISPLAY_X, ROW_Y, DISPLAY_W, DISPLAY_H, mouseX, mouseY)) {
-            graphics.setTooltipForNextFrame(this.font, List.of(this.statusLine()), Optional.empty(), mouseX, mouseY);
+            graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, List.of(this.statusLine())), mouseX, mouseY);
             return;
         }
         Item short1 = this.missingNow();
         if (short1 != null && this.isHovering(DISPLAY_X, ROW_Y, DISPLAY_W, DISPLAY_H, mouseX, mouseY)) {
             Identifier selected = this.menu.selected();
-            graphics.setTooltipForNextFrame(this.font, this.missingLines(selected), Optional.empty(), mouseX, mouseY);
+            graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, this.missingLines(selected)), mouseX, mouseY);
             return;
         }
         if (this.isHovering(this.energyX(), this.energyY() - 10, 10, ENERGY_H + 10, mouseX, mouseY)) {

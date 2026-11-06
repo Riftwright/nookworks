@@ -16,7 +16,7 @@
   "slots": [
     "mainhand"
   ],
-  "supported_items": "#nookworks:hammers",
-  "primary_items": "#nookworks:hammers",
+  "supported_items": "#nookworks:earthmover_tools",
+  "primary_items": "#nookworks:earthmover_tools",
   "weight": 2
 }

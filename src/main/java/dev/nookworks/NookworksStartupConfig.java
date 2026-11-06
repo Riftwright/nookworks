@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import dev.nookworks.feature.Features;
+import dev.nookworks.feature.PartGraph;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -144,9 +145,12 @@ public final class NookworksStartupConfig {
         return FEATURES.get(name);
     }
 
-    /** Whether the bakery's recipes load: its own setting, with the kitchen whose flour and dough it is made of. */
+    /**
+     * Whether the bakery's recipes load: its own setting, with the kitchen whose flour and dough it is made of, while the
+     * dough can be had - with the Sifter or the Retort off there is no salt, and bread had no recipe at all (r21).
+     */
     public static boolean flourBakery() {
-        return FLOUR_BAKERY.getAsBoolean() && Features.enabled("kitchen");
+        return FLOUR_BAKERY.getAsBoolean() && Features.enabled("kitchen") && Features.available(PartGraph.BREAD_DOUGH);
     }
 
     private NookworksStartupConfig() {}

@@ -126,7 +126,7 @@ public final class IfTravel {
     }
 
     /** The player's respawn point - or the world's spawn when that is in the If (a bed there): home is out of it. */
-    private static TeleportTransition respawn(ServerPlayer player) {
+    public static TeleportTransition respawn(ServerPlayer player) {
         TeleportTransition respawn = player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
         return respawn.newLevel().dimension().equals(IfWorld.KEY) ? TeleportTransition.createDefault(player, TeleportTransition.DO_NOTHING) : respawn;
     }

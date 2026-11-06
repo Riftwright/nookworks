@@ -696,11 +696,17 @@ public final class MachineIO {
             return 0;
         }
         List<EnergyHandler> hungry = new ArrayList<>(targets.size());
+        List<EnergyHandler> through = new ArrayList<>(0);
         for (EnergyHandler target : targets) {
             if (target.getAmountAsLong() < target.getCapacityAsLong()) {
                 hungry.add(target);
+            } else if (target.getCapacityAsLong() == 0) {
+                through.add(target);
             }
         }
+        // one that keeps nothing (another mod's cable passing power straight on) is asked too, after the rest, as
+        // handlerOf keeps it on purpose: it never counted as hungry and got nothing (r21, 2026-11-06)
+        hungry.addAll(through);
         if (hungry.isEmpty()) {
             return 0;
         }
@@ -721,9 +727,9 @@ public final class MachineIO {
 
     /**
      * Moves up to {@code amount} FE atomically: only what the target accepts leaves the source, and no more than the
-     * source gives. When it gives less than the target would take, the smaller amount is moved: a Generator whose
-     * output was raised in play still gives at its old rate a tick until its chunk reloads, and asking the two sides to
-     * agree on the larger moved nothing at all to a lone Laser (r7 review).
+     * source gives. When it gives less than the target would take, the smaller amount is moved: another mod's source
+     * may give less than it was asked, and asking the two sides to agree on the larger moved nothing at all to a lone
+     * Laser (r7 review).
      */
     public static int transfer(EnergyHandler from, EnergyHandler to, int amount) {
         try (Transaction tx = Transaction.openRoot()) {

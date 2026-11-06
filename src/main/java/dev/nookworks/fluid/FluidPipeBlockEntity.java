@@ -164,6 +164,45 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.6F, 1.3F);
     }
 
+    /**
+     * Whether this pipe's line leads to something besides {@code except} that takes {@code resource} now (asked, never
+     * committed), walking at most {@code limit} pipes. The Stirring Tank sends biodiesel up into an empty pipe only when
+     * it goes somewhere: a feed pipe set on a tank already holding biodiesel was filled with it, and the oil line
+     * plugged (the round-two fix re-check).
+     */
+    public boolean leadsToTakerOf(ServerLevel level, FluidResource resource, BlockPos except, int limit) {
+        java.util.ArrayDeque<FluidPipeBlockEntity> queue = new java.util.ArrayDeque<>();
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        queue.add(this);
+        seen.add(this.worldPosition);
+        while (!queue.isEmpty()) {
+            FluidPipeBlockEntity pipe = queue.poll();
+            BlockPos at = pipe.worldPosition;
+            for (Direction side : SIDES) {
+                BlockPos next = at.relative(side);
+                if (next.equals(except) || !pipe.open(level, at, side) || pipe.pullsFrom(side)) {
+                    continue;
+                }
+                FluidPipeBlockEntity other = pipe.pipeOn(level, at, side);
+                if (other != null) {
+                    if (seen.size() < limit && seen.add(next)) {
+                        queue.add(other);
+                    }
+                    continue;
+                }
+                ResourceHandler<FluidResource> handler = pipe.handlerOn(level, at, side);
+                if (handler != null) {
+                    try (Transaction test = Transaction.openRoot()) {
+                        if (handler.insert(resource, 1, test) > 0) {
+                            return true; // never committed: only asking
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /** How many pipes away the nearest taker of this pipe's fluid is, or {@link #NOWHERE}. */
     public int reach() {
         return this.reach;

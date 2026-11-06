@@ -527,7 +527,10 @@ final class ReviewThreeTests {
         helper.succeed();
     }
 
-    /** An enchanted bow would burn in a Generator: a click with it opens the screen instead; coal still goes in. */
+    /**
+     * An enchanted bow would burn in a Generator: a click with it opens the screen instead - and since 2026-11-05 a click
+     * with coal does too, nothing going into a machine with a screen by a click (the user).
+     */
     private static void machineClickLeavesGearInHand(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 2, 2);
         helper.setBlock(pos, ModBlocks.GENERATOR.get());
@@ -542,8 +545,10 @@ final class ReviewThreeTests {
         }
         ItemStack coal = new ItemStack(Items.COAL, 5);
         player.setItemInHand(InteractionHand.MAIN_HAND, coal);
-        helper.getBlockState(pos).useItemOn(coal, helper.getLevel(), player, InteractionHand.MAIN_HAND, hit(helper, pos, Direction.NORTH));
-        check(helper, generator.getItem(0).is(Items.COAL) && generator.getItem(0).getCount() == 5, "coal is loaded by a click");
+        InteractionResult result = helper.getBlockState(pos).useItemOn(coal, helper.getLevel(), player, InteractionHand.MAIN_HAND,
+                hit(helper, pos, Direction.NORTH));
+        check(helper, generator.getItem(0).isEmpty() && coal.getCount() == 5 && result instanceof InteractionResult.TryEmptyHandInteraction,
+                "coal is not loaded by a click either, which goes on to the screen: " + result);
         helper.succeed();
     }
 

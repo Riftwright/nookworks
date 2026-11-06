@@ -113,7 +113,7 @@ def cover(kind):
             px[x, my - 1] = GOLD
             px[x, my] = GOLD_DARK
     # a fine grain over it, as of paper or cloth over the board: small soft patches, a few single pixels
-    img = texkit.finish(img, 31 + KINDS.index(kind), clusters=0.45, grain=0.3, size=2, reach=1,
+    img = texkit.shade(img, 31 + KINDS.index(kind), clusters=0.45, grain=0.3, size=2, reach=1, material="plain",
                         keep=ACCENTS + [c["rim"]])
     px = img.load()
     side = Image.new("RGBA", (16, 16), CLEAR)

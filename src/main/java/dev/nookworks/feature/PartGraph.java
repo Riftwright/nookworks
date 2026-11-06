@@ -92,9 +92,13 @@ public final class PartGraph {
         return Collections.unmodifiableMap(map);
     }
 
-    /** Whether start-up setting {@code setting} holds, with the parts {@code partOn} says are on. */
+    /**
+     * Whether start-up setting {@code setting} holds, with the parts {@code partOn} says are on. The bakery's own setting is
+     * that, with the kitchen whose flour and dough it is made of, before asking whether the dough can be had
+     * ({@link #reachable} asks that).
+     */
     static boolean setting(String setting, Predicate<String> partOn) {
-        if (setting.equals("flour_bakery")) { // the bakery goes with the kitchen whose flour and dough it is made of
+        if (setting.equals("flour_bakery")) {
             return NookworksStartupConfig.FLOUR_BAKERY.getAsBoolean() && Features.enabled("kitchen", partOn);
         }
         if (setting.startsWith("feature.")) {
@@ -106,6 +110,21 @@ public final class PartGraph {
 
     /** The items of ours that can be had with the parts {@code partOn} says are on, {@code kept} had whatever the table says. */
     public static Set<String> reachable(Predicate<String> partOn, Collection<String> kept) {
+        boolean bakery = setting("flour_bakery", partOn);
+        Set<String> had = reachable(partOn, kept, bakery);
+        if (bakery && !had.contains(BREAD_DOUGH)) {
+            // the bakery takes vanilla's bread away for its dough's: with no dough to be had (no salt, the Sifter or the
+            // Retort off) it stands down, and vanilla's 3-wheat bread is back (r21 round three: bread had no recipe)
+            had = reachable(partOn, kept, false);
+        }
+        return had;
+    }
+
+    /** Bread dough, without which the bakery stands down ({@link NookworksStartupConfig#flourBakery}). */
+    public static final String BREAD_DOUGH = "nookworks:bread_dough";
+
+    /** {@link #reachable}, with the bakery's setting taken as {@code bakery}. */
+    private static Set<String> reachable(Predicate<String> partOn, Collection<String> kept, boolean bakery) {
         Set<String> had = new HashSet<>();
         for (String id : kept) {
             if (Features.enabledByPart(id, partOn)) {
@@ -116,7 +135,8 @@ public final class PartGraph {
         for (Source source : SOURCES) {
             boolean holds = true;
             for (Condition c : source.conditions()) {
-                boolean now = c.part() != null ? Features.enabled(c.part(), partOn) : setting(c.setting(), partOn);
+                boolean now = c.part() != null ? Features.enabled(c.part(), partOn)
+                        : "flour_bakery".equals(c.setting()) ? bakery : setting(c.setting(), partOn);
                 if (now != c.is()) {
                     holds = false;
                     break;

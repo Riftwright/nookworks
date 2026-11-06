@@ -80,7 +80,7 @@ def bottle_fill(light=LIGHT, mid=GOLD, deep=DEEP, seed=12, grain=texkit.SMOOTH["
         for x in range(first, last + 1):
             depth = (row - 7) / 6
             img.putpixel((x, row), rgba(light if row == 8 else mix(mid, deep, depth * 0.8)))
-    return texkit.finish(img, seed, keep=[rgba(light)], **{**texkit.SMOOTH, "grain": grain})
+    return texkit.shade(img, seed, keep=[rgba(light)], **{**texkit.SMOOTH, "grain": grain})
 
 
 # Biodiesel in a bottle or a bucket, lit top, body and depth: a saturated amber, between the oil's gold and the
@@ -204,8 +204,13 @@ def main():
         write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/{name}"}})
     write_json(ASSETS / "models/item/soap.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "nookworks:item/soap"}})
     write_json(ASSETS / "items/soap.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/soap"}})
+    # handheld in first person, as a tool is used; in third person held by its handle at a can's size, the spout
+    # leading (r21: gripped by the body's corner at a pickaxe's size)
+    can_third = {"rotation": [0, -90, 25], "translation": [0, 3.5, 1], "scale": [0.6, 0.6, 0.6]}
     write_json(ASSETS / "models/item/oil_can.json", {"parent": "minecraft:item/handheld",
-                                                      "textures": {"layer0": "nookworks:item/oil_can"}})
+                                                      "textures": {"layer0": "nookworks:item/oil_can"},
+                                                      "display": {"thirdperson_righthand": can_third,
+                                                                  "thirdperson_lefthand": can_third}})
     write_json(ASSETS / "items/oil_can.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/oil_can"}})
     write_json(ASSETS / "models/item/vegetable_oil_bucket.json", {"parent": "minecraft:item/generated", "textures": {
         "layer0": "minecraft:item/bucket", "layer1": "nookworks:item/vegetable_oil_bucket_fill"}})

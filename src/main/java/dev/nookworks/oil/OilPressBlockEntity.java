@@ -42,6 +42,10 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
  * Chest gathers them (the user, 2026-10-31). With a block in the way they wait inside, and at a stack the press stops.
  */
 public class OilPressBlockEntity extends MachineBlockEntity implements Crankable {
+    /** The game tick its turn sound last played in (not saved). */
+    private long soundAt = Long.MIN_VALUE;
+    private long finishSoundAt = Long.MIN_VALUE;
+
     public static final int TANK = 4_000;
     public static final int INPUT = 0;
     public static final int CAKE = 1;
@@ -150,7 +154,10 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
             this.turning = input.copyWithCount(1);
         }
         CrankMotion.announce(level, this.worldPosition, this.getBlockState());
-        level.playSound(null, this.worldPosition, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.35F, 0.7F + level.getRandom().nextFloat() * 0.2F);
+        if (level.getGameTime() != this.soundAt) { // one sound a tick: nookTechnology's speed gear turns it up to four times at once, and four were a thump (r21)
+            this.soundAt = level.getGameTime();
+            level.playSound(null, this.worldPosition, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.35F, 0.7F + level.getRandom().nextFloat() * 0.2F);
+        }
         if (++this.turns >= recipe.turns()) {
             this.turns = 0;
             input.shrink(1);
@@ -164,7 +171,10 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
                 }
                 this.handOutCakes(level);
             }
-            level.playSound(null, this.worldPosition, SoundEvents.HONEY_BLOCK_SLIDE, SoundSource.BLOCKS, 0.6F, 0.8F);
+            if (level.getGameTime() != this.finishSoundAt) { // once a tick too: a geared Motor finishes two seeds in one
+                this.finishSoundAt = level.getGameTime();
+                level.playSound(null, this.worldPosition, SoundEvents.HONEY_BLOCK_SLIDE, SoundSource.BLOCKS, 0.6F, 0.8F);
+            }
         }
         this.setChanged();
     }
@@ -247,6 +257,15 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
     @Override
     public void jade(java.util.function.Consumer<Component> lines) {
         lines.accept(this.state());
+    }
+
+    /** The seeds put in, given back to a sneaking hand with no cakes inside: the turns made on them go with them. */
+    public ItemStack takeInput() {
+        this.turns = 0;
+        this.turning = ItemStack.EMPTY;
+        ItemStack seeds = this.removeItemNoUpdate(INPUT);
+        this.setChanged();
+        return seeds;
     }
 
     @Override

@@ -5,6 +5,8 @@ import dev.nookworks.machine.Drive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -95,8 +97,11 @@ public abstract class HandMachineBlock extends MachineBlock {
                 machine.turn(server);
             } else {
                 ItemStack out = machine.takeOut();
-                if (!out.isEmpty() && !player.getInventory().add(out)) {
-                    player.drop(out, false, Prediction.PREDICTED);
+                if (!out.isEmpty()) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
+                    if (!player.getInventory().add(out)) {
+                        player.drop(out, false, Prediction.PREDICTED);
+                    }
                 }
             }
             player.sendOverlayMessage(machine.status());

@@ -2,6 +2,7 @@ package dev.nookworks.cooking;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -486,7 +487,9 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
             level.setBlock(pos, state.setValue(IronPotBlock.COOKING, cooking), Block.UPDATE_CLIENTS);
         }
         if (!cooking) {
-            if (this.progress != 0) {
+            // a recipe found during the settle wait and lost again (a bottle taken out) left its id: "Cooking 0%" for
+            // ever, over why it does not cook (the round-two fix re-check)
+            if (this.progress != 0 || this.cooking != null) {
                 this.progress = 0;
                 this.cooking = null;
                 this.setChanged();
@@ -609,7 +612,8 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 items.add(stack.copy());
             }
         }
-        return new NookworksNetwork.PotContents(held == null ? 0 : held == PotRecipe.Liquid.WATER ? 1 : 2, this.amount(), CAPACITY, items);
+        return new NookworksNetwork.PotContents(held == null ? 0 : held == PotRecipe.Liquid.WATER ? 1 : 2, this.amount(), CAPACITY, items,
+                Optional.ofNullable(this.stuck()));
     }
 
     /** What the pot holds, for the player who looks in. */
@@ -633,32 +637,68 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         return line;
     }
 
+    /**
+     * Why a pot over the fire, with water or oil and things in it, cooks nothing - or null when it cooks, or waits for
+     * nothing it could be told: short of the liquid a recipe of all of them needs (how much), or no recipe of them yet.
+     * It said nothing at all, and its contents alone did not tell a pot a bottle short of udon from one about to cook
+     * (round two of r21).
+     */
+    public @Nullable Component stuck() {
+        PotRecipe.Liquid held = this.liquid();
+        if (this.level == null || !this.dish.isEmpty() || this.count() == 0 || held == null
+                || !IronPotBlock.heated(this.level, this.worldPosition)
+                || PotRecipe.find(this.level, this.contents, held, this.amount()) != null) {
+            return null;
+        }
+        // only a recipe of the liquid held can be short of it: one of the other liquid matched eggs in oil to boiled eggs
+        // and said "needs water" to a pot halfway to tamagoyaki (the round-two fix re-check)
+        boolean mayBecome = false;
+        boolean otherTakes = false;
+        for (RecipeHolder<PotRecipe> holder : PotRecipe.all(this.level)) {
+            PotRecipe recipe = holder.value();
+            if (recipe.liquid() == held && recipe.batches(this.contents, held, Integer.MAX_VALUE) > 0) {
+                return Component.translatable(held == PotRecipe.Liquid.WATER ? "nookworks.iron_pot.needs_water"
+                        : "nookworks.iron_pot.needs_oil", recipe.amount()).withColor(0xE0A548);
+            }
+            if (this.allPartOf(recipe)) {
+                mayBecome |= recipe.liquid() == held; // cream stew begun: the chicken is in, the rest to come
+                otherTakes |= recipe.liquid() != held;
+            }
+        }
+        if (!mayBecome && otherTakes) {
+            return Component.translatable(held == PotRecipe.Liquid.WATER ? "nookworks.iron_pot.cooks_in_oil"
+                    : "nookworks.iron_pot.cooks_in_water").withColor(0xE0A548);
+        }
+        return Component.translatable("nookworks.iron_pot.no_recipe").withColor(0xE0A548);
+    }
+
+    /** Whether every thing in the pot belongs to some part of {@code recipe}, however many of each. */
+    private boolean allPartOf(PotRecipe recipe) {
+        for (ItemStack stack : this.contents) {
+            if (!stack.isEmpty() && recipe.partFor(stack) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** What is in it, and how far the cooking is - and the bowls or buckets its cooking has freed, to take back. */
     @Override
     public void readout(Consumer<Component> lines) {
         this.lines(lines, true);
     }
 
-    /** To Jade, the same less the liquid and how much, which Jade shows itself (r15 fix check). */
+    /** To Jade, the same less the liquid and the things in it, which Jade shows itself (r15 fix check; r21). */
     @Override
     public void jade(Consumer<Component> lines) {
         this.lines(lines, false);
     }
 
     private void lines(Consumer<Component> lines, boolean liquid) {
+        // to Jade, not the things in it: Jade lists them itself, with their pictures, and they showed twice, as on the
+        // Tray before (round two of r21, in the client)
         if (liquid || !this.dish.isEmpty()) {
             lines.accept(this.describe());
-        } else {
-            MutableComponent items = null;
-            for (ItemStack stack : this.contents) {
-                if (!stack.isEmpty()) {
-                    Component one = Component.translatable("nookworks.iron_pot.item", stack.getHoverName(), stack.getCount());
-                    items = items == null ? one.copy() : items.append(Component.translatable("nookworks.list.separator")).append(one);
-                }
-            }
-            if (items != null) {
-                lines.accept(items);
-            }
         }
         // a hand takes them back - unless a dish waits for bowls, when a hand serves it first
         String freedKey = !this.dish.isEmpty() && this.container != null ? "nookworks.iron_pot.freed.after" : "nookworks.iron_pot.freed";
@@ -683,6 +723,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         } else if (this.dish.isEmpty() && this.count() > 0 && this.liquid() == null) {
             // over the fire with things in it and nothing to cook them in: it said nothing at all (the kitchen play-test)
             lines.accept(Component.translatable("nookworks.iron_pot.dry").withColor(0xE0A548));
+        } else {
+            Component why = this.stuck();
+            if (why != null) {
+                lines.accept(why);
+            }
         }
     }
 

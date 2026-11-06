@@ -9,7 +9,7 @@ blockstates. Deterministic.
 - block/rice_panicles_stage0..3.png the upper block: the fan carries on, heads come up green and hang heavy and gold
 - models/block/rice_stage*.json, rice_panicles_stage*.json (crop models, cutout), blockstates/rice*.json
 
-The crop is drawn flat and then finished with texkit (PLANT), which breaks each colour into its hue-shifted shades;
+The crop is drawn flat and then finished with texkit.shade (PLANT, plain), which breaks each colour into its hue-shifted shades;
 the grains and the bran's sack are placed pixel by pixel (itemkit) and left as placed.
 
 The crop model shows the texture on four planes, so each texture is the plant seen side on, rooted at the middle of
@@ -278,7 +278,7 @@ def main():
     bran().save(ASSETS / "textures/item/rice_bran.png")
     for stage in range(4):
         for i, (name, fn) in enumerate((("rice", lower), ("rice_panicles", upper))):
-            texkit.finish(fn(stage), 10 + stage * 2 + i, reach=1, **texkit.PLANT).save(tex / f"{name}_stage{stage}.png")
+            texkit.shade(fn(stage), 10 + stage * 2 + i, reach=1, **texkit.PLANT).save(tex / f"{name}_stage{stage}.png")
             write_json(ASSETS / f"models/block/{name}_stage{stage}.json", {
                 "parent": "minecraft:block/crop", "render_type": "minecraft:cutout",
                 "textures": {"crop": f"nookworks:block/{name}_stage{stage}"}})

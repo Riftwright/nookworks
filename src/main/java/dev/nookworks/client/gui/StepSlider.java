@@ -10,11 +10,13 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 
 /**
  * A slider over a fixed number of steps, in the machine screens' style: a groove with a notch at each step and a brass
  * knob that is dragged (or clicked to, or moved with the arrow keys) from notch to notch. It shows the server's
- * value, except while it is being dragged, when it shows where the mouse has put it; each new step is sent at once.
+ * value, except while it is being dragged, when it shows where the mouse has put it, and a step just sent until the
+ * server has it; each new step is sent at once.
  */
 public class StepSlider extends AbstractWidget {
     private static final int EDGE = 0xFF121418;
@@ -28,6 +30,13 @@ public class StepSlider extends AbstractWidget {
     private final IntSupplier current;
     private final IntConsumer choose;
     private int dragged = -1;
+    /**
+     * The step last sent, shown until the server's value is it (or a second has gone by, the step refused): the knob fell
+     * back to the old value for a moment after a drag, and arrow keys pressed faster than the server answered were lost,
+     * each counted from the old value (round two of r21).
+     */
+    private int sent = -1;
+    private long sentAt;
 
     public StepSlider(int x, int y, int width, int steps, Component name, IntSupplier current, IntConsumer choose) {
         super(x, y, width, 12, name);
@@ -36,9 +45,18 @@ public class StepSlider extends AbstractWidget {
         this.choose = choose;
     }
 
-    /** The step on show: where it is being dragged to, or the value the server has. */
+    /** The step on show: where it is being dragged to, the step just sent, or the value the server has. */
     public int shown() {
-        return this.dragged >= 0 ? this.dragged : Math.max(0, Math.min(this.steps - 1, this.current.getAsInt()));
+        if (this.dragged >= 0) {
+            return this.dragged;
+        }
+        int server = Math.max(0, Math.min(this.steps - 1, this.current.getAsInt()));
+        long since = Util.getMillis() - this.sentAt;
+        // a quarter second at least, so the server's answers to steps already left (a drag out and back) go by first
+        if (this.sent >= 0 && (this.sent == server && since > 250 || since > 1000)) {
+            this.sent = -1;
+        }
+        return this.sent >= 0 ? this.sent : server;
     }
 
     private int xOf(int step) {
@@ -53,8 +71,9 @@ public class StepSlider extends AbstractWidget {
     private void moveTo(int step) {
         if (step != this.shown()) {
             this.choose.accept(step);
+            this.sent = step;
+            this.sentAt = Util.getMillis();
         }
-        this.dragged = step;
     }
 
     /** Whether the slider counts for anything now (the gap, with one pulse, does not): greyed out and still, if not. */
@@ -65,11 +84,13 @@ public class StepSlider extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean doubleClick) {
         this.moveTo(this.stepAt(event.x()));
+        this.dragged = this.stepAt(event.x());
     }
 
     @Override
     protected void onDrag(MouseButtonEvent event, double dx, double dy) {
         this.moveTo(this.stepAt(event.x()));
+        this.dragged = this.stepAt(event.x());
     }
 
     @Override
@@ -82,7 +103,6 @@ public class StepSlider extends AbstractWidget {
         if (event.isLeft() || event.isRight()) {
             int step = Math.max(0, Math.min(this.steps - 1, this.shown() + (event.isLeft() ? -1 : 1)));
             this.moveTo(step);
-            this.dragged = -1;
             return true;
         }
         return false;
