@@ -87,6 +87,16 @@ def bottle_fill(light=LIGHT, mid=GOLD, deep=DEEP, seed=12, grain=texkit.SMOOTH["
 # vinegar's brown
 BIODIESEL = ((250, 200, 96), (212, 130, 30), (140, 72, 16))
 
+# Methanol in a bottle, lit top, body and depth: near clear, a cold blue-white (the bottle's since 0.2); in a bucket
+# the same cold clear spirit a few steps bluer, or with no glass round it it read as a bucket of milk
+METHANOL = ((236, 244, 250), (206, 220, 232), (170, 188, 204))
+METHANOL_BUCKET = ((206, 228, 246), (156, 192, 224), (108, 146, 190))
+
+# Wood vinegar in a bottle, lit top, body and depth: a smoky brown (the bottle's since 0.2); in a bucket the same clear
+# amber-brown, lit a little brighter in the open bucket, told from biodiesel's redder amber
+WOOD_VINEGAR = ((176, 110, 60), (120, 64, 30), (72, 36, 16))
+WOOD_VINEGAR_BUCKET = ((204, 146, 92), (150, 94, 50), (98, 56, 26))
+
 INK = (36, 34, 40)
 # The oiler (itemkit): a steel drum, lit down its left as a cylinder is, and brass for its cone, spout and pump.
 OILER_COLOURS = {"1": (60, 64, 78), "2": (96, 102, 116), "3": (138, 146, 158), "4": (184, 192, 202), "5": (230, 236, 242),
@@ -189,10 +199,26 @@ def main():
     write_json(ASSETS / "items/biodiesel_bucket.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/biodiesel_bucket"}})
     write_json(ASSETS / "blockstates/biodiesel.json", {"variants": {"": {"model": "nookworks:block/biodiesel"}}})
     write_json(ASSETS / "models/block/biodiesel.json", {"textures": {"particle": "nookworks:block/biodiesel_still"}})
+    # methanol, a liquid since 1.5: its bucket in the bottle's colours, its placed liquid
+    meth = dict(gold=METHANOL_BUCKET[1], light=METHANOL_BUCKET[0], deep=METHANOL_BUCKET[2])
+    save(bucket_fill(**meth), ITEM / "methanol_bucket_fill.png")
+    write_json(ASSETS / "models/item/methanol_bucket.json", {"parent": "minecraft:item/generated", "textures": {
+        "layer0": "minecraft:item/bucket", "layer1": "nookworks:item/methanol_bucket_fill"}})
+    write_json(ASSETS / "items/methanol_bucket.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/methanol_bucket"}})
+    write_json(ASSETS / "blockstates/methanol.json", {"variants": {"": {"model": "nookworks:block/methanol"}}})
+    write_json(ASSETS / "models/block/methanol.json", {"textures": {"particle": "nookworks:block/methanol_still"}})
+    # wood vinegar, a liquid since 1.5: its bucket in the bottle's colours, its placed liquid
+    vinegar = dict(gold=WOOD_VINEGAR_BUCKET[1], light=WOOD_VINEGAR_BUCKET[0], deep=WOOD_VINEGAR_BUCKET[2])
+    save(bucket_fill(**vinegar), ITEM / "wood_vinegar_bucket_fill.png")
+    write_json(ASSETS / "models/item/wood_vinegar_bucket.json", {"parent": "minecraft:item/generated", "textures": {
+        "layer0": "minecraft:item/bucket", "layer1": "nookworks:item/wood_vinegar_bucket_fill"}})
+    write_json(ASSETS / "items/wood_vinegar_bucket.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/wood_vinegar_bucket"}})
+    write_json(ASSETS / "blockstates/wood_vinegar.json", {"variants": {"": {"model": "nookworks:block/wood_vinegar"}}})
+    write_json(ASSETS / "models/block/wood_vinegar.json", {"textures": {"particle": "nookworks:block/wood_vinegar_still"}})
     # the other bottled liquids, drawn the same way under the vanilla glass: smoky brown wood vinegar, near-clear
     # methanol, and amber biodiesel, clear and without a speck
-    for name, colours, seed, grain in (("wood_vinegar", ((176, 110, 60), (120, 64, 30), (72, 36, 16)), 15, None),
-                                       ("methanol", ((236, 244, 250), (206, 220, 232), (170, 188, 204)), 16, None),
+    for name, colours, seed, grain in (("wood_vinegar", WOOD_VINEGAR, 15, None),
+                                       ("methanol", METHANOL, 16, None),
                                        ("biodiesel_bottle", BIODIESEL, 17, 0),
                                        # liquid experience, the pale glowing green of its pipes and tanks
                                        ("liquid_experience_bottle", ((214, 252, 140), (150, 226, 70), (78, 150, 32)), 18,

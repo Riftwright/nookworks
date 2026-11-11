@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "WWW",
+    "NNN"
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "W": "#minecraft:wooden_slabs",
+    "N": "minecraft:iron_nugget"
+  },
+  "result": {
+    "id": "nookworks:wind_chime",
+    "count": 1
+  }
+}

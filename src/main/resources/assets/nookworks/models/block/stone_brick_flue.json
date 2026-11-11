@@ -6,7 +6,8 @@
     "cap": "minecraft:block/smooth_stone",
     "cap_side": "minecraft:block/smooth_stone_slab_side",
     "pot": "minecraft:block/terracotta",
-    "soot": "minecraft:block/black_concrete"
+    "soot": "nookworks:block/chimney_soot",
+    "flue": "nookworks:block/stone_brick_flue_inside"
   },
   "elements": [
     {
@@ -26,7 +27,7 @@
           "cullface": "north"
         },
         "south": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "east": {
           "texture": "#brick",
@@ -59,7 +60,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "south": {
           "texture": "#brick",
@@ -96,13 +97,13 @@
       ],
       "faces": {
         "north": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "south": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "east": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "west": {
           "texture": "#brick",
@@ -131,17 +132,17 @@
       ],
       "faces": {
         "north": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "south": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "east": {
           "texture": "#brick",
           "cullface": "east"
         },
         "west": {
-          "texture": "#soot"
+          "texture": "#flue"
         },
         "up": {
           "texture": "#brick",

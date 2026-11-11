@@ -113,6 +113,9 @@ final class R15Tests {
      * (a block drawn from #wall_corals) stopped the If's world being made (found in r15's tests).
      */
     private static void ifCoral(GameTestHelper helper) {
+        if (IfTests.notOurs(helper)) {
+            return;
+        }
         var server = helper.getLevel().getServer();
         var world = dev.nookworks.ifworld.IfWorld.get(server);
         while (!world.rolled()) {

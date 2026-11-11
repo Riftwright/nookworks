@@ -278,8 +278,10 @@ final class R7KitchenDataCoreTests {
             String part = partOf.get(page.getValue());
             Map<Item, List<String>> without = pages(name -> !name.equals(part));
             String other = own + ".without_" + part;
-            check(helper, without.getOrDefault(page.getKey(), List.of()).equals(List.of(other)),
-                    "with " + part + " off, " + other + ": " + without.get(page.getKey()));
+            // in its place (the Retort's general page stands before it, the same with the part off or on)
+            List<String> left = without.getOrDefault(page.getKey(), List.of());
+            check(helper, left.contains(other) && !left.contains(own) && left.size() == all.get(page.getKey()).size(),
+                    "with " + part + " off, " + other + " in place of " + own + ": " + without.get(page.getKey()));
         }
         // the Barter Terminal goes with the Mob Bottle, and the fan's page with it
         Map<Item, List<String>> noBottle = pages(name -> Features.enabled(name, part -> !part.equals("mob_bottle")));

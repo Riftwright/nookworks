@@ -84,7 +84,12 @@ public class SeatEntity extends Entity {
         }
         SeatEntity seat = new SeatEntity(level, pos, height);
         level.addFreshEntity(seat);
-        return player.startRiding(seat);
+        boolean sat = player.startRiding(seat);
+        if (sat) { // heard sitting down (the sound session's survey, 2026-11-10: our seats made no sound)
+            level.playSound(null, pos, dev.nookworks.registry.ModSounds.SEAT_SIT.get(), net.minecraft.sounds.SoundSource.BLOCKS,
+                    1.0F, 0.95F + level.getRandom().nextFloat() * 0.1F);
+        }
+        return sat;
     }
 
     @Override

@@ -50,7 +50,9 @@ import org.jspecify.annotations.Nullable;
  * Biodiesel: with methanol in the charge slot and caustic soda in the second, it stirs {@link #OIL_PER_BATCH} mB of
  * vegetable oil - piped into its oil tank - into as much biodiesel, which it pushes out of its top into a Copper Pipe or
  * tank; the methanol's bottle goes below with the rest. So a press, this tank and a Generator make a line that runs by
- * itself, fed with seeds, methanol and caustic soda by hopper.
+ * itself, fed with seeds, methanol and caustic soda by hopper. Since 1.5 the methanol may come by pipe as well, into a
+ * tank of its own: with the charge slot empty, a bottle's worth of it ({@link #METHANOL_PER_BATCH} mB) goes into each
+ * batch in place of a bottle, as the Retort boils piped water when its charge slot is empty.
  * <p>
  * Mud: dirt - whatever vanilla turns to mud under a water bottle - stirred with a bottle's worth of water,
  * {@link #WATER_PER_MUD} mB piped in, becomes mud, into the container below; the Sifter gets clay and rice out of mud
@@ -64,6 +66,9 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
     public static final int OIL_TANK = 4_000;
     public static final int BIODIESEL_TANK = 1_000;
     public static final int OIL_PER_BATCH = 250;
+    /** Piped methanol: a bottle's worth a batch, as a bottle in the charge slot gives. */
+    public static final int METHANOL_PER_BATCH = OilFluids.BOTTLE;
+    public static final int METHANOL_TANK = 4_000;
     /**
      * Caustic soda is the catalyst, barely used up: one serves this many batches, a bucket of oil (the user, 2026-10-12:
      * a soda a batch spent the mercury cell's mercury on every 250 mB, a cinnabar an hour for one Diesel Generator).
@@ -79,12 +84,14 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
             fluid -> fluid == OilFluids.BIODIESEL.get(), false, true, this::setChanged);
     private final FluidStacksResourceHandler water = Tanks.tank(WATER_TANK, fluid -> fluid == Fluids.WATER,
             true, false, this::setChanged);
+    private final FluidStacksResourceHandler methanol = Tanks.tank(METHANOL_TANK, fluid -> fluid == OilFluids.METHANOL.get(),
+            true, false, this::setChanged);
     private final ResourceHandler<FluidResource> fluids =
-            new CombinedResourceHandler<>(this.water, this.oil, this.biodiesel);
+            new CombinedResourceHandler<>(this.water, this.oil, this.biodiesel, this.methanol);
 
     /**
-     * Whether water or oil has come in through the top: then the top is a feed, and no biodiesel is pushed up into it.
-     * The pipe bringing oil down onto the tank was filled with biodiesel the first time it ran empty, and the oil line
+     * Whether water, oil or methanol has come in through the top: then the top is a feed, and no biodiesel is pushed up
+     * into it. The pipe bringing oil down onto the tank was filled with biodiesel the first time it ran empty, and the oil line
      * stopped (round two of r21). Forgotten once nothing that holds liquid is above.
      */
     private boolean topFeeds;
@@ -122,7 +129,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         super(ModBlockEntities.STIRRING_TANK.get(), pos, state, 2, 1, 10_000);
     }
 
-    /** Water and oil in, biodiesel out, from any side (a pipe only takes what it carries). */
+    /** Water, oil and methanol in, biodiesel out, from any side (a pipe only takes what it carries). */
     public ResourceHandler<FluidResource> fluidHandler() {
         return this.fluids;
     }
@@ -149,8 +156,18 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         return this.water.getAmountAsInt(0);
     }
 
+    public int methanolStored() {
+        return this.methanol.getAmountAsInt(0);
+    }
+
+    /** A bottle of methanol in the charge slot, or the slot empty with piped methanol in its tank. */
     private boolean makingBiodiesel() {
-        return this.items.get(INPUT).is(ModOil.METHANOL.get());
+        return this.items.get(INPUT).is(ModOil.METHANOL.get()) || this.fromMethanolTank();
+    }
+
+    /** Making biodiesel of the methanol tank's: the charge slot is empty (a bottle there goes first). */
+    private boolean fromMethanolTank() {
+        return this.items.get(INPUT).isEmpty() && this.methanolStored() > 0;
     }
 
     private boolean makingMud() {
@@ -241,12 +258,14 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
 
 
     private void stirBiodiesel(ServerLevel level, BlockPos pos) {
+        boolean piped = this.fromMethanolTank();
         MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
+                : piped && this.methanolStored() < METHANOL_PER_BATCH ? MachineStatus.LOW_METHANOL
                 : this.catalystLeft <= 0 && !this.items.get(CATALYST).is(ModItems.CAUSTIC_SODA.get()) ? MachineStatus.NO_REAGENT
                 : this.oilStored() < OIL_PER_BATCH ? MachineStatus.LOW_OIL
                 : BIODIESEL_TANK - this.biodieselStored() < OIL_PER_BATCH ? MachineStatus.TANK_FULL : null;
         if (blocked != null) {
-            if (blocked == MachineStatus.LOW_OIL) {
+            if (blocked == MachineStatus.LOW_OIL || blocked == MachineStatus.LOW_METHANOL) {
                 this.progress = 0;
             }
             this.status = blocked;
@@ -264,7 +283,11 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         this.payWork(FE_PER_TICK);
         if (++this.progress >= MachineTuning.time(TICKS)) {
             this.progress = 0;
-            this.items.get(INPUT).shrink(1);
+            if (piped) {
+                Tanks.set(this.methanol, OilFluids.METHANOL.get(), this.methanolStored() - METHANOL_PER_BATCH);
+            } else {
+                this.items.get(INPUT).shrink(1);
+            }
             if (this.catalystLeft > 0) {
                 this.catalystLeft--;
             } else {
@@ -273,7 +296,9 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
             }
             Tanks.set(this.oil, OilFluids.SOURCE.get(), this.oilStored() - OIL_PER_BATCH);
             Tanks.set(this.biodiesel, OilFluids.BIODIESEL.get(), this.biodieselStored() + OIL_PER_BATCH);
-            this.addOutput(new ItemStack(Items.GLASS_BOTTLE));
+            if (!piped) {
+                this.addOutput(new ItemStack(Items.GLASS_BOTTLE)); // the methanol's bottle
+            }
             this.flush(level, pos);
         }
         this.setChanged();
@@ -347,11 +372,13 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         out.accept(Tanks.held(this.water));
         out.accept(Tanks.held(this.oil));
         out.accept(Tanks.held(this.biodiesel));
+        out.accept(Tanks.held(this.methanol));
     }
 
     @Override
     protected void restoreFluid(FluidStack fluid) {
-        if (!Tanks.restore(this.water, fluid) && !Tanks.restore(this.oil, fluid) && !Tanks.restore(this.biodiesel, fluid)) {
+        if (!Tanks.restore(this.water, fluid) && !Tanks.restore(this.oil, fluid) && !Tanks.restore(this.biodiesel, fluid)
+                && !Tanks.restore(this.methanol, fluid)) {
             super.restoreFluid(fluid);
         }
     }
@@ -362,6 +389,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         this.water.serialize(output.child("Water"));
         this.oil.serialize(output.child("Oil"));
         this.biodiesel.serialize(output.child("Biodiesel"));
+        this.methanol.serialize(output.child("methanol")); // since 1.5, snake_case as new keys are
         output.putInt("CatalystLeft", this.catalystLeft);
         if (this.topFeeds) {
             output.putBoolean("top_feeds", true);
@@ -374,6 +402,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         input.child("Water").ifPresent(this.water::deserialize);
         input.child("Oil").ifPresent(this.oil::deserialize);
         input.child("Biodiesel").ifPresent(this.biodiesel::deserialize);
+        input.child("methanol").ifPresent(this.methanol::deserialize);
         this.catalystLeft = Math.clamp(input.getIntOr("CatalystLeft", 0), 0, BATCHES_PER_SODA - 1);
         this.topFeeds = input.getBooleanOr("top_feeds", false);
     }
@@ -417,13 +446,14 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         return slot == INPUT && (MercuryRecipes.amalgamation(stack) != null || stack.is(ModOil.METHANOL.get()) || muddies(stack));
     }
 
-    /** The water for mud, the biodiesel it makes, the oil it takes and the mercury for amalgam. */
+    /** The water for mud, the biodiesel it makes, the oil and methanol it takes and the mercury for amalgam. */
     @Override
     public ResourceHandler<FluidResource> gaugeTank(int index) {
         return switch (index) {
             case 0 -> this.water;
             case 1 -> this.biodiesel;
             case 2 -> this.oil;
+            case 3 -> this.methanol;
             default -> null;
         };
     }
@@ -432,7 +462,8 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.WATER, this.waterStored(), WATER_TANK),
                 new GuiTank(GuiTank.Kind.BIODIESEL, this.biodieselStored(), BIODIESEL_TANK),
-                new GuiTank(GuiTank.Kind.VEGETABLE_OIL, this.oilStored(), OIL_TANK), this.mercuryTank());
+                new GuiTank(GuiTank.Kind.VEGETABLE_OIL, this.oilStored(), OIL_TANK),
+                new GuiTank(GuiTank.Kind.METHANOL, this.methanolStored(), METHANOL_TANK), this.mercuryTank());
     }
 
     @Override

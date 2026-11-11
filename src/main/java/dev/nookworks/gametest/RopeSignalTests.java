@@ -61,12 +61,16 @@ final class RopeSignalTests {
         for (HungItemEntity hung : new HungItemEntity[] {bulb, lantern, soul, bottle}) {
             level.addFreshEntity(hung);
         }
-        helper.runAfterDelay(8, () -> {
+        // the redstone set only once the knot has looked at its post unpowered: under load in a full run it could first
+        // look after, take the signal as how it stood and switch nothing (failed once, 2026-11-01); and its looks waited for
+        afterTicks(helper, RopeKnotEntity.at(level, a), 8, () -> {
             bulb.switchLight(level, false);
             lantern.switchLight(level, false);
             check(helper, bulb.switchedOff() && lantern.item().is(ModItems.UNLIT_LANTERN.get()), "the bulb off and the lantern out, to start");
             helper.setBlock(posts[0].north(), Blocks.REDSTONE_BLOCK);
-            helper.runAfterDelay(6, () -> {
+            RopeKnotEntity knot = RopeKnotEntity.at(level, a);
+            int lit = knot.tickCount;
+            afterTicks(helper, knot, lit + 6, () -> {
                 check(helper, RopeKnotEntity.at(level, a).signalled(), "the knot sees its post's signal");
                 check(helper, !bulb.switchedOff() && lantern.item().is(Items.LANTERN) && soul.item().is(Items.SOUL_LANTERN)
                         && bottle.item().is(Items.GLASS_BOTTLE), "as the signal comes, the bulb goes on and both lanterns are lit");

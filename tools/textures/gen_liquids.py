@@ -1,4 +1,4 @@
-"""The mod's liquids, still and flowing: vegetable oil, biodiesel, mercury and liquid experience.
+"""The mod's liquids, still and flowing: vegetable oil, biodiesel, methanol, wood vinegar, mercury and liquid experience.
 
 Each is an animation in vanilla's layout - still 16 px wide, flowing 32 px wide (the game draws a flowing face from a
 16 px window of it), 32 frames either way - and loops without a seam in space or time.
@@ -11,6 +11,10 @@ how bright the strokes are is what tells one liquid from another:
 - Vegetable oil: pale gold and see-through; broad, gentle swells and long soft highlights, slow - oil is thick.
 - Biodiesel: a clear deep amber, darker and a little less see-through than the oil, with fewer highlights: a fuel,
   not food, told from the oil at a glance.
+- Methanol: a clear spirit, colourless as water but for a faint cold blue-white; thin, so its swells are small and
+  quick and its ripples many and short, and it is the most see-through of them all.
+- Wood vinegar: a clear amber-brown, mostly water - thin as methanol, its ripples as quick, but brown as tea and a
+  little less see-through, told from biodiesel's deeper, redder amber by its paler, smokier brown.
 - Mercury: opaque liquid silver, bright as a mirror of the sky, with white glints where the light is broken; still,
   its swells are gentle (hard ones would show every block of a pool as a tile), falling, they are dark and bright in
   hard streaks, as a metal pours.
@@ -19,7 +23,7 @@ how bright the strokes are is what tells one liquid from another:
 The alpha of every pixel is what makes the game draw a liquid translucent: all opaque and it is drawn solid. A block of
 liquid is looked through twice (its near face and its far one), and a bright liquid reads as a wall well before a dark
 one does, so these sit under water's 180: oil and experience about 140, biodiesel, darker, about 160 (at 200 or so,
-two faces of gold were a solid golden block). Original work, deterministic. Run from the repo root:
+two faces of gold were a solid golden block); methanol, near colourless and pale, about 110, or it reads as frosted glass. Original work, deterministic. Run from the repo root:
 python tools/textures/gen_liquids.py
 """
 import json
@@ -195,6 +199,14 @@ OIL_LIGHT, OIL_GLINT = rgba((250, 232, 170), 168), rgba((255, 246, 210), 190)
 DIESEL = [rgba((104, 63, 17), 170), rgba((120, 73, 20), 164), rgba((134, 83, 23), 160), rgba((148, 94, 28), 158)]
 DIESEL_LIGHT, DIESEL_GLINT = rgba((186, 128, 50), 170), rgba((226, 176, 102), 192)
 
+# methanol: pale blue-greys close together, lighter than water's grey and much fainter, as a clear spirit is
+METHANOL = [rgba((176, 194, 210), 116), rgba((190, 206, 220), 112), rgba((204, 218, 230), 108), rgba((218, 230, 240), 108)]
+METHANOL_LIGHT, METHANOL_GLINT = rgba((236, 244, 250), 150), rgba((252, 254, 255), 184)
+
+# wood vinegar: smoky tea browns close together, about as faint as the oil (it reads as a brown glass block at more)
+WOOD_VINEGAR = [rgba((112, 66, 30), 140), rgba((128, 78, 38), 136), rgba((144, 92, 46), 132), rgba((160, 106, 58), 132)]
+WOOD_VINEGAR_LIGHT, WOOD_VINEGAR_GLINT = rgba((206, 156, 104), 160), rgba((236, 204, 160), 184)
+
 MERCURY = [rgba((84, 90, 102), 255), rgba((122, 128, 142), 255), rgba((162, 168, 182), 255), rgba((200, 206, 218), 255),
            rgba((232, 236, 244), 255)]
 MERCURY_LIGHT, MERCURY_GLINT = rgba((218, 222, 232), 255), rgba((252, 253, 255), 255)
@@ -212,13 +224,21 @@ def main():
         save(liquid(size, flow, 23, DIESEL, steps=5, big=(2, 3), fine=(3, 5), contrast=0.8, strokes=1, stroke_len=(6, 9),
                     stroke_colour=DIESEL_LIGHT, bands=BANDS, slant=not flow, soft=True, life=(14, 22)),
              f"biodiesel_{suffix}", 2)
+        # thin and quick: more, shorter ripples than the oils', across a still surface (not on a slant, as water's)
+        save(liquid(size, flow, 61, METHANOL, steps=5, big=(2, 4), fine=(4, 6), contrast=0.9, strokes=3, stroke_len=(3, 5),
+                    stroke_colour=METHANOL_LIGHT, glints=1, glint_colour=METHANOL_GLINT, bands=BANDS, soft=True,
+                    life=(10, 16)), f"methanol_{suffix}", 2)
+        # as thin and quick as methanol, a shade fewer ripples
+        save(liquid(size, flow, 67, WOOD_VINEGAR, steps=5, big=(2, 4), fine=(4, 6), contrast=0.85, strokes=2, stroke_len=(3, 5),
+                    stroke_colour=WOOD_VINEGAR_LIGHT, glints=1, glint_colour=WOOD_VINEGAR_GLINT, bands=BANDS, soft=True,
+                    life=(10, 16)), f"wood_vinegar_{suffix}", 2)
         # still mercury is a mirror: gentle swells and few glints, or a pool shows its blocks as tiles
         save(liquid(size, flow, 37, MERCURY, steps=6, big=(2, 3), fine=(3, 4), contrast=1.5 if flow else 1.05,
                     lift=0.7 if flow else 0.8, strokes=3 if flow else 2, stroke_len=(2, 4), stroke_colour=MERCURY_LIGHT,
                     glints=3 if flow else 1, glint_colour=MERCURY_GLINT), f"mercury_{suffix}", 3)
         save(liquid(size, flow, 53, EXPERIENCE, steps=6, big=(2, 3), fine=(3, 5), contrast=1.1, strokes=3, stroke_len=(2, 4),
                     stroke_colour=EXPERIENCE_LIGHT, sparks=3, spark_colour=EXPERIENCE_SPARK), f"liquid_experience_{suffix}", 2)
-    print("wrote the four liquids, still and flowing")
+    print("wrote the six liquids, still and flowing")
 
 
 if __name__ == "__main__":

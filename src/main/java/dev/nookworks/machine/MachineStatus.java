@@ -70,7 +70,14 @@ public enum MachineStatus {
     /** A Motor turning with no machine at work (powered, it always turns). */
     IDLING(Tone.QUIET),
     /** A Motor held still by a redstone signal: shown plainly (the user, 2026-10-25: the redstone wording read as fussy). */
-    STOPPED(Tone.QUIET);
+    STOPPED(Tone.QUIET),
+    /**
+     * A Stirring Tank making biodiesel of piped methanol, its charge slot empty, with less in its methanol tank than a
+     * batch takes (since 1.5; last, so the statuses before it keep their numbers).
+     */
+    LOW_METHANOL(Tone.WARN),
+    /** A Laser with a grown pumpkin or melon in its beam, storing the surge to cut it (since 1.5). */
+    CHARGING_CUT(Tone.QUIET);
 
     public enum Tone {
         GOOD, QUIET, WARN, BAD
@@ -84,6 +91,14 @@ public enum MachineStatus {
 
     public Tone tone() {
         return this.tone;
+    }
+
+    /**
+     * Whether a machine stopped like this wants someone to see to it - an amber or red status, or out of fuel - so its
+     * stop is heard (MachineAlerts) and a Machine Bell beside it rings; idle, held by redstone or full is as meant.
+     */
+    public boolean alerts() {
+        return this.tone == Tone.WARN || this.tone == Tone.BAD || this == NO_FUEL;
     }
 
     public String translationKey() {

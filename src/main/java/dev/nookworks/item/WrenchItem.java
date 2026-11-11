@@ -2,10 +2,15 @@ package dev.nookworks.item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.feature.JoinOverrides;
+import dev.nookworks.feature.WrenchRecovery;
+import dev.nookworks.registry.ModDataComponents;
+import dev.nookworks.registry.ModSounds;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.block.PipeSides;
 import dev.nookworks.fluid.CopperFittingBlock;
@@ -13,22 +18,30 @@ import dev.nookworks.fluid.FluidPipeBlockEntity;
 import dev.nookworks.furniture.BenchBlock;
 import dev.nookworks.furniture.DeskBlock;
 import dev.nookworks.furniture.WallShelfBlock;
+import dev.nookworks.wood.TurnedPlanks;
 import dev.nookworks.feature.Permission;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -63,6 +76,14 @@ import net.minecraft.world.phys.Vec3;
  * picks a machine up, say), and if it takes none the block is turned back a step - its empty-hand use, which would
  * open its screen, is not asked, vanilla skipping it for a sneak-use too. The block is asked to turn with its place in
  * the world, for a mod whose block turns more than itself.
+ * <p>
+ * Two modes (the user, 2026-11-07), switched by a sneak-use at nothing ({@link WrenchMode}): Adjust is all of the
+ * above, and sneak-used on a fence, wall or pane parts the side aimed at from what it joins, or joins it
+ * ({@link JoinOverrides}); Recover takes a machine or fitting in {@code #nookworks:wrench_pickup} up into the inventory at
+ * once ({@link WrenchRecovery}), and does nothing else.
+ * <p>
+ * In Adjust, planks and wooden slabs, which face no way, turn their boards a quarter, to run up and down and back
+ * ({@link TurnedPlanks}, the user, 2026-11-10).
  */
 public class WrenchItem extends Item {
     /** Blocks the Wrench leaves alone although they face some way. Packs may add their own. */
@@ -84,6 +105,49 @@ public class WrenchItem extends Item {
         return state.getBlock() instanceof WallShelfBlock ? WallShelfBlock.apartSide(level, pos, state, hit) : null;
     }
 
+    /** The mode {@code stack} is in: Adjust unless switched. */
+    public static WrenchMode mode(ItemStack stack) {
+        return stack.getOrDefault(ModDataComponents.WRENCH_MODE.get(), WrenchMode.ADJUST);
+    }
+
+    /** Sets {@code stack}'s mode; Adjust is kept as no component at all, as a new Wrench has. */
+    public static void setMode(ItemStack stack, WrenchMode mode) {
+        if (mode == WrenchMode.ADJUST) {
+            stack.remove(ModDataComponents.WRENCH_MODE.get());
+        } else {
+            stack.set(ModDataComponents.WRENCH_MODE.get(), mode);
+        }
+    }
+
+    /**
+     * Sneak-used at nothing - no block in reach - the Wrench switches between Adjust and Recover, the action bar naming
+     * the mode it is now in. A sneak-use at a block it does nothing with does not switch it (vanilla goes on to this use
+     * then too): one missing a pipe's side by a hair would find the Wrench in the other mode.
+     */
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        // the Wrench in hand only: one in the other hand is not switched by a sneak-click made with something else (r1 review)
+        if (hand != InteractionHand.MAIN_HAND || !player.isShiftKeyDown()
+                || getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE).getType() == HitResult.Type.BLOCK) {
+            return InteractionResult.PASS;
+        }
+        ItemStack stack = player.getItemInHand(hand);
+        WrenchMode now = mode(stack).next();
+        setMode(stack, now);
+        level.playSound(null, player.blockPosition(), ModSounds.WRENCH_TURN.get(), SoundSource.PLAYERS, 0.5F,
+                now == WrenchMode.RECOVER ? 1.15F : 1.0F);
+        if (!level.isClientSide()) {
+            player.sendOverlayMessage(Component.translatable("message.nookworks.wrench.mode", now.displayName()));
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder,
+            TooltipFlag flag) {
+        builder.accept(Component.translatable("tooltip.nookworks.wrench.mode", mode(stack).displayName()).withStyle(ChatFormatting.GRAY));
+    }
+
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
@@ -91,6 +155,74 @@ public class WrenchItem extends Item {
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
         boolean backwards = player != null && player.isShiftKeyDown();
+
+        // Recover mode: a machine or fitting is taken up into the inventory (WrenchRecovery), sneaking or not. Anything
+        // else is left to its own use, as with any other item in hand: the Wrench neither turns nor sets up in this mode.
+        if (mode(stack) == WrenchMode.RECOVER) {
+            if (!state.is(WrenchRecovery.PICKUP) || player == null) {
+                return InteractionResult.PASS;
+            }
+            if (level instanceof ServerLevel server && player instanceof ServerPlayer serverPlayer) {
+                return WrenchRecovery.recover(server, pos, serverPlayer, context.getHand());
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Planks and wooden slabs: their boards turned to run up and down, and back (the user, 2026-11-10) - in place, a
+        // slab's half and its water kept (TurnedPlanks). Sneaking or not the same: there are only the two ways.
+        BlockState turnedPlanks = state.is(IGNORES) ? null : TurnedPlanks.turn(state);
+        if (turnedPlanks != null) {
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel) {
+                level.setBlock(pos, turnedPlanks, Block.UPDATE_ALL);
+                level.playSound(null, pos, state.getSoundType(level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 0.8F, 1.1F);
+                if (player != null) {
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // A fence gate: sneak-use lowers it as between walls, or raises it to a fence's height (the user, 2026-11-07).
+        if (backwards && JoinOverrides.gate(state) && !state.is(IGNORES)) {
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel server) {
+                boolean lowered = JoinOverrides.toggleGate(server, pos, state);
+                level.playSound(null, pos, state.getSoundType(level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 0.8F, lowered ? 0.8F : 1.2F);
+                if (player != null) {
+                    player.sendOverlayMessage(Component.translatable(lowered ? "message.nookworks.wrench.gate_low" : "message.nookworks.wrench.gate_high"));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        // Fences, walls and panes: sneak-use parts the side aimed at from what it joins, or joins it - this block's side
+        // only, the one beside it keeping its own (the user, 2026-11-07). JoinOverrides keeps it so when the neighbours change.
+        // One of another mod's that has no such side, or shapes itself its own way, is left alone (JoinOverrides.settable).
+        if (backwards && JoinOverrides.joinable(state) && !state.is(IGNORES)
+                && JoinOverrides.settable(state, JoinOverrides.sideFromHit(pos, context.getClickLocation(), context.getClickedFace(),
+                        player != null ? player.getDirection().getOpposite() : context.getClickedFace()))) {
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel server) {
+                Direction side = JoinOverrides.sideFromHit(pos, context.getClickLocation(), context.getClickedFace(),
+                        player != null ? player.getDirection().getOpposite() : context.getClickedFace());
+                boolean joined = JoinOverrides.toggle(server, pos, state, side);
+                level.playSound(null, pos, state.getSoundType(level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 0.8F, joined ? 1.2F : 0.8F);
+                if (player != null) {
+                    player.sendOverlayMessage(Component.translatable(joined ? "message.nookworks.wrench.join_on" : "message.nookworks.wrench.join_off",
+                            Component.translatable("direction.nookworks." + side.getSerializedName())));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
 
         // Pipes and cables: sneak-use switches the side you point at off, or back on - and a fluid pipe's side against a
         // tank or machine goes joined, pulling, off (FluidPipeBlockEntity.cycle).
@@ -108,8 +240,9 @@ public class WrenchItem extends Item {
                 FluidPipeBlockEntity.SideSetting now = level.getBlockEntity(pos) instanceof FluidPipeBlockEntity pipe
                         ? pipe.cycle(server, side)
                         : PipeSides.toggle(level, pos, state, side) ? FluidPipeBlockEntity.SideSetting.OFF : FluidPipeBlockEntity.SideSetting.JOINED;
-                level.playSound(null, pos, now == FluidPipeBlockEntity.SideSetting.OFF ? SoundEvents.IRON_TRAPDOOR_CLOSE : SoundEvents.IRON_TRAPDOOR_OPEN,
-                        SoundSource.BLOCKS, 0.6F, now == FluidPipeBlockEntity.SideSetting.PULLING ? 1.0F : 1.4F);
+                // each setting at a pitch of its own, as before (an iron trapdoor shut for off, opened low for pulling, high for joined)
+                level.playSound(null, pos, ModSounds.WRENCH_TURN.get(),
+                        SoundSource.BLOCKS, 0.6F, now == FluidPipeBlockEntity.SideSetting.OFF ? 0.85F : now == FluidPipeBlockEntity.SideSetting.PULLING ? 1.0F : 1.12F);
                 if (player != null) {
                     player.sendOverlayMessage(Component.translatable(switch (now) {
                         case OFF -> "message.nookworks.wrench.side_off";
@@ -130,7 +263,7 @@ public class WrenchItem extends Item {
             if (level instanceof ServerLevel) {
                 BlockState moved = state.cycle(CorrugatedSheetBlock.CENTERED);
                 level.setBlock(pos, moved, Block.UPDATE_ALL);
-                level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.6F, 1.2F);
+                level.playSound(null, pos, ModSounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.6F, 1.0F);
                 if (player != null) {
                     player.sendOverlayMessage(Component.translatable(moved.getValue(CorrugatedSheetBlock.CENTERED)
                             ? "message.nookworks.wrench.sheet_centered" : "message.nookworks.wrench.sheet_against"));
@@ -205,7 +338,7 @@ public class WrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
-        if (ownOrVanilla(state)) {
+        if (ownOrVanilla(state) || mode(context.getItemInHand()) == WrenchMode.RECOVER) {
             return InteractionResult.PASS; // already had its turn, first
         }
         return turnAt(context, state, context.getPlayer() != null && context.getPlayer().isShiftKeyDown());
@@ -247,7 +380,7 @@ public class WrenchItem extends Item {
             level.setBlockAndUpdate(pos, turned);
             // and whatever holds what it offers a side looks again: a tank kept pouring into a sight glass turned on its side
             level.invalidateCapabilities(pos);
-            level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.6F, 1.6F);
+            level.playSound(null, pos, ModSounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.6F, 1.05F);
             if (player != null) {
                 context.getItemInHand().hurtAndBreak(1, player, context.getHand());
             }

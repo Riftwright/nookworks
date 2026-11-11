@@ -9,7 +9,6 @@ import dev.nookworks.block.entity.SifterBlockEntity;
 import dev.nookworks.machine.MachineMenu;
 import dev.nookworks.machine.MachineTuning;
 import dev.nookworks.mercury.RetortBlockEntity;
-import dev.nookworks.mercury.RetortBottles;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.oil.OilPressBlockEntity;
@@ -55,10 +54,10 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
  * the Oil Press takes in place of the flower.
  */
 final class BiodieselTests {
-    static final String[] NEED_LIQUID_EXPERIENCE = {"retort_sends_hoppered_bottles_where_its_screen_says"};
+    static final String[] NEED_LIQUID_EXPERIENCE = {"retort_takes_no_hoppered_bottle"};
 
     static void register() {
-        test("retort_sends_hoppered_bottles_where_its_screen_says", 120, BiodieselTests::retortBottles);
+        test("retort_takes_no_hoppered_bottle", 120, BiodieselTests::retortBottles);
         test("one_caustic_soda_serves_four_batches_of_biodiesel", 600, BiodieselTests::sodaServesFour);
         test("sunflower_seeds_sift_sow_shell_and_press", BiodieselTests::sunflowerSeeds);
         test("a_slower_job_costs_no_more_power", BiodieselTests::slowerJobCostsNoMore);
@@ -66,46 +65,40 @@ final class BiodieselTests {
     }
 
     /**
-     * Auto, as it was: an empty retort's bottles to the fill box. Experience only: to the fill box though logs are in.
-     * Wood Vinegar only: to the reagents, though no log is in yet. The button steps through them; the choice is saved.
+     * Since 1.5 the Retort fills no bottle (the user's rule for both mods, 2026-11-08) and its bottle setting is gone: a
+     * hopper's glass bottles stay in the hopper whether logs are in or not, and a Retort saved with the old setting
+     * ("Bottles") loads as any other.
      */
     private static void retortBottles(GameTestHelper helper) {
-        BlockPos experience = new BlockPos(1, 1, 1);
-        BlockPos vinegar = new BlockPos(4, 1, 1);
-        for (BlockPos pos : List.of(experience, vinegar)) {
+        BlockPos empty = new BlockPos(1, 1, 1);
+        BlockPos logs = new BlockPos(4, 1, 1);
+        for (BlockPos pos : List.of(empty, logs)) {
             helper.setBlock(pos, ModBlocks.RETORT.get());
             helper.setBlock(pos.above(), Blocks.HOPPER);
             helper.getBlockEntity(pos.above(), HopperBlockEntity.class).setItem(0, new ItemStack(Items.GLASS_BOTTLE, 4));
         }
-        var toFill = helper.getBlockEntity(experience, RetortBlockEntity.class);
-        var toLogs = helper.getBlockEntity(vinegar, RetortBlockEntity.class);
-        check(helper, toFill.bottles() == RetortBottles.AUTO, "a retort starts as it always worked: " + toFill.bottles());
-
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        var menu = new MachineMenu(1, player.getInventory(), toFill.layout(), toFill.slots(), MachineMenu.data(toFill), toFill);
-        check(helper, menu.clickMenuButton(player, MachineMenu.BUTTON_RETORT_BOTTLES) && toFill.bottles() == RetortBottles.EXPERIENCE,
-                "the screen's button steps to experience only: " + toFill.bottles());
-        check(helper, menu.extra() == RetortBottles.EXPERIENCE.ordinal(), "and the screen is told so");
-        toFill.setItem(0, new ItemStack(Items.OAK_LOG, 4)); // logs in, which in auto would take the bottles
-        toLogs.setBottles(RetortBottles.VINEGAR);
+        var withLogs = helper.getBlockEntity(logs, RetortBlockEntity.class);
+        withLogs.setItem(0, new ItemStack(Items.OAK_LOG, 4));
+        check(helper, withLogs.getContainerSize() == 5, "the Retort has its charge, two reagents and two outputs: " + withLogs.getContainerSize());
 
         var saved = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, helper.getLevel().registryAccess());
-        toLogs.saveCustomOnly(saved);
-        check(helper, "VINEGAR".equals(saved.buildResult().getStringOr("Bottles", "")), "the choice is saved");
-        // and read back by a retort made afresh, as after a restart (r14: only the writing was looked at)
-        var reloaded = new RetortBlockEntity(helper.absolutePos(vinegar), helper.getBlockState(vinegar));
+        withLogs.saveCustomOnly(saved);
+        var tag = saved.buildResult();
+        check(helper, !tag.contains("Bottles"), "no bottle setting is saved");
+        tag.putString("Bottles", "VINEGAR"); // as 1.4 saved it
+        var reloaded = new RetortBlockEntity(helper.absolutePos(logs), helper.getBlockState(logs));
         reloaded.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(ProblemReporter.DISCARDING,
-                helper.getLevel().registryAccess(), saved.buildResult()));
-        check(helper, reloaded.bottles() == RetortBottles.VINEGAR, "and read back: " + reloaded.bottles());
+                helper.getLevel().registryAccess(), tag));
+        check(helper, reloaded.getItem(0).is(Items.OAK_LOG) && reloaded.getItem(0).getCount() == 4, "and one saved with it loads: " + reloaded.getItem(0));
         helper.runAfterDelay(60, () -> {
-            check(helper, toFill.getItem(RetortBlockEntity.FILL).is(Items.GLASS_BOTTLE)
-                    && toFill.getItem(RetortBlockEntity.FIRST_REAGENT).isEmpty()
-                    && toFill.getItem(RetortBlockEntity.FIRST_REAGENT + 1).isEmpty(),
-                    "experience only: into the fill box, the logs beside them left without: " + toFill.getItem(RetortBlockEntity.FILL));
-            check(helper, toLogs.getItem(RetortBlockEntity.FILL).isEmpty()
-                    && toLogs.getItem(RetortBlockEntity.FIRST_REAGENT).is(Items.GLASS_BOTTLE),
-                    "wood vinegar only: to the reagents with no log in yet, never the fill box: "
-                            + toLogs.getItem(RetortBlockEntity.FIRST_REAGENT) + ", " + toLogs.getItem(RetortBlockEntity.FILL));
+            for (BlockPos pos : List.of(empty, logs)) {
+                var retort = helper.getBlockEntity(pos, RetortBlockEntity.class);
+                for (int i = 1; i < retort.getContainerSize(); i++) {
+                    check(helper, !retort.getItem(i).is(Items.GLASS_BOTTLE), "no bottle went into slot " + i + ": " + retort.getItem(i));
+                }
+                check(helper, helper.getBlockEntity(pos.above(), HopperBlockEntity.class).getItem(0).getCount() == 4,
+                        "the hopper keeps its bottles");
+            }
             helper.succeed();
         });
     }

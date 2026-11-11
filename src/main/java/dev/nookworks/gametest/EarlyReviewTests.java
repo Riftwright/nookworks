@@ -1500,9 +1500,10 @@ final class EarlyReviewTests {
      */
     static void woodToMethanolToBiodiesel(GameTestHelper helper) {
         var retorting = MercuryRecipes.retorting(new ItemStack(Items.OAK_LOG));
-        check(helper, retorting != null && retorting.byproduct().value() == ModOil.WOOD_VINEGAR.get()
-                && retorting.remainder().map(h -> h.value() == Items.CHARCOAL).orElse(false)
-                && retorting.reagents().stream().anyMatch(set -> new ItemStack(Items.GLASS_BOTTLE).is(set)), "a log and a bottle: charcoal and wood vinegar");
+        // since 2026-11-10 the wood vinegar comes off as a liquid, no bottle with the log
+        check(helper, retorting != null && retorting.byproduct().value() == Items.CHARCOAL && !retorting.needsReagents()
+                && retorting.liquid().map(l -> l.getFluid() == dev.nookworks.oil.OilFluids.WOOD_VINEGAR.get()).orElse(false),
+                "a log: charcoal and wood vinegar");
         var distilling = MercuryRecipes.distillation(new ItemStack(ModOil.WOOD_VINEGAR.get()));
         check(helper, distilling != null && distilling.result().map(h -> h.value() == ModOil.METHANOL.get()).orElse(false),
                 "wood vinegar distils to methanol");

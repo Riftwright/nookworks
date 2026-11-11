@@ -7,6 +7,7 @@ import dev.nookworks.machine.ElectrolyticCellBlockEntity;
 import dev.nookworks.machine.GaugePouring;
 import dev.nookworks.machine.GuiTank;
 import dev.nookworks.machine.MachineMenu;
+import dev.nookworks.menu.tab.LiquidTab;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
@@ -30,7 +31,7 @@ final class GaugePouringTests {
 
     static void register() {
         test("a_bucket_or_bottle_clicked_on_a_gauge_pours_into_that_tank", GaugePouringTests::pours);
-        test("a_bucket_of_mercury_clicked_on_its_gauge_fills_the_mercury_tank", GaugePouringTests::mercury);
+        test("a_bucket_of_mercury_in_the_liquid_tab_fills_the_mercury_tank", GaugePouringTests::mercury);
     }
 
     private static void pours(GameTestHelper helper) {
@@ -56,31 +57,34 @@ final class GaugePouringTests {
         helper.succeed();
     }
 
+    /**
+     * A bucket of mercury in the Electrolytic Cell's Liquid tab goes into its mercury pool, and an empty one takes it back
+     * out (since 1.5 by the tab, the gauge click gone); a spectator's tab does nothing.
+     */
     private static void mercury(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         helper.setBlock(at, ModBlocks.ELECTROLYTIC_CELL.get());
         ElectrolyticCellBlockEntity cell = helper.getBlockEntity(at, ElectrolyticCellBlockEntity.class);
-        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
-        var pos = helper.absolutePos(at.south());
-        player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
         var menu = new MachineMenu(1, player.getInventory(), cell.layout(), cell.slots(), MachineMenu.data(cell), cell);
-        menu.setCarried(new ItemStack(ModItems.MERCURY_BUCKET.get()));
-        int mercuryGauge = cell.guiTanks().size() - 1;
+        LiquidTab liquid = menu.tabs().liquid();
         int before = cell.mercuryStore().amount();
-        check(helper, GaugePouring.clicked(player, menu, mercuryGauge) && cell.mercuryStore().amount() == before + 1000,
-                "a bucket of mercury on the mercury gauge goes into the cell: " + cell.mercuryStore().amount());
-        check(helper, menu.getCarried().is(Items.BUCKET), "the bucket comes back empty");
-        check(helper, GaugePouring.clicked(player, menu, mercuryGauge) && menu.getCarried().is(ModItems.MERCURY_BUCKET.get())
-                && cell.mercuryStore().amount() == before, "and an empty one draws it out again");
-        menu.setCarried(new ItemStack(ModItems.MERCURY_BUCKET.get()));
-        check(helper, !GaugePouring.clicked(player, menu, 0), "mercury does not go in by the water gauge");
-        // a spectator with the screen open (one made so after opening it, r19)
-        ServerPlayer watching = (ServerPlayer) helper.makeMockServerPlayer(GameType.SPECTATOR);
-        watching.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        var watched = new MachineMenu(2, watching.getInventory(), cell.layout(), cell.slots(), MachineMenu.data(cell), cell);
-        watched.setCarried(new ItemStack(ModItems.MERCURY_BUCKET.get()));
-        check(helper, !GaugePouring.clicked(watching, watched, mercuryGauge) && cell.mercuryStore().amount() == before
-                && watched.getCarried().is(ModItems.MERCURY_BUCKET.get()), "a spectator pours nothing");
+        liquid.slot(LiquidTab.POUR).set(new ItemStack(ModItems.MERCURY_BUCKET.get()));
+        for (int i = 0; i < LiquidTab.TICKS; i++) {
+            menu.tabs().tick(player);
+        }
+        check(helper, cell.mercuryStore().amount() == before + 1000 && liquid.slot(LiquidTab.POUR).getItem().is(Items.BUCKET),
+                "a bucket of mercury goes into the cell and comes back empty: " + cell.mercuryStore().amount());
+        menu.clickMenuButton(player, dev.nookworks.menu.tab.MenuTabs.BUTTON_LIQUID_CHOICE + cell.guiTanks().size() - 1);
+        liquid.slot(LiquidTab.DRAW).set(new ItemStack(Items.BUCKET));
+        for (int i = 0; i < LiquidTab.TICKS; i++) {
+            menu.tabs().tick(player);
+        }
+        check(helper, liquid.slot(LiquidTab.DRAW).getItem().is(ModItems.MERCURY_BUCKET.get()) && cell.mercuryStore().amount() == before,
+                "and an empty one draws it out again: " + liquid.slot(LiquidTab.DRAW).getItem());
+        check(helper, GaugePouring.pourMercury(new ItemStack(Items.WATER_BUCKET), cell.mercuryStore(), true).isEmpty(),
+                "a water bucket is no mercury");
+        menu.removed(player);
         helper.succeed();
     }
 }

@@ -21,6 +21,9 @@ import dev.nookworks.poster.PrintingPressBlockEntity;
 import dev.nookworks.poster.PrintingPressMenu;
 import dev.nookworks.registry.ModItems;
 import net.minecraft.ChatFormatting;
+import dev.nookworks.client.gui.tab.ScreenTabs;
+import dev.nookworks.client.gui.tab.TabbedScreen;
+import dev.nookworks.menu.tab.TabSlot;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -45,7 +48,8 @@ import net.minecraft.world.item.ItemStack;
  * Between them, Photos: the photos in the cameras the player carries, newest first, a click choosing one; beside them the
  * print as it will come out, and the sizes it prints at. With no camera, or none with a photo, the page says so.
  */
-public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMenu> {
+public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMenu> implements TabbedScreen {
+    private ScreenTabs tabs;
     private static final int CELL = 24;
     private static final int COLUMNS = 6;
     /** Two rows, so the whole screen stays 224 px tall and fits a 240 px GUI (a small window at GUI scale 2 or 3). */
@@ -146,8 +150,11 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
         this.syncing = false;
         this.letters.visible = this.page == Page.LABELS;
         this.addRenderableWidget(this.letters);
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
-                this.menu::redstoneMode, () -> this.press(PrintingPressMenu.BUTTON_REDSTONE)));
+        this.tabs = new ScreenTabs(this, this.menu.tabs());
+        // the redstone mode lives in the Settings tab since 1.5 (the user's design, 2026-11-08), its mode named beside it
+        this.tabs.addSetting(this.addRenderableWidget(new RedstoneButton(0, 0, this.menu::redstoneMode,
+                () -> this.press(PrintingPressMenu.BUTTON_REDSTONE))), () -> Component.translatable(this.menu.redstoneMode().translationKey()));
+        this.leftPos -= this.tabs.fit(this.children()); // an open tab kept inside a small window
     }
 
     /** The box changed: keep what it may say, and send it to the press, a letter a button. */
@@ -282,6 +289,9 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.tabs.mouseClicked(event)) {
+            return true;
+        }
         if (this.onBar(event.x(), event.y())) {
             this.dragging = true;
             // the thumb is taken where it is held, so a click on it moves nothing; a click beside it brings it there
@@ -386,11 +396,13 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        this.leftPos -= this.tabs.fit(this.children()); // first: all that follows is drawn from the left edge
         super.extractBackground(graphics, mouseX, mouseY, a);
+        this.tabs.extractBackground(graphics, mouseX, mouseY); // under the panel, which covers their inner edge
         MachineStyle.panel(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
         MachineStyle.bay(graphics, this.leftPos + 5, this.topPos + 16, this.imageWidth - 10, BAY_BOTTOM - 16);
         for (Slot slot : this.menu.slots) {
-            if (slot.isActive()) { // the label page's sample slot is not framed among the poster page's pictures
+            if (slot.isActive() && !(slot instanceof TabSlot)) { // the label page's sample slot is not framed among the poster page's pictures
                 MachineStyle.slot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
             }
         }
@@ -763,7 +775,7 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
-        MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 30, MachineStyle.TITLE, true);
+        MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 16, MachineStyle.TITLE, true);
         graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, MachineStyle.DIM, false);
         int textX = DISPLAY_X + (this.missingNow() != null ? 29 : 11);
         this.statusCut = MachineStyle.fitText(graphics, this.font, this.statusLine(), textX, ROW_Y + 5, DISPLAY_X + DISPLAY_W - 3 - textX,
@@ -843,6 +855,13 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
 
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        if (this.menu.getCarried().isEmpty()) {
+            List<Component> tabbed = this.tabs.tooltip(mouseX, mouseY);
+            if (!tabbed.isEmpty()) {
+                graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, tabbed), mouseX, mouseY);
+                return;
+            }
+        }
         if (this.statusCut && this.isHovering(DISPLAY_X, ROW_Y, DISPLAY_W, DISPLAY_H, mouseX, mouseY)) {
             graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, List.of(this.statusLine())), mouseX, mouseY);
             return;
@@ -961,5 +980,16 @@ public class PrintingPressScreen extends AbstractContainerScreen<PrintingPressMe
             lines.add(Component.translatable("gui.nookworks.printing_press.no_paper").withStyle(ChatFormatting.RED));
         }
         return lines;
+    }
+
+    @Override
+    public ScreenTabs tabs() {
+        return this.tabs;
+    }
+
+    /** A click on a tab is no click outside the screen: it throws nothing. */
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top) {
+        return super.hasClickedOutside(mouseX, mouseY, left, top) && !this.tabs.inside(mouseX, mouseY);
     }
 }

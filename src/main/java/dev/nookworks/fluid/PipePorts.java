@@ -117,4 +117,37 @@ public final class PipePorts {
             });
         }
     }
+
+    /**
+     * The ports a pipe's arms point at, set right once its chunk is in, on blocks that keep no block entity to do it
+     * themselves (the Condenser): one saved before it showed ports would show none until a neighbour changed. Blocks with
+     * a block entity see to their own ({@link #showOnLoad}). For a pipe's onLoad.
+     */
+    public static void showBesideOnLoad(BlockEntity pipe) {
+        if (pipe.getLevel() instanceof ServerLevel server) {
+            server.getServer().execute(() -> {
+                if (!pipe.isRemoved() && pipe.getLevel() == server) {
+                    showBeside(server, pipe.getBlockPos());
+                }
+            });
+        }
+    }
+
+    /** {@link #showBesideOnLoad}'s work, for the pipe at {@code pos}. Public for tests. */
+    public static void showBeside(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        for (var arm : PipeBlock.PROPERTY_BY_DIRECTION.entrySet()) {
+            BlockPos next = pos.relative(arm.getKey());
+            BooleanProperty port = PORTS.get(arm.getKey().getOpposite());
+            // a side whose chunk is not in is left: reading it would load it (as showOnLoad)
+            if (!state.hasProperty(arm.getValue()) || !state.getValue(arm.getValue()) || !level.isLoaded(next)) {
+                continue;
+            }
+            BlockState there = level.getBlockState(next);
+            if (there.hasProperty(port) && !there.getValue(port) && !there.hasBlockEntity()) {
+                // a port is only drawn: nothing beside it is asked its shape again (the pipe would ask after its arm)
+                level.setBlock(next, there.setValue(port, true), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            }
+        }
+    }
 }

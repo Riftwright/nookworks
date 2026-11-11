@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -36,6 +37,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AttachedStemBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +56,9 @@ import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
  * <li>a log of a natural tree: the whole tree is felled (drops on the ground) and its leaves decay fast - the stem of
  * a huge crimson or warped fungus too, cut as a log is (stems do not burn), its wart blocks left as they never decay
  * ({@link ChainBreaking#looksLikeTree});</li>
+ * <li>a pumpkin, melon, carved pumpkin or jack o'lantern ({@link #CUTS}), and any mod's gourd grown on vanilla's
+ * stems: cut as by hand, its drops on the ground (a pumpkin, melon slices, the carved pumpkin or lantern itself); one
+ * grown on its stem leaves the stem to grow another ({@link #cuttable});</li>
  * <li>any other flammable block: it may catch fire, unless it has Fireproof Coating;</li>
  * <li>living things anywhere along the beam: damage ({@code nookworks:laser}).</li>
  * </ul>
@@ -78,6 +84,18 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
     public static final int FE_STANDBY = 2;
     /** On top of that, the surge that actually takes the tree down. */
     public static final int FE_PER_FELL = 4_000;
+    /**
+     * The surge that cuts a pumpkin or melon off its stem (the user, 2026-11-10: 「レーザーでカボチャやスイカも収穫できるよう
+     * にしてほしいな」): an eighth of a tree's, one block against a trunk and its crown, on top of the beam's tick.
+     */
+    public static final int FE_PER_CUT = 500;
+    /**
+     * What the beam cuts off whole, as a hand would, wherever it stands: a pumpkin, a melon, a carved pumpkin, a jack
+     * o'lantern (the user, 2026-11-10: 「カボチャは壊せるのにくり抜いたカボチャやランタンが壊せないのは不自然」).
+     */
+    public static final TagKey<Block> CUTS = TagKey.create(Registries.BLOCK, Nookworks.id("laser_cuts"));
+    /** How often a fruit a claim kept from the laser's owner is asked about again, in ticks. */
+    private static final int ASK_AGAIN = 100;
     public static final int DAMAGE_INTERVAL = 10;
     public static final float DAMAGE = 4.0F;
     private static final int FIRE_CHANCE = 30; // percent, checked once a second
@@ -95,6 +113,9 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
     /** The log the beam last judged, and what it made of it: judged again once a second, or at once for a new log. */
     private @Nullable BlockPos judged;
     private Fell verdict = Fell.NOT_A_TREE;
+    /** A fruit a claim keeps from its owner, and when that was asked: left alone, beam and all, until asked again. */
+    private @Nullable BlockPos refusedFruit;
+    private int refusedAt;
     /** Who placed it: the laser breaks and burns as them, so it works inside their claim and nobody else's. */
     private @Nullable UUID owner;
     /** What its owner may take power from across a claim's edge, as last asked ({@link DrawRights}). */
@@ -163,6 +184,7 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
                 this.energy.set((int) (this.energy.getAmountAsLong() - cost));
                 this.status = work ? MachineStatus.RUNNING
                         : hit != null && hit.equals(this.judged) && this.verdict == Fell.WAITING ? MachineStatus.CHARGING
+                        : hit != null && cuttable(level, hit) && !this.refused(hit) ? MachineStatus.CHARGING_CUT
                         : MachineStatus.STANDBY;
                 if (work) {
                     length = reach;
@@ -222,6 +244,11 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
      * else that burns and has no Fireproof Coating. Stone, glass, a coated wall: the beam would only warm it.
      */
     private boolean worthFiringAt(ServerLevel level, BlockPos hit, Direction facing) {
+        if (cuttable(level, hit)) {
+            // a fruit is cut the tick the beam fires at it: fired at only with the surge stored, as a tree waits for its own
+            return !this.refused(hit)
+                    && this.energy.getAmountAsLong() >= MachineTuning.energy(FE_PER_CUT) + MachineTuning.energy(FE_PER_TICK);
+        }
         BlockState state = level.getBlockState(hit);
         boolean burns = state.isFlammable(level, hit, facing.getOpposite()) && !Fireproofing.isCoated(level, hit);
         if (state.is(BlockTags.LOGS)) {
@@ -253,6 +280,10 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
     }
 
     private void hitBlock(ServerLevel level, BlockPos hit, Direction facing) {
+        if (cuttable(level, hit)) {
+            this.cutFruit(level, hit);
+            return; // a gourd never catches fire from it
+        }
         BlockState state = level.getBlockState(hit);
         if (state.is(BlockTags.LOGS)) {
             // A log is judged once a second, not searched twenty times a second; a new log in the beam at once, and a
@@ -275,6 +306,50 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
                 level.setBlock(front, BaseFireBlock.getState(level, front), 11);
             }
         }
+    }
+
+    /** Whether the beam cuts the block at {@code pos} off whole: one of {@link #CUTS}, or any gourd grown on its stem. */
+    public static boolean cuttable(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).is(CUTS) || grownFruit(level, pos);
+    }
+
+    /**
+     * Whether the block at {@code pos} is a fruit grown on its stem: an attached stem beside it faces it. Only a fruit that
+     * grew there has one (the stem goes back to growing when its fruit is taken). Any mod's gourd grown on vanilla's
+     * attached stem counts, tagged or not.
+     */
+    public static boolean grownFruit(ServerLevel level, BlockPos pos) {
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            BlockPos stem = pos.relative(side);
+            if (!level.isLoaded(stem)) {
+                continue;
+            }
+            BlockState there = level.getBlockState(stem);
+            if (there.getBlock() instanceof AttachedStemBlock && there.getValue(AttachedStemBlock.FACING) == side.getOpposite()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether a claim kept the fruit at {@code pos} from the laser's owner when last asked (asked again now and then). */
+    private boolean refused(BlockPos pos) {
+        return pos.equals(this.refusedFruit) && this.age - this.refusedAt < ASK_AGAIN;
+    }
+
+    /** Cuts the fruit at {@code hit} as a hand would, with the surge stored; a claim that keeps it from the owner is let be. */
+    private void cutFruit(ServerLevel level, BlockPos hit) {
+        if (this.refused(hit) || this.energy.getAmountAsLong() < MachineTuning.energy(FE_PER_CUT)) {
+            return;
+        }
+        if (!Permission.mayBreak(level, hit, Permission.actor(level, this.owner))) {
+            this.refusedFruit = hit.immutable();
+            this.refusedAt = this.age;
+            return;
+        }
+        this.energy.set((int) (this.energy.getAmountAsLong() - MachineTuning.energy(FE_PER_CUT)));
+        level.destroyBlock(hit, true); // its own loot, as broken by an empty hand: a pumpkin, three to seven slices of melon
+        level.playSound(null, hit, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.4F, 1.9F);
     }
 
     /** Fells the tree the log belongs to, from the bottom of its trunk, if it is a natural tree and the surge is stored. */
@@ -418,5 +493,12 @@ public class LaserBlockEntity extends BlockEntity implements MachineInfo, DrawRi
         MachineBlockEntity.readEnergy(input, this.energy);
         this.redstone = RedstoneMode.load(input);
         this.owner = input.read("Owner", UUIDUtil.CODEC).orElse(null);
+    }
+
+    /** Its stop heard, as every machine's is (MachineAlerts). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        dev.nookworks.machine.MachineAlerts.track(this);
     }
 }

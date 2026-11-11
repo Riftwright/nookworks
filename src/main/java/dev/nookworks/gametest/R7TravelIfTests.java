@@ -239,6 +239,9 @@ final class R7TravelIfTests {
      * night passes and both wake. By its own vote one sleeper in the If skipped the night for the whole server.
      */
     private static void ifSleepersCountWithTheOverworld(GameTestHelper helper) {
+        if (IfTests.notOurs(helper)) {
+            return;
+        }
         MinecraftServer server = helper.getLevel().getServer();
         ServerLevel level = helper.getLevel();
         ServerLevel ifLevel = rolled(server);
@@ -536,6 +539,9 @@ final class R7TravelIfTests {
 
     /** A respawn at a bed in the If while it waits for its reset goes to the world's spawn; with no reset, to the bed. */
     private static void bedWhileResetPending(GameTestHelper helper) {
+        if (IfTests.notOurs(helper)) {
+            return;
+        }
         MinecraftServer server = helper.getLevel().getServer();
         ServerLevel ifLevel = rolled(server);
         ServerPlayer player = MockPlayers.inLevel(helper, net.minecraft.world.level.GameType.SURVIVAL);

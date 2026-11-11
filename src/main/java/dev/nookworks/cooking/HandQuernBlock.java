@@ -5,10 +5,10 @@ import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.registry.ModBlockEntities;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -68,7 +68,7 @@ public class HandQuernBlock extends HandMachineBlock {
 
         @Override
         protected SoundEvent turnSound() {
-            return SoundEvents.GRINDSTONE_USE;
+            return ModSounds.HAND_QUERN_TURN.get();
         }
 
         @Override

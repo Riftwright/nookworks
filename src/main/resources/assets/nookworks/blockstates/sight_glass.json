@@ -191,6 +191,66 @@
     {
       "when": {
         "axis": "z",
+        "content": "methanol",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "methanol",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "methanol",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "methanol",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "methanol",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "content": "methanol",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
         "content": "other",
         "level": "1"
       },
@@ -458,6 +518,72 @@
     {
       "when": {
         "axis": "x",
+        "content": "methanol",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "methanol",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "methanol",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "methanol",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "methanol",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "content": "methanol",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_h_methanol_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
         "content": "other",
         "level": "1"
       },
@@ -708,6 +834,66 @@
       },
       "apply": {
         "model": "nookworks:block/sight_glass_liquid_v_biodiesel_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "content": "methanol",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/sight_glass_liquid_v_methanol_6"
       }
     },
     {

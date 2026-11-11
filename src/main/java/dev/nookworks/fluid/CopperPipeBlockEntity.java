@@ -12,8 +12,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 /**
- * Copper Pipe: carries water (from a Water Pump), vegetable oil (from an Oil Press) or biodiesel, ours or another mod's, to
- * whatever takes it. A pipe holds one of them at a time, so a line keeps to one until it runs dry. Broken, what it
+ * Copper Pipe: carries water (from a Water Pump), vegetable oil (from an Oil Press), biodiesel, methanol (from a Vacuum
+ * Distiller) or wood vinegar (from a Sealed Retort), ours or another mod's, to whatever takes it. A pipe holds one of them at a time, so a line keeps to one until it runs dry. Broken, what it
  * held is lost.
  */
 public class CopperPipeBlockEntity extends FluidPipeBlockEntity {
@@ -38,11 +38,14 @@ public class CopperPipeBlockEntity extends FluidPipeBlockEntity {
 
     @Override
     protected boolean carries(FluidResource resource) {
-        return resource.getFluid() == Fluids.WATER || resource.getFluid() == OilFluids.SOURCE.get() || resource.getFluid() == OilFluids.BIODIESEL.get();
+        Fluid fluid = resource.getFluid();
+        return fluid == Fluids.WATER || fluid == OilFluids.SOURCE.get() || fluid == OilFluids.BIODIESEL.get()
+                || fluid == OilFluids.METHANOL.get() || fluid == OilFluids.WOOD_VINEGAR.get();
     }
 
     @Override
     protected List<Fluid> candidates() {
-        return List.of(Fluids.WATER, OilFluids.SOURCE.get(), OilFluids.BIODIESEL.get());
+        return List.of(Fluids.WATER, OilFluids.SOURCE.get(), OilFluids.BIODIESEL.get(), OilFluids.METHANOL.get(),
+                OilFluids.WOOD_VINEGAR.get());
     }
 }

@@ -13,6 +13,7 @@ import dev.nookworks.Nookworks;
 import dev.nookworks.machine.CrushingRecipe;
 import dev.nookworks.machine.MachineBlockEntity;
 import dev.nookworks.oil.PressingRecipe;
+import dev.nookworks.recycling.BalerBlock;
 import dev.nookworks.recycling.CompressorBlockEntity;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
 import dev.nookworks.recycling.RecyclerBlock;
@@ -65,7 +66,7 @@ final class RecyclingTests {
             "recycler_broken_by_hand_drops_nothing", "recycler_drops_its_output_on_top", "recycler_refuses_what_holds_things",
             "recycler_drops_beside_under_a_hopper", "wrench_moves_a_sheet_to_the_middle_and_back", "recycler_intake_is_the_body",
             "a_lone_intake_is_not_the_machine_under_it", "recycler_broken_with_a_pickaxe_drops_one",
-            "recycler_keeps_its_work_through_a_save"};
+            "recycler_keeps_its_work_through_a_save", "baler_is_a_block_that_faces_you_and_drops_itself"};
 
     static void register() {
         test("compressor_packs_nine_into_one", RecyclingTests::compressorPacksNine);
@@ -92,6 +93,7 @@ final class RecyclingTests {
         test("corrugated_sheet_lies_on_the_floor", RecyclingTests::sheetLiesFlat);
         test("scrap_recipes", RecyclingTests::scrapRecipes);
         test("sorting_tags_match_the_machines", RecyclingTests::sortingTagsMatch);
+        test("baler_is_a_block_that_faces_you_and_drops_itself", 100, RecyclingTests::balerIsABlock);
     }
 
     private static <T extends MachineBlockEntity> T powered(GameTestHelper helper, BlockPos pos, Class<T> type) {
@@ -607,4 +609,48 @@ final class RecyclingTests {
     }
 
     private RecyclingTests() {}
+
+    /**
+     * The Baler is a block (the user, 2026-11-10): its item, by the same id, sets it down facing whoever set it, in a
+     * shape of its own (no full cube); a pickaxe takes it and it drops itself; it does nothing; and the Recycler is
+     * still made of a Crusher, a Compressor and a Baler.
+     */
+    static void balerIsABlock(GameTestHelper helper) {
+        check(helper, BuiltInRegistries.ITEM.getKey(ModRecycling.BALER.get()).equals(Nookworks.id("baler"))
+                && ModRecycling.BALER.get().getBlock() == ModRecycling.BALER_BLOCK.get(), "the Baler item should be its block's, by its old id");
+        BlockPos pos = new BlockPos(2, 1, 2);
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        player.setYRot(180.0F); // looking north
+        ItemStack stack = new ItemStack(ModRecycling.BALER.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        BlockPos below = helper.absolutePos(pos.below());
+        stack.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(below).add(0, 0.5, 0),
+                Direction.UP, below, false)));
+        BlockState state = helper.getBlockState(pos);
+        check(helper, state.is(ModRecycling.BALER_BLOCK.get()), "the Baler should be set down, found " + state);
+        check(helper, state.getValue(BalerBlock.FACING) == Direction.SOUTH, "its front should face the player who set it, faced "
+                + state.getValue(BalerBlock.FACING));
+        var shape = state.getShape(helper.getLevel(), helper.absolutePos(pos));
+        check(helper, !shape.isEmpty() && shape != net.minecraft.world.phys.shapes.Shapes.block(), "it should have a shape of its own");
+        check(helper, state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE), "a pickaxe should mine it");
+        check(helper, !state.hasBlockEntity(), "it does nothing: no block entity");
+        // turned by the Wrench, as anything that faces some way
+        check(helper, dev.nookworks.item.WrenchItem.turn(state, false).getValue(BalerBlock.FACING) == Direction.WEST,
+                "a Wrench should turn it");
+        var level = helper.getLevel();
+        var grid = net.minecraft.world.item.crafting.CraftingInput.of(3, 1, List.of(new ItemStack(ModRecycling.BALER.get()),
+                new ItemStack(BuiltInRegistries.ITEM.getValue(Nookworks.id("crusher"))), new ItemStack(ModRecycling.COMPRESSOR_ITEM.get())));
+        ItemStack made = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid, level)
+                .map(holder -> holder.value().assemble(grid)).orElse(ItemStack.EMPTY);
+        check(helper, made.is(ModRecycling.RECYCLER_ITEM.get()), "a Crusher, a Compressor and a Baler should still make a Recycler: " + made);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
+        player.gameMode.destroyBlock(helper.absolutePos(pos));
+        check(helper, helper.getBlockState(pos).isAir(), "mined, it should be gone");
+        helper.runAfterDelay(5, () -> {
+            int dropped = helper.getEntities(net.minecraft.world.entity.EntityTypes.ITEM, pos, 2.0).stream()
+                    .filter(item -> item.getItem().is(ModRecycling.BALER.get())).mapToInt(item -> item.getItem().getCount()).sum();
+            check(helper, dropped == 1, "and drop one Baler, dropped " + dropped);
+            helper.succeed();
+        });
+    }
 }

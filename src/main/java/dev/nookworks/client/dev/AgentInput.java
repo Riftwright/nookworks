@@ -333,6 +333,9 @@ public final class AgentInput {
                     mc.getFps(), (SDLVideo.SDL_GetWindowFlags(handle) & SDLVideo.SDL_WINDOW_HIDDEN) != 0);
             // the field of view for the shots that follow (degrees, 30-110), as the slider sets it: fov <degrees>
             case "fov" -> mc.options.fov().set(Integer.parseInt(a[1]));
+            // Standing Mirrors under a shader pack, whose light they measure (MirrorLight): mirrorlight off|on|show|auto
+            // (off: lit by the game's own table; show: the measuring board left showing; auto: the player's setting)
+            case "mirrorlight" -> dev.nookworks.client.render.MirrorLight.set(a[1]);
             case "player" -> playerHands = a[1].equals("on");
             // the window shown (SDL does not activate it in a hidden run: no focus taken) or hidden again
             case "window" -> {

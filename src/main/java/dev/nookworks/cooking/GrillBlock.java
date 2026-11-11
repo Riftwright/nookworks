@@ -7,6 +7,7 @@ import dev.nookworks.feature.DrawRights;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModCooking;
 import dev.nookworks.ventilation.Ventilation;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -212,7 +213,7 @@ public class GrillBlock extends BaseEntityBlock {
                 double grate = state.getValue(OVER_FIRE) ? 0.15 : 1.0; // low over a fire, at the top standing
                 Ventilation.smoke(level, pos, ParticleTypes.SMOKE, x, pos.getY() + grate, z, 0.0, 0.02, 0.0);
                 if (random.nextFloat() < 0.1F) {
-                    level.playLocalSound(pos, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 0.4F, 1.6F, false);
+                    level.playLocalSound(pos, ModSounds.GRILL_SIZZLE.get(), SoundSource.BLOCKS, 0.4F, 0.95F + random.nextFloat() * 0.1F, false);
                 }
             }
         }

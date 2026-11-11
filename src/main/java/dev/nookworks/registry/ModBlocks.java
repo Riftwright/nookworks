@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.fluid.LiquidCauldronBlock;
+import dev.nookworks.fluid.LiquidCauldrons;
 import dev.nookworks.anchor.WarpAnchorBlock;
 import dev.nookworks.block.CrateBlock;
 import dev.nookworks.block.CreativeGeneratorBlock;
@@ -52,6 +54,7 @@ import dev.nookworks.fluid.ValveBlock;
 import dev.nookworks.fluid.WaterPumpBlock;
 import dev.nookworks.mercury.MercuryBlock;
 import dev.nookworks.mercury.MercuryFluids;
+import dev.nookworks.mercury.CondenserBlock;
 import dev.nookworks.mercury.MercuryMachineBlock;
 import dev.nookworks.mercury.MercuryPipeBlock;
 import dev.nookworks.mercury.MercuryTankBlock;
@@ -209,7 +212,13 @@ public final class ModBlocks {
             p -> keeperProperties(p).noOcclusion());
     public static final DeferredBlock<Block> DISTILLATION_COLUMN = BLOCKS.registerSimpleBlock("distillation_column",
             p -> machineProperties(p, true));
-    public static final DeferredBlock<Block> CONDENSER = BLOCKS.registerSimpleBlock("condenser", p -> machineProperties(p, true));
+    /** Kept a plain Block for what add-ons compiled against; its ports since 1.5 (dev.nookworks.mercury.CondenserBlock). */
+    public static final DeferredBlock<Block> CONDENSER = BLOCKS.<Block>registerBlock("condenser", CondenserBlock::new,
+            p -> machineProperties(p, true));
+    /** A small alarm bell fitted beside a machine: rings, and gives a signal, when the machine stops (MachineBellBlock). */
+    public static final DeferredBlock<dev.nookworks.block.MachineBellBlock> MACHINE_BELL = BLOCKS.registerBlock("machine_bell",
+            dev.nookworks.block.MachineBellBlock::new, p -> p.mapColor(MapColor.COLOR_RED).strength(1.0F).sound(SoundType.COPPER)
+                    .noCollision().noOcclusion().pushReaction(net.minecraft.world.level.material.PushReaction.POPPED));
     /** The blackened steel frame every powered machine is built on. A crafting material, nothing more. */
     public static final DeferredBlock<Block> MACHINE_CHASSIS = BLOCKS.registerSimpleBlock("machine_chassis", p -> machineProperties(p, true));
     /** A lantern put out (dev.nookworks.decor.Lanterns): vanilla's lantern, its flame behind sooty glass, and no light. */
@@ -246,6 +255,25 @@ public final class ModBlocks {
     public static final DeferredBlock<dev.nookworks.quench.OilCauldronBlock> VEGETABLE_OIL_CAULDRON = BLOCKS.registerBlock(
             "vegetable_oil_cauldron", dev.nookworks.quench.OilCauldronBlock::new,
             p -> p.mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F).noOcclusion());
+    /** Cauldrons of our other liquids, a bucket's worth in three levels as the oil's (dev.nookworks.fluid.LiquidCauldrons). */
+    public static final DeferredBlock<LiquidCauldronBlock> METHANOL_CAULDRON = cauldron("methanol_cauldron",
+            LiquidCauldrons.METHANOL, LiquidCauldronBlock.Touch.NONE, 0);
+    public static final DeferredBlock<LiquidCauldronBlock> WOOD_VINEGAR_CAULDRON = cauldron("wood_vinegar_cauldron",
+            LiquidCauldrons.WOOD_VINEGAR, LiquidCauldronBlock.Touch.NONE, 0);
+    public static final DeferredBlock<LiquidCauldronBlock> BIODIESEL_CAULDRON = cauldron("biodiesel_cauldron",
+            LiquidCauldrons.BIODIESEL, LiquidCauldronBlock.Touch.NONE, 0);
+    /** Glowing as the liquid does (light 7). */
+    public static final DeferredBlock<LiquidCauldronBlock> LIQUID_EXPERIENCE_CAULDRON = cauldron("liquid_experience_cauldron",
+            LiquidCauldrons.EXPERIENCE, LiquidCauldronBlock.Touch.EXPERIENCE, 7);
+    public static final DeferredBlock<LiquidCauldronBlock> MERCURY_CAULDRON = cauldron("mercury_cauldron",
+            LiquidCauldrons.MERCURY, LiquidCauldronBlock.Touch.MERCURY, 0);
+
+    private static DeferredBlock<LiquidCauldronBlock> cauldron(String id, net.minecraft.core.cauldron.CauldronInteraction.Dispatcher interactions,
+            LiquidCauldronBlock.Touch touch, int light) {
+        return BLOCKS.registerBlock(id, p -> new LiquidCauldronBlock(interactions, touch, p),
+                p -> p.mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F).noOcclusion().lightLevel(state -> light));
+    }
+
     public static final DeferredBlock<Block> VELARIUM_BLOCK = BLOCKS.registerSimpleBlock("velarium_block",
             p -> p.mapColor(MapColor.COLOR_CYAN).strength(50.0F, 1200.0F)
                     .requiresCorrectToolForDrops().sound(SoundType.NETHERITE_BLOCK));

@@ -33,8 +33,14 @@ public final class MachineStyle {
 
     /** The icons in {@link #ICONS}, left to right. */
     public enum Icon {
-        ENERGY, WATER, VEGETABLE_OIL, BIODIESEL, MERCURY, EXPERIENCE, LIQUID_FUEL, NETHER_AIR
+        ENERGY, WATER, VEGETABLE_OIL, BIODIESEL, MERCURY, EXPERIENCE, LIQUID_FUEL, NETHER_AIR, METHANOL, WOOD_VINEGAR
     }
+    /** The tabs' icons, 16x16 each in {@link dev.nookworks.menu.tab.MachineTab}'s order (tools/textures/gen_gui.py). */
+    public static final Identifier TABS = Nookworks.id("textures/gui/tabs.png");
+    /** The Liquid tab's timer: {@link #DIAL_FRAMES} frames of a {@link #DIAL}-pixel dial filling clockwise. */
+    public static final Identifier DIAL_TEXTURE = Nookworks.id("textures/gui/dial.png");
+    public static final int DIAL = 14;
+    public static final int DIAL_FRAMES = 21;
     public static final int TITLE = 0xFFE2C27A;
     public static final int TEXT = 0xFFE6E0CE;
     public static final int DIM = 0xFFA3A9B2;
@@ -64,6 +70,12 @@ public final class MachineStyle {
     public static final int OIL_LIT = 0xFFF1D270;
     public static final int BIODIESEL = 0xFF86521A;
     public static final int BIODIESEL_LIT = 0xFFB2782C;
+    // methanol, clear as water: a pale blue-white, the shade of its bottle and its still surface
+    public static final int METHANOL = 0xFFB4C6D6;
+    public static final int METHANOL_LIT = 0xFFE2ECF4;
+    // wood vinegar, a clear amber-brown: lighter and redder than biodiesel, the shade of its bottle
+    public static final int WOOD_VINEGAR = 0xFF9A5A2C;
+    public static final int WOOD_VINEGAR_LIT = 0xFFC48450;
     public static final int EXPERIENCE = 0xFF5CA820;
     public static final int EXPERIENCE_LIT = 0xFFB0EC56;
     // the Nether's air: crimson, as the motes of a crimson forest
@@ -93,6 +105,23 @@ public final class MachineStyle {
         return broken;
     }
 
+    /**
+     * {@code line} broken at {@code width}, Japanese and Chinese between words (CjkLines), each piece in the line's own
+     * style - for words drawn in a screen's own room (the tag picker's hint), as {@link #wrap(Font, List)} breaks a
+     * tooltip.
+     */
+    public static List<FormattedCharSequence> wrap(Font font, Component line, int width) {
+        String text = line.getString();
+        if (!CjkLines.needed(text)) {
+            return font.split(line, width);
+        }
+        List<FormattedCharSequence> broken = new ArrayList<>();
+        for (String piece : CjkLines.wrap(text, width, font::width).split("\n")) {
+            broken.add(Component.literal(piece).withStyle(line.getStyle()).getVisualOrderText());
+        }
+        return broken;
+    }
+
     public static final int ARROW_W = 24;
     public static final int ARROW_H = 16;
 
@@ -116,15 +145,7 @@ public final class MachineStyle {
 
     /** The background in {@code finish}: on enamel, brass brackets in the corners in place of the rivets. */
     public static void panel(GuiGraphicsExtractor g, int x, int y, int w, int h, Finish finish) {
-        g.fill(x + 1, y, x + w - 1, y + h, EDGE);
-        g.fill(x, y + 1, x + w, y + h - 1, EDGE);
-        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, BRASS_DARK);  // the rim's shaded side, bottom and right
-        g.fill(x + 1, y + 1, x + w - 2, y + h - 2, BRASS_LIT);   // its lit side, top and left
-        g.fill(x + 2, y + 2, x + w - 2, y + h - 2, BRASS);
-        g.fill(x + 3, y + 3, x + w - 3, y + h - 3, finish.dark()); // the face sits a little below the rim
-        face(g, x + 4, y + 4, w - 7, h - 7, finish.face(), -1);
-        g.fill(x + 4, y + h - 4, x + w - 3, y + h - 3, finish.lit());
-        g.fill(x + w - 4, y + 4, x + w - 3, y + h - 3, finish.lit());
+        frame(g, x, y, w, h, finish);
         if (finish.brackets()) {
             bracket(g, x + 4, y + 4, 1, 1);
             bracket(g, x + w - 5, y + 4, -1, 1);
@@ -135,6 +156,50 @@ public final class MachineStyle {
         for (int[] corner : new int[][] {{x + 6, y + 6}, {x + w - 8, y + 6}, {x + 6, y + h - 8}, {x + w - 8, y + h - 8}}) {
             rivet(g, corner[0], corner[1]);
         }
+    }
+
+    /**
+     * A tab on a screen's right edge (dev.nookworks.client.gui.tab.ScreenTabs): the panel's rim and face with no rivets,
+     * drawn before the panel so the panel's own rim covers its inner edge and it reads as coming out from under it; its
+     * face lit while the pointer is on it.
+     */
+    public static void tab(GuiGraphicsExtractor g, int x, int y, int w, int h, Finish finish, boolean lit) {
+        frame(g, x, y, w, h, finish);
+        if (lit) {
+            g.fill(x + 4, y + 4, x + w - 4, y + Math.min(h, 24) - 4, 0x30FFFFFF);
+        }
+    }
+
+    /** A tab's icon, 16x16. */
+    public static void tabIcon(GuiGraphicsExtractor g, int ordinal, int x, int y) {
+        g.blit(RenderPipelines.GUI_TEXTURED, TABS, x, y, ordinal * 16, 0, 16, 16, 48, 16);
+    }
+
+    /** The Liquid tab's timer dial, {@link #DIAL} square, filled clockwise as far as {@code done} (0 to 1). */
+    public static void dial(GuiGraphicsExtractor g, int x, int y, float done) {
+        int frame = Math.round(Math.max(0.0F, Math.min(1.0F, done)) * (DIAL_FRAMES - 1));
+        g.blit(RenderPipelines.GUI_TEXTURED, DIAL_TEXTURE, x, y, frame * DIAL, 0, DIAL, DIAL, DIAL * DIAL_FRAMES, DIAL);
+    }
+
+    /** A small button's frame lit in brass: the choice made among several (the Liquid tab's liquids). */
+    public static void chosen(GuiGraphicsExtractor g, int x, int y, int w, int h) {
+        g.fill(x, y, x + w, y + 1, BRASS_LIT);
+        g.fill(x, y + h - 1, x + w, y + h, BRASS_LIT);
+        g.fill(x, y, x + 1, y + h, BRASS_LIT);
+        g.fill(x + w - 1, y, x + w, y + h, BRASS_LIT);
+    }
+
+    /** The rim and face of a panel or tab: a black outline with its corners cut, a bevelled brass rim, the face. */
+    private static void frame(GuiGraphicsExtractor g, int x, int y, int w, int h, Finish finish) {
+        g.fill(x + 1, y, x + w - 1, y + h, EDGE);
+        g.fill(x, y + 1, x + w, y + h - 1, EDGE);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, BRASS_DARK);  // the rim's shaded side, bottom and right
+        g.fill(x + 1, y + 1, x + w - 2, y + h - 2, BRASS_LIT);   // its lit side, top and left
+        g.fill(x + 2, y + 2, x + w - 2, y + h - 2, BRASS);
+        g.fill(x + 3, y + 3, x + w - 3, y + h - 3, finish.dark()); // the face sits a little below the rim
+        face(g, x + 4, y + 4, w - 7, h - 7, finish.face(), -1);
+        g.fill(x + 4, y + h - 4, x + w - 3, y + h - 3, finish.lit());
+        g.fill(x + w - 4, y + 4, x + w - 3, y + h - 3, finish.lit());
     }
 
     /**
@@ -226,7 +291,7 @@ public final class MachineStyle {
 
     /** One of the gauge icons, 8x8; dimmed when what it stands for is empty or missing. */
     public static void icon(GuiGraphicsExtractor g, Icon icon, int x, int y, boolean dim) {
-        g.blit(RenderPipelines.GUI_TEXTURED, ICONS, x, y, icon.ordinal() * 8, dim ? 8 : 0, 8, 8, 64, 16);
+        g.blit(RenderPipelines.GUI_TEXTURED, ICONS, x, y, icon.ordinal() * 8, dim ? 8 : 0, 8, 8, Icon.values().length * 8, 16);
     }
 
     /**
@@ -350,6 +415,8 @@ public final class MachineStyle {
             case BIODIESEL -> BIODIESEL;
             case EXPERIENCE -> EXPERIENCE;
             case NETHER_AIR -> NETHER_AIR;
+            case METHANOL -> METHANOL;
+            case WOOD_VINEGAR -> WOOD_VINEGAR;
         };
     }
 
@@ -361,6 +428,8 @@ public final class MachineStyle {
             case BIODIESEL -> BIODIESEL_LIT;
             case EXPERIENCE -> EXPERIENCE_LIT;
             case NETHER_AIR -> NETHER_AIR_LIT;
+            case METHANOL -> METHANOL_LIT;
+            case WOOD_VINEGAR -> WOOD_VINEGAR_LIT;
         };
     }
 

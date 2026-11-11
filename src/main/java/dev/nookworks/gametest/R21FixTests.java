@@ -530,16 +530,10 @@ final class R21FixTests {
         check(helper, player.getMainHandItem().is(ModItems.MERCURY_BUCKET.get()) && retort.mercuryStore().amount() == 0,
                 "the Retort, which makes mercury, turns a bucket down by a click");
         var menu = new MachineMenu(1, player.getInventory(), retort.layout(), retort.slots(), MachineMenu.data(retort), retort);
-        int gauge = -1;
-        for (int i = 0; i < retort.guiTanks().size(); i++) {
-            if (retort.guiTanks().get(i).kind() == GuiTank.Kind.MERCURY) {
-                gauge = i;
-            }
-        }
-        menu.setCarried(new ItemStack(ModItems.MERCURY_BUCKET.get()));
-        check(helper, gauge >= 0 && !GaugePouring.clicked(player, menu, gauge) && retort.mercuryStore().amount() == 0
-                && menu.getCarried().is(ModItems.MERCURY_BUCKET.get()), "and at its gauge alike");
-        menu.setCarried(ItemStack.EMPTY);
+        // since 1.5 the screen's Liquid tab pours by hand, not a click on the gauge: its bottom slot turns it down alike
+        check(helper, menu.tabs().liquid() != null
+                && !menu.tabs().liquid().slot(dev.nookworks.menu.tab.LiquidTab.POUR).mayPlace(new ItemStack(ModItems.MERCURY_BUCKET.get()))
+                && retort.mercuryStore().amount() == 0, "and in its screen's Liquid tab alike");
         done(helper, player);
     }
 

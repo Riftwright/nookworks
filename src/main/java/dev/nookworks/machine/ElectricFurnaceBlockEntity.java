@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import dev.nookworks.Nookworks;
 import dev.nookworks.block.ElectricFurnaceBlock;
-import dev.nookworks.experience.ExperienceBottling;
 import dev.nookworks.experience.ExperienceBuffer;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModItems;
@@ -34,7 +33,9 @@ import net.neoforged.neoforge.transfer.fluid.FluidResource;
  * coal's worth of Generator power smelts sixteen items, twice what the coal would in a furnace, so a Generator running
  * on piped oil or biodiesel is a smeltery that feeds itself. Input from any side; the results collect in its output
  * and go down into the container below. The experience a furnace would give is kept as Liquid Experience, as the
- * Sealed Retort keeps its own, for a pipe to draw off; broken, it pours out as orbs.
+ * Sealed Retort keeps its own, for a pipe to draw off (or a bottle or bucket in its screen's Liquid tab); broken, it
+ * pours out as orbs. Its fill box (an empty bottle in, a filled one out) went in 1.5, under the user's rule for both
+ * mods that nothing fills a container by itself (2026-11-08); a box's contents in an old world are put out below.
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements MachineInfo {
@@ -43,11 +44,8 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
     public static final int INPUT = 0;
     public static final int OUTPUT = 1;
     public static final int EXPERIENCE_CAPACITY = 1_000;
-    /** The fill box: an empty bucket or bottle in, filled with the experience kept, out. */
-    public static final int FILL = 2;
-    public static final int FILLED = 3;
-    private static final int[] INPUT_SLOTS = {INPUT, FILL};
-    private static final int[] OUTPUT_SLOTS = {OUTPUT, FILLED};
+    private static final int[] INPUT_SLOTS = {INPUT};
+    private static final int[] OUTPUT_SLOTS = {OUTPUT};
 
     private int progress;
     private int cookTime;
@@ -72,7 +70,7 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
             new ExperienceBuffer(EXPERIENCE_CAPACITY, this::setChanged);
 
     public ElectricFurnaceBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ELECTRIC_FURNACE.get(), pos, state, 4, CAPACITY, 200, 0);
+        super(ModBlockEntities.ELECTRIC_FURNACE.get(), pos, state, 2, CAPACITY, 200, 0);
     }
 
     private Optional<RecipeHolder<SmeltingRecipe>> recipeFor(ServerLevel level, ItemStack input) {
@@ -91,10 +89,8 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
         if (!(level instanceof ServerLevel server)) {
             return;
         }
+        furnace.putOutLeftovers(server, pos);
         furnace.experience.push(server, pos, furnace);
-        if (ExperienceBottling.fill(furnace.items, FILL, FILLED, furnace.experience)) {
-            furnace.setChanged();
-        }
         furnace.flush(server, pos);
         boolean lit = furnace.showsLit(furnace.work(server, pos));
         if (state.getValue(ElectricFurnaceBlock.LIT) != lit) {
@@ -165,8 +161,7 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
             ItemStack out = this.items.get(slot);
             if (!out.isEmpty()) {
                 waiting = true;
-                // what it smelts goes out whatever is below; a filled bottle only into a container, or waits in its box
-                ItemStack rest = slot == FILLED ? MachineIO.intoBelow(level, pos, out) : MachineIO.deliverBelow(level, pos, out);
+                ItemStack rest = MachineIO.deliverBelow(level, pos, out);
                 if (rest.getCount() != out.getCount()) {
                     this.items.set(slot, rest);
                     this.setChanged();
@@ -264,15 +259,12 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot == FILL) {
-            return ExperienceBottling.fillable(stack);
-        }
         return slot == INPUT && this.level != null
                 && this.level.recipeAccess().propertySet(RecipePropertySet.FURNACE_INPUT).test(stack);
     }
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return (slot == OUTPUT || slot == FILLED) && side == Direction.DOWN;
+        return slot == OUTPUT && side == Direction.DOWN;
     }
 }

@@ -1,6 +1,7 @@
 package dev.nookworks.block;
 
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.machine.WorkSounds;
 import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineInfo;
 import dev.nookworks.machine.MachineMenu;
@@ -70,10 +71,17 @@ public abstract class MachineBlock extends BaseEntityBlock {
         soundNowAndThen(level, pos, random, sound, false);
     }
 
-    /** As {@link #soundNowAndThen(Level, BlockPos, RandomSource, SoundEvent)}, at one pitch if {@code steady}. */
+    /**
+     * As {@link #soundNowAndThen(Level, BlockPos, RandomSource, SoundEvent)}, at one pitch if {@code steady}. How loud and
+     * how often go by the player's settings, and no more than a few start in a second (dev.nookworks.machine.WorkSounds).
+     */
     public static void soundNowAndThen(Level level, BlockPos pos, RandomSource random, @Nullable SoundEvent sound, boolean steady) {
-        if (sound != null && random.nextFloat() < WORK_SOUND_CHANCE) {
-            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, sound, SoundSource.BLOCKS, 1.0F,
+        if (sound == null || !level.isClientSide() || random.nextFloat() >= WorkSounds.chance(WORK_SOUND_CHANCE)) {
+            return;
+        }
+        float volume = WorkSounds.volume();
+        if (volume > 0.0F && WorkSounds.mayStart(level.getGameTime())) {
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, sound, SoundSource.BLOCKS, volume,
                     steady ? 1.0F : 0.9F + random.nextFloat() * 0.2F, false);
         }
     }

@@ -9,8 +9,12 @@ import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.machine.MachineTuning;
 import net.minecraft.ChatFormatting;
+import dev.nookworks.client.gui.tab.ScreenTabs;
+import dev.nookworks.client.gui.tab.TabbedScreen;
+import dev.nookworks.menu.tab.TabSlot;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -21,7 +25,8 @@ import net.minecraft.world.item.ItemStack;
  * under them saying whether it is mending, and if not, what it is waiting for. In the box's own finish, navy enamel with
  * brass corners, where the machines are steel with rivets.
  */
-public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
+public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> implements TabbedScreen {
+    private ScreenTabs tabs;
     private static final int ENERGY_X = 12;
     private static final int TANK_X = 150;
     private static final int ICON_Y = MachineLayout.BAY_TOP + 3;
@@ -39,9 +44,11 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
-                this.menu::redstoneMode,
-                () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, RepairBoxMenu.BUTTON_REDSTONE)));
+        this.tabs = new ScreenTabs(this, this.menu.tabs()).finish(MachineStyle.Finish.ENAMEL);
+        // the redstone mode lives in the Settings tab since 1.5 (the user's design, 2026-11-08), its mode named beside it
+        this.tabs.addSetting(this.addRenderableWidget(new RedstoneButton(0, 0, this.menu::redstoneMode,
+                () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, RepairBoxMenu.BUTTON_REDSTONE))), () -> Component.translatable(this.menu.redstoneMode().translationKey()));
+        this.leftPos -= this.tabs.fit(this.children()); // an open tab kept inside a small window
     }
 
     private int energyCapacity() {
@@ -54,7 +61,9 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        this.leftPos -= this.tabs.fit(this.children()); // first: all that follows is drawn from the left edge
         super.extractBackground(graphics, mouseX, mouseY, a);
+        this.tabs.extractBackground(graphics, mouseX, mouseY); // under the panel, which covers their inner edge
         int x = this.leftPos;
         int y = this.topPos;
         // the box's own navy enamel and brass, not the machines' steel
@@ -63,7 +72,9 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
                 MachineStyle.Finish.ENAMEL);
         MachineStyle.display(graphics, x + 7, y + MachineLayout.STATUS_Y, this.imageWidth - 14, 12, this.status().tone());
         for (Slot slot : this.menu.slots) {
-            MachineStyle.slot(graphics, x + slot.x - 1, y + slot.y - 1, MachineStyle.Finish.ENAMEL);
+            if (!(slot instanceof TabSlot)) { // the tabs frame their own
+                MachineStyle.slot(graphics, x + slot.x - 1, y + slot.y - 1, MachineStyle.Finish.ENAMEL);
+            }
         }
         int energy = this.menu.energy();
         MachineStatus.Tone tone = energy < MachineTuning.energy(RepairBoxBlockEntity.FE_PER_STEP) ? MachineStatus.Tone.BAD
@@ -104,7 +115,7 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
-        MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 30, MachineStyle.TITLE, true);
+        MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 19, MachineStyle.TITLE, true); // to the bracket on the corner
         graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, MachineStyle.DIM, false);
         this.statusCut = MachineStyle.fitText(graphics, this.font, this.statusLine(), 18, MachineLayout.STATUS_Y + 2, this.imageWidth - 28,
                 MachineStyle.toneColour(this.status().tone()), false);
@@ -112,6 +123,13 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
 
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        if (this.menu.getCarried().isEmpty()) {
+            List<Component> tabbed = this.tabs.tooltip(mouseX, mouseY);
+            if (!tabbed.isEmpty()) {
+                graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, tabbed), mouseX, mouseY);
+                return;
+            }
+        }
         String k = "gui.nookworks.machine.";
         List<Component> lines = null;
         if (this.isHovering(ENERGY_X, ICON_Y, 10, GAUGE_Y + GAUGE_H - ICON_Y, mouseX, mouseY)) {
@@ -133,5 +151,21 @@ public class RepairBoxScreen extends AbstractContainerScreen<RepairBoxMenu> {
 
     private static String number(int n) {
         return String.format(Locale.ROOT, "%,d", n);
+    }
+
+    @Override
+    public ScreenTabs tabs() {
+        return this.tabs;
+    }
+
+    /** A click on a tab is no click outside the screen: it throws nothing. */
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top) {
+        return super.hasClickedOutside(mouseX, mouseY, left, top) && !this.tabs.inside(mouseX, mouseY);
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        return this.tabs.mouseClicked(event) || super.mouseClicked(event, doubleClick);
     }
 }

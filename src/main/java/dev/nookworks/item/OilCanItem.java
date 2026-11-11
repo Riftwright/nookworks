@@ -3,11 +3,11 @@ package dev.nookworks.item;
 import java.util.List;
 
 import dev.nookworks.feature.Lubrication;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +50,7 @@ public class OilCanItem extends Item {
                 Lubrication.lubricate(server, part);
             }
             server.sendParticles(ParticleTypes.DRIPPING_HONEY, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 4, 0.25, 0.2, 0.25, 0.0);
-            server.playSound(null, pos, SoundEvents.HONEY_BLOCK_SLIDE, SoundSource.PLAYERS, 0.5F, 1.4F);
+            server.playSound(null, pos, ModSounds.OIL_CAN_SQUIRT.get(), SoundSource.PLAYERS, 0.5F, 0.95F + server.getRandom().nextFloat() * 0.1F);
             server.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
             if (player != null) {
                 context.getItemInHand().hurtAndBreak(1, player, context.getHand());

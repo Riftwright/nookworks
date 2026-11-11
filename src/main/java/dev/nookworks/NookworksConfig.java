@@ -79,6 +79,7 @@ public final class NookworksConfig {
     public static final ModConfigSpec.DoubleValue MACHINE_ENERGY;
     public static final ModConfigSpec.DoubleValue MACHINE_TIME;
     public static final ModConfigSpec.DoubleValue GENERATOR_OUTPUT;
+    public static final ModConfigSpec.BooleanValue MACHINE_VIBRATIONS;
 
     static {
         BUILDER.translation(key("timber")).push("timber");
@@ -162,6 +163,9 @@ public final class NookworksConfig {
                 .translation(key("machines.workTime")).defineInRange("workTime", 1.0, 0.1, 10.0);
         GENERATOR_OUTPUT = BUILDER.comment("Multiplies the power a Generator or Diesel Generator makes a tick, from any fuel.")
                 .translation(key("machines.generatorOutput")).defineInRange("generatorOutput", 1.0, 0.1, 10.0);
+        MACHINE_VIBRATIONS = BUILDER.comment("A machine at work makes a vibration every two seconds, as a sculk sensor hears one. Off by default:",
+                "a shrieker would call the Warden to a factory near the deep dark.")
+                .translation(key("machines.vibrations")).define("vibrations", false);
         BUILDER.pop();
 
         ELEVATOR_RANGE = BUILDER.comment("How far (in blocks) an elevator looks for the next one above or below.")

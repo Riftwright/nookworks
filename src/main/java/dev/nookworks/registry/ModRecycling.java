@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.recycling.BalerBlock;
 import dev.nookworks.recycling.CompressorBlock;
 import dev.nookworks.recycling.CompressorBlockEntity;
 import dev.nookworks.recycling.CorrugatedSheetBlock;
@@ -35,8 +36,14 @@ import net.neoforged.neoforge.registries.DeferredItem;
  */
 public final class ModRecycling {
     public static final DeferredItem<Item> SCRAP = ModItems.ITEMS.registerSimpleItem("scrap");
-    /** The press the Recycler packs its scrap with: a part, not a machine (the user, 2026-10-18). */
-    public static final DeferredItem<Item> BALER = ModItems.ITEMS.registerSimpleItem("baler");
+    /**
+     * The press the Recycler packs its scrap with: a part, not a machine (the user, 2026-10-18) - and since 2026-11-10 a
+     * block too, set down as decor that does nothing (the user: 「装飾用に置けるブロックとして」). The item kept its id: it
+     * is the block's item now, so every Baler made before is one.
+     */
+    public static final DeferredBlock<BalerBlock> BALER_BLOCK = ModBlocks.BLOCKS.registerBlock("baler", BalerBlock::new,
+            p -> machine(p).noOcclusion());
+    public static final DeferredItem<BlockItem> BALER = ModItems.ITEMS.registerSimpleBlockItem(BALER_BLOCK);
 
     public static final DeferredBlock<CompressorBlock> COMPRESSOR = ModBlocks.BLOCKS.registerBlock("compressor",
             CompressorBlock::new, p -> machine(p).noOcclusion());

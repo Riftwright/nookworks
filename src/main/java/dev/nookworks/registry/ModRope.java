@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.carry.CarriedLook;
 import dev.nookworks.rope.FilamentBulbBlock;
 import dev.nookworks.rope.HookBlock;
 import dev.nookworks.rope.HungBannerEntity;
@@ -11,6 +12,7 @@ import dev.nookworks.rope.HungLightBlock;
 import dev.nookworks.rope.HungItemEntity;
 import dev.nookworks.rope.RopeKnotEntity;
 import dev.nookworks.rope.ThinChainItem;
+import dev.nookworks.rope.TiedLoadEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -44,6 +46,8 @@ public final class ModRope {
 
     static {
         SERIALIZERS.register("positions", () -> POSITIONS);
+        // a carried block's look, for any mod's entity to sync (dev.nookworks.carry; a Tied Load's)
+        SERIALIZERS.register("carried_look", () -> CarriedLook.ENTITY_SERIALIZER);
     }
 
     public static final Supplier<EntityType<RopeKnotEntity>> ROPE_KNOT = ModEntities.ENTITY_TYPES.register("rope_knot",
@@ -60,6 +64,15 @@ public final class ModRope {
                     .noLootTable().sized((float) HungBannerEntity.WIDTH, (float) HungBannerEntity.HEIGHT).clientTrackingRange(10)
                     .updateInterval(Integer.MAX_VALUE)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Nookworks.id("hung_banner"))));
+
+    /**
+     * A block tied up with rope, standing where it was (TiedLoadEntity): a block's size, tracked as far as a block is
+     * seen, sent each tick it moves (hoisted or falling), as nothing else moves it.
+     */
+    public static final Supplier<EntityType<TiedLoadEntity>> TIED_LOAD = ModEntities.ENTITY_TYPES.register("tied_load",
+            () -> EntityType.Builder.<TiedLoadEntity>of(TiedLoadEntity::new, MobCategory.MISC)
+                    .noLootTable().sized(1.0F, 1.0F).fireImmune().clientTrackingRange(10).updateInterval(1)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Nookworks.id("tied_load"))));
 
     public static final DeferredBlock<FilamentBulbBlock> FILAMENT_BULB = ModBlocks.BLOCKS.registerBlock("filament_bulb", FilamentBulbBlock::new,
             p -> p.mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED)
@@ -85,6 +98,8 @@ public final class ModRope {
      * and it rattles and sways a little when something goes through it ({@link dev.nookworks.rope.ChainSway}).
      */
     public static final DeferredItem<ThinChainItem> THIN_CHAIN = ModItems.ITEMS.registerItem("thin_chain", ThinChainItem::new);
+    /** A garden wind chime, hung as a bottle is, that chimes in the wind (HungItemEntity#windChime). */
+    public static final DeferredItem<Item> WIND_CHIME = ModItems.ITEMS.registerSimpleItem("wind_chime");
 
     /**
      * Fish opened out and dried in the sun (干物): a day of sun makes it keep, and a little better eating than a fish

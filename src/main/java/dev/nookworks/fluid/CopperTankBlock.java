@@ -8,10 +8,8 @@ import dev.nookworks.machine.SightGlass;
 import dev.nookworks.mercury.MercuryBucketItem;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
-import dev.nookworks.registry.ModOil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -23,8 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -35,7 +31,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -54,7 +49,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 
 /**
  * Copper Tank (see {@link CopperTankBlockEntity}): a banded copper vessel on a frame plinth, its sight glasses
- * showing what is in it. A bucket or a bottle of water, oil or biodiesel pours in; an empty one draws out.
+ * showing what is in it. A bucket or a bottle of water, oil, biodiesel, methanol or wood vinegar pours in; an empty one draws out.
  */
 public class CopperTankBlock extends BaseEntityBlock {
     /** The plinth, and the vessel on it (tools/gen_machine_models.py). */
@@ -185,32 +180,17 @@ public class CopperTankBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    /** The fluid a filled bottle pours: water, oil, biodiesel; null for anything else. */
+    /**
+     * The fluid a filled bottle pours: water, oil, biodiesel, methanol, wood vinegar, liquid experience, an add-on's
+     * ({@link Bottles}); null for anything else.
+     */
     public static @Nullable Fluid bottleOf(ItemStack stack) {
-        if (stack.is(Items.POTION) && stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
-            return Fluids.WATER;
-        }
-        if (stack.is(ModOil.VEGETABLE_OIL_BOTTLE.get())) {
-            return OilFluids.SOURCE.get();
-        }
-        if (stack.is(ModOil.BIODIESEL_BOTTLE.get())) {
-            return OilFluids.BIODIESEL.get();
-        }
-        return null;
+        return Bottles.fluidOf(stack);
     }
 
-    /** A bottle of what the tank holds, or empty for a fluid there is no bottle of. */
+    /** A bottle of what the tank holds, or empty for a fluid there is no bottle of ({@link Bottles}). */
     public static ItemStack filledBottle(Fluid fluid) {
-        if (fluid.isSame(Fluids.WATER)) {
-            return PotionContents.createItemStack(Items.POTION, Potions.WATER);
-        }
-        if (fluid.isSame(OilFluids.SOURCE.get())) {
-            return new ItemStack(ModOil.VEGETABLE_OIL_BOTTLE.get());
-        }
-        if (fluid.isSame(OilFluids.BIODIESEL.get())) {
-            return new ItemStack(ModOil.BIODIESEL_BOTTLE.get());
-        }
-        return ItemStack.EMPTY;
+        return Bottles.filled(fluid);
     }
 
     /** Comparators reading it through a block hear that it is gone, as with vanilla's containers. */

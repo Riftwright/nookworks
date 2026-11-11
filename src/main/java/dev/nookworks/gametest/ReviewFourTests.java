@@ -145,7 +145,7 @@ final class ReviewFourTests {
         NookworksGameTests.test("fluids_falling_wash_away_none_of_ours", ReviewFourTests::fluidsFallingWashAwayNoneOfOurs);
         NookworksGameTests.test("bottled_villager_gives_up_its_workstation", ReviewFourTests::bottledVillagerGivesUpItsWorkstation);
         NookworksGameTests.test("mercury_bucket_offers_no_fluid_to_other_mods", ReviewFourTests::mercuryBucketOffersNoFluid);
-        NookworksGameTests.test("retort_takes_hoppered_bottles_in_its_fill_box", 120, ReviewFourTests::retortTakesHopperedBottles);
+        NookworksGameTests.test("retort_leaves_hoppered_bottles_in_the_hopper", 120, ReviewFourTests::retortTakesHopperedBottles);
         NookworksGameTests.test("machine_sending_up_fills_a_tank_on_top", ReviewFourTests::machineSendingUpFillsATankOnTop);
         NookworksGameTests.test("liquid_experience_credits_only_monsters", ReviewFourTests::liquidExperienceCreditsOnlyMonsters);
         NookworksGameTests.test("sneak_takes_with_a_shield_in_the_other_hand", ReviewFourTests::sneakTakesWithAShield);
@@ -834,9 +834,9 @@ final class ReviewFourTests {
     }
 
     /**
-     * Glass bottles a hopper sends down into an empty Sealed Retort go to its fill box, for the experience - not into a
-     * reagent slot (bottles are what logs are charred with), where they started nothing and kept brass and pulp from
-     * their second reagent.
+     * Glass bottles a hopper sends down into an empty Sealed Retort go nowhere in it: not into a reagent slot, where they
+     * started nothing and kept brass and pulp from their second reagent, and - since 1.5, the fill box gone - nowhere
+     * else either; they wait in the hopper.
      */
     private static void retortTakesHopperedBottles(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 1, 3);
@@ -847,7 +847,7 @@ final class ReviewFourTests {
         var retort = helper.getBlockEntity(pos, RetortBlockEntity.class);
         helper.runAfterDelay(60, () -> {
             check(helper, retort.getItem(1).isEmpty() && retort.getItem(2).isEmpty(), "nothing in the reagent slots: " + retort.getItem(1) + ", " + retort.getItem(2));
-            check(helper, retort.getItem(RetortBlockEntity.FILL).is(Items.GLASS_BOTTLE), "the bottles are in the fill box");
+            check(helper, hopper.getItem(0).getCount() == 4, "the bottles stay in the hopper: " + hopper.getItem(0));
             helper.succeed();
         });
     }

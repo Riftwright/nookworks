@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nookworks:block/turned_jungle_slab"
+    },
+    "type=double": {
+      "model": "nookworks:block/turned_jungle_planks"
+    },
+    "type=top": {
+      "model": "nookworks:block/turned_jungle_slab_top"
+    }
+  }
+}

@@ -31,12 +31,12 @@
       "experience": 0.5
     },
     "#minecraft:logs_that_burn": {
-      "byproduct": "nookworks:wood_vinegar",
+      "byproduct": "minecraft:charcoal",
       "count": 1,
-      "remainder": "minecraft:charcoal",
-      "reagents": [
-        "minecraft:glass_bottle"
-      ],
+      "liquid": {
+        "id": "nookworks:wood_vinegar",
+        "amount": 250
+      },
       "experience": 0.15
     }
   }

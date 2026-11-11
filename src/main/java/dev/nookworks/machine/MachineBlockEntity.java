@@ -15,8 +15,11 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +49,13 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
     protected final dev.nookworks.feature.DrawRights drawRights = new dev.nookworks.feature.DrawRights();
 
     protected final NonNullList<ItemStack> items;
+    /**
+     * What an old world kept in slots a machine no longer has (the Sealed Retort's and the Electric Furnace's fill box,
+     * gone in 1.5 under the user's rule that nothing fills a container by itself): read from the save, never lost, put
+     * out below by {@link #putOutLeftovers} at the machine's first tick - into the container under it, else dropped -
+     * and dropped with the rest if the machine is broken first. Saved meanwhile under {@code leftovers}.
+     */
+    private final List<ItemStack> leftovers = new ArrayList<>();
     protected final SimpleEnergyHandler energy;
     protected RedstoneMode redstone = RedstoneMode.DEFAULT;
     /** What the last tick found; not saved, since the next tick finds it again. */
@@ -103,6 +113,7 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
     @Override
     public void onLoad() {
         super.onLoad();
+        MachineAlerts.track(this);
         PipePorts.showOnLoad(this);
     }
 
@@ -213,6 +224,15 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
         return this.status;
     }
 
+    /**
+     * Whether {@code status}, this machine's, is a stop to see to - heard once and rung for by a Machine Bell
+     * ({@link MachineAlerts}) - as its tone says ({@link MachineStatus#alerts}). A machine for which one of them is as
+     * meant overrides this: the Water Pump's tank full is the line drawing less than it pumps.
+     */
+    public boolean alerts(MachineStatus status) {
+        return status.alerts();
+    }
+
     public Container slots() {
         return this;
     }
@@ -315,6 +335,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
         super.saveAdditional(output);
         output.storeNullable("Owner", net.minecraft.core.UUIDUtil.CODEC, this.owner);
         ContainerHelper.saveAllItems(output, this.items);
+        if (!this.leftovers.isEmpty()) {
+            output.store("leftovers", ItemStack.CODEC.listOf(), List.copyOf(this.leftovers));
+        }
         this.energy.serialize(output.child("Energy"));
         this.redstone.save(output);
     }
@@ -325,8 +348,56 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
         this.owner = input.read("Owner", net.minecraft.core.UUIDUtil.CODEC).orElse(null);
         this.items.clear(); // what is read fills only the slots saved: a slot emptied by /data stayed as it was
         ContainerHelper.loadAllItems(input, this.items);
+        this.leftovers.clear();
+        // the slots beyond the machine's own, as an old world saved them (the indices of the rest are unchanged)
+        for (ItemStackWithSlot item : input.listOrEmpty("Items", ItemStackWithSlot.CODEC)) {
+            if (item.slot() >= this.items.size() && !item.stack().isEmpty()) {
+                this.leftovers.add(item.stack());
+            }
+        }
+        input.read("leftovers", ItemStack.CODEC.listOf()).ifPresent(this.leftovers::addAll);
         readEnergy(input, this.energy);
         this.redstone = RedstoneMode.load(input);
+    }
+
+    /** Whether anything an old world kept in a slot that is gone waits to be put out ({@link #leftovers}). */
+    public boolean hasLeftovers() {
+        return !this.leftovers.isEmpty();
+    }
+
+    /**
+     * Puts out what an old world kept in slots this machine no longer has: into the container below, the rest dropped
+     * out where there is room ({@link MachineIO#deliverBelow}, {@link MachineIO#dropOut}); with every side closed it
+     * waits and is tried again a second later. Called from the tick of a machine that lost slots.
+     */
+    protected void putOutLeftovers(ServerLevel level, BlockPos pos) {
+        if (this.leftovers.isEmpty() || (level.getGameTime() + pos.hashCode()) % 20 != 0 && this.leftoversTried) {
+            return;
+        }
+        this.leftoversTried = true;
+        for (int i = 0; i < this.leftovers.size(); i++) {
+            ItemStack rest = MachineIO.deliverBelow(level, pos, this.leftovers.get(i));
+            if (!rest.isEmpty() && MachineIO.dropOut(level, pos, rest.copy())) {
+                rest = ItemStack.EMPTY;
+            }
+            this.leftovers.set(i, rest);
+        }
+        this.leftovers.removeIf(ItemStack::isEmpty);
+        this.setChanged();
+    }
+
+    private boolean leftoversTried;
+
+    /** Broken before its first tick, it drops what an old world kept in its lost slots with the rest. */
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level != null) {
+            for (ItemStack stack : this.leftovers) {
+                Containers.dropItemStack(this.level, pos.getX(), pos.getY(), pos.getZ(), stack);
+            }
+        }
+        this.leftovers.clear();
     }
 
     /**

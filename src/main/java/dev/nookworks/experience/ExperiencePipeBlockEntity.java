@@ -17,7 +17,11 @@ import net.neoforged.neoforge.transfer.fluid.FluidResource;
  * {@link FluidPipeBlockEntity} for how it moves.
  */
 public class ExperiencePipeBlockEntity extends FluidPipeBlockEntity {
-    public static final int BUFFER = 400;
+    /**
+     * A bucket, as the Copper Pipe holds: what it hands on in a tick, and what a cauldron takes at once. It was 400 mB
+     * until 1.5, which could never fill a Liquid Experience Cauldron (the user, 2026-11-10: raised, and faster with it).
+     */
+    public static final int BUFFER = 1_000;
     /**
      * How long the glass goes on showing green after the pipe last held any experience: it moves along a line a step at
      * a time, so a pipe in use holds some only now and then, and its glass must not flicker (nor send a block update

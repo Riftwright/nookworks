@@ -7,6 +7,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.carry.CarriedBlock;
+import dev.nookworks.item.WandBox;
+import dev.nookworks.item.WandMode;
 import dev.nookworks.label.LabelText;
 import dev.nookworks.photo.Photos;
 import dev.nookworks.storage.StorageContents;
@@ -29,6 +32,13 @@ public final class ModDataComponents {
     public static final DeferredRegister.DataComponents COMPONENTS =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Nookworks.MODID);
 
+    /**
+     * A block carried with its block entity (dev.nookworks.carry.CarriedBlock), for any mod's item to hold - the add-on's
+     * packed loads. Saved and sent whole: CarriedBlock.MAX_BYTES caps it.
+     */
+    public static final Supplier<DataComponentType<CarriedBlock>> CARRIED_BLOCK = COMPONENTS.registerComponentType("carried_block",
+            b -> b.persistent(CarriedBlock.CODEC).networkSynchronized(CarriedBlock.STREAM_CODEC));
+
     /** Storage Chest contents carried by the item when the chest is broken. */
     public static final Supplier<DataComponentType<StorageContents>> STORAGE = COMPONENTS.registerComponentType("storage",
             b -> b.persistent(StorageContents.CODEC).networkSynchronized(StorageContents.STREAM_CODEC));
@@ -36,6 +46,14 @@ public final class ModDataComponents {
     /** The mob type of a spawner picked up with a Silk Touch hammer. */
     public static final Supplier<DataComponentType<EntityType<?>>> SPAWNER_ENTITY = COMPONENTS.registerComponentType("spawner_entity",
             b -> b.persistent(EntityType.CODEC).networkSynchronized(ByteBufCodecs.registry(Registries.ENTITY_TYPE)));
+
+    /** The Reinforced Building Wand's mode (BuildingWandItem); the plain wand has none. */
+    public static final Supplier<DataComponentType<WandMode>> WAND_MODE = COMPONENTS.registerComponentType("wand_mode",
+            b -> b.persistent(WandMode.CODEC).networkSynchronized(WandMode.STREAM_CODEC));
+
+    /** The box the Reinforced Building Wand is marking out, while it is. */
+    public static final Supplier<DataComponentType<WandBox>> WAND_BOX = COMPONENTS.registerComponentType("wand_box",
+            b -> b.persistent(WandBox.CODEC).networkSynchronized(WandBox.STREAM_CODEC));
 
     /** Mercury (mB) in a Mercury Tank item. */
     public static final Supplier<DataComponentType<Integer>> MERCURY = COMPONENTS.registerComponentType("mercury",
@@ -115,6 +133,10 @@ public final class ModDataComponents {
     /** A Silk Touch axe's leaf gathering switched off (LeafGathering); absent, it is on. */
     public static final Supplier<DataComponentType<Boolean>> GATHERS_LEAVES = COMPONENTS.registerComponentType("gathers_leaves",
             b -> b.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+
+    /** A Wrench's mode (Adjust or Recover); absent, it is Adjust. */
+    public static final Supplier<DataComponentType<dev.nookworks.item.WrenchMode>> WRENCH_MODE = COMPONENTS.registerComponentType("wrench_mode",
+            b -> b.persistent(dev.nookworks.item.WrenchMode.CODEC).networkSynchronized(dev.nookworks.item.WrenchMode.STREAM_CODEC));
 
     /** The mob inside a filled Mob Bottle. */
     public static final Supplier<DataComponentType<EntityType<?>>> CAPTURED_ENTITY = COMPONENTS.registerComponentType("captured_entity",

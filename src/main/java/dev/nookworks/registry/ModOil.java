@@ -27,7 +27,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 
-/** Vegetable oil: the placed liquid, its bucket and its bottle, and the Oil Press (with its Motor) that makes it. */
+/** Vegetable oil: the placed liquid, its bucket and its bottle, and the Oil Press (with its Motor) that makes it; biodiesel and methanol beside it. */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class ModOil {
     public static final DeferredBlock<LiquidBlock> VEGETABLE_OIL = ModBlocks.BLOCKS.registerBlock("vegetable_oil",
@@ -42,6 +42,20 @@ public final class ModOil {
                     .noLootTable().liquid().sound(SoundType.EMPTY));
     public static final DeferredItem<BucketItem> BIODIESEL_BUCKET = ModItems.ITEMS.registerItem("biodiesel_bucket",
             p -> new BucketItem(OilFluids.BIODIESEL.get(), p), p -> p.craftRemainder(Items.BUCKET).stacksTo(1));
+    /** Methanol spilt, or poured from its bucket: the liquid of the Bottle of Methanol ({@link #METHANOL}). */
+    public static final DeferredBlock<LiquidBlock> METHANOL_BLOCK = ModBlocks.BLOCKS.registerBlock("methanol",
+            p -> new LiquidBlock(OilFluids.METHANOL.get(), p),
+            p -> p.mapColor(MapColor.ICE).replaceable().noCollision().strength(100.0F).pushReaction(PushReaction.POPPED)
+                    .noLootTable().liquid().sound(SoundType.EMPTY));
+    public static final DeferredItem<BucketItem> METHANOL_BUCKET = ModItems.ITEMS.registerItem("methanol_bucket",
+            p -> new BucketItem(OilFluids.METHANOL.get(), p), p -> p.craftRemainder(Items.BUCKET).stacksTo(1));
+    /** Wood vinegar spilt, or poured from its bucket: the liquid of the Bottle of Wood Vinegar ({@link #WOOD_VINEGAR}). */
+    public static final DeferredBlock<LiquidBlock> WOOD_VINEGAR_BLOCK = ModBlocks.BLOCKS.registerBlock("wood_vinegar",
+            p -> new LiquidBlock(OilFluids.WOOD_VINEGAR.get(), p),
+            p -> p.mapColor(MapColor.TERRACOTTA_BROWN).replaceable().noCollision().strength(100.0F).pushReaction(PushReaction.POPPED)
+                    .noLootTable().liquid().sound(SoundType.EMPTY));
+    public static final DeferredItem<BucketItem> WOOD_VINEGAR_BUCKET = ModItems.ITEMS.registerItem("wood_vinegar_bucket",
+            p -> new BucketItem(OilFluids.WOOD_VINEGAR.get(), p), p -> p.craftRemainder(Items.BUCKET).stacksTo(1));
     public static final DeferredBlock<OilPressBlock> OIL_PRESS = ModBlocks.BLOCKS.registerBlock("oil_press",
             OilPressBlock::new, p -> p.mapColor(MapColor.WOOD).strength(2.5F, ModBlocks.KEEPER_BLAST_RESISTANCE) // a keeper of oil
                     .sound(SoundType.WOOD).noOcclusion());
@@ -76,7 +90,7 @@ public final class ModOil {
      */
     public static final DeferredItem<Item> WOOD_VINEGAR = ModItems.ITEMS.registerItem("wood_vinegar",
             WoodVinegarItem::new, p -> p.craftRemainder(Items.GLASS_BOTTLE).stacksTo(16));
-    /** Wood alcohol: distilled from wood vinegar, for making biodiesel. */
+    /** Wood alcohol: distilled from wood vinegar, for making biodiesel. A bottle of the methanol liquid (OilFluids.METHANOL). */
     public static final DeferredItem<Item> METHANOL = bottle("methanol");
     /** Vegetable oil turned with methanol over caustic soda in the Iron Pot: a fuel that burns twice as long as the oil. */
     public static final DeferredItem<Item> BIODIESEL_BOTTLE = bottle("biodiesel_bottle");
@@ -100,6 +114,7 @@ public final class ModOil {
             FireBlockAccessor fire = (FireBlockAccessor) (FireBlock) Blocks.FIRE;
             fire.nookworks$setFlammable(VEGETABLE_OIL.get(), 30, 60);
             fire.nookworks$setFlammable(BIODIESEL_BLOCK.get(), 60, 100);
+            fire.nookworks$setFlammable(METHANOL_BLOCK.get(), 60, 100);
         });
     }
 

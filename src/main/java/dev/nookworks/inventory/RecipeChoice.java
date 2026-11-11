@@ -153,7 +153,7 @@ public final class RecipeChoice {
     /** The player picked the {@code index}th thing they were offered in menu {@code containerId}: their grid makes it now. */
     public static void pick(ServerPlayer player, int containerId, int index) {
         Offer offer = OFFERED.get(player);
-        if (!active() || offer == null || offer.containerId() != containerId || player.containerMenu.containerId != containerId
+        if (!active() || player.isSpectator() || offer == null || offer.containerId() != containerId || player.containerMenu.containerId != containerId
                 || index < 0 || index >= offer.recipes().size() || !(player.containerMenu instanceof AbstractCraftingMenu menu)) {
             return;
         }

@@ -3,11 +3,13 @@ package dev.nookworks.feature;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -15,12 +17,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
  * Whether something of ours may move what one block holds into another: liquid along pipes and out of machines,
@@ -41,6 +47,17 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
  * its own; and asked only when something would move, since each asking is a break event every listener hears.
  */
 public final class DrawRights {
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Nookworks.MODID);
+    /**
+     * Who set down a vanilla dispenser (or dropper), as {@link #ownerOf} says: a block of no owner of ours that moves
+     * liquid on its own (LiquidDispensing), asked about as them ({@link #mayReach}). Unset on one set down before 1.5.
+     */
+    public static final Supplier<AttachmentType<UUID>> PLACED_BY = ATTACHMENT_TYPES.register("placed_by",
+            () -> AttachmentType.builder(() -> net.minecraft.util.Util.NIL_UUID)
+                    .serialize(UUIDUtil.CODEC.fieldOf("player"), id -> !id.equals(net.minecraft.util.Util.NIL_UUID))
+                    .build());
+
     /** How long an answer is kept, in ticks, at most. */
     public static final long ASK_EVERY = 6000;
     /** By the position asked about: who it was asked for, until when, and whether they were let. */
@@ -77,6 +94,41 @@ public final class DrawRights {
             return rights.couldBreak(level, into, from, owner);
         }
         return giver == null || ((Owned) source).drawRights().couldBreak(level, from, into, giver);
+    }
+
+    /**
+     * Whether a dispenser at {@code by} ({@code dispenser}, its block entity) may take from or give into the block at
+     * {@code at} (its block entity {@code there}, or null), or pour into or take from the world there (r22 CXC-003,
+     * CXP-002, CXM-002: {@link #mayMove} asked the tank's owner of the dispenser's cell, so a stranger's dispenser
+     * outside a claim drew a claimed tank dry).
+     * <p>
+     * A dispenser set down by a player since 1.5 is asked about as them ({@link #PLACED_BY}): yes if they could break
+     * the block at {@code at} - in no claim, or in theirs, or one they are let into - or it is theirs. One set down
+     * before is asked about as nobody: yes where anybody could break the block at {@code at} (it is in no claim); no
+     * where anybody could break the dispenser's cell and not the block's (the dispenser outside a claim, the block in
+     * it); with both in claims, yes if the block's owner, when it keeps one, could break the dispenser's cell. (Two
+     * claims side by side and a block of no owner - a cauldron - between them is what the old one cannot tell apart:
+     * the re-check of r22.) The answers kept as {@link #couldBreak} keeps them.
+     */
+    public static boolean mayReach(ServerLevel level, BlockPos by, @Nullable BlockEntity dispenser, BlockPos at, @Nullable BlockEntity there) {
+        UUID owner = there instanceof Owned owned ? owned.owner() : null;
+        if (dispenser != null && dispenser.hasData(PLACED_BY)) {
+            UUID placer = dispenser.getData(PLACED_BY);
+            return placer.equals(owner) || shared(level, placer).couldBreak(level, by, at, placer);
+        }
+        DrawRights nobody = shared(level, Permission.NOBODY);
+        if (nobody.couldBreak(level, by, at, Permission.NOBODY)) {
+            return true;
+        }
+        if (nobody.couldBreak(level, at, by, Permission.NOBODY)) {
+            return false;
+        }
+        return owner == null || shared(level, owner).couldBreak(level, at, by, owner);
+    }
+
+    /** Every answer kept in {@code level} let go of: for tests, whose places are used again by the next batch's. */
+    public static void forget(ServerLevel level) {
+        SHARED.remove(level.dimension());
     }
 
     /**
@@ -154,6 +206,10 @@ public final class DrawRights {
             LevelAccessor level = event.getLevel();
             if (owner != null && !level.isClientSide() && level.getBlockEntity(event.getPos()) instanceof Owned owned && owned.owner() == null) {
                 owned.setOwner(owner);
+            }
+            if (owner != null && !level.isClientSide() && level.getBlockEntity(event.getPos()) instanceof DispenserBlockEntity dispenser
+                    && !dispenser.hasData(PLACED_BY)) {
+                dispenser.setData(PLACED_BY, owner);
             }
         }
 

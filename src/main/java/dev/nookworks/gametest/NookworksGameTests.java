@@ -73,6 +73,7 @@ public final class NookworksGameTests {
         R18FixTests.register();
         R19FixTests.register();
         R21FixTests.register();
+        WandTests.register();
         BotPathTests.register();
         BotRulesTests.register();
         BotDigTests.register();
@@ -89,6 +90,7 @@ public final class NookworksGameTests {
         SifterTests.register();
         MachineTests.register();
         RecyclingTests.register();
+        TurnedPlanksTests.register();
         StorageTests.register();
         MobTests.register();
         MercuryTests.register();
@@ -135,10 +137,16 @@ public final class NookworksGameTests {
         WarpAnchorTests.register();
         TablewareTests.register();
         OilPressPortTests.register();
+        SoundFeatureTests.register();
         HandOutTests.register();
         SortDirectionTests.register();
         SorterAllowTests.register();
         GaugePouringTests.register();
+        MethanolTests.register();
+        WoodVinegarTests.register();
+        LiquidCauldronTests.register();
+        LiquidDispensingTests.register();
+        LaserFruitTests.register();
         QuenchingTests.register();
         DecorTests.register();
         R15Tests.register();
@@ -155,9 +163,13 @@ public final class NookworksGameTests {
         LowItemTests.register();
         BenchTests.register();
         FurnitureApartTests.register();
+        WrenchModeTests.register();
         RootboundTests.register();
         CompatSweepTests.register();
         ForeignBlockTests.register();
+        MachineTabTests.register();
+        CarryTests.register();
+        TagPickerTests.register();
     }
 
     public static void register(IEventBus modEventBus) {
@@ -168,6 +180,7 @@ public final class NookworksGameTests {
         R15LateAuditTests.listen(modEventBus);
         FUNCTIONS.register(modEventBus);
         ForeignBlockTests.listen(modEventBus); // stand-ins for another mod's blocks, in GameTest runs only
+        CarryTests.listen(modEventBus); // a stand-in block entity that wants a word in being carried
         modEventBus.addListener(NookworksGameTests::onRegisterTests);
         NeoForge.EVENT_BUS.addListener(NookworksGameTests::watchdog);
     }
@@ -217,7 +230,7 @@ public final class NookworksGameTests {
         needs(() -> Features.enabled("sorting"), "sorter_gears_fit_and_old_sorters_keep_their_speed");
         needs(() -> Features.enabled("mob_bottle"), "advancements_are_earned_as_a_player_would");
         needs(() -> Features.enabled("liquid_experience"), "experience_bottles_fill_and_enchant",
-                "retort_takes_hoppered_bottles_in_its_fill_box", "machine_screen_keeps_outputs_output_only");
+                "retort_leaves_hoppered_bottles_in_the_hopper", "machine_screen_keeps_outputs_output_only");
         needs(() -> Features.enabled("liquid_experience"), R9PipeTests.NEED_LIQUID_EXPERIENCE);
         needs(() -> Features.enabled("liquid_experience"), BiodieselTests.NEED_LIQUID_EXPERIENCE);
         needs(() -> Features.enabled("kitchen"), R11DriveTests.NEED_KITCHEN);

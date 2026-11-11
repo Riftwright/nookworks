@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
-import dev.nookworks.experience.ExperienceBottling;
 import dev.nookworks.experience.ExperienceBuffer;
+import dev.nookworks.fluid.LiquidOutlet;
 import dev.nookworks.fluid.OneTank;
 import dev.nookworks.fluid.Tanks;
+import dev.nookworks.machine.GaugePouring;
 import dev.nookworks.machine.GuiTank;
-import dev.nookworks.machine.MachineIO;
 import dev.nookworks.machine.MachineInfo;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineStatus;
@@ -63,6 +63,17 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
  * Water can come in by pipe as well as by the bucket: a Copper Pipe (or another mod's) fills a tank of
  * {@link #WATER_TANK} mB, and with nothing in the charge slot, each bucket's worth of it is boiled down just as a
  * water bucket would be.
+ * <p>
+ * Logs give their wood vinegar as a liquid since 1.5 (the user, 2026-11-10: 「木酢液も液体として作って欲しい」; and their
+ * rule for both mods, 2026-11-08: 「そもそも瓶しかない液体があるのは、工業modとして扱いづらい」): no glass bottle goes in with
+ * them, and what an entry gives off as a liquid ({@code liquid} in its data) is kept in a tank of {@link #LIQUID_TANK} mB
+ * and pushed out into a pipe or tank beside it that takes it, as the Vacuum Distiller's methanol is (any side). With
+ * the tank too full for a charge's worth it waits; nothing is bottled.
+ * <p>
+ * Its fill box (an empty bottle or bucket in, filled with the experience, out) and the screen's setting for where a
+ * hopper's glass bottles go are gone since 1.5, under the user's rule for both mods (2026-11-08: 「入ってくる瓶と汲みだす
+ * 瓶を一緒にしない」): the experience goes out by pipe, or into a bottle or bucket in its screen's Liquid tab. What an
+ * old world kept in the box is put out below at the first tick ({@link #putOutLeftovers}).
  */
 public class RetortBlockEntity extends MercuryMachineBlockEntity implements MachineInfo {
     public static final int FE_PER_TICK = 30;
@@ -76,6 +87,8 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     public static final int EXPERIENCE_CAPACITY = 1_000;
     public static final int WATER_TANK = 4_000;
+    /** Sixteen logs' wood vinegar, on its way out. */
+    public static final int LIQUID_TANK = 4_000;
     private static final int BUCKET = 1_000;
 
     /** The experience the charges left behind: taken from, never filled from outside. */
@@ -102,21 +115,24 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         }
     };
 
-    /** What pipes see: the experience to draw out, and the water tank to fill. */
+    /**
+     * What the charges give off as a liquid (wood vinegar from logs), on its way out: filled by its own work only, drawn
+     * by pipes (and by a bottle or bucket at its gauge). One liquid at a time.
+     */
+    private final FluidStacksResourceHandler liquid = Tanks.tank(LIQUID_TANK, fluid -> true, false, true, this::setChanged);
+
+    /** What pipes see: the experience and the liquid to draw out, and the water tank to fill. */
     private final ResourceHandler<FluidResource> fluids =
-            new CombinedResourceHandler<>(this.experience, this.water);
+            new CombinedResourceHandler<>(this.experience, this.water, this.liquid);
 
-    /** The fill box: an empty bucket or bottle in, filled with the experience the charges left, out. */
-    public static final int FILL = INPUTS + OUTPUTS;
-    public static final int FILLED = FILL + 1;
-    private static final int[] SIDE_SLOTS = {0, 1, 2, FILL};
-    private static final int[] DOWN_SLOTS = {INPUTS, INPUTS + 1, FILLED};
+    /** Where the liquid goes out: any side. */
+    private final LiquidOutlet outlet = new LiquidOutlet(true);
 
-    /** Where a glass bottle from a hopper or pipe goes: set from the screen. */
-    private RetortBottles bottles = RetortBottles.DEFAULT;
+    private static final int[] SIDE_SLOTS = {0, 1, 2};
+    private static final int[] DOWN_SLOTS = {INPUTS, INPUTS + 1};
 
     public RetortBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.RETORT.get(), pos, state, INPUTS, OUTPUTS, 2, 10_000);
+        super(ModBlockEntities.RETORT.get(), pos, state, INPUTS, OUTPUTS, 0, 10_000);
     }
 
     @Override
@@ -126,22 +142,7 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return side == Direction.DOWN && (slot == INPUTS || slot == INPUTS + 1 || slot == FILLED);
-    }
-
-    /** Bottles and buckets from the fill box; filled, they go down into a container below, or wait in the box to be taken. */
-    private void bottle(ServerLevel level, BlockPos pos) {
-        if (ExperienceBottling.fill(this.items, FILL, FILLED, this.experience)) {
-            this.setChanged();
-        }
-        ItemStack filled = this.items.get(FILLED);
-        if (!filled.isEmpty()) {
-            ItemStack rest = MachineIO.intoBelow(level, pos, filled);
-            if (rest.getCount() != filled.getCount()) {
-                this.items.set(FILLED, rest);
-                this.setChanged();
-            }
-        }
+        return side == Direction.DOWN && (slot == INPUTS || slot == INPUTS + 1);
     }
 
     @Override
@@ -156,11 +157,14 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
     }
 
     private void tick(ServerLevel level, BlockPos pos) {
+        this.putOutLeftovers(level, pos);
         if (this.mercury.amount() > 0) {
             MercuryNetwork.push(level, pos, this, PIPE_RATE);
         }
         this.experience.push(level, pos, this);
-        this.bottle(level, pos);
+        if (this.liquidStored() > 0) {
+            this.outlet.push(level, pos, this, this.liquid);
+        }
         MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
         // With the charge slot empty, piped water is boiled as if it had come in a bucket.
         boolean fromTank = recipe == null && this.items.get(INPUT).isEmpty() && this.waterStored() >= BUCKET
@@ -177,6 +181,7 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
                 : recipe == null ? MachineStatus.IDLE
                 : this.mercury.space() < recipe.mercury() ? MachineStatus.MERCURY_FULL
+                : !this.roomFor(recipe) ? MachineStatus.TANK_FULL
                 : !this.hasReagents(recipe) ? MachineStatus.NO_REAGENT : null;
         if (blocked != null) {
             // Nothing to work on - even while it waits for room - and what it had done went with what was in it;
@@ -211,10 +216,24 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
             if (!fromTank) {
                 recipe.remainder().ifPresent(item -> this.addOutput(new ItemStack(item))); // no bucket came in with piped water
             }
+            recipe.liquid().ifPresent(given -> Tanks.set(this.liquid, given.getFluid(), this.liquidStored() + given.getAmount()));
             this.experience.keep(this.level, this.worldPosition, recipe.experience());
+            if (this.liquidStored() > 0) {
+                this.outlet.push(level, pos, this, this.liquid);
+            }
             this.flush(level, pos);
         }
         this.setChanged();
+    }
+
+    /** Whether the liquid tank has room for what a charge of {@code recipe} gives off (and holds nothing else). */
+    private boolean roomFor(MercuryRecipes.Retorting recipe) {
+        if (recipe.liquid().isEmpty()) {
+            return true;
+        }
+        var given = recipe.liquid().get();
+        return (this.liquidStored() == 0 || this.liquid.getResource(0).getFluid().isSame(given.getFluid()))
+                && LIQUID_TANK - this.liquidStored() >= given.getAmount();
     }
 
     /**
@@ -298,43 +317,10 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
         boolean reagentSlot = slot >= FIRST_REAGENT && slot < FIRST_REAGENT + REAGENT_SLOTS;
-        if (stack.is(Items.GLASS_BOTTLE) && this.bottles != RetortBottles.AUTO) {
-            // the screen's setting: only the fill box, or only the reagents - there before the logs, as the setting asks
-            boolean wanted = this.bottles == RetortBottles.EXPERIENCE ? slot == FILL : reagentSlot;
-            return wanted && super.canPlaceItemThroughFace(slot, stack, side);
-        }
         if (reagentSlot && MercuryRecipes.retorting(this.items.get(INPUT)) == null) {
             return false;
         }
         return super.canPlaceItemThroughFace(slot, stack, side);
-    }
-
-    public RetortBottles bottles() {
-        return this.bottles;
-    }
-
-    public void setBottles(RetortBottles bottles) {
-        this.bottles = bottles;
-        this.setChanged();
-    }
-
-    /** The bottle setting, for the screen's button. */
-    @Override
-    public int guiExtra() {
-        return this.bottles.ordinal();
-    }
-
-    /**
-     * A shift-clicked bottle or bucket goes into the fill box, where the screen shows a bottle - not to the reagents,
-     * which take glass bottles too - unless the charge in is one that cooks with it (logs, for wood vinegar).
-     */
-    @Override
-    public int shiftClickSlot(ItemStack stack) {
-        if (!ExperienceBottling.fillable(stack)) {
-            return -1;
-        }
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
-        return recipe != null && recipe.reagents().stream().anyMatch(stack::is) ? -1 : FILL;
     }
 
     @Override
@@ -347,12 +333,6 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
      * which holds the slots the server sent (MachineMenu), so a shift-click lands there as it will on the server.
      */
     public static boolean takes(Container items, int slot, ItemStack stack) {
-        if (slot == FILL) {
-            return ExperienceBottling.fillable(stack);
-        }
-        if (slot == FILLED) {
-            return false;
-        }
         if (slot == INPUT) {
             return MercuryRecipes.retorting(stack) != null;
         }
@@ -458,12 +438,13 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         return this.water;
     }
 
-    /** The experience it keeps, the water it boils and the mercury it frees. */
+    /** The experience it keeps, the water it boils, the liquid it gives off and the mercury it frees. */
     @Override
     public ResourceHandler<FluidResource> gaugeTank(int index) {
         return switch (index) {
             case 0 -> this.experienceHandler();
             case 1 -> this.water;
+            case 2 -> this.liquid;
             default -> null;
         };
     }
@@ -471,23 +452,37 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
     @Override
     public List<GuiTank> guiTanks() {
         return List.of(new GuiTank(GuiTank.Kind.EXPERIENCE, this.experienceStored(), EXPERIENCE_CAPACITY),
-                new GuiTank(GuiTank.Kind.WATER, this.waterStored(), WATER_TANK), this.mercuryTank());
+                new GuiTank(GuiTank.Kind.WATER, this.waterStored(), WATER_TANK),
+                new GuiTank(GaugePouring.kindOf(this.liquid.getResource(0).getFluid(), GuiTank.Kind.WOOD_VINEGAR), this.liquidStored(),
+                        LIQUID_TANK), this.mercuryTank());
+    }
+
+    /** How much of the liquid it gives off (wood vinegar) it holds. */
+    public int liquidStored() {
+        return this.liquid.getAmountAsInt(0);
+    }
+
+    /** That tank alone: drawn from, never filled. */
+    public FluidStacksResourceHandler liquidTank() {
+        return this.liquid;
     }
 
     public int experienceStored() {
         return this.experience.stored();
     }
 
-    /** Its water goes with it, as its mercury does; its experience pours out as orbs. */
+    /** Its water and wood vinegar go with it, as its mercury does; its experience pours out as orbs. */
     @Override
     protected void heldFluids(Consumer<FluidStack> out) {
         super.heldFluids(out);
         out.accept(Tanks.held(this.water));
+        out.accept(Tanks.held(this.liquid));
     }
 
     @Override
     protected void restoreFluid(FluidStack fluid) {
-        if (!Tanks.restore(this.water, fluid)) {
+        // water into the water tank, as it always went; anything else of ours (wood vinegar) into the liquid tank
+        if (!Tanks.restore(this.water, fluid) && (fluid.getFluid() == MercuryFluids.SOURCE.get() || !Tanks.restore(this.liquid, fluid))) {
             super.restoreFluid(fluid);
         }
     }
@@ -497,7 +492,7 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         super.saveAdditional(output);
         this.experience.serialize(output.child("Experience"));
         this.water.serialize(output.child("Water"));
-        this.bottles.save(output);
+        this.liquid.serialize(output.child("liquid")); // since 1.5: a Retort saved before has none, its tank empty
     }
 
     @Override
@@ -505,7 +500,8 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         super.loadAdditional(input);
         input.child("Experience").ifPresent(this.experience::deserialize);
         input.child("Water").ifPresent(this.water::deserialize);
-        this.bottles = RetortBottles.load(input);
+        input.child("liquid").ifPresent(this.liquid::deserialize);
+        // its old bottle setting ("Bottles", 1.4) is no longer read: there is no fill box for it to choose
     }
 
     /** Broken, it pours out the experience it held as orbs. */

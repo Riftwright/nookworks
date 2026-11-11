@@ -14,6 +14,7 @@ import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.machine.SightGlass;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -156,7 +157,7 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
         CrankMotion.announce(level, this.worldPosition, this.getBlockState());
         if (level.getGameTime() != this.soundAt) { // one sound a tick: nookTechnology's speed gear turns it up to four times at once, and four were a thump (r21)
             this.soundAt = level.getGameTime();
-            level.playSound(null, this.worldPosition, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.35F, 0.7F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, this.worldPosition, ModSounds.OIL_PRESS_TURN.get(), SoundSource.BLOCKS, 0.35F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         }
         if (++this.turns >= recipe.turns()) {
             this.turns = 0;

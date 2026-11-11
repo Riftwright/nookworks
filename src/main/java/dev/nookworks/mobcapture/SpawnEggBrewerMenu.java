@@ -4,6 +4,9 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.machine.RedstoneMode;
 import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.menu.tab.MachineTab;
+import dev.nookworks.menu.tab.MenuTabs;
+import dev.nookworks.menu.tab.TabbedMenu;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -16,7 +19,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /** Spawn Egg Brewer GUI: bottle and egg on the left, blaze powder below, the spawn egg on the right. */
-public class SpawnEggBrewerMenu extends AbstractContainerMenu {
+public class SpawnEggBrewerMenu extends AbstractContainerMenu implements TabbedMenu {
     public static final int BOTTLE_X = 44;
     public static final int BOTTLE_Y = 20;
     public static final int EGG_X = 44;
@@ -32,6 +35,7 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
     public static final int BUTTON_REDSTONE = 0;
 
     private final Container container;
+    private final MenuTabs tabs = new MenuTabs(176);
     private final ContainerData data;
     private final @Nullable SpawnEggBrewerBlockEntity brewer;
 
@@ -63,6 +67,8 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
         });
         this.addStandardInventorySlots(inventory, 8, INVENTORY_Y);
         this.addDataSlots(data);
+        // the tabs on the screen's right edge (1.5): its redstone mode in Settings; an add-on may add an Add-on tab
+        this.tabs.enable(MachineTab.SETTINGS);
     }
 
     public int progress() {
@@ -88,6 +94,9 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (this.tabs.clickMenuButton(player, id)) {
+            return true;
+        }
         if (id == BUTTON_REDSTONE && this.brewer != null) {
             this.brewer.setRedstoneMode(this.brewer.redstoneMode().next());
             return true;
@@ -100,6 +109,10 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
+        }
+        ItemStack tabbed = this.tabs.quickMove(slot, MACHINE_SLOTS, this::moveItemStackTo);
+        if (tabbed != null) {
+            return tabbed;
         }
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
@@ -139,5 +152,16 @@ public class SpawnEggBrewerMenu extends AbstractContainerMenu {
         public boolean mayPlace(ItemStack stack) {
             return this.container.canPlaceItem(this.getContainerSlot(), stack);
         }
+    }
+
+    @Override
+    public MenuTabs tabs() {
+        return this.tabs;
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.tabs.removed(player);
     }
 }

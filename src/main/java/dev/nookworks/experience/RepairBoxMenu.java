@@ -3,6 +3,9 @@ package dev.nookworks.experience;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.RedstoneMode;
 import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.menu.tab.MachineTab;
+import dev.nookworks.menu.tab.MenuTabs;
+import dev.nookworks.menu.tab.TabbedMenu;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -19,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
  * Repair Box GUI: the gear slots - six, or twelve for a double - between a power gauge and an experience gauge.
  * The gauges show both halves of a double together, since the pair spends them together.
  */
-public class RepairBoxMenu extends AbstractContainerMenu {
+public class RepairBoxMenu extends AbstractContainerMenu implements TabbedMenu {
     /** Energy and experience (two short slots each), how many boxes (1 or 2), the redstone mode, and whether it holds. */
     public static final int BOXES = 4;
     public static final int REDSTONE = 5;
@@ -30,6 +33,7 @@ public class RepairBoxMenu extends AbstractContainerMenu {
     public static final int INVENTORY_Y = MachineLayout.INVENTORY_Y;
 
     private final Container container;
+    private final MenuTabs tabs = new MenuTabs(176);
     private final ContainerData data;
     private final RepairBoxBlockEntity[] halves;
 
@@ -58,6 +62,8 @@ public class RepairBoxMenu extends AbstractContainerMenu {
         }
         this.addStandardInventorySlots(inventory, 8, INVENTORY_Y);
         this.addDataSlots(data);
+        // the tabs on the screen's right edge (1.5): its redstone mode in Settings; an add-on may add an Add-on tab
+        this.tabs.enable(MachineTab.SETTINGS);
         for (RepairBoxBlockEntity box : halves) {
             box.startOpen(inventory.player);
         }
@@ -106,6 +112,9 @@ public class RepairBoxMenu extends AbstractContainerMenu {
     /** The pair is one machine, so both halves take the new mode. */
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (this.tabs.clickMenuButton(player, id)) {
+            return true;
+        }
         if (id != BUTTON_REDSTONE || this.halves.length == 0) {
             return false;
         }
@@ -121,6 +130,10 @@ public class RepairBoxMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
+        }
+        ItemStack tabbed = this.tabs.quickMove(slot, this.container.getContainerSize(), this::moveItemStackTo);
+        if (tabbed != null) {
+            return tabbed;
         }
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
@@ -155,8 +168,14 @@ public class RepairBoxMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
+        this.tabs.removed(player);
         for (RepairBoxBlockEntity box : this.halves) {
             box.stopOpen(player);
         }
+    }
+
+    @Override
+    public MenuTabs tabs() {
+        return this.tabs;
     }
 }

@@ -1,6 +1,20 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "nookworks:item/wrench"
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "nookworks:wrench_mode",
+    "cases": [
+      {
+        "when": "recover",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/wrench_recover"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "nookworks:item/wrench"
+    }
   }
 }

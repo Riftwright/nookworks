@@ -55,6 +55,8 @@ public final class ModCapabilities {
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.ELECTROLYTIC_CELL.get(), (be, side) -> be.energy());
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.ELECTROLYTIC_CELL.get(), (be, side) -> be.waterHandler());
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.DISTILLER.get(), Sided::new);
+        // its methanol on the way out (since 1.5), drawn by pipes and tanks; not its mercury, which stays out of fluid systems
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.DISTILLER.get(), (be, side) -> be.fluidHandler());
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.PRINTING_PRESS.get(), Sided::new);
 
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.STORAGE.get(), (be, side) -> be.inventory());

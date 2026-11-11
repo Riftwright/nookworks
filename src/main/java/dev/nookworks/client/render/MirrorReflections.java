@@ -95,7 +95,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
  * sections within {@link #SECTION_RADIUS} of its own (from meshes of the mirrors' own, {@link MirrorScenes}), the
  * entities and block entities within {@link #ENTITY_REACH}; beyond that is the fog's colour. A mirror's picture is not
  * drawn in another mirror's (its glass there is the model's silver). Under an Iris shader pack the picture is drawn with
- * the game's own programs all the same ({@link IrisHooks}), and the glass over the pack's finished picture.
+ * the game's own programs all the same ({@link IrisHooks}), and the glass over the pack's finished picture; what lights
+ * the picture then is the pack's own light, measured from the pack on the glass itself ({@link MirrorLight}).
  */
 @EventBusSubscriber(modid = Nookworks.MODID, value = Dist.CLIENT)
 public final class MirrorReflections {
@@ -165,6 +166,8 @@ public final class MirrorReflections {
     static void registerPipelines(RegisterRenderPipelinesEvent event) {
         event.registerPipeline(GLASS);
         event.registerPipeline(GLASS_OVER_SHADERS);
+        event.registerPipeline(MirrorLight.READ);
+        event.registerPipeline(MirrorLight.START);
     }
 
     /** Where the glass's face is: the plane it reflects in, through its middle. */
@@ -273,6 +276,19 @@ public final class MirrorReflections {
         GpuBufferSlice transform = RenderSystem.getDynamicUniforms().writeTransform(bob(camera).mul(camera.viewRotationMatrix));
         var main = Minecraft.getInstance().gameRenderer.mainRenderTarget();
         var sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR);
+        ClientLevel level = Minecraft.getInstance().level;
+        if (MirrorLight.mode() == MirrorLight.Mode.ON && level != null) {
+            // the pack's picture is finished and the glasses are not yet painted over it: each one's board is read, for
+            // the pictures to come
+            for (Over over : overShaders) {
+                Slot slot = slots[over.slot];
+                if (slot.light == null) {
+                    slot.light = new MirrorLight.Table(slot.index);
+                }
+                MirrorLight.read(slot.light, main.getColorTextureView(), main.getDepthTextureView(), camera, over.lower, over.facing,
+                        MirrorLight.shade(level.cardinalLighting()));
+            }
+        }
         try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(() -> "Nookworks mirror glass over shaders",
                 main.getColorTextureView(), Optional.empty(), main.getDepthTextureView(), OptionalDouble.empty())) {
             RenderSystem.bindDefaultUniforms(pass);
@@ -444,12 +460,15 @@ public final class MirrorReflections {
             RenderSystem.setProjectionMatrix(slot.projection.getBuffer(camera.projectionMatrix), ProjectionType.PERSPECTIVE);
             slot.sky.render(worldFog, sky);
         }
+        // under a shader pack, lit as the pack lights: by the table measured from it, once there is one (MirrorLight)
+        boolean lit = IrisHooks.shaderPackInUse() && MirrorLight.mode() == MirrorLight.Mode.ON && slot.light != null && slot.light.measured;
         RenderSystem.setProjectionMatrix(slot.skyless.getBuffer(projection), ProjectionType.PERSPECTIVE);
         RenderSystem.setShaderFog(worldFog);
         modelView.set(view);
         mc.gameRenderer.lighting().setupFor(Lighting.Entry.LEVEL);
         GpuTextureView atlas = mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).getTextureView();
         var sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR);
+        MirrorLight.use(lit ? slot.light.view : null);
         try (FeatureRenderDispatcher.PreparedFrame frame = features.prepareFrame(submits);
                 RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(() -> "Nookworks mirror",
                         target.getColorTextureView(), Optional.empty(), target.getDepthTextureView(), OptionalDouble.empty())) {
@@ -460,6 +479,7 @@ public final class MirrorReflections {
             frame.executeTranslucent(pass);
             frame.executeTranslucentAfterTerrain(pass);
         } finally {
+            MirrorLight.use(null);
             modelView.popMatrix();
             RenderSystem.restoreProjectionMatrix();
             if (fogBefore != null) {
@@ -540,6 +560,8 @@ public final class MirrorReflections {
         @Nullable Glass glass;
         @Nullable TextureTarget target;
         @Nullable SkyRenderer sky;
+        /** Under a shader pack: the pack's light as measured at this slot's glass. */
+        MirrorLight.@Nullable Table light;
 
         Slot(int index) {
             this.index = index;
@@ -578,6 +600,10 @@ public final class MirrorReflections {
             if (this.sky != null) {
                 this.sky.close();
                 this.sky = null;
+            }
+            if (this.light != null) {
+                this.light.close();
+                this.light = null;
             }
         }
     }

@@ -4,8 +4,11 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.barter.BarterTerminalBlockEntity;
 import dev.nookworks.block.entity.SifterBlockEntity;
-import dev.nookworks.experience.ExperienceBottling;
 import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.menu.tab.LiquidTab;
+import dev.nookworks.menu.tab.MachineTab;
+import dev.nookworks.menu.tab.MenuTabs;
+import dev.nookworks.menu.tab.TabbedMenu;
 import dev.nookworks.mercury.DistillerBlockEntity;
 import dev.nookworks.mercury.RetortBlockEntity;
 import dev.nookworks.mercury.StirringTankBlockEntity;
@@ -31,16 +34,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * The one menu every machine screen uses: the slots its {@link MachineLayout} lists, the player's inventory, and
- * the machine's numbers. Button {@link #BUTTON_REDSTONE} steps its redstone mode.
+ * The one menu every machine screen uses: the slots its {@link MachineLayout} lists, the player's inventory, the
+ * Liquid tab's two slots when the machine has tanks of liquid ({@link LiquidTab}, {@link MachineLiquids}), and the
+ * machine's numbers. Button {@link #BUTTON_REDSTONE} steps its redstone mode; ids 20-39 are the tabs'
+ * ({@link MenuTabs}), 100-119 nookTechnology's. Its screen's tabs: Settings always, Liquid with tanks, Add-on when an
+ * add-on puts something there.
  * <p>
  * Menu data travels as 16-bit shorts, and a machine's energy does not fit in one, so each number takes two data
  * slots: the low half, then the high half.
  */
-public class MachineMenu extends AbstractContainerMenu {
+public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
     public static final int BUTTON_REDSTONE = 0;
-    /** The Sealed Retort's setting for bottles a hopper puts in. */
-    public static final int BUTTON_RETORT_BOTTLES = 1;
 
     private static final int ENERGY = 0;
     private static final int ENERGY_CAPACITY = 1;
@@ -50,7 +54,8 @@ public class MachineMenu extends AbstractContainerMenu {
     private static final int EXTRA = 5;
     /** Each tank's amount and capacity, two wide numbers per tank. */
     private static final int TANKS = 6;
-    public static final int MAX_TANKS = 4;
+    /** Five since 1.5: the Stirring Tank's methanol. */
+    public static final int MAX_TANKS = 5;
     private static final int WIDE = TANKS + MAX_TANKS * 2;
     private static final int STATUS = WIDE * 2;
     private static final int REDSTONE = STATUS + 1;
@@ -62,6 +67,7 @@ public class MachineMenu extends AbstractContainerMenu {
     private final Container container;
     private final ContainerData data;
     private final @Nullable BlockEntity machine;
+    private final MenuTabs tabs = new MenuTabs(MachineLayout.WIDTH);
 
     /** Client side: the server says which layout. */
     public static MachineMenu client(int containerId, Inventory inventory, FriendlyByteBuf buf) {
@@ -92,9 +98,8 @@ public class MachineMenu extends AbstractContainerMenu {
                     case GENERATOR -> slot != 0 || GeneratorBlockEntity.burns(stack);
                     case CRUSHER -> slot != 0 || CrushingRecipe.of(stack) != null;
                     case ELECTROLYTIC_CELL -> slot != 0 || Electrolysis.of(stack) != null;
-                    case ELECTRIC_FURNACE -> slot == ElectricFurnaceBlockEntity.FILL ? ExperienceBottling.fillable(stack)
-                            : slot != ElectricFurnaceBlockEntity.INPUT
-                                    || level.recipeAccess().propertySet(RecipePropertySet.FURNACE_INPUT).test(stack);
+                    case ELECTRIC_FURNACE -> slot != ElectricFurnaceBlockEntity.INPUT
+                            || level.recipeAccess().propertySet(RecipePropertySet.FURNACE_INPUT).test(stack);
                     case RETORT -> RetortBlockEntity.takes(this, slot, stack);
                     case COMPRESSOR -> CompressorBlockEntity.takes(this, slot, stack, () -> Compressing.pressesHere(stack));
                     case STIRRING_TANK -> StirringTankBlockEntity.takes(slot, stack);
@@ -134,6 +139,17 @@ public class MachineMenu extends AbstractContainerMenu {
         }
         this.addStandardInventorySlots(inventory, 8, MachineLayout.INVENTORY_Y);
         this.addDataSlots(data);
+        // the tabs on the screen's right edge (the user, 2026-11-08): Settings holds the redstone mode; the Liquid tab's
+        // two slots come after the player's inventory, so an add-on's slot after them finds the inventory where it was
+        this.tabs.enable(MachineTab.SETTINGS);
+        if (MachineLiquids.any(layout)) {
+            LiquidTab.add(this.tabs, new MachineLiquids(this), this::addSlot, this::addDataSlot);
+        }
+    }
+
+    @Override
+    public MenuTabs tabs() {
+        return this.tabs;
     }
 
     /** The machine's numbers, read live each time the menu syncs. */
@@ -234,15 +250,21 @@ public class MachineMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (this.tabs.clickMenuButton(player, id)) {
+            return true;
+        }
         if (id == BUTTON_REDSTONE && this.machine instanceof MachineInfo info) {
             info.setRedstoneMode(info.redstoneMode().next());
             return true;
         }
-        if (id == BUTTON_RETORT_BOTTLES && this.machine instanceof RetortBlockEntity retort) {
-            retort.setBottles(retort.bottles().next());
-            return true;
-        }
         return false;
+    }
+
+    /** The screen closed: what is left in the Liquid tab goes back to the player. */
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.tabs.removed(player);
     }
 
     @Override
@@ -251,9 +273,14 @@ public class MachineMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
+        int machineSlots = this.layout.slotCount();
+        // the tabs first: out of a tab's slot, or into the open tab's (the Liquid tab's slots only while it is open)
+        ItemStack tabbed = this.tabs.quickMove(slot, machineSlots, this::moveItemStackTo);
+        if (tabbed != null) {
+            return tabbed;
+        }
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
-        int machineSlots = this.layout.slotCount();
         if (index < machineSlots) {
             boolean output = this.layout.spots().get(index).output();
             if (!this.moveItemStackTo(stack, machineSlots, machineSlots + ShiftClick.INVENTORY_SLOTS, output)) {

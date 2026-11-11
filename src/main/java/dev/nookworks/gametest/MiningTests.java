@@ -172,8 +172,10 @@ final class MiningTests {
         helper.succeedWhen(() -> {
             check(helper, helper.getBlockState(new BlockPos(1, 5, 1)).isAir() && helper.getBlockState(new BlockPos(5, 6, 5)).isAir(),
                     "the leaves have gone");
+            // over this tree and a block round it only: a test standing beside this one may drop saplings of its own
             var drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
-                    new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(9));
+                    net.minecraft.world.phys.AABB.encapsulatingFullBlocks(helper.absolutePos(new BlockPos(-1, 0, -1)),
+                            helper.absolutePos(new BlockPos(7, 8, 7))));
             int leafItems = drops.stream().filter(e -> e.getItem().is(Items.OAK_LEAVES)).mapToInt(e -> e.getItem().getCount()).sum();
             boolean saplings = drops.stream().anyMatch(e -> e.getItem().is(Items.OAK_SAPLING));
             // (the mock player at the corner may pick a few up: what matters is leaves, not saplings)

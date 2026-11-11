@@ -545,6 +545,9 @@ final class R15ClaimTests {
      * read the server's biome). What is drawn is only noted, and stopped: nothing is let out into the If.
      */
     private static void ifAnimals(GameTestHelper helper) {
+        if (IfTests.notOurs(helper)) {
+            return;
+        }
         var server = helper.getLevel().getServer();
         IfWorld world = IfWorld.get(server);
         while (!world.rolled()) {

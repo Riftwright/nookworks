@@ -61,6 +61,7 @@ public final class ClientRenderers {
         event.registerEntityRenderer(ModRope.ROPE_KNOT.get(), RopeKnotRenderer::new);
         event.registerEntityRenderer(ModRope.HUNG_ITEM.get(), HungItemRenderer::new);
         event.registerEntityRenderer(ModRope.HUNG_BANNER.get(), HungBannerRenderer::new);
+        event.registerEntityRenderer(ModRope.TIED_LOAD.get(), TiedLoadRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.NOODLE_MAKER.get(), c -> new CrankRenderer<>(c, CrankRenderer.NOODLE_MAKER));
         event.registerBlockEntityRenderer(ModTravel.DAEMON_DOOR_ENTITY.get(), DaemonDoorRenderer::new);
         event.registerBlockEntityRenderer(ModTravel.IF_MIRROR_ENTITY.get(), IfMirrorRenderer::new);

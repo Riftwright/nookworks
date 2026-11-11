@@ -204,6 +204,69 @@
     },
     {
       "when": {
+        "content": "methanol",
+        "level": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_empty"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_1"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_2"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_3"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_4"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_5"
+      }
+    },
+    {
+      "when": {
+        "content": "methanol",
+        "level": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/copper_tank_gauge_methanol_6"
+      }
+    },
+    {
+      "when": {
         "content": "other",
         "level": "0"
       },

@@ -1,6 +1,20 @@
 {
   "replace": false,
   "values": [
-    "nookworks:dawnwood_planks"
+    "nookworks:dawnwood_planks",
+    "nookworks:turned_oak_planks",
+    "nookworks:turned_spruce_planks",
+    "nookworks:turned_birch_planks",
+    "nookworks:turned_jungle_planks",
+    "nookworks:turned_acacia_planks",
+    "nookworks:turned_dark_oak_planks",
+    "nookworks:turned_mangrove_planks",
+    "nookworks:turned_cherry_planks",
+    "nookworks:turned_pale_oak_planks",
+    "nookworks:turned_poplar_planks",
+    "nookworks:turned_crimson_planks",
+    "nookworks:turned_warped_planks",
+    "nookworks:turned_bamboo_planks",
+    "nookworks:turned_dawnwood_planks"
   ]
 }

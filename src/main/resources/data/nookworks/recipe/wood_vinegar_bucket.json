@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wood_vinegar_bucket",
+        "nookworks:wood_vinegar"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bucket",
+    "nookworks:wood_vinegar",
+    "nookworks:wood_vinegar",
+    "nookworks:wood_vinegar",
+    "nookworks:wood_vinegar"
+  ],
+  "result": {
+    "id": "nookworks:wood_vinegar_bucket",
+    "count": 1
+  }
+}

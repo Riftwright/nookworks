@@ -71,6 +71,12 @@ public class ThinRopeBlock extends RopeBlock {
         return side == Direction.UP ? updated.setValue(ANCHORED, !neighbourState.is(this)) : updated;
     }
 
+    /** A cord for bottles and lanterns: it holds no tied load (Rope does). */
+    @Override
+    public boolean holdsLoads() {
+        return false;
+    }
+
     /** A Filament Bulb goes on the rope's end; something to hang up hangs there; anything else as on any rope. */
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,

@@ -177,6 +177,7 @@
   "nookworks:laser",
   "nookworks:liquid_experience_bottle",
   "nookworks:lode_pearl",
+  "nookworks:machine_bell",
   "nookworks:machine_chassis",
   "nookworks:magnet",
   "nookworks:magnet_chest",
@@ -190,6 +191,7 @@
   "nookworks:mercury_pipe",
   "nookworks:mercury_tank",
   "nookworks:methanol",
+  "nookworks:methanol_bucket",
   "nookworks:mixed_amalgam",
   "nookworks:mob_bottle",
   "nookworks:motor",
@@ -248,6 +250,7 @@
   "nookworks:recycler",
   "nookworks:red_corrugated_sheet",
   "nookworks:red_hot_velarium_ingot",
+  "nookworks:reinforced_building_wand",
   "nookworks:reinforced_rod",
   "nookworks:repair_box",
   "nookworks:retort",
@@ -347,10 +350,12 @@
   "nookworks:weathered_scrap_bale",
   "nookworks:white_corrugated_sheet",
   "nookworks:white_rice",
+  "nookworks:wind_chime",
   "nookworks:wine_glass",
   "nookworks:wood_chips",
   "nookworks:wood_pulp",
   "nookworks:wood_vinegar",
+  "nookworks:wood_vinegar_bucket",
   "nookworks:wooden_tray",
   "nookworks:wool_shears",
   "nookworks:wrench",
@@ -1541,7 +1546,8 @@
    ],
    "in": [
     [
-     "nookworks:methanol"
+     "nookworks:methanol",
+     "nookworks:methanol_bucket"
     ],
     [
      "nookworks:caustic_soda"
@@ -1552,6 +1558,24 @@
    ],
    "at": [
     "nookworks:stirring_tank"
+   ],
+   "if": []
+  },
+  {
+   "how": "java: the Vacuum Distiller pipes methanol off into a tank, a bucket drawing it out",
+   "out": [
+    "nookworks:methanol_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:wood_vinegar",
+     "nookworks:wood_vinegar_bucket"
+    ]
+   ],
+   "at": [
+    "nookworks:distiller",
+    "nookworks:distillation_column",
+    "nookworks:condenser"
    ],
    "if": []
   },
@@ -3432,6 +3456,15 @@
    "if": []
   },
   {
+   "how": "recipe nookworks:machine_bell",
+   "out": [
+    "nookworks:machine_bell"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
    "how": "recipe nookworks:machine_chassis",
    "out": [
     "nookworks:machine_chassis"
@@ -3551,6 +3584,32 @@
     "nookworks:mercury_tank"
    ],
    "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:methanol",
+   "out": [
+    "nookworks:methanol"
+   ],
+   "in": [
+    [
+     "nookworks:methanol_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:methanol_bucket",
+   "out": [
+    "nookworks:methanol_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:methanol"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -4462,6 +4521,22 @@
    "if": []
   },
   {
+   "how": "recipe nookworks:reinforced_building_wand",
+   "out": [
+    "nookworks:reinforced_building_wand"
+   ],
+   "in": [
+    [
+     "nookworks:building_wand"
+    ],
+    [
+     "nookworks:velarium_ingot"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
    "how": "recipe nookworks:reinforced_rod",
    "out": [
     "nookworks:reinforced_rod"
@@ -5301,11 +5376,46 @@
    "if": []
   },
   {
+   "how": "recipe nookworks:wind_chime",
+   "out": [
+    "nookworks:wind_chime"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
    "how": "recipe nookworks:wine_glass",
    "out": [
     "nookworks:wine_glass"
    ],
    "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wood_vinegar",
+   "out": [
+    "nookworks:wood_vinegar"
+   ],
+   "in": [
+    [
+     "nookworks:wood_vinegar_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:wood_vinegar_bucket",
+   "out": [
+    "nookworks:wood_vinegar_bucket"
+   ],
+   "in": [
+    [
+     "nookworks:wood_vinegar"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -7367,7 +7477,7 @@
   {
    "how": "retorting #minecraft:logs_that_burn",
    "out": [
-    "nookworks:wood_vinegar"
+    "nookworks:wood_vinegar_bucket"
    ],
    "in": [],
    "at": [
@@ -7730,6 +7840,7 @@
    "nookworks:laser",
    "nookworks:mercury_bucket",
    "nookworks:methanol",
+   "nookworks:methanol_bucket",
    "nookworks:mixed_amalgam",
    "nookworks:motor",
    "nookworks:nether_grit",
@@ -7744,6 +7855,7 @@
    "nookworks:recycler",
    "nookworks:red_corrugated_sheet",
    "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_building_wand",
    "nookworks:reinforced_rod",
    "nookworks:retort",
    "nookworks:risen_dough",
@@ -7794,6 +7906,7 @@
    "nookworks:wood_chips",
    "nookworks:wood_pulp",
    "nookworks:wood_vinegar",
+   "nookworks:wood_vinegar_bucket",
    "nookworks:wool_shears"
   ],
   "sifter": [
@@ -7822,6 +7935,7 @@
    "nookworks:iron_amalgam",
    "nookworks:label",
    "nookworks:methanol",
+   "nookworks:methanol_bucket",
    "nookworks:mixed_amalgam",
    "nookworks:nukadoko",
    "nookworks:poster",
@@ -7830,6 +7944,7 @@
    "nookworks:raw_udon",
    "nookworks:raw_zinc",
    "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_building_wand",
    "nookworks:reinforced_rod",
    "nookworks:risen_dough",
    "nookworks:salt",
@@ -7926,12 +8041,14 @@
    "nookworks:label",
    "nookworks:mercury_bucket",
    "nookworks:methanol",
+   "nookworks:methanol_bucket",
    "nookworks:mixed_amalgam",
    "nookworks:nukadoko",
    "nookworks:poster",
    "nookworks:printing_press",
    "nookworks:raw_udon",
    "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_building_wand",
    "nookworks:reinforced_rod",
    "nookworks:risen_dough",
    "nookworks:salt",
@@ -7973,6 +8090,7 @@
    "nookworks:iron_amalgam",
    "nookworks:mixed_amalgam",
    "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_building_wand",
    "nookworks:tempered_velarium_ingot",
    "nookworks:velarium_axe",
    "nookworks:velarium_block",
@@ -7996,6 +8114,7 @@
    "nookworks:biodiesel_bucket",
    "nookworks:methanol",
    "nookworks:red_hot_velarium_ingot",
+   "nookworks:reinforced_building_wand",
    "nookworks:tempered_velarium_ingot",
    "nookworks:velarium_axe",
    "nookworks:velarium_block",

@@ -70,6 +70,11 @@
     "nookworks:destination_panel",
     "nookworks:stony_dirt",
     "nookworks:vegetable_oil_cauldron",
+    "nookworks:methanol_cauldron",
+    "nookworks:wood_vinegar_cauldron",
+    "nookworks:biodiesel_cauldron",
+    "nookworks:liquid_experience_cauldron",
+    "nookworks:mercury_cauldron",
     "nookworks:unlit_lantern",
     "nookworks:unlit_soul_lantern",
     "nookworks:unlit_copper_lantern",
@@ -113,6 +118,8 @@
     "nookworks:nether_brick_flue",
     "nookworks:cobblestone_flue",
     "nookworks:plate",
-    "nookworks:mug"
+    "nookworks:mug",
+    "nookworks:baler",
+    "nookworks:machine_bell"
   ]
 }

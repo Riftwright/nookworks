@@ -168,6 +168,15 @@ public class WaterPumpBlockEntity extends MachineBlockEntity {
                 Component.translatable(this.status.translationKey()));
     }
 
+    /**
+     * Its tank full is no stop to see to: whatever it feeds draws less than it pumps, which is a water line at rest. Heard
+     * as one, a pump feeding a machine slowly cued and rang at every refill (the last look before 1.5).
+     */
+    @Override
+    public boolean alerts(MachineStatus status) {
+        return status != MachineStatus.TANK_FULL && super.alerts(status);
+    }
+
     /** To Jade, only what it is doing: its power and water Jade shows itself. */
     @Override
     public void jade(java.util.function.Consumer<Component> lines) {

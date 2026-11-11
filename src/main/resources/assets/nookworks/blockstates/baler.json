@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "nookworks:block/baler"
+    },
+    "facing=west": {
+      "model": "nookworks:block/baler",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "nookworks:block/baler",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "nookworks:block/baler",
+      "y": 270
+    }
+  }
+}

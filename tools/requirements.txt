@@ -1,3 +1,6 @@
 # what the Python tools import; Pillow held to one version, so the PNGs the scripts write come out byte for byte the same
 Pillow==12.2.0
 fonttools>=4.50  # make_guide.py: the page's pixel font, cut down to the characters it uses
+numpy>=2.0  # tools/sounds/gen_sounds.py: the sounds are computed (ffmpeg on the PATH writes the .ogg files)
+scipy>=1.14  # the same: its filters
+matplotlib>=3.8  # tools/sounds/look.py only: the sheets a sound is looked at on

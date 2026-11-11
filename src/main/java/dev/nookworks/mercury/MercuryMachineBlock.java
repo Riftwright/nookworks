@@ -11,6 +11,7 @@ import dev.nookworks.block.MachineBlock;
 import dev.nookworks.fluid.Tanks;
 import dev.nookworks.machine.GaugePouring;
 import dev.nookworks.machine.MachineBlockEntity;
+import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -157,8 +158,10 @@ public class MercuryMachineBlock extends MachineBlock {
     }
 
     /**
-     * A bucket on the Stirring Tank pours water or vegetable oil into its tanks, and an empty one takes its biodiesel
-     * out, as on a Copper Tank; anything else goes into its charge slot or opens its screen, as on any machine.
+     * A filled bucket on the Stirring Tank pours water, vegetable oil or methanol into its tanks; an empty one opens its
+     * screen, whose Liquid tab draws the biodiesel (since 1.5: the user's rule for both mods, 2026-11-08 - containers are
+     * filled from a machine only by its Liquid tab or from a tank, 「バケツ・瓶からくみ出したいときは、機械の液体タブを
+     * 使うか、一度タンクに移動してタンクから汲みだす」); anything else opens its screen, as on any machine.
      */
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
@@ -167,10 +170,11 @@ public class MercuryMachineBlock extends MachineBlock {
             return pourMercuryBucket(stack, level, pos, player, hand);
         }
         if (this.kind == Kind.STIRRING_TANK && level.getBlockEntity(pos) instanceof StirringTankBlockEntity tank
+                && !FluidUtil.getFirstStackContained(stack).isEmpty()
                 && ItemAccess.forPlayerInteraction(player, hand).getCapability(Capabilities.Fluid.ITEM) != null) {
             // The client does not know what the tanks hold: the click ends here and the server decides, as at a Copper
             // Tank. Had it gone on, a bucket the server had just emptied would be poured out in front of the tank.
-            if (level.isClientSide() || FluidUtil.interactWithFluidHandler(player, hand, pos, tank.fluidHandler(), null)) {
+            if (level.isClientSide() || FluidUtil.interactWithFluidHandler(player, hand, pos, Tanks.fillOnly(tank.fluidHandler()), null)) {
                 return InteractionResult.SUCCESS;
             }
             player.sendOverlayMessage(Component.translatable("message.nookworks.stirring_tank.will_not_take"));
@@ -182,6 +186,16 @@ public class MercuryMachineBlock extends MachineBlock {
             // click opened the screen, the bucket left full); an empty one draws nothing out - the experience is the
             // screen's to give
             if (level.isClientSide() || FluidUtil.interactWithFluidHandler(player, hand, pos, Tanks.fillOnly(retort.waterHandler()), null)) {
+                return InteractionResult.SUCCESS;
+            }
+            player.sendOverlayMessage(Component.translatable("message.nookworks.copper_tank.will_not_take"));
+            return Clicks.REFUSED;
+        }
+        if (this.kind == Kind.DISTILLER && level.getBlockEntity(pos) instanceof DistillerBlockEntity distiller
+                && FluidUtil.getFirstStackContained(stack).getFluid() == OilFluids.WOOD_VINEGAR.get()) {
+            // a bucket of wood vinegar pours into its wood vinegar tank, as water into the Retort's (a bottle goes into
+            // the charge slot, and is poured from there)
+            if (level.isClientSide() || FluidUtil.interactWithFluidHandler(player, hand, pos, Tanks.fillOnly(distiller.woodVinegarTank()), null)) {
                 return InteractionResult.SUCCESS;
             }
             player.sendOverlayMessage(Component.translatable("message.nookworks.copper_tank.will_not_take"));

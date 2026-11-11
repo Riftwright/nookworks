@@ -9,13 +9,15 @@ import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 /**
  * What a window on the copper line shows standing in it - a Sight Glass, a Copper Tank: nothing, water, vegetable
- * oil, biodiesel, or (another mod's fluid of the same kind) something else, drawn in a plain grey.
+ * oil, biodiesel, methanol, or (another mod's fluid of the same kind) something else, drawn in a plain grey.
  */
 public enum LineContent implements StringRepresentable {
     EMPTY("empty"),
     WATER("water"),
     OIL("oil"),
     BIODIESEL("biodiesel"),
+    /** Since 1.5 (a value added: old worlds' blocks keep theirs). */
+    METHANOL("methanol"),
     OTHER("other");
 
     public static final EnumProperty<LineContent> PROPERTY = EnumProperty.create("content", LineContent.class);
@@ -42,6 +44,9 @@ public enum LineContent implements StringRepresentable {
         }
         if (fluid.isSame(OilFluids.BIODIESEL.get())) {
             return BIODIESEL;
+        }
+        if (fluid.isSame(OilFluids.METHANOL.get())) {
+            return METHANOL;
         }
         return fluid == Fluids.EMPTY ? EMPTY : OTHER;
     }

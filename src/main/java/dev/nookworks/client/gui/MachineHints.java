@@ -9,12 +9,14 @@ import dev.nookworks.barter.BarterTerminalBlockEntity;
 import dev.nookworks.block.entity.SifterBlockEntity;
 import dev.nookworks.feature.Features;
 import dev.nookworks.machine.CrushingRecipe;
+import dev.nookworks.experience.ExperienceFluids;
 import dev.nookworks.machine.ElectricFurnaceBlockEntity;
+import dev.nookworks.machine.GuiTank;
+import dev.nookworks.oil.OilFluids;
 import dev.nookworks.machine.Electrolysis;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineMenu;
 import dev.nookworks.mercury.MercuryRecipes;
-import dev.nookworks.mercury.RetortBlockEntity;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.mobcapture.MobBottleItem;
 import dev.nookworks.recycling.Compressing;
@@ -31,6 +33,8 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 
 /**
@@ -38,8 +42,8 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  * Stirring Tank's caustic soda), the reagents of the charge in the Retort, or - for a slot many things fit - each of
  * them in turn, a second apiece. Read from the synced data maps, so a datapack's additions show too.
  */
-final class MachineHints {
-    /** What the experience fill slot takes: a glass bottle or a bucket, shown in turn. */
+public final class MachineHints {
+    /** What the Liquid tab's top slot takes: a glass bottle or a bucket, shown in turn. */
     private static final List<Item> FILLABLE = List.of(Items.GLASS_BOTTLE, Items.BUCKET);
 
     /** What a furnace smelts, shown in turn in the Electric Furnace (its recipes are not the client's to read). */
@@ -66,9 +70,8 @@ final class MachineHints {
             case STIRRING_TANK -> slot == StirringTankBlockEntity.CATALYST ? new ItemStack(ModItems.CAUSTIC_SODA.get())
                     : slot == 0 ? turn(charges()) : ItemStack.EMPTY;
             case RETORT -> slot == 0 ? turn(keys(MercuryRecipes.RETORTING)) : slot == 1 || slot == 2 ? reagent(menu, slot - 1)
-                    : slot == RetortBlockEntity.FILL ? turn(FILLABLE) : ItemStack.EMPTY;
-            case ELECTRIC_FURNACE -> slot == ElectricFurnaceBlockEntity.FILL ? turn(FILLABLE)
-                    : slot == ElectricFurnaceBlockEntity.INPUT ? turn(SMELTED) : ItemStack.EMPTY;
+                    : ItemStack.EMPTY;
+            case ELECTRIC_FURNACE -> slot == ElectricFurnaceBlockEntity.INPUT ? turn(SMELTED) : ItemStack.EMPTY;
             case DIESEL_GENERATOR -> turn(List.of(ModOil.BIODIESEL_BOTTLE.get(), ModOil.BIODIESEL_BUCKET.get()));
             case DISTILLER -> slot == 0 ? turn(keys(MercuryRecipes.DISTILLATION)) : ItemStack.EMPTY;
             case BARTER_TERMINAL -> slot == BarterTerminalBlockEntity.GOLD ? new ItemStack(Items.GOLD_INGOT)
@@ -134,6 +137,61 @@ final class MachineHints {
         });
         items.sort(Comparator.comparing(i -> BuiltInRegistries.ITEM.getKey(i).toString()));
         return items;
+    }
+
+    /**
+     * The Liquid tab's top slot: an empty bucket or glass bottle, in turn. Public so an add-on's own Liquid tab fades
+     * the same hint.
+     */
+    public static ItemStack emptyContainer() {
+        return turn(FILLABLE);
+    }
+
+    /**
+     * The Liquid tab's bottom slot: the bottles and buckets of what the machine takes in (a tank its screen shows flowing
+     * in), in turn.
+     */
+    static ItemStack filledContainer(MachineMenu menu) {
+        List<Fluid> taken = new ArrayList<>();
+        for (int i = 0; i < menu.layout().tanks().size(); i++) {
+            if (menu.layout().tanks().get(i).flow() == MachineLayout.Flow.IN) {
+                taken.addAll(fluids(menu.tankKind(i)));
+            }
+        }
+        return filledContainer(taken);
+    }
+
+    /**
+     * The Liquid tab's bottom slot for a machine taking {@code fluids}: their bottles and buckets, in turn (no water
+     * bottle, which is a potion). Public so an add-on's own Liquid tab fades the same hint.
+     */
+    public static ItemStack filledContainer(List<Fluid> fluids) {
+        List<Item> filled = new ArrayList<>();
+        for (Fluid fluid : fluids) {
+            ItemStack bottle = dev.nookworks.fluid.Bottles.filled(fluid);
+            if (!bottle.isEmpty() && !filled.contains(bottle.getItem()) && !bottle.is(Items.POTION)) {
+                filled.add(bottle.getItem());
+            }
+            Item bucket = fluid == dev.nookworks.mercury.MercuryFluids.SOURCE.get() ? ModItems.MERCURY_BUCKET.get() : fluid.getBucket();
+            if (bucket != Items.AIR && !filled.contains(bucket)) {
+                filled.add(bucket);
+            }
+        }
+        return turn(filled);
+    }
+
+    private static List<Fluid> fluids(GuiTank.Kind kind) {
+        return switch (kind) {
+            case WATER -> List.of(Fluids.WATER);
+            case VEGETABLE_OIL -> List.of(OilFluids.SOURCE.get());
+            case BIODIESEL -> List.of(OilFluids.BIODIESEL.get());
+            case LIQUID_FUEL -> List.of(OilFluids.SOURCE.get(), OilFluids.BIODIESEL.get());
+            case METHANOL -> List.of(OilFluids.METHANOL.get());
+            case WOOD_VINEGAR -> List.of(OilFluids.WOOD_VINEGAR.get());
+            case EXPERIENCE -> List.of(ExperienceFluids.SOURCE.get());
+            case MERCURY -> List.of(dev.nookworks.mercury.MercuryFluids.SOURCE.get());
+            case NETHER_AIR -> List.of();
+        };
     }
 
     private static ItemStack turn(List<Item> items) {

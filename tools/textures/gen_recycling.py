@@ -1,4 +1,4 @@
-"""The textures of recycling (DECISIONS, "Recycling", 2026-10-18): Scrap, the Baler, and what is built of scrap. Original
+"""The textures of recycling (DECISIONS, "Recycling", 2026-10-18): Scrap and what is built of it. Original
 pixel art, drawn flat and shaded with texkit.shade as metal. Deterministic.
 
 - Scrap Bale (block/<age>scrap_bale_side, _top): a cube of crushed junk as a scrapyard's baler packs it, bound with
@@ -10,8 +10,8 @@ pixel art, drawn flat and shaded with texkit.shade as metal. Deterministic.
 - Painted sheets (block/<colour>_corrugated_sheet): the same sheet painted, a few chips showing the steel.
 - Patched Sheet Metal (block/patched_sheet_metal_0..4): riveted steel plate with a soft sheen, weathered in rust
   blotches, some mended with a patch of other metal - five drawings the block picks among at random.
-- item/scrap: a heap of scrap, after the reference picture the user gave. item/baler: the press - its cap's top showing, a ram
-  coming down between two posts on a strapped bale.
+- item/scrap: a heap of scrap, after the reference picture the user gave. (The Baler's icon, a press drawn flat, gave
+  way to its block on 2026-11-10: tools/textures/gen_baler.py.)
 
 The bare bale and sheet rust over four ages as copper weathers (DECISIONS): the galvanized grey goes dull, then rust
 spreads in from the crevices and down from the screws, then it is rust nearly all over. Every age is drawn from the
@@ -370,34 +370,6 @@ kRrkWKKKWkPPpk..
 ................
 """
 
-# The Baler: a small press seen as vanilla draws its things (the minecart, the bucket) - its cap's top face showing,
-# lit from the upper left, two posts, the ram and its plate, and a bale of scrap held between them, strapped; open
-# between the posts so it reads as a frame, not a box.
-BALER_ITEM = """
-................
-...TTTTTTTTTT...
-..TttttttttttT..
-..FFFFFFFFFFFFf.
-..Ff...RR...Ff..
-..Ff...Rr...Ff..
-..Ff.PPPPPP.Ff..
-..Ff.pppppp.Ff..
-..Ff.bBbbBb.Ff..
-..Ff.cbSbbc.Ff..
-..Ff.bcSbcb.Ff..
-..Ff.BbSbBb.Ff..
-..FFFFFFFFFFFFf.
-..ffffffffffffk.
-................
-................
-"""
-
-BALER_COLOURS = {
-    "T": (184, 188, 194), "t": (150, 154, 162), "F": (118, 122, 130), "f": (84, 88, 96), "R": (206, 210, 216),
-    "r": (150, 154, 160), "P": (132, 136, 144), "p": (98, 102, 110), "b": (150, 143, 140), "B": (118, 110, 104),
-    "c": (150, 90, 60), "S": (96, 98, 104), "k": (60, 62, 68),
-}
-
 SCRAP_COLOURS = {
     "K": (36, 27, 23), "k": (58, 44, 38), "D": (90, 84, 83), "G": (121, 114, 113), "L": (148, 142, 141),
     "W": (178, 172, 170), "r": (88, 51, 37), "R": (117, 72, 52), "o": (148, 92, 66), "p": (128, 94, 80),
@@ -446,7 +418,6 @@ def main():
     for which in range(len(PATCH_DRAWINGS)):
         save(patched(which), f"patched_sheet_metal_{which}", 360 + which, clusters=0.35, grain=0.02, size=5, reach=1)
     texkit.icon(from_map(SCRAP_ITEM, SCRAP_COLOURS), 370, keep=(SCRAP_COLOURS["K"],), material="metal").save(TEX / "item/scrap.png")
-    texkit.icon(from_map(BALER_ITEM, BALER_COLOURS), 371, material="metal").save(TEX / "item/baler.png")
     print("wrote the recycling textures")
 
 

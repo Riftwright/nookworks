@@ -19,8 +19,9 @@ import org.jspecify.annotations.Nullable;
 /**
  * What the camera sees inside one of our liquids. Without this the game knows only water and lava: under oil or
  * mercury it draws the open air, clear to the horizon. Each liquid gets its own fog, in its colour and as thick as it
- * is - oil a golden murk a few blocks deep, biodiesel darker and closer, mercury opaque at arm's length as lava is,
- * liquid experience a green glow you can see a little way through - and water's faint wobble on the screen.
+ * is - oil a golden murk a few blocks deep, biodiesel darker and closer, methanol a clear spirit seen through about as
+ * far as water, wood vinegar a clear amber-brown a little closer, mercury opaque at arm's length as lava is, liquid experience a green glow you can see a little way
+ * through - and water's faint wobble on the screen.
  */
 public final class LiquidLooks {
     /** Vanilla's underwater wobble, by name: the same faint moving shadow on the screen as in water. */
@@ -29,6 +30,8 @@ public final class LiquidLooks {
     public static void register(RegisterClientExtensionsEvent event) {
         event.registerFluidType(new Look(0xD6A834, -1.0F, 7.0F), OilFluids.TYPE.get());
         event.registerFluidType(new Look(0x6E4414, -0.5F, 4.5F), OilFluids.BIODIESEL_TYPE.get());
+        event.registerFluidType(new Look(0xC4D2DE, -1.0F, 18.0F), OilFluids.METHANOL_TYPE.get());
+        event.registerFluidType(new Look(0x8A5428, -1.0F, 12.0F), OilFluids.WOOD_VINEGAR_TYPE.get());
         event.registerFluidType(new Look(0x8C929E, 0.25F, 1.5F), MercuryFluids.TYPE.get());
         event.registerFluidType(new Look(0x5CBF30, -2.0F, 12.0F), ExperienceFluids.TYPE.get());
     }

@@ -1,11 +1,11 @@
 package dev.nookworks.sorter;
 
-import java.util.BitSet;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.SorterBlock;
+import dev.nookworks.inventory.GhostSlots;
 import dev.nookworks.registry.ModMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -28,15 +28,18 @@ import net.minecraft.world.level.block.state.BlockState;
  * clears), the gear slot - a real one, for a Sorter Gear - and a button that swaps the outlets. Nothing is ever moved
  * into or out of the filter.
  * <p>
- * A Precision Sorter also has its tag picker, which takes the place of the filter on its screen while it is open: a
- * ghost sample slot, the sample's mod and its tags ({@link SorterTags#choices}) to tick, and Register, which puts a mod
- * entry or a tag entry in the filter for each one ticked - or Keep Out, which puts them in the Keep Out row. The sample
- * and the ticks belong to this screen alone and are never saved. The client keeps its own copy of the ticks in step by
- * applying the same button presses it sends.
+ * A Precision Sorter also has its tag picker ({@link TagPicker}, the one add-ons' screens share), which takes the place
+ * of the filter on its screen while it is open: a ghost sample slot, the sample's mod and its tags to tick, and
+ * Register, which puts a mod entry or a tag entry in the filter for each one ticked - or Keep Out, which puts them in
+ * the Keep Out row. The sample and the ticks belong to this screen alone and are never saved. The client keeps its own
+ * copy of the ticks in step by applying the same button presses it sends.
  * <p>
  * Under it all, the Keep Out row: ghost slots as the filter's, for what the sorter is never to take in.
+ * <p>
+ * An item dragged from JEI's list onto a filter slot or the Keep Out row registers it there, and onto the picker's sample
+ * slot makes it the sample, as a click with it in hand would ({@link GhostSlots}).
  */
-public class SorterMenu extends AbstractContainerMenu {
+public class SorterMenu extends AbstractContainerMenu implements GhostSlots {
     public static final int BUTTON_SWAP = 0;
     /**
      * Button ids for the Precision Sorter's switches - {@link SorterSettings#BLACKLIST} and
@@ -44,19 +47,21 @@ public class SorterMenu extends AbstractContainerMenu {
      * ({@link SorterSettings#KEEP_OUT_OTHERS}): this plus the flag.
      */
     public static final int BUTTON_FLAG = 1;
+    /** The tag picker's buttons, from here on ({@link TagPicker}): clear of the flags', and of the tabs' 20-39. */
+    public static final int PICKER = 200;
     /** The tag picker: opened, closed (the sample and ticks let go), and its ticks put in the filter. */
-    public static final int BUTTON_PICKER_OPEN = 10;
-    public static final int BUTTON_PICKER_CLOSE = 11;
-    public static final int BUTTON_REGISTER_TAGS = 12;
+    public static final int BUTTON_PICKER_OPEN = PICKER + TagPicker.OPEN;
+    public static final int BUTTON_PICKER_CLOSE = PICKER + TagPicker.CLOSE;
+    public static final int BUTTON_REGISTER_TAGS = PICKER + TagPicker.REGISTER;
     /** The sample's mod ticked or unticked (the line above its tags). */
-    public static final int BUTTON_CHOOSE_MOD = 13;
+    public static final int BUTTON_CHOOSE_MOD = PICKER + TagPicker.MOD;
     /**
      * The picker's ticks put in the Keep Out row instead of the filter (the user, 2026-10-10: "精密ソーターの禁止項目なんだけど、
      * タグ単位で禁止項目を追加できるようにして").
      */
-    public static final int BUTTON_REGISTER_DENY = 14;
+    public static final int BUTTON_REGISTER_DENY = PICKER + TagPicker.REGISTER + 1;
     /** A tag ticked or unticked: this plus its place in the sample's list. */
-    public static final int BUTTON_CHOOSE = 100;
+    public static final int BUTTON_CHOOSE = PICKER + TagPicker.TICKS;
     public static final int FILTER_X = 8;
     public static final int FILTER_Y = 20;
     public static final int COLUMNS = 9;
@@ -83,16 +88,13 @@ public class SorterMenu extends AbstractContainerMenu {
 
     private final Container filter;
     private final Container deny;
-    private final Container sample = new SimpleContainer(1);
     private final BlockPos pos;
     private final DataSlot swapped;
     private final SorterTier tier;
     private final @Nullable SorterSettings settings;
     private final DataSlot[] flags = new DataSlot[SorterSettings.COUNT];
-    /** Whether the tag picker is open, which of the sample's tags are ticked, and whether its mod is. */
-    private boolean picking;
-    private final BitSet chosen = new BitSet();
-    private boolean modChosen;
+    /** The tag picker: the filter its first destination, the Keep Out row its second. */
+    private final TagPicker picker;
 
     /** Client side. The tier comes over with the menu, because the GUI's shape depends on it. */
     public static SorterMenu client(int containerId, Inventory inventory, RegistryFriendlyByteBuf data) {
@@ -133,6 +135,10 @@ public class SorterMenu extends AbstractContainerMenu {
         this.pos = pos;
         this.tier = tier;
         this.settings = settings;
+        this.picker = new TagPicker(PICKER, List.of(
+                new TagPicker.Destination(filter, tier.filterSlots, () -> Component.translatable("message.nookworks.sorter.filter_full")),
+                new TagPicker.Destination(deny, SorterBlockEntity.DENY_SLOTS, () -> Component.translatable(
+                        this.flag(SorterSettings.KEEP_OUT_OTHERS) ? "message.nookworks.sorter.allow_full" : "message.nookworks.sorter.deny_full"))));
         for (int i = 0; i < SorterBlockEntity.FILTER_SLOTS; i++) {
             boolean used = i < tier.filterSlots;
             this.addSlot(new Slot(filter, i, FILTER_X + (i % COLUMNS) * 18, FILTER_Y + (i / COLUMNS) * 18) {
@@ -150,7 +156,7 @@ public class SorterMenu extends AbstractContainerMenu {
                 // and the gear slot drawn where it lies. Nor is the filter while the tag picker covers it.
                 @Override
                 public boolean isActive() {
-                    return used && !SorterMenu.this.picking;
+                    return used && !SorterMenu.this.picker.open();
                 }
             });
         }
@@ -167,25 +173,10 @@ public class SorterMenu extends AbstractContainerMenu {
 
             @Override
             public boolean isActive() {
-                return !SorterMenu.this.picking;
+                return !SorterMenu.this.picker.open();
             }
         });
-        this.addSlot(new Slot(this.sample, 0, SAMPLE_X + 1, SAMPLE_Y + 1) {
-            @Override
-            public boolean mayPickup(Player player) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public boolean isActive() {
-                return SorterMenu.this.picking;
-            }
-        });
+        this.addSlot(this.picker.sampleSlot(SAMPLE_X + 1, SAMPLE_Y + 1));
         for (int i = 0; i < SorterBlockEntity.DENY_SLOTS; i++) {
             this.addSlot(new Slot(deny, i, DENY_X + i * 18, denyY(tier) + 1) {
                 @Override
@@ -200,7 +191,7 @@ public class SorterMenu extends AbstractContainerMenu {
 
                 @Override
                 public boolean isActive() {
-                    return !SorterMenu.this.picking;
+                    return !SorterMenu.this.picker.open();
                 }
             });
         }
@@ -283,195 +274,133 @@ public class SorterMenu extends AbstractContainerMenu {
 
     // ---- the tag picker ----
 
+    /** The Precision Sorter's tag picker; on an Item Sorter's menu it is there, but no button reaches it. */
+    public TagPicker picker() {
+        return this.picker;
+    }
+
     public boolean picking() {
-        return this.picking;
+        return this.picker.open();
     }
 
     public ItemStack sample() {
-        return this.sample.getItem(0);
+        return this.picker.sample();
     }
 
     /** The sample's tags, in the order the picker lists them (the same on both sides: the tags are synced). */
     public List<TagKey<Item>> choices() {
-        return SorterTags.choices(this.sample());
+        return this.picker.choices();
     }
 
     public boolean chosen(int index) {
-        return this.chosen.get(index);
+        return this.picker.chosen(index);
     }
 
     /** The sample's mod, offered above its tags (by its namespace), or null with no sample. */
     public @Nullable String sampleMod() {
-        return this.sample().isEmpty() ? null : SorterTags.namespace(this.sample());
+        return this.picker.sampleMod();
     }
 
     public boolean modChosen() {
-        return this.modChosen;
+        return this.picker.modChosen();
     }
 
     public boolean anyChosen() {
-        return !this.chosen.isEmpty() || this.modChosen;
+        return this.picker.anyChosen();
     }
 
     /** Filter slots still free. */
     public int freeSlots() {
-        return free(this.filter, this.tier.filterSlots);
+        return this.picker.free(0);
     }
 
     /** Keep Out slots still free. */
     public int freeDenySlots() {
-        return free(this.deny, SorterBlockEntity.DENY_SLOTS);
-    }
-
-    private static int free(Container container, int size) {
-        int free = 0;
-        for (int i = 0; i < size; i++) {
-            free += container.getItem(i).isEmpty() ? 1 : 0;
-        }
-        return free;
+        return this.picker.free(1);
     }
 
     /** Whether a tag entry for {@code tag} is in the filter already. */
     public boolean hasEntryFor(TagKey<Item> tag) {
-        return holdsTag(this.filter, this.tier.filterSlots, tag);
+        return this.picker.holds(0, tag, null);
     }
 
     /** Whether a mod entry for the mod {@code namespace} is in the filter already. */
     public boolean hasModEntryFor(String namespace) {
-        return holdsMod(this.filter, this.tier.filterSlots, namespace);
+        return this.picker.holds(0, null, namespace);
     }
 
     /** Whether a tag entry for {@code tag} is in the Keep Out row already. */
     public boolean hasDenyEntryFor(TagKey<Item> tag) {
-        return holdsTag(this.deny, SorterBlockEntity.DENY_SLOTS, tag);
+        return this.picker.holds(1, tag, null);
     }
 
     /** Whether a mod entry for the mod {@code namespace} is in the Keep Out row already. */
     public boolean hasDenyModEntryFor(String namespace) {
-        return holdsMod(this.deny, SorterBlockEntity.DENY_SLOTS, namespace);
-    }
-
-    private static boolean holdsTag(Container container, int size, TagKey<Item> tag) {
-        for (int i = 0; i < size; i++) {
-            if (tag.equals(SorterTags.of(container.getItem(i)))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean holdsMod(Container container, int size, String namespace) {
-        for (int i = 0; i < size; i++) {
-            if (namespace.equals(SorterTags.modOf(container.getItem(i)))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void setSample(ItemStack stack) {
-        this.sample.setItem(0, stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1));
-        this.chosen.clear(); // a new sample has a list of its own
-        this.modChosen = false;
+        return this.picker.holds(1, null, namespace);
     }
 
     /**
      * The picker's buttons, as the client applies them to its own copy as it sends them to the server. Returns whether
-     * the id is the picker's.
+     * the id is the picker's: only a Precision Sorter's is pressed.
      */
     public boolean pickerButton(Player player, int id) {
-        if (!this.tier.configurable) {
-            return false;
-        }
-        if (id == BUTTON_PICKER_OPEN || id == BUTTON_PICKER_CLOSE) {
-            this.picking = id == BUTTON_PICKER_OPEN;
-            this.setSample(ItemStack.EMPTY);
-            return true;
-        }
-        if (id >= BUTTON_CHOOSE) {
-            int index = id - BUTTON_CHOOSE;
-            if (index < this.choices().size()) {
-                this.chosen.flip(index);
-            }
-            return true;
-        }
-        if (id == BUTTON_CHOOSE_MOD) {
-            this.modChosen = !this.modChosen && !this.sample().isEmpty();
-            return true;
-        }
-        if (id == BUTTON_REGISTER_TAGS || id == BUTTON_REGISTER_DENY) {
-            this.registerChosen(player, id == BUTTON_REGISTER_DENY);
-            this.picking = false;
-            this.setSample(ItemStack.EMPTY);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * What was ticked, each in the first free slot of the filter, or of the Keep Out row for {@code deny}: the mod entry
-     * if its mod was ticked, then a tag entry for each tag ticked, in the list's order. One already there is skipped.
-     */
-    private void registerChosen(Player player, boolean deny) {
-        ItemStack sample = this.sample();
-        String mod = this.sampleMod();
-        Container target = deny ? this.deny : this.filter;
-        int size = deny ? SorterBlockEntity.DENY_SLOTS : this.tier.filterSlots;
-        if (this.modChosen && mod != null && !holdsMod(target, size, mod) && !put(player, target, size, SorterTags.modEntry(sample), deny)) {
-            return;
-        }
-        List<TagKey<Item>> choices = this.choices();
-        for (int index = this.chosen.nextSetBit(0); index >= 0 && index < choices.size(); index = this.chosen.nextSetBit(index + 1)) {
-            TagKey<Item> tag = choices.get(index);
-            if (!holdsTag(target, size, tag) && !put(player, target, size, SorterTags.entry(sample, tag), deny)) {
-                return;
-            }
-        }
-    }
-
-    /** Puts {@code entry} in the first free slot of {@code target}; with none free, says so and returns false. */
-    private boolean put(Player player, Container target, int size, ItemStack entry, boolean deny) {
-        for (int i = 0; i < size; i++) {
-            if (target.getItem(i).isEmpty()) {
-                target.setItem(i, entry);
-                return true;
-            }
-        }
-        if (!player.level().isClientSide()) {
-            player.sendOverlayMessage(Component.translatable(!deny ? "message.nookworks.sorter.filter_full"
-                    : this.flag(SorterSettings.KEEP_OUT_OTHERS) ? "message.nookworks.sorter.allow_full" : "message.nookworks.sorter.deny_full"));
-        }
-        return false;
+        return this.tier.configurable && this.picker.button(player, id);
     }
 
     @Override
     public void clicked(int slotIndex, int button, ContainerInput input, Player player) {
         if (slotIndex >= 0 && slotIndex < this.tier.filterSlots) {
-            if (input != ContainerInput.PICKUP || this.picking) {
+            if (input != ContainerInput.PICKUP || this.picker.open()) {
                 return; // shift, number keys, Q, double-click: none of them register or clear a filter
             }
             ItemStack carried = this.getCarried();
             this.filter.setItem(slotIndex, carried.isEmpty() ? ItemStack.EMPTY : carried.copyWithCount(1));
             return;
         }
-        if (slotIndex == SAMPLE_SLOT) {
-            if (input == ContainerInput.PICKUP && this.picking) {
-                this.setSample(this.getCarried()); // a copy, as a filter entry is: the item stays in hand
-            }
-            return;
+        if (this.picker.clicked(this, slotIndex, input)) {
+            return; // the sample: a copy, as a filter entry is, the item staying in hand
         }
         if (slotIndex == HELD_SLOT) {
             return; // shown, not taken: what the sorter holds stays with it
         }
         if (slotIndex >= DENY_SLOT && slotIndex < INVENTORY) {
             // the Keep Out row, as the filter: an item clicked in registers a copy, an empty hand clears
-            if (input == ContainerInput.PICKUP && !this.picking) {
+            if (input == ContainerInput.PICKUP && !this.picker.open()) {
                 ItemStack carried = this.getCarried();
                 this.deny.setItem(slotIndex - DENY_SLOT, carried.isEmpty() ? ItemStack.EMPTY : carried.copyWithCount(1));
             }
             return;
         }
         super.clicked(slotIndex, button, input, player);
+    }
+
+    /**
+     * Where an item dragged from JEI's list may land just now: a filter slot the sorter has, or the Keep Out row, while
+     * the tag picker is shut; the sample slot while it is open (the user, 2026-11-10: 「3もつけていいです。」).
+     */
+    @Override
+    public boolean takesGhost(int slotIndex) {
+        if (this.picker.open()) {
+            return this.picker.takesGhost(slotIndex);
+        }
+        return slotIndex >= 0 && slotIndex < this.tier.filterSlots || slotIndex >= DENY_SLOT && slotIndex < HELD_SLOT;
+    }
+
+    /** An item dropped there from JEI: registered as a click with it would (a copy of one), or made the sample. */
+    @Override
+    public boolean setGhost(int slotIndex, ItemStack stack) {
+        if (stack.isEmpty() || !this.takesGhost(slotIndex)) {
+            return false;
+        }
+        if (this.picker.open()) {
+            return this.picker.ghost(slotIndex, stack);
+        }
+        if (slotIndex < this.tier.filterSlots) {
+            this.filter.setItem(slotIndex, stack.copyWithCount(1));
+        } else {
+            this.deny.setItem(slotIndex - DENY_SLOT, stack.copyWithCount(1));
+        }
+        return true;
     }
 
     /**
@@ -496,8 +425,7 @@ public class SorterMenu extends AbstractContainerMenu {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (this.picking) {
-            this.setSample(stack);
+        if (this.picker.quickMove(stack)) {
             return ItemStack.EMPTY;
         }
         if (stack.getItem() instanceof SorterGearItem && !this.slots.get(GEAR_SLOT).hasItem()) {

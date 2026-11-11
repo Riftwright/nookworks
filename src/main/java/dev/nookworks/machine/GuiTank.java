@@ -17,7 +17,11 @@ public record GuiTank(Kind kind, int amount, int capacity) {
         LIQUID_FUEL,
         EXPERIENCE,
         /** The Nether's air a Barter Terminal keeps its room filled with, in ticks it lasts. */
-        NETHER_AIR;
+        NETHER_AIR,
+        /** Methanol (since 1.5: last, so the kinds before it keep their numbers). */
+        METHANOL,
+        /** Wood vinegar (since 1.5, after methanol). */
+        WOOD_VINEGAR;
 
         public static Kind byId(int id) {
             return id >= 0 && id < values().length ? values()[id] : WATER;

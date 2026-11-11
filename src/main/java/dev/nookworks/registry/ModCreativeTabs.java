@@ -40,6 +40,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.THIN_ROPE.get());
                         output.accept(ModRope.THIN_CHAIN.get());
                         output.accept(ModRope.HOOK_ITEM.get());
+                        output.accept(ModRope.WIND_CHIME.get());
                         output.accept(ModRope.FILAMENT_BULB_ITEM.get());
                         output.accept(ModItems.DEEPSLATE_GRAVEL.get());
                         output.accept(ModItems.NETHER_GRIT.get());
@@ -97,6 +98,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.FERTILE_SOIL.get());
                         output.accept(ModOil.OIL_CAKE.get());
                         output.accept(ModOil.WOOD_VINEGAR.get());
+                        output.accept(ModOil.WOOD_VINEGAR_BUCKET.get());
                         // the hand-worked machines of the kitchen, its stove and its air
                         output.accept(ModCrops.RICE_POLISHER_ITEM.get());
                         output.accept(ModKitchen.HAND_QUERN_ITEM.get());
@@ -182,6 +184,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.VELARIUM_BOOTS.get());
                         output.accept(ModItems.WRENCH.get());
                         output.accept(ModItems.BUILDING_WAND.get());
+                        output.accept(ModItems.REINFORCED_BUILDING_WAND.get());
                         output.accept(ModItems.MAGNET.get());
                         output.accept(ModItems.ADVANCED_MAGNET.get());
                         output.accept(ModOil.OIL_CAN.get());
@@ -218,6 +221,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.DISTILLER.get());
                         output.accept(ModItems.DISTILLATION_COLUMN.get());
                         output.accept(ModItems.CONDENSER.get());
+                        output.accept(ModItems.MACHINE_BELL.get());
                         output.accept(ModItems.PRINTING_PRESS.get());
                         output.accept(ModBarter.BARTER_TERMINAL_ITEM.get());
                         output.accept(ModTrading.TRADING_COUNTER_ITEM.get());
@@ -286,6 +290,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.FINE_PAPER.get());
                         output.accept(ModItems.CHARRED_LUMP.get());
                         output.accept(ModOil.METHANOL.get());
+                        output.accept(ModOil.METHANOL_BUCKET.get());
                         output.accept(ModOil.BIODIESEL_BOTTLE.get());
                         output.accept(ModOil.BIODIESEL_BUCKET.get());
                         output.accept(ModItems.MERCURY_BUCKET.get());

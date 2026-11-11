@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nookworks:block/turned_bamboo_slab"
+    },
+    "type=double": {
+      "model": "nookworks:block/turned_bamboo_planks"
+    },
+    "type=top": {
+      "model": "nookworks:block/turned_bamboo_slab_top"
+    }
+  }
+}

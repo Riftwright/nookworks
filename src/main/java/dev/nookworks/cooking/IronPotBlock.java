@@ -15,6 +15,7 @@ import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModCooking;
 import dev.nookworks.registry.ModOil;
 import dev.nookworks.ventilation.Ventilation;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -481,10 +482,12 @@ public class IronPotBlock extends BaseEntityBlock {
             Ventilation.smoke(level, pos, oil ? ParticleTypes.SMOKE : ParticleTypes.WHITE_SMOKE,
                     pos.getX() + 0.5 + random.nextGaussian() * 0.12, top, pos.getZ() + 0.5 + random.nextGaussian() * 0.12, 0.0, oil ? 0.02 : 0.03, 0.0);
         }
+        // a second or two of the fat sizzling, or of the boil, now and then (the boil as often as the frying since it
+        // is a phrase of its own and no longer one bubble's pop)
         if (oil && random.nextInt(6) == 0) {
-            level.playLocalSound(pos, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 0.5F, 1.8F, false);
-        } else if (!oil && random.nextInt(40) == 0) {
-            level.playLocalSound(pos, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 0.4F, 0.8F, false);
+            level.playLocalSound(pos, ModSounds.IRON_POT_FRY.get(), SoundSource.BLOCKS, 0.5F, 0.95F + random.nextFloat() * 0.1F, false);
+        } else if (!oil && random.nextInt(8) == 0) {
+            level.playLocalSound(pos, ModSounds.IRON_POT_BOIL.get(), SoundSource.BLOCKS, 0.4F, 0.95F + random.nextFloat() * 0.1F, false);
         }
     }
 

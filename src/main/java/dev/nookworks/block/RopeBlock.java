@@ -1,6 +1,8 @@
 package dev.nookworks.block;
 
 import dev.nookworks.feature.Permission;
+import dev.nookworks.rope.TiedLoadEntity;
+import dev.nookworks.rope.TiedLoads;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -149,7 +151,11 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             return InteractionResult.PASS;
         }
         BlockPos target = bottomOf(level, pos).below();
-        if (level.isOutsideBuildHeight(target) || !level.getBlockState(target).canBeReplaced()) {
+        // a load tied up right under the rope's end goes down with it, a block at a time, into free space only; Thin
+        // Rope holds no load, and goes no lower through one
+        TiedLoadEntity load = TiedLoads.at(level, target);
+        if (load != null && (!this.holdsLoads() || !TiedLoads.canMove(load, -1, null))
+                || level.isOutsideBuildHeight(target) || !level.getBlockState(target).canBeReplaced()) {
             if (!level.isClientSide()) {
                 player.sendOverlayMessage(Component.translatable("message.nookworks.rope.no_lower")); // never silent (2026-11-05)
             }
@@ -157,8 +163,12 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
         }
         if (level instanceof ServerLevel server) {
             // The far end may be a long way down from the block clicked: ask there too (claims, spawn protection).
-            if (!Permission.mayPlace(server, target, Direction.UP, player)) {
+            if (!Permission.mayPlace(server, target, Direction.UP, player)
+                    || load != null && !TiedLoads.mayMoveInto(server, load, -1, player)) {
                 return Clicks.REFUSED;
+            }
+            if (load != null) {
+                TiedLoads.moveWithRope(load, -1);
             }
             BlockState placed = this.inWater(this.defaultBlockState(), level, target); // hangs from more rope: flush
             level.setBlock(target, placed, Block.UPDATE_ALL);
@@ -178,11 +188,19 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             return InteractionResult.PASS; // an adventure map's ropes stay where the map put them
         }
         BlockPos bottom = bottomOf(level, pos);
+        // a load tied up under the rope's end comes up with it (TiedLoads)
+        TiedLoadEntity load = this.holdsLoads() ? TiedLoads.hangingFrom(level, bottom) : null;
+        if (load != null && !TiedLoads.mayPullUp(level, player, bottom, load, this)) {
+            return Clicks.REFUSED;
+        }
         if (level instanceof ServerLevel server) {
-            if (!Permission.mayBreak(server, bottom, player)) {
+            if (!Permission.mayBreak(server, bottom, player) || load != null && !TiedLoads.mayMoveInto(server, load, 1, player)) {
                 return Clicks.REFUSED; // the bottom segment hangs where the player may not break blocks
             }
             level.removeBlock(bottom, false);
+            if (load != null) {
+                TiedLoads.moveWithRope(load, 1);
+            }
             level.playSound(null, bottom, state.getSoundType(level, bottom, player).getBreakSound(), SoundSource.BLOCKS, 1.0F, 1.1F);
             level.gameEvent(player, GameEvent.BLOCK_DESTROY, bottom);
             if (!player.getAbilities().instabuild) {
@@ -193,6 +211,14 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Whether a load tied up right under its bottom end hangs from it and goes up and down with it ({@code TiedLoads}):
+     * the climbing rope does; Thin Rope, a cord for bottles and lanterns, does not.
+     */
+    public boolean holdsLoads() {
+        return true;
     }
 
     /** Returns the lowest rope segment connected below {@code pos}. */

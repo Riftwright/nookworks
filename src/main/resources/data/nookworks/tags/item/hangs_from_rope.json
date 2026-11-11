@@ -25,6 +25,7 @@
     "nookworks:onion",
     "#nookworks:hangs_solid",
     "#nookworks:hangs_as_lantern",
-    "#minecraft:banners"
+    "#minecraft:banners",
+    "nookworks:wind_chime"
   ]
 }

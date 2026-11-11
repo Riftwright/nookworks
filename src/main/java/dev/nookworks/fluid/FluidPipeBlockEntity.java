@@ -38,7 +38,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
-import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 /**
  * A pipe that carries fluid a step at a time (the Experience Pipe, the Copper Pipe), one kind at a time.
@@ -191,12 +190,8 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
                     continue;
                 }
                 ResourceHandler<FluidResource> handler = pipe.handlerOn(level, at, side);
-                if (handler != null) {
-                    try (Transaction test = Transaction.openRoot()) {
-                        if (handler.insert(resource, 1, test) > 0) {
-                            return true; // never committed: only asking
-                        }
-                    }
+                if (handler != null && Tanks.wouldTake(handler, resource, pipe.buffer)) {
+                    return true;
                 }
             }
         }
@@ -290,17 +285,23 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
         return this.candidateResources;
     }
 
-    /** Whether {@code handler} would take some of what this pipe holds (or, empty, of anything it may carry). */
+    /**
+     * Whether {@code handler} would take some of what this pipe holds (or, empty, of anything it may carry): asked with
+     * a millibucket, then with a full buffer ({@link Tanks#wouldTake}), the most the pipe hands on at once. So a cauldron,
+     * which takes a bucket or nothing, is a taker of a pipe that holds a bucket (the Copper Pipe, and the Experience Pipe
+     * since 1.5) and the line fills toward it, the pipe beside it handing it a bucket once it holds one; a pipe that held
+     * less could never fill it, and is not sent toward it - counted, it would draw a line full from a tank to stand there.
+     */
     private boolean takes(@Nullable ResourceHandler<FluidResource> handler) {
         if (handler == null) {
             return false;
         }
-        List<FluidResource> tried = this.stored() > 0 ? List.of(this.resource()) : this.candidateResources();
-        try (Transaction test = Transaction.openRoot()) {
-            for (FluidResource resource : tried) {
-                if (handler.insert(resource, 1, test) > 0) {
-                    return true; // never committed: only asking
-                }
+        if (this.stored() > 0) {
+            return Tanks.wouldTake(handler, this.resource(), this.buffer);
+        }
+        for (FluidResource resource : this.candidateResources()) {
+            if (Tanks.wouldTake(handler, resource, this.buffer)) {
+                return true;
             }
         }
         return false;
@@ -355,7 +356,7 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
 
     /**
      * Draws fluid in through the sides set to pull, as much as the buffer has room for: a pipe pulls no faster than it
-     * hands on, so a pulling line runs as full as one a tank pours into (a bucket a tick in a Copper Pipe, 400 mB in an
+     * hands on, so a pulling line runs as full as one a tank pours into (a bucket a tick, in a Copper Pipe or an
      * Experience Pipe). Only while something down the line takes what it carries ({@link #reach}) - or a line with
      * nowhere to go would fill itself from the tank and sit full - and only a fluid this pipe carries, the one it
      * holds if it holds any.
@@ -470,6 +471,13 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
                         Component.translatable("direction.nookworks." + side.getSerializedName())));
             }
         }
+    }
+
+    /** A Condenser beside it saved before it showed ports gets its port now (PipePorts#showBesideOnLoad). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        PipePorts.showBesideOnLoad(this);
     }
 
     /**

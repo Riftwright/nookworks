@@ -9,9 +9,10 @@
     "wonders": ["dark_matter", "daemon_door", "if_world", "mob_bottle", "spawner_control", "barter_terminal"]
   },
   "_needs": {
-    "_comment": "A part, or a single item, that needs another part on as well: with that part off it goes too. The Barter Terminal's piglin goes in by a Mob Bottle; the Absorption Pad is made with a Magnet; the Velarium Hammer, Sorter Gear, Storage Barrel and Upgrade are made of velarium.",
+    "_comment": "A part, or a single item, that needs another part on as well: with that part off it goes too. The Barter Terminal's piglin goes in by a Mob Bottle; the Absorption Pad is made with a Magnet; the Reinforced Building Wand, Velarium Hammer, Sorter Gear, Storage Barrel and Upgrade are made of velarium.",
     "barter_terminal": ["mob_bottle"],
     "nookworks:absorption_pad": ["magnets"],
+    "nookworks:reinforced_building_wand": ["velarium"],
     "nookworks:velarium_hammer": ["velarium"],
     "nookworks:velarium_sorter_gear": ["velarium"],
     "nookworks:velarium_storage_barrel": ["velarium"],
@@ -49,7 +50,7 @@
     "nookworks:stone_hammer", "nookworks:copper_hammer", "nookworks:iron_hammer", "nookworks:golden_hammer",
     "nookworks:diamond_hammer", "nookworks:netherite_hammer", "nookworks:velarium_hammer"
   ],
-  "building_wand": ["nookworks:building_wand"],
+  "building_wand": ["nookworks:building_wand", "nookworks:reinforced_building_wand"],
   "spawner_control": ["nookworks:spawner_link_sender", "nookworks:spawner_link_receiver", "nookworks:spawner_controller"],
   "mob_bottle": ["nookworks:mob_bottle", "nookworks:spawn_egg_brewer"],
   "laser": ["nookworks:laser"],
@@ -99,7 +100,8 @@
     "nookworks:velarium_ingot", "nookworks:velarium_nugget", "nookworks:velarium_block", "nookworks:red_hot_velarium_ingot", "nookworks:tempered_velarium_ingot", "nookworks:velarium_pickaxe", "nookworks:velarium_axe", "nookworks:velarium_shovel", "nookworks:velarium_hoe", "nookworks:velarium_sword", "nookworks:velarium_helmet", "nookworks:velarium_chestplate", "nookworks:velarium_leggings", "nookworks:velarium_boots"
   ],
   "machine_chassis": [
-    "nookworks:machine_chassis"
+    "nookworks:machine_chassis",
+    "nookworks:machine_bell"
   ],
   "sifter": [
     "nookworks:sifter", "nookworks:brass_mesh"
@@ -108,13 +110,13 @@
     "nookworks:crusher"
   ],
   "retort": [
-    "nookworks:retort"
+    "nookworks:retort", "nookworks:wood_vinegar_bucket"
   ],
   "stirring_tank": [
     "nookworks:stirring_tank"
   ],
   "distiller": [
-    "nookworks:distiller", "nookworks:distillation_column", "nookworks:condenser"
+    "nookworks:distiller", "nookworks:distillation_column", "nookworks:condenser", "nookworks:methanol_bucket"
   ],
   "oil_press": [
     "nookworks:oil_press"

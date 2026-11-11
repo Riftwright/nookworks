@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -321,6 +321,9 @@ final class SaveCompat {
             out.put(Nookworks.MODID + ":" + name, low);
         }
         out.put(Nookworks.MODID + ":copper_tank", round);
+        // 1.5: the Condenser too, on its four sides (mercury/CondenserBlock); with no block entity of its own, set right by
+        // the pipe beside it as that loads
+        out.put(Nookworks.MODID + ":condenser", round);
         return out;
     }
 
@@ -385,6 +388,23 @@ final class SaveCompat {
             StringBuilder out = new StringBuilder(block + "[");
             properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
             now.addProperty("state", out.append(']').toString());
+        }
+        if ((block.equals(Nookworks.MODID + ":retort") || block.equals(Nookworks.MODID + ":electric_furnace")) && now.has("items")) {
+            // 1.5: the Sealed Retort's and the Electric Furnace's fill box are gone (the user's rule for both mods, 2026-11-08:
+            // nothing fills a container by itself; a bottle is filled in the screen's Liquid tab). What an old world kept in
+            // the box (every fixture: 8 glass bottles in the Retort's, 5 in the Furnace's) is held by the machine, unseen,
+            // and put out below at its first tick (MachineBlockEntity's leftovers; MachineTabTests.oldFillBoxes): seen
+            // here as it loads, the box's bottles are no longer in the machine. Its other slots keep their places.
+            JsonArray kept = new JsonArray();
+            for (JsonElement item : now.getAsJsonArray("items")) {
+                String line = item.getAsString();
+                if (block.endsWith(":retort") && line.equals("minecraft:glass_bottle 12")) {
+                    kept.add("minecraft:glass_bottle 4"); // the four in its reagent slot stay
+                } else if (!(block.endsWith(":electric_furnace") && line.equals("minecraft:glass_bottle 5"))) {
+                    kept.add(line);
+                }
+            }
+            now.add("items", kept);
         }
         if (state.equals(Nookworks.MODID + ":filament_bulb")) {
             // 1.0.1: a Filament Bulb switches off and on by hand and by redstone (rope/FilamentBulbBlock, LIT and
@@ -573,6 +593,23 @@ final class SaveCompat {
             // where on its face it sits (across, up, how far back the face stands) and its size
             out.addProperty("box", box(label.getBoundingBox()));
         }
+        if (entity instanceof dev.nookworks.rope.TiedLoadEntity load && load.carried() != null) {
+            // what it holds tied up: each block's state where it stands in the load, and what its block entity keeps
+            JsonArray parts = new JsonArray();
+            for (dev.nookworks.carry.CarriedBlock.Part part : load.carried().parts()) {
+                StringBuilder line = new StringBuilder(part.offset().toShortString() + " " + part.state());
+                if (part.data() != null) {
+                    net.minecraft.nbt.ListTag items = part.data().getListOrEmpty("Items");
+                    for (int i = 0; i < items.size(); i++) {
+                        net.minecraft.nbt.CompoundTag item = items.getCompoundOrEmpty(i);
+                        line.append(" | ").append(item.getByteOr("Slot", (byte) 0)).append(": ").append(item.getIntOr("count", 1))
+                                .append(" ").append(item.getStringOr("id", "?"));
+                    }
+                }
+                parts.add(line.toString());
+            }
+            out.add("carries", parts);
+        }
         if (entity instanceof Container container) {
             JsonArray items = new JsonArray();
             for (int slot = 0; slot < container.getContainerSize(); slot++) {
@@ -640,9 +677,12 @@ final class SaveCompat {
      */
     private static void capture(GameTestHelper helper, Path dir, String name) {
         ServerLevel level = helper.getLevel();
+        // every block of ours a world can hold - from 1.5 those with no item of their own too (turned planks, the
+        // cauldrons of our liquids, potted plants, crops: up to 1.4 they were left out), but the liquids themselves
         List<Block> blocks = BuiltInRegistries.BLOCK.stream()
                 .filter(block -> BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(Nookworks.MODID))
-                .filter(block -> block.asItem() != Items.AIR || block.defaultBlockState().hasBlockEntity())
+                .filter(block -> block.asItem() != Items.AIR || block.defaultBlockState().hasBlockEntity()
+                        || !(block instanceof net.minecraft.world.level.block.LiquidBlock))
                 .toList();
         int rows = (blocks.size() + PER_ROW - 1) / PER_ROW;
         int sceneZ = rows * 3 + SCENE_GAP;
@@ -712,7 +752,7 @@ final class SaveCompat {
             throw new IllegalStateException("cannot write the fixture to " + dir, e);
         }
         clearAll(level, AT, size);
-        check(helper, entities.size() == 20, "the scene holds 20 entities of ours (four knots, seven hung things, three posters, three labels, a seat, two boats): " + entities);
+        check(helper, entities.size() == 21, "the scene holds 21 entities of ours (four knots, seven hung things, three posters, three labels, a seat, two boats, a tied load): " + entities);
         Nookworks.LOGGER.info("save compat fixture {}: {} blocks, {} places, {} entities, written to {}", name, blocks.size(),
                 places.size(), entities.size(), dir);
         helper.succeed();
@@ -807,6 +847,16 @@ final class SaveCompat {
         level.addFreshEntity(picture);
         level.addFreshEntity(letters);
         level.addFreshEntity(onChest);
+
+        // a chest tied up with rope, with what it holds (from 1.5)
+        BlockPos tied = s.offset(20, 1, 3);
+        level.setBlockAndUpdate(tied.below(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(tied, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH));
+        if (level.getBlockEntity(tied) instanceof Container held) {
+            held.setItem(0, new ItemStack(Items.IRON_INGOT, 7));
+            held.setItem(13, new ItemStack(ModItems.THIN_ROPE.get(), 2));
+        }
+        check(helper, dev.nookworks.rope.TiedLoads.tie(level, tied, null) != null, "the chest is tied up");
 
         // a chair, for the seat left on it (set as the fixture is kept: with no one in it, it goes on its first tick)
         BlockPos chair = chair(s);

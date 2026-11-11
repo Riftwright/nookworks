@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:reinforced_building_wand",
+        "nookworks:building_wand"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_transmute",
+  "category": "equipment",
+  "input": "nookworks:building_wand",
+  "material": "#c:ingots/velarium",
+  "material_count": 2,
+  "result": {
+    "id": "nookworks:reinforced_building_wand"
+  }
+}

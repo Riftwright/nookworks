@@ -1,7 +1,7 @@
-"""Generate the Wrench and Building Wand textures. Deterministic.
+"""Generate the Wrench, Building Wand and Reinforced Building Wand textures. Deterministic.
 (The Repair Box has gen_repair_box.py, the Trash Can gen_trash_can.py.)
 
-Items:  wrench, building_wand
+Items:  wrench, building_wand, reinforced_building_wand
 
 Run from the repo root:  python tools/textures/gen_tools.py
 """
@@ -102,12 +102,47 @@ def building_wand():
     return img
 
 
+# The Reinforced Building Wand ("Wand C" of draft_tool_icons.py, 2026-11-07): the wand in Nookworks' workshop
+# materials - a walnut rod (V lit, W body, w shade) banded in copper (k, C) a third of the way up, a brass claw (g lit,
+# B, b) holding a velarium crystal at its head: a pale facet to the upper left (y), the body (X), a deep facet to the
+# lower right (x), a near-white crown (Y) and a teal glint inside (t). Ringed as itemkit rings items.
+REINFORCED_WAND = itemkit.check([
+    "................",
+    "............Y...",
+    "...........yYx..",
+    "..........ytXx..",
+    ".........yXXx...",
+    "........gBXx....",
+    ".......gBb......",
+    ".......Vw.......",
+    "......VW........",
+    ".....kC.........",
+    "....VW..........",
+    "...VW...........",
+    "..VW............",
+    "..w.............",
+    "................",
+    "................",
+])
+REINFORCED_WAND_COLOURS = {
+    "w": (72, 44, 26), "W": (108, 70, 38), "V": (184, 136, 84),  # walnut
+    "C": (168, 88, 50), "k": (214, 128, 76),  # copper
+    "b": (124, 84, 26), "B": (178, 130, 46), "g": (230, 190, 96),  # brass
+    "x": (52, 30, 94), "X": (112, 80, 182), "y": (178, 154, 236), "Y": (228, 218, 252), "t": (92, 210, 172),  # velarium
+}
+
+
+def reinforced_building_wand():
+    return itemkit.sprite(REINFORCED_WAND, REINFORCED_WAND_COLOURS)
+
+
 def main():
     BLOCK.mkdir(parents=True, exist_ok=True)
     ITEM.mkdir(parents=True, exist_ok=True)
     # vanilla's two outline tones: a step lighter where the edge faces the light, near black where it faces away
     texkit.retone(wrench(), STEEL[0], STEEL[1]).save(ITEM / "wrench.png")
     building_wand().save(ITEM / "building_wand.png")
+    reinforced_building_wand().save(ITEM / "reinforced_building_wand.png")
     print("wrote tool textures")
 
 

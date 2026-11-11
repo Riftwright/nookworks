@@ -40,7 +40,33 @@ public final class NookworksClientConfig {
             .comment("While squinting, raise the hand that holds nothing, or the off hand, to the brow: it shows at the top of the view.")
             .translation(Nookworks.MODID + ".configuration.squint.hand").define("squintHand", true);
 
+    // the sounds of machines (the user, 2026-11-10, of the sound session's survey: the Blocks slider was the only way down)
+    public static final ModConfigSpec.IntValue MACHINE_SOUND_VOLUME = BUILDER
+            .comment("How loud the sounds machines make now and then as they work, in percent of how they are made (0 turns them off).",
+                    "Nookworks' machines, and an add-on's that plays its work sounds the same way.")
+            .translation(sound("machineVolume")).defineInRange("machineSoundVolume", 100, 0, 100);
+    public static final ModConfigSpec.IntValue MACHINE_SOUND_FREQUENCY = BUILDER
+            .comment("How often each machine makes its work sound, in percent of the usual: 25 is a quarter as often, 200 twice.",
+                    "However many machines stand near, no more than three of their sounds start in any one second.")
+            .translation(sound("machineFrequency")).defineInRange("machineSoundFrequency", 100, 25, 200);
+    public static final ModConfigSpec.BooleanValue MACHINE_STOP_CUE = BUILDER
+            .comment("A short sound from a machine near you that has stopped for a reason to see to (out of fuel or power, its output",
+                    "blocked, a tank full...): once, after it has stood two seconds stopped.")
+            .translation(sound("machineStopCue")).define("machineStopCue", true);
+
+    // the Standing Mirror under a shader pack (the user, 2026-11-11: the pack's look in the mirror); a switch, as the
+    // packs differ and not all can be tried
+    public static final ModConfigSpec.BooleanValue MIRROR_PACK_LIGHT = BUILDER
+            .comment("With a shader pack (Iris), a Standing Mirror's reflection is lit as the pack lights the room around it - as",
+                    "dark, as warm - measured from the pack itself. Off: lit as the game lights it without shaders.",
+                    "The pack's shadows, sky and water do not show in the mirror either way.")
+            .translation(Nookworks.MODID + ".configuration.mirror.packLight").define("mirrorPackLight", true);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
+
+    private static String sound(String path) {
+        return Nookworks.MODID + ".configuration.sounds." + path;
+    }
 
     private static String key(String path) {
         return Nookworks.MODID + ".configuration.inventory." + path;

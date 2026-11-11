@@ -30,7 +30,9 @@ final class R9RopeTests {
 
     static void register() {
         NookworksGameTests.test("a_rope_is_not_tied_through_what_stands_in_its_way", R9RopeTests::notThroughThings);
-        NookworksGameTests.test("a_knot_left_with_no_rope_goes_at_once", 40, R9RopeTests::knotGoesAtOnce);
+        // 100 ticks: the wait for the entities round it to load is in time as well (inTime, 20 ms a tick it waits), and 40
+        // gave it under a second, which a full run's disk sometimes took longer than (2026-11-10)
+        NookworksGameTests.test("a_knot_left_with_no_rope_goes_at_once", 100, R9RopeTests::knotGoesAtOnce);
         NookworksGameTests.test("a_hung_thing_needs_room_for_all_of_it", R9RopeTests::roomForAllOfIt);
         NookworksGameTests.test("no_block_is_set_down_where_something_hangs", R9RopeTests::noBlockWhereItHangs);
         NookworksGameTests.test("a_knot_made_off_the_server_thread_waits_on_nothing", R9RopeTests::knotMadeOffTheServerThread);

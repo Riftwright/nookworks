@@ -20,17 +20,19 @@ import net.minecraft.world.phys.Vec3;
 /**
  * A Standing Mirror's glass, over the model's silver: what is before it, from {@link MirrorReflections}, while it is one
  * of the few near enough to be drawn; otherwise the silver shows. Under an Iris shader pack it is drawn over the pack's
- * finished picture instead, so the pack neither lights nor blooms it.
+ * finished picture instead, so the pack neither lights nor blooms it; beneath it, for the pack to light, goes the board
+ * the pack's light is measured on ({@link MirrorLight}).
  */
 public class StandingMirrorRenderer implements BlockEntityRenderer<StandingMirrorBlockEntity, StandingMirrorRenderer.State> {
     /** The glass in the two blocks' picture, as the model has it: columns and rows, ends exclusive. */
-    private static final int LEFT = 3;
-    private static final int RIGHT = 13;
-    private static final int TOP = 3;
-    private static final int BOTTOM = 29;
+    static final int LEFT = 3;
+    static final int RIGHT = 13;
+    static final int TOP = 3;
+    static final int BOTTOM = 29;
     /** A little in front of the model's glass. */
     private static final float OUT = MirrorReflections.GLASS_OUT + 0.002F;
-    private static final float OUT_OVER_SHADERS = MirrorReflections.GLASS_OUT + 0.012F;
+    /** Over a pack's picture, further out: before the board the pack's light is measured on (MirrorLight). */
+    static final float OUT_OVER_SHADERS = MirrorReflections.GLASS_OUT + 0.016F;
 
     public StandingMirrorRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -63,7 +65,13 @@ public class StandingMirrorRenderer implements BlockEntityRenderer<StandingMirro
             return;
         }
         if (IrisHooks.shaderPackInUse()) {
-            MirrorReflections.overShaders(state.blockPos, state.facing, glass.slot()); // drawn over the pack's picture, after it
+            if (MirrorLight.mode() != MirrorLight.Mode.OFF) {
+                // for the pack to light: read where the glass is once its picture is finished, then painted over
+                collector.submitCustomGeometry(pose, MirrorLight.BOARD, (p, buffer) -> MirrorLight.board(p, buffer, state.facing));
+            }
+            if (MirrorLight.mode() != MirrorLight.Mode.SHOW) {
+                MirrorReflections.overShaders(state.blockPos, state.facing, glass.slot()); // drawn over the pack's picture, after it
+            }
         } else {
             collector.submitCustomGeometry(pose, glass.type(), (p, buffer) -> PixelFaces.bare(p, buffer, state.facing, OUT, LEFT, RIGHT, TOP, BOTTOM));
         }

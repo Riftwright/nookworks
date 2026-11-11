@@ -25,6 +25,7 @@ final class WadeTests {
     static void register() {
         test("a_body_sinks_and_moves_in_vegetable_oil", 60, helper -> wades(helper, ModOil.VEGETABLE_OIL::get));
         test("a_body_sinks_and_moves_in_biodiesel", 60, helper -> wades(helper, ModOil.BIODIESEL_BLOCK::get));
+        test("a_body_sinks_and_moves_in_methanol", 60, helper -> wades(helper, ModOil.METHANOL_BLOCK::get));
         test("a_body_sinks_and_moves_in_liquid_experience", 60, helper -> wades(helper, ModBlocks.LIQUID_EXPERIENCE::get));
         test("a_body_sinks_and_moves_in_mercury", 60, helper -> wades(helper, ModBlocks.MERCURY::get));
     }

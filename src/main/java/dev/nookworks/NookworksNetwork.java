@@ -3,6 +3,7 @@ package dev.nookworks;
 import dev.nookworks.feature.Squinting;
 import dev.nookworks.inventory.ChestSorting;
 import dev.nookworks.inventory.RecipeChoice;
+import dev.nookworks.item.BuildingWandItem;
 import dev.nookworks.photo.Photo;
 import dev.nookworks.photo.Photos;
 import dev.nookworks.trading.TradingCounterView;
@@ -28,8 +29,6 @@ import dev.nookworks.cooking.PotLine;
 import dev.nookworks.registry.ModCreativeTabs;
 import dev.nookworks.travel.DaemonDestinations;
 import dev.nookworks.travel.DaemonTravel;
-import dev.nookworks.machine.GaugePouring;
-import dev.nookworks.machine.MachineMenu;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -335,16 +334,29 @@ public final class NookworksNetwork {
     }
 
     /**
-     * Client to server: gauge {@code gauge} of the machine screen {@code containerId} clicked with what the cursor holds
-     * (GaugePouring) - a payload of its own, not a menu button id: those are kept clear for nookTechnology (docs/compat.md).
+     * Client to server: an item dragged from JEI's list onto slot {@code slot} of the open menu {@code containerId}, one
+     * with ghost slots ({@link dev.nookworks.inventory.GhostSlots}): set there as a click with it in hand would.
      */
-    public record PourGauge(int containerId, int gauge) implements CustomPacketPayload {
-        public static final Type<PourGauge> TYPE = new Type<>(Nookworks.id("pour_gauge"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, PourGauge> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, PourGauge::containerId, ByteBufCodecs.VAR_INT, PourGauge::gauge, PourGauge::new);
+    public record SetGhost(int containerId, int slot, ItemStack item) implements CustomPacketPayload {
+        public static final Type<SetGhost> TYPE = new Type<>(Nookworks.id("set_ghost"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, SetGhost> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, SetGhost::containerId, ByteBufCodecs.VAR_INT, SetGhost::slot,
+                ItemStack.validatedStreamCodec(ItemStack.OPTIONAL_UNTRUSTED_STREAM_CODEC), SetGhost::item, SetGhost::new);
 
         @Override
-        public Type<PourGauge> type() {
+        public Type<SetGhost> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: the Reinforced Building Wand in hand stepped this many modes on (scrolled while sneaking); the plain wand has none. */
+    public record StepWandMode(int steps) implements CustomPacketPayload {
+        public static final Type<StepWandMode> TYPE = new Type<>(Nookworks.id("step_wand_mode"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, StepWandMode> STREAM_CODEC =
+                ByteBufCodecs.VAR_INT.map(StepWandMode::new, StepWandMode::steps).cast();
+
+        @Override
+        public Type<StepWandMode> type() {
             return TYPE;
         }
     }
@@ -393,12 +405,13 @@ public final class NookworksNetwork {
     @SubscribeEvent
     static void register(RegisterPayloadHandlersEvent event) {
         // "2" since 1.4: PotContents carries a note, so a 1.3 client on a 1.4 server (or the reverse) is turned away at
-        // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check)
-        var registrar = event.registrar("2");
-        registrar.playToServer(PourGauge.TYPE, PourGauge.STREAM_CODEC, (payload, context) -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof MachineMenu menu
-                    && menu.containerId == payload.containerId()) {
-                GaugePouring.clicked(player, menu, payload.gauge());
+        // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check). "3" since
+        // 1.5: the machine screens' tabs add slots to their menus, and the gauge click's payload is gone
+        var registrar = event.registrar("3");
+        registrar.playToServer(StepWandMode.TYPE, StepWandMode.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player && BuildingWandItem.hasModes(player.getMainHandItem())
+                    && payload.steps() != 0) {
+                BuildingWandItem.stepMode(player, player.getMainHandItem(), Integer.signum(payload.steps()));
             }
         });
         registrar.playToServer(AskWorldParts.TYPE, AskWorldParts.STREAM_CODEC, (payload, context) -> {
@@ -442,6 +455,11 @@ public final class NookworksNetwork {
         registrar.playToClient(TradingCounterViewPayload.TYPE, TradingCounterViewPayload.STREAM_CODEC, (payload, context) -> {
             if (context.player().containerMenu instanceof TradingCounterMenu menu && menu.containerId == payload.containerId()) {
                 menu.view = payload.view();
+            }
+        });
+        registrar.playToServer(SetGhost.TYPE, SetGhost.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                dev.nookworks.inventory.GhostSlots.dropped(player, payload.containerId(), payload.slot(), payload.item());
             }
         });
         registrar.playToServer(Squint.TYPE, Squint.STREAM_CODEC, (payload, context) -> {

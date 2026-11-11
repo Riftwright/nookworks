@@ -301,10 +301,11 @@ final class StorageTests {
         ItemStack oldItem = new ItemStack(ModItems.GOLD_SORTER.get());
         oldItem.getItem().appendHoverText(oldItem, Item.TooltipContext.EMPTY, TooltipDisplay.DEFAULT, said::add,
                 TooltipFlag.NORMAL);
+        // the gear as the gear itself is named: nookTechnology names ours its Speed Gears
+        Component goldGear = new ItemStack(ModItems.GOLD_SORTER_GEAR.get()).getHoverName();
         check(helper, said.size() == 1 && said.get(0).getContents() instanceof TranslatableContents words
                 && words.getKey().equals("tooltip.nookworks.legacy_sorter") && words.getArgs()[0] instanceof Component gear
-                && gear.getContents() instanceof TranslatableContents name
-                && name.getKey().equals("item.nookworks.gold_sorter_gear"), "one still in a chest says it becomes an Item Sorter with a gold gear");
+                && gear.equals(goldGear), "one still in a chest says it becomes an Item Sorter with a gold gear: " + said);
 
         BlockPos precise = new BlockPos(5, 1, 1);
         helper.setBlock(precise, ModBlocks.PRECISION_SORTER.get());
@@ -822,6 +823,17 @@ final class StorageTests {
         ItemStack magnet = new ItemStack(ModItems.MAGNET.get());
         magnet.set(ModDataComponents.MAGNET_ACTIVE.get(), true);
         sample.accept(ModDataComponents.MAGNET_ACTIVE.get(), magnet);
+        ItemStack recovering = new ItemStack(ModItems.WRENCH.get());
+        recovering.set(ModDataComponents.WRENCH_MODE.get(), dev.nookworks.item.WrenchMode.RECOVER);
+        sample.accept(ModDataComponents.WRENCH_MODE.get(), recovering);
+        ItemStack boxing = new ItemStack(ModItems.REINFORCED_BUILDING_WAND.get());
+        boxing.set(ModDataComponents.WAND_MODE.get(), dev.nookworks.item.WandMode.HOLLOW);
+        sample.accept(ModDataComponents.WAND_MODE.get(), boxing);
+        ItemStack marking = new ItemStack(ModItems.REINFORCED_BUILDING_WAND.get());
+        marking.set(ModDataComponents.WAND_BOX.get(), new dev.nookworks.item.WandBox(net.minecraft.core.GlobalPos.of(
+                net.minecraft.world.level.Level.OVERWORLD, new BlockPos(1, 64, -3)), java.util.Optional.of(new BlockPos(9, 70, 4)),
+                net.minecraft.world.level.block.Blocks.OAK_STAIRS.defaultBlockState()));
+        sample.accept(ModDataComponents.WAND_BOX.get(), marking);
         ItemStack leafless = new ItemStack(net.minecraft.world.item.Items.DIAMOND_AXE);
         leafless.set(ModDataComponents.GATHERS_LEAVES.get(), false);
         sample.accept(ModDataComponents.GATHERS_LEAVES.get(), leafless);
@@ -847,6 +859,15 @@ final class StorageTests {
         ItemStack camera = new ItemStack(ModItems.CAMERA.get());
         camera.set(ModDataComponents.CAMERA_PHOTOS.get(), List.of(3, 40_000, 1_234_567));
         sample.accept(ModDataComponents.CAMERA_PHOTOS.get(), camera);
+        // a carried block on any item (the add-on's packed loads): a chest with a diamond, both its parts' data whole
+        ItemStack packed = new ItemStack(Items.PAPER);
+        CompoundTag chestData = new CompoundTag();
+        chestData.putString("id", "minecraft:chest");
+        chestData.putString("CustomName", "\"Packed\"");
+        packed.set(ModDataComponents.CARRIED_BLOCK.get(), new dev.nookworks.carry.CarriedBlock(List.of(
+                new dev.nookworks.carry.CarriedBlock.Part(BlockPos.ZERO, Blocks.CHEST.defaultBlockState(), chestData),
+                new dev.nookworks.carry.CarriedBlock.Part(new BlockPos(1, 0, 0), Blocks.STONE.defaultBlockState(), null))));
+        sample.accept(ModDataComponents.CARRIED_BLOCK.get(), packed);
 
         for (var entry : ModDataComponents.COMPONENTS.getEntries()) {
             check(helper, samples.containsKey(entry.get()), entry.getId() + " has no sample in this test");

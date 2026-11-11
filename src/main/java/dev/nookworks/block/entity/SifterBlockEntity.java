@@ -410,4 +410,11 @@ public class SifterBlockEntity extends BlockEntity implements WorldlyContainer, 
     public void clearContent() {
         this.items.clear();
     }
+
+    /** Its stop heard, as every machine's is (MachineAlerts). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        dev.nookworks.machine.MachineAlerts.track(this);
+    }
 }

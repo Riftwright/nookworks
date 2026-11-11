@@ -19,6 +19,7 @@ import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -45,9 +46,13 @@ public final class MercuryRecipes {
      * <p>
      * {@code experience} is what a furnace would call it: the points one charge leaves behind, which the Retort keeps
      * as Liquid Experience (20 mB a point).
+     * <p>
+     * {@code liquid} ({@code {"id": "nookworks:wood_vinegar", "amount": 250}}) is a liquid the charge gives off, kept in the
+     * Retort's liquid tank and pushed out into a pipe or tank beside it (since 1.5: logs give their wood vinegar so,
+     * where they once filled a glass bottle in a reagent slot). With no room in that tank the Retort waits.
      */
     public record Retorting(int mercury, Holder<Item> byproduct, int count, Optional<Holder<Item>> remainder,
-            List<HolderSet<Item>> reagents, float experience) {
+            List<HolderSet<Item>> reagents, float experience, Optional<Liquid> liquid) {
         public static final Codec<Retorting> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(0, 4000).optionalFieldOf("mercury", 0).forGetter(Retorting::mercury),
                 BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("byproduct").forGetter(Retorting::byproduct),
@@ -55,12 +60,31 @@ public final class MercuryRecipes {
                 BuiltInRegistries.ITEM.holderByNameCodec().optionalFieldOf("remainder").forGetter(Retorting::remainder),
                 RegistryCodecs.holderSet(Registries.ITEM).listOf().optionalFieldOf("reagents", List.of())
                         .forGetter(Retorting::reagents),
-                Codec.floatRange(0.0F, 100.0F).optionalFieldOf("experience", 0.2F).forGetter(Retorting::experience))
+                Codec.floatRange(0.0F, 100.0F).optionalFieldOf("experience", 0.2F).forGetter(Retorting::experience),
+                Liquid.CODEC.optionalFieldOf("liquid").forGetter(Retorting::liquid))
                 .apply(i, Retorting::new));
 
         /** Whether this entry needs anything in the reagent slot at all. */
         public boolean needsReagents() {
             return !this.reagents.isEmpty();
+        }
+    }
+
+    /**
+     * An amount of a liquid, as an entry gives it off: {@code {"id": "nookworks:wood_vinegar", "amount": 250}}. Not a
+     * FluidStack, whose components are not yet bound when data maps load.
+     */
+    public record Liquid(Fluid fluid, int amount) {
+        public static final Codec<Liquid> CODEC = RecordCodecBuilder.create(i -> i.group(
+                BuiltInRegistries.FLUID.byNameCodec().fieldOf("id").forGetter(Liquid::fluid),
+                Codec.intRange(1, 64_000).fieldOf("amount").forGetter(Liquid::amount)).apply(i, Liquid::new));
+
+        public Fluid getFluid() {
+            return this.fluid;
+        }
+
+        public int getAmount() {
+            return this.amount;
         }
     }
 
@@ -112,7 +136,8 @@ public final class MercuryRecipes {
 
     public static @Nullable Retorting retorting(ItemStack stack) {
         Retorting recipe = stack.isEmpty() ? null : stack.typeHolder().getData(RETORTING);
-        return recipe != null && Features.enabled(recipe.byproduct().value()) ? recipe : null;
+        return recipe != null && Features.enabled(recipe.byproduct().value())
+                && recipe.liquid().map(liquid -> Features.enabled(liquid.getFluid().getBucket())).orElse(true) ? recipe : null;
     }
 
     public static @Nullable Amalgamation amalgamation(ItemStack stack) {

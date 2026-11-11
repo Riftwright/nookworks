@@ -8,6 +8,9 @@ import org.jspecify.annotations.Nullable;
 import dev.nookworks.label.LabelText;
 import dev.nookworks.machine.RedstoneMode;
 import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.menu.tab.MachineTab;
+import dev.nookworks.menu.tab.MenuTabs;
+import dev.nookworks.menu.tab.TabbedMenu;
 import dev.nookworks.photo.CameraItem;
 import dev.nookworks.photo.Photo;
 import dev.nookworks.photo.Photos;
@@ -30,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
  * labels - the posters as a scrolling grid of designs, labels as a sample slot with a preview of the label it makes.
  * The chosen design is synced as its index into the sorted design list rather than as an id; labels are the first.
  */
-public class PrintingPressMenu extends AbstractContainerMenu {
+public class PrintingPressMenu extends AbstractContainerMenu implements TabbedMenu {
     /** The letter labels' text, two letters a slot, from this slot on. */
     public static final int DATA_TEXT = 6;
     /** The chosen photo's number, in two slots, and its size's place in {@link Photo#SIZES}. */
@@ -60,6 +63,7 @@ public class PrintingPressMenu extends AbstractContainerMenu {
     public static final int INVENTORY_Y = 142;
 
     private final Container container;
+    private final MenuTabs tabs = new MenuTabs(176);
     private final ContainerData data;
     private final @Nullable PrintingPressBlockEntity press;
     private final List<Identifier> designs;
@@ -112,6 +116,8 @@ public class PrintingPressMenu extends AbstractContainerMenu {
         });
         this.addStandardInventorySlots(inventory, 8, INVENTORY_Y);
         this.addDataSlots(data);
+        // the tabs on the screen's right edge (1.5): its redstone mode in Settings; an add-on may add an Add-on tab
+        this.tabs.enable(MachineTab.SETTINGS);
     }
 
     /** Labels, then every design the pack defines, in the order the GUI shows them. */
@@ -212,6 +218,9 @@ public class PrintingPressMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (this.tabs.clickMenuButton(player, id)) {
+            return true;
+        }
         if (this.press == null) {
             return false;
         }
@@ -283,6 +292,10 @@ public class PrintingPressMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
+        ItemStack tabbed = this.tabs.quickMove(slot, PrintingPressBlockEntity.SLOTS, this::moveItemStackTo);
+        if (tabbed != null) {
+            return tabbed;
+        }
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
         int machineSlots = PrintingPressBlockEntity.SLOTS;
@@ -329,5 +342,16 @@ public class PrintingPressMenu extends AbstractContainerMenu {
         public boolean mayPlace(ItemStack stack) {
             return PrintingPressBlockEntity.accepts(this.index, stack);
         }
+    }
+
+    @Override
+    public MenuTabs tabs() {
+        return this.tabs;
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.tabs.removed(player);
     }
 }

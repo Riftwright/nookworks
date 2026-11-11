@@ -1,7 +1,44 @@
 {
-  "variants": {
-    "": {
-      "model": "nookworks:block/condenser"
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/condenser"
+      }
+    },
+    {
+      "when": {
+        "port_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port_condenser"
+      }
+    },
+    {
+      "when": {
+        "port_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port_condenser",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "port_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port_condenser",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "port_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/pipe_port_condenser",
+        "y": 270
+      }
     }
-  }
+  ]
 }

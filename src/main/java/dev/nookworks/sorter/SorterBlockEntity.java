@@ -184,6 +184,26 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         return this.getBlockState().getBlock() instanceof SorterBlock block ? block.tier : SorterTier.ITEM;
     }
 
+    /** The least ticks between two of a sorter's clicks; and then only half the time (hoppers are silent). */
+    public static final int CLICK_GAP = 40;
+    private long lastClick = Long.MIN_VALUE / 2;
+
+    /**
+     * A small click as it sends something on, now and then: at most once in {@link #CLICK_GAP} ticks and half of those
+     * times, so a sorter at work is heard without ticking at every item (the user, 2026-11-10, of the sound session's
+     * survey: no sorter made a sound).
+     */
+    private void clickNowAndThen(ServerLevel level, BlockPos pos) {
+        long now = level.getGameTime();
+        if (now - this.lastClick >= CLICK_GAP) {
+            this.lastClick = now;
+            if (level.getRandom().nextBoolean()) {
+                level.playSound(null, pos, dev.nookworks.registry.ModSounds.SORTER_SORT.get(), net.minecraft.sounds.SoundSource.BLOCKS,
+                        1.0F, 0.95F + level.getRandom().nextFloat() * 0.1F);
+            }
+        }
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, SorterBlockEntity sorter) {
         if (!(level instanceof ServerLevel server)) {
             return;
@@ -224,6 +244,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
             if (moved > 0) {
                 stack.shrink(moved);
                 sorter.setChanged();
+                sorter.clickNowAndThen(server, pos);
             }
             if (moved < offered) {
                 return; // the outlet is full or blocked: it keeps what it has, and draws nothing more in until that goes

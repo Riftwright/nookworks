@@ -14,6 +14,7 @@ Drawn flat, then shaded with texkit.shade (casing metal; glass, liquids, glow an
 frame colours exact. Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_machine_faces.py
 """
+import math
 from pathlib import Path
 
 from PIL import Image
@@ -913,6 +914,9 @@ LINE_GAUGES = {
             ((226, 176, 56), (240, 200, 92), (204, 150, 34), (170, 118, 22))),
     "biodiesel": (((214, 160, 80), (236, 188, 110), (178, 120, 44), (140, 86, 26)),
                   ((150, 94, 28), (178, 118, 40), (122, 74, 22), (92, 54, 16))),
+    # methanol: clear, its cold blue-white a shade brighter than the empty glass beside it, its surface lit
+    "methanol": (((216, 228, 238), (240, 246, 252), (190, 204, 216), (160, 176, 190)),
+                 ((150, 170, 186), (178, 196, 210), (128, 146, 162), (100, 116, 132))),
     # another mod's liquid: light greys the game tints with the liquid's own colour (client/render/WindowTint), its
     # shading kept; untinted (a liquid it cannot read) the tint is the grey these were before, 224 in 255
     "other": (((228, 230, 235), (255, 255, 255), (194, 196, 203), (160, 162, 169)),
@@ -935,19 +939,58 @@ def sight_glass_glass():
     return img
 
 
+# Cast brass in nine shades (the user, 2026-11-10: the four flat ones read のっぺり): the four brass colours above
+# with a shade between each and a pale glint on top. The shadows go towards a warm brown, the lights towards a pale
+# straw, as vanilla's gold block and bell run; the deepest is a recess, still brass-brown, never black.
+BRASS_RAMP = ((70, 50, 24), (96, 66, 26), (124, 88, 36), (146, 106, 42), (174, 132, 56), (200, 156, 68),
+              (222, 182, 92), (238, 204, 116), (250, 230, 166))
+
+
 def brass_fitting():
     """
-    Cast and turned brass for the fittings' bodies and flanges: smooth, in broad bands of light and shade as a
-    turned surface catches it, a fine darker line where one band meets the next. Tileable, and kept free of grain -
-    speckled, it read as sponge.
+    Cast brass for the fittings' bodies and flanges (the Valve, the Sight Glass, the Filament Bulb's cap). The models
+    give the brass no UVs of their own: each face takes its slice from where it stands, so the Valve's flanges show
+    3..12, the Sight Glass's 2..13 and the Valve's body 4..11 across, 3..12 down. The texture is drawn to that:
+    - a field of broad, smooth lumps lit from the upper left, with a soft diagonal sheen across it (lower left to
+      upper right, as on vanilla's gold block) - smooth, no single-pixel grain: speckled, brass read as sponge;
+    - worn edges where the parts' edges fall, rows and columns 2 and 3 lit (a pale glint here and there where the
+      edge is rubbed bright), 12 and 13 a shade and two down, so each flange reads as a cast rim;
+    - a few small pits a shade down in the field.
     """
     img = blank()
-    bands = (BRASS_HI, BRASS_HI, BRASS, BRASS, BRASS, BRASS_LO, BRASS, BRASS)
+    top = len(BRASS_RAMP) - 1
+
+    def lump(x, y, size, seed):
+        return texkit._smooth(x, y, size, size, seed, 16, 16, True)
+
     for y in range(16):
         for x in range(16):
-            put(img, x, y, bands[y % 8])
-    for x in range(16):
-        put(img, x, 7, BRASS_DK)  # the line between two turned bands
+            u = (0.4 * x + 0.6 * y) / 15                     # 0 at the upper left, 1 at the lower right
+            t = 5.7 - 2.3 * u
+            d = x + y + 0.8 * lump(x, y, 4, 2143)            # the streaks wander a little, as a sheen on a cast face
+            t += 1.5 * math.exp(-((d - 9.5) / 1.6) ** 2)       # the sheen, a soft streak across the field,
+            t -= 0.9 * math.exp(-((d - 13.5) / 1.3) ** 2)      # the shade it leaves under it,
+            t += 1.2 * math.exp(-((d - 17) / 1.2) ** 2)        # and a fainter streak below that
+            t += 0.35 * lump(x, y, 5, 2141) + 0.15 * lump(x, y, 3, 2142)
+            # the parts' edges, framing 2..13: lit along the top and left, a shade and then two down along the
+            # bottom and right
+            if 2 <= x <= 13 and 2 <= y <= 13:
+                lit = 2 if (x == 2 or y == 2) else 1 if (x == 3 or y == 3) else 0
+                dark = 2 if (x == 13 or y == 13) else 1 if (x == 12 or y == 12) else 0
+                if lit and dark:
+                    t = 4.5 if lit + dark < 4 else 4.0                   # where a lit edge turns into a shaded one
+                elif lit:
+                    t = max(t + 0.8 * lit, 5.5 + lit * 0.6)
+                elif dark:
+                    t = min(t - 0.9 * dark, 4.6 - dark)
+            put(img, x, y, BRASS_RAMP[max(0, min(top - 1, round(t)))])
+    # the edge rubbed bright in places, a pale glint; the corner where the two lit edges meet brightest
+    for x, y in ((2, 2), (3, 2), (2, 3), (3, 3), (7, 2), (2, 8), (10, 3), (3, 6)):
+        put(img, x, y, BRASS_RAMP[top])
+    for x, y in ((8, 9), (6, 6), (10, 10)):  # small casting pits, a shade under the field round them
+        r, g, b, _ = img.getpixel((x, y))
+        i = min(range(len(BRASS_RAMP)), key=lambda k: sum(abs(a - c) for a, c in zip(BRASS_RAMP[k], (r, g, b))))
+        put(img, x, y, BRASS_RAMP[max(1, i - 1)])
     return img
 
 

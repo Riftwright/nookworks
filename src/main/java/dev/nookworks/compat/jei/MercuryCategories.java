@@ -7,9 +7,12 @@ import java.util.Locale;
 import dev.nookworks.Nookworks;
 import dev.nookworks.feature.Features;
 import dev.nookworks.machine.LootSummaries;
+import dev.nookworks.mercury.DistillerBlockEntity;
 import dev.nookworks.mercury.MercuryRecipes;
 import dev.nookworks.mercury.StirringTankBlockEntity;
+import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModItems;
+import dev.nookworks.registry.ModOil;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -104,6 +107,9 @@ public final class MercuryCategories {
                 builder.addOutputSlot(83, 5).setOutputSlotBackground().add(ModItems.MERCURY_BUCKET.get());
             }
             r.recipe().remainder().ifPresent(item -> builder.addOutputSlot(105, 5).setOutputSlotBackground().add(new ItemStack(item)));
+            // a liquid it gives off into its tank, to be piped out (wood vinegar from logs, since 1.5)
+            r.recipe().liquid().ifPresent(liquid -> builder.addOutputSlot(r.recipe().mercury() > 0 ? 127 : 83, 5).setOutputSlotBackground()
+                    .add(liquid.getFluid(), liquid.getAmount()).setFluidRenderer(Math.max(liquid.getAmount(), OilFluids.BOTTLE), false, 16, 16));
         }
 
         @Override
@@ -162,8 +168,21 @@ public final class MercuryCategories {
         @Override
         public void setRecipe(IRecipeLayoutBuilder builder, Distil r, IFocusGroup focuses) {
             builder.addInputSlot(1, 5).setStandardSlotBackground().add(r.input());
-            if (r.recipe().result().isPresent()) {
+            if (DistillerBlockEntity.pours(r.input()) && r.recipe().result().map(h -> h.value() == ModOil.METHANOL.get()).orElse(false)) {
+                // wood vinegar, poured into its tank or piped in, distils to methanol in its tank, bottle by bottle (since 1.5)
+                builder.addInputSlot(1, 24).setStandardSlotBackground().add(OilFluids.WOOD_VINEGAR.get(), OilFluids.BOTTLE)
+                        .setFluidRenderer(OilFluids.BOTTLE, false, 16, 16);
+                builder.addOutputSlot(61, 5).setOutputSlotBackground()
+                        .add(OilFluids.METHANOL.get(), (long) OilFluids.BOTTLE * r.recipe().count())
+                        .setFluidRenderer(OilFluids.BOTTLE, false, 16, 16);
+            } else if (r.recipe().result().isPresent()) {
                 builder.addOutputSlot(61, 5).setOutputSlotBackground().add(new ItemStack(r.recipe().result().get(), r.recipe().count()));
+                if (r.recipe().result().get().value() == ModOil.METHANOL.get()) {
+                    // or as the liquid, into a pipe or tank beside the Distiller, the bottle back empty (since 1.5)
+                    builder.addOutputSlot(83, 5).setOutputSlotBackground()
+                            .add(OilFluids.METHANOL.get(), (long) OilFluids.BOTTLE * r.recipe().count())
+                            .setFluidRenderer(OilFluids.BOTTLE, false, 16, 16);
+                }
             } else if (r.recipe().lootTable().isPresent()) {
                 var key = r.recipe().lootTable().get().identifier();
                 var drops = LootSummaries.get(key);

@@ -15,6 +15,7 @@ import dev.nookworks.decor.Lanterns;
 import dev.nookworks.feature.StructureTurns;
 import dev.nookworks.registry.ModRope;
 import net.minecraft.core.BlockPos;
+import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -234,6 +235,27 @@ public class HungItemEntity extends Entity {
         this.vineAge = this.random.nextInt(GrowingPlantHeadBlock.MAX_AGE);
     }
 
+    /** A Wind Chime touched by the wind now and then ({@link #windChime}), heard where it hangs: each player's own. */
+    private void chimeNowAndThen() {
+        if (!this.item().is(ModRope.WIND_CHIME.get())) {
+            return;
+        }
+        Level level = this.level();
+        Vec3 at = this.hangPoint();
+        if (this.random.nextFloat() < windChime(level.canSeeSky(BlockPos.containing(at)), level.isRaining(), level.isThundering())) {
+            level.playLocalSound(at.x, at.y - 0.4, at.z, ModSounds.WIND_CHIME_CHIME.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
+        }
+    }
+
+    /**
+     * The chance a Wind Chime chimes in a tick: about every fifteen seconds in the open, every six in rain and two or three
+     * in a storm, a quarter as often under a roof. Public for tests.
+     */
+    public static float windChime(boolean open, boolean rain, boolean thunder) {
+        float chance = thunder ? 1.0F / 50 : rain ? 1.0F / 120 : 1.0F / 300;
+        return open ? chance : chance / 4;
+    }
+
     /** Whether {@code stack} can be hung up. */
     public static boolean hangs(ItemStack stack) {
         return stack.is(HANGS) || stack.is(ModRope.FILAMENT_BULB_ITEM.get());
@@ -372,13 +394,17 @@ public class HungItemEntity extends Entity {
 
     /**
      * Why it cannot hang where it was put - something in its way under the rope - as the message's key, or null when it
-     * can. On a span its box must be clear of blocks; under a rope's end, the block it hangs in must be free.
+     * can. On a span its box must be clear of blocks; under a rope's end, the block it hangs in must be free. Either way
+     * it must be clear of a tied load, a block carried: a bottle hung under a Thin Rope let down to one sat inside it,
+     * hidden (2026-11-10).
      */
     public @Nullable String misfit(Level level) {
-        if (this.ropeEnd != null) {
-            return level.getBlockState(this.ropeEnd.below()).canBeReplaced() ? null : NO_ROOM;
+        boolean free = this.ropeEnd != null ? level.getBlockState(this.ropeEnd.below()).canBeReplaced()
+                : level.noBlockCollision(null, this.getBoundingBox());
+        if (free && !level.getEntitiesOfClass(TiedLoadEntity.class, this.getBoundingBox(), load -> !load.isRemoved()).isEmpty()) {
+            free = false;
         }
-        return level.noBlockCollision(null, this.getBoundingBox()) ? null : NO_ROOM;
+        return free ? null : NO_ROOM;
     }
 
     /**
@@ -539,6 +565,9 @@ public class HungItemEntity extends Entity {
         // put, as an item frame does, and with hundreds of them strung up those rounds would add up for nothing.
         this.checkBelowWorld();
         if (!(this.level() instanceof ServerLevel level)) {
+            if (this.level().isClientSide()) {
+                this.chimeNowAndThen();
+            }
             return;
         }
         if (this.warming > 0 && --this.warming == 0 && this.glow() > 0) {

@@ -28,19 +28,23 @@ public enum MachineLayout {
     // Input, the nine results, then the mesh fitted under the input (slot 10: SifterBlockEntity.MESH).
     SIFTER(Gauge.ARROW, 54, 36, -1, -1, concat(concat(List.of(in(30, 27)), grid(86, 20, 3, 3, true)),
             List.of(fitting(30, 49))), List.of()),
-    // The charge and its two reagents, the byproduct and the remainder, the fill box (bottle in, filled out); experience,
-    // water and mercury tanks.
-    RETORT(Gauge.ARROW, 52, 27, 94, 47, List.of(in(30, 27), in(21, 51), in(39, 51), out(80, 27), out(98, 27), in(64, 55), out(82, 55)),
-            List.of(tank(118, Flow.OUT), tank(135, Flow.IN), tank(152, Flow.OUT))),
+    // The charge and its two reagents, the byproduct and the remainder (the fill box, bottle in and filled out, went in
+    // 1.5: a bottle is filled in the Liquid tab now); experience, water, the liquid it gives off (wood vinegar, since 1.5)
+    // and mercury tanks - four, a pixel closer than other machines' and the slots a little further left, as the Stirring
+    // Tank's.
+    RETORT(Gauge.ARROW, 44, 27, 84, 47, List.of(in(22, 27), in(21, 51), in(39, 51), out(70, 27), out(88, 27)),
+            List.of(tank(106, Flow.OUT), tank(122, Flow.IN), tank(138, Flow.OUT), tank(154, Flow.OUT))),
     // The charge (ore, methanol for biodiesel, or dirt for mud), the caustic soda for biodiesel, then the output; the
-    // water for mud, the biodiesel it makes (out of the top), the oil it takes and the mercury. The slots stand further
-    // left than the other machines' to leave room for the fourth tank.
-    STIRRING_TANK(Gauge.ARROW, 48, 37, 81, 57, List.of(in(26, 27), in(26, 49), out(77, 37)),
-            List.of(tank(101, Flow.IN), tank(118, Flow.UP), tank(135, Flow.IN), tank(152, Flow.IN))),
-    DISTILLER(Gauge.ARROW, 64, 37, 112, 66, List.of(in(40, 37), out(94, 28), out(112, 28), out(94, 46), out(112, 46)),
-            List.of(tank(152, Flow.OUT))),
-    // What it smelts and what that becomes, and the experience it keeps.
-    ELECTRIC_FURNACE(Gauge.ARROW, 72, 36, 108, 56, List.of(in(48, 36), out(104, 36), in(130, 24), out(130, 50)),
+    // water for mud, the biodiesel it makes (out of the top), the oil and the methanol it takes and the mercury. The
+    // slots stand further left than the other machines', and its five tanks a pixel closer, to leave room for them all.
+    STIRRING_TANK(Gauge.ARROW, 43, 37, 74, 57, List.of(in(23, 27), in(23, 49), out(70, 37)),
+            List.of(tank(90, Flow.IN), tank(106, Flow.UP), tank(122, Flow.IN), tank(138, Flow.IN), tank(154, Flow.IN))),
+    // The charge, four outputs; the methanol it pipes off and the wood vinegar piped in (both since 1.5), and the
+    // mercury it gives back - its slots a little further left for the third tank.
+    DISTILLER(Gauge.ARROW, 58, 37, 104, 66, List.of(in(34, 37), out(86, 28), out(104, 28), out(86, 46), out(104, 46)),
+            List.of(tank(122, Flow.OUT), tank(138, Flow.IN), tank(154, Flow.OUT))),
+    // What it smelts and what that becomes, and the experience it keeps (its fill box went in 1.5, to the Liquid tab).
+    ELECTRIC_FURNACE(Gauge.ARROW, 72, 36, 108, 56, List.of(in(48, 36), out(104, 36)),
             List.of(tank(152, Flow.OUT))),
     // What it works on, then the result and its extra; the water it uses and the mercury pool of its mercury cell.
     ELECTROLYTIC_CELL(Gauge.ARROW, 58, 36, 96, 56, List.of(in(34, 36), out(88, 36), out(106, 36)),

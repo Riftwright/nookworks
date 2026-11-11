@@ -217,10 +217,26 @@ final class IfTests {
     }
 
     /**
+     * Whether the If here is not ours to test - Nook of the Dead's, which makes it its own way (its own generator, a
+     * town, its own nights and respawning), tested in its own suite: then the test passes, saying so. A run of these
+     * tests beside the add-on took its If for ours (r22 compat, its suggestion 1).
+     */
+    static boolean notOurs(GameTestHelper helper) {
+        if (!dev.nookworks.ifworld.NookOfTheDeadWarning.present()) {
+            return false;
+        }
+        helper.succeed(); // Nook of the Dead's If: not this test's
+        return true;
+    }
+
+    /**
      * Rolled, the If is made: the overworld's kind of dimension, from its number's seed, its biomes vanilla's overworld
      * biomes and decorated with vanilla's own features, its land made.
      */
     private static void madeFromNumber(GameTestHelper helper) {
+        if (IfTests.notOurs(helper)) {
+            return;
+        }
         MinecraftServer server = helper.getLevel().getServer();
         ServerLevel level = rolled(server);
         IfWorld world = IfWorld.get(server);
@@ -418,8 +434,8 @@ final class IfTests {
      * server's only language - check_lang.py checks the other seven).
      */
     private static void nookOfTheDeadWarning(GameTestHelper helper) {
-        check(helper, !dev.nookworks.ifworld.NookOfTheDeadWarning.present() && !dev.nookworks.ifworld.NookOfTheDeadWarning.stranded(),
-                "Nook of the Dead is not installed here, so nothing is said");
+        // with it installed (a run beside the add-on), the If is on and its mirror made: nothing to say either
+        check(helper, !dev.nookworks.ifworld.NookOfTheDeadWarning.stranded(), "the If is on here, so nothing is said");
         for (String key : java.util.List.of("message.nookworks.notd_if_off", "nookworks.world_features.notd.title",
                 "nookworks.world_features.notd.message")) {
             check(helper, net.minecraft.locale.Language.getInstance().has(key), key + " is written");

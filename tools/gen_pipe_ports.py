@@ -32,7 +32,12 @@ PORTS = {
     "water_pump": HORIZONTAL + ("down",),
     "stirring_tank": HORIZONTAL,
     "copper_tank": HORIZONTAL,
+    # the finned body stands 2-3 px in from the edge (its hood and flange reach the top and bottom ones): a deeper port
+    # (the user, 2026-11-10: 「パイプと冷却器の間に隙間ができる」, for nookTechnology's pipe off a Condenser)
+    "condenser": HORIZONTAL,
 }
+# a block whose port is not the flat flange: the model it shows instead
+PORT_MODELS = {"condenser": "pipe_port_condenser"}
 # a side a block shows no port on while it faces that way: the Experience Tank's tap is on its front
 NOT_FACING = {"experience_tank"}
 TURN = {"north": {}, "east": {"y": 90}, "south": {"y": 180}, "west": {"y": 270}, "up": {"x": 270}, "down": {"x": 90}}
@@ -47,6 +52,21 @@ def port_model():
                 "north": face([3, 3, 13, 13]), "south": face([3, 3, 13, 13]),
                 "east": face([0, 3, 1, 13]), "west": face([15, 3, 16, 13]),
                 "up": face([3, 0, 13, 1]), "down": face([3, 15, 13, 16])}}]}
+
+
+def condenser_port_model():
+    """
+    The flange, with a neck behind it back to the Condenser's body (z 1..3, 8 across and 7 high: its top and bottom
+    land between the fins' faces, so no face of it lies in one plane with a fin's and flickers).
+    """
+    model = port_model()
+    def face(uv):
+        return {"texture": "#iron", "uv": uv}
+    # its back drawn too, though the body covers it: should the body ever change, no hole shows (check_model_faces)
+    model["elements"].append({"from": [4, 4, 1], "to": [12, 11, 3], "faces": {
+        "east": face([13, 5, 15, 12]), "west": face([1, 5, 3, 12]),
+        "up": face([4, 1, 12, 3]), "down": face([4, 13, 12, 15]), "south": face([4, 5, 12, 12])}})
+    return model
 
 
 def as_multipart(state):
@@ -65,21 +85,28 @@ def with_ports(name, state):
     """{@code state} (a blockstate's JSON) with the port parts of block {@code name} added, any old ones dropped."""
     if name not in PORTS:
         return state
-    parts = [part for part in as_multipart(state) if part["apply"].get("model") != "nookworks:block/pipe_port"]
+    models = {"nookworks:block/pipe_port"} | {"nookworks:block/" + m for m in PORT_MODELS.values()}
+    parts = [part for part in as_multipart(state) if part["apply"].get("model") not in models]
+    port = "nookworks:block/" + PORT_MODELS.get(name, "pipe_port")
     for side in PORTS[name]:
         when = {f"port_{side}": "true"}
         if name in NOT_FACING and side in HORIZONTAL:
             when["facing"] = "|".join(other for other in HORIZONTAL if other != side)
-        parts.append({"when": when, "apply": {"model": "nookworks:block/pipe_port", **TURN[side]}})
+        parts.append({"when": when, "apply": {"model": port, **TURN[side]}})
     return {"multipart": parts}
 
 
 def write_json(path, data):
-    path.write_bytes((json.dumps(data, indent=2) + "\n").encode("utf-8"))
+    """Written in the line endings the file had (some blockstates are CRLF): a run that changes nothing changes no file."""
+    text = json.dumps(data, indent=2) + "\n"
+    if path.exists() and b"\r\n" in path.read_bytes():
+        text = text.replace("\n", "\r\n")
+    path.write_bytes(text.encode("utf-8"))
 
 
 def main():
     write_json(ASSETS / "models/block/pipe_port.json", port_model())
+    write_json(ASSETS / "models/block/pipe_port_condenser.json", condenser_port_model())
     for name in PORTS:
         path = ASSETS / f"blockstates/{name}.json"
         write_json(path, with_ports(name, json.loads(path.read_text(encoding="utf-8"))))

@@ -34,11 +34,13 @@ public final class Permission {
     private static boolean asking;
     /** Server thread only: the asking is {@link #mayTake}'s, whose a block is, not whether it may come down. */
     private static boolean taking;
-    private static final GameProfile ANONYMOUS = new GameProfile(UUID.fromString("6e6f6f6b-776f-726b-7300-6d6163686e65"), "[Nookworks]");
+    /** The id asked as for a machine of nobody's: {@link #actor} gives the anonymous one for it, as for null. */
+    public static final UUID NOBODY = UUID.fromString("6e6f6f6b-776f-726b-7300-6d6163686e65");
+    private static final GameProfile ANONYMOUS = new GameProfile(NOBODY, "[Nookworks]");
 
     /** Someone to ask as for a machine owned by {@code owner} (or by nobody we know). */
     public static FakePlayer actor(ServerLevel level, @Nullable UUID owner) {
-        return FakePlayerFactory.get(level, owner == null ? ANONYMOUS : new GameProfile(owner, "[Nookworks]"));
+        return FakePlayerFactory.get(level, owner == null || owner.equals(NOBODY) ? ANONYMOUS : new GameProfile(owner, "[Nookworks]"));
     }
 
     /**

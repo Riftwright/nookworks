@@ -57,6 +57,7 @@
     "nookworks:hung_light",
     "nookworks:liquid_experience",
     "nookworks:mercury",
+    "nookworks:methanol",
     "nookworks:nested_timer",
     "nookworks:oil_lamp",
     "nookworks:onions",
@@ -65,10 +66,12 @@
     "nookworks:sunflower_crop",
     "nookworks:vegetable_oil",
     "nookworks:wall_sconce",
+    "nookworks:wood_vinegar",
     "nookworks:placed_bottles",
     "nookworks:placed_books",
     "nookworks:wine_glass",
     "nookworks:mug",
-    "nookworks:plate"
+    "nookworks:plate",
+    "nookworks:machine_bell"
   ]
 }

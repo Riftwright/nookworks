@@ -178,6 +178,19 @@ public class NookworksJeiPlugin implements IModPlugin {
      */
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        // the machine tabs on a screen's right edge (1.5): JEI's item list keeps off them, on any screen that has them
+        // (ours, and an add-on's built on dev.nookworks.client.gui.tab)
+        registration.addGenericGuiContainerHandler(net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.class,
+                new IGuiContainerHandler<net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>>() {
+                    @Override
+                    public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(
+                            net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen) {
+                        return screen instanceof dev.nookworks.client.gui.tab.TabbedScreen tabbed && tabbed.tabs() != null
+                                ? tabbed.tabs().areas() : List.of();
+                    }
+                });
+        // an item dragged from the list onto a sorter's filter, Keep Out row or tag picker's sample (1.5)
+        registration.addGhostIngredientHandler(dev.nookworks.client.gui.SorterScreen.class, new SorterGhosts());
         registration.addGuiContainerHandler(MachineScreen.class, new IGuiContainerHandler<>() {
             @Override
             public Collection<IGuiClickableArea> getGuiClickableAreas(MachineScreen screen, double mouseX, double mouseY) {

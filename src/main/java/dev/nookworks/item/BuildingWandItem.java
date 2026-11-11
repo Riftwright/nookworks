@@ -4,15 +4,25 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.compat.FeatureGate;
 import dev.nookworks.feature.Permission;
+import dev.nookworks.registry.ModDataComponents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -20,6 +30,8 @@ import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +50,14 @@ import net.neoforged.neoforge.event.EventHooks;
  * It only extends across the face that was clicked, and only over blocks identical to the one clicked, so it
  * fills a wall or a floor without wandering around a corner. Blocks come out of the player's inventory (a
  * creative player needs none), and it stops at {@link #MAX_BLOCKS} so one click stays something you can undo.
+ * <p>
+ * Two items are made of this class (the user, 2026-11-07). The Building Wand does only that, as it always did, with two
+ * helpers: a sneaking click at the air takes its last use back, and an outline shows what a click would do. The
+ * Reinforced Building Wand, made from it with velarium, also has modes, stepped by scrolling while sneaking
+ * ({@link WandMode}): that one; replacing the surface clicked with the block in the other hand (an ordinary full block,
+ * never over ores or blocks harder than deepslate's - {@link WandWork#replaceRefusal}); and a box between two clicked
+ * corners, filled whole, its walls or its edges ({@link WandBox}). The modes were first tried on the plain wand and
+ * found too strong there. The work is {@link WandWork}'s.
  */
 public class BuildingWandItem extends Item {
     public static final int MAX_BLOCKS = 32;
@@ -59,8 +79,21 @@ public class BuildingWandItem extends Item {
             BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING,
             BlockStateProperties.ROTATION_16, BlockStateProperties.HALF, BlockStateProperties.SLAB_TYPE);
 
+    /** Whether this wand has modes: the Reinforced Building Wand; the plain one only spreads. */
+    private final boolean modes;
+
     public BuildingWandItem(Properties properties) {
+        this(properties, false);
+    }
+
+    public BuildingWandItem(Properties properties, boolean modes) {
         super(properties);
+        this.modes = modes;
+    }
+
+    /** Whether {@code stack} is a wand with modes (the Reinforced Building Wand). */
+    public static boolean hasModes(ItemStack stack) {
+        return stack.getItem() instanceof BuildingWandItem wand && wand.modes;
     }
 
     @Override
@@ -70,9 +103,30 @@ public class BuildingWandItem extends Item {
         if (player == null || !FeatureGate.wand()) {
             return InteractionResult.PASS;
         }
+        ItemStack wand = context.getItemInHand();
+        WandMode mode = mode(wand);
         BlockPos clicked = context.getClickedPos();
         Direction face = context.getClickedFace();
         BlockState clickedState = level.getBlockState(clicked);
+        if (mode.box()) {
+            if (level instanceof ServerLevel server) {
+                corner(server, player, wand, mode, clicked, face, clickedState);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (mode == WandMode.REPLACE) {
+            if (level instanceof ServerLevel server) {
+                // as for spreading below: each block asked about on its own, not all again at the end (r1 review)
+                boolean capturing = server.captureBlockSnapshots;
+                server.captureBlockSnapshots = false;
+                try {
+                    WandWork.replace(server, player, clicked, face, wand);
+                } finally {
+                    server.captureBlockSnapshots = capturing;
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
         if (!canCopy(clickedState)) {
             return InteractionResult.PASS;
         }
@@ -82,41 +136,142 @@ public class BuildingWandItem extends Item {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server) {
-            int placed = 0;
-            ItemStack wand = context.getItemInHand();
-            // Each block is asked about on its own below, with its materials taken only once it stands. NeoForge
-            // would otherwise also record them all and ask about the lot at the end, and a refusal there puts the
-            // blocks back without the materials that came out of other inventory slots.
+            // Each block is asked about on its own (WandWork.placeOne), with its materials taken only once it stands.
+            // NeoForge would otherwise also record them all and ask about the lot at the end, and a refusal there puts
+            // the blocks back without the materials that came out of other inventory slots.
             boolean capturing = server.captureBlockSnapshots;
             server.captureBlockSnapshots = false;
             try {
-            int cost = cost(placing);
-            for (BlockPos target : targets) {
-                int slot = find(player, placing);
-                if (!player.hasInfiniteMaterials() && (slot < 0 || count(player, placing) < cost)) {
-                    break;
-                }
-                // Made of that very item: a worn-out Nourished Soil is placed worn out, as it would be by hand.
-                BlockState block = slot < 0 ? placing : placing(placing, player.getInventory().getNonEquipmentItems().get(slot));
-                if (!place(server, player, target, face, block, wand)) {
-                    continue; // refused by protection or the block itself; keep the materials
-                }
-                if (!player.hasInfiniteMaterials()) {
-                    take(player, placing, slot, cost);
-                }
-                placed++;
-            }
+                WandWork.spread(server, player, clicked, face, placing, targets, wand);
             } finally {
                 server.captureBlockSnapshots = capturing;
             }
-            if (placed > 0) {
-                level.playSound(null, clicked, placing.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
-                wand.hurtAndBreak(placed, player, context.getHand());
-            } else {
-                level.playSound(null, clicked, SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, 0.6F, 1.0F);
-            }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * A box mode's click on a block: the first corner (the square in front of the face clicked, where a block put
+     * against it would go), then the second, then - a box marked out - fills it. A first corner in another world, or
+     * a box too big, starts over.
+     */
+    private static void corner(ServerLevel level, Player player, ItemStack wand, WandMode mode, BlockPos clicked,
+            Direction face, BlockState clickedState) {
+        BlockPos at = clicked.relative(face);
+        WandBox box = wand.get(ModDataComponents.WAND_BOX.get());
+        if (box != null && box.first().dimension() != level.dimension()) {
+            box = null;
+        }
+        if (box == null) {
+            BlockState template = fillBlock(player, canCopy(clickedState) ? toPlace(clickedState) : null);
+            if (template == null) {
+                WandWork.say(player, "need_block");
+                return;
+            }
+            wand.set(ModDataComponents.WAND_BOX.get(), new WandBox(GlobalPos.of(level.dimension(), at), Optional.empty(), template));
+            WandWork.say(player, "first_corner");
+            level.playSound(null, at, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.4F, 1.4F);
+            return;
+        }
+        if (box.second().isEmpty()) {
+            BlockPos first = box.first().pos();
+            if (!WandBox.fits(first, at)) {
+                WandWork.say(player, "too_big", WandBox.MAX_SIDE, WandBox.MAX_VOLUME);
+                return;
+            }
+            wand.set(ModDataComponents.WAND_BOX.get(), box.withSecond(at));
+            int[] size = WandBox.size(first, at);
+            WandWork.say(player, "second_corner", size[0], size[1], size[2], WandBox.cells(first, at, mode).size());
+            level.playSound(null, at, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.4F, 1.6F);
+            return;
+        }
+        fill(level, player, wand, mode, box);
+    }
+
+    /**
+     * Fills a marked-out box with the block in the other hand, or the one its first corner was clicked on. The box is
+     * looked at again here, not taken on the clicks' word: a wand's box can come from anywhere a component can (a
+     * creative client's own item, a command), and one too big, or a block the wand cannot place, fills nothing (r22
+     * CXC-005: a box of any size was listed whole on the server thread).
+     */
+    private static void fill(ServerLevel level, Player player, ItemStack wand, WandMode mode, WandBox box) {
+        BlockState template = canCopy(box.template()) ? toPlace(box.template()) : null; // as a click makes it: one block an item
+        BlockState block = fillBlock(player, template);
+        wand.remove(ModDataComponents.WAND_BOX.get());
+        if (block == null || box.second().isEmpty()) {
+            return;
+        }
+        if (box.first().dimension() != level.dimension() || !WandBox.fits(box.first().pos(), box.second().get())) {
+            WandWork.say(player, "too_big", WandBox.MAX_SIDE, WandBox.MAX_VOLUME);
+            return;
+        }
+        WandWork.startBox(level, player, wand, box.first().pos(), box.second().get(), mode, block);
+    }
+
+    /** What a box is filled with: the block in the other hand, if the wand can place it; else {@code fallback}. */
+    public static @Nullable BlockState fillBlock(Player player, @Nullable BlockState fallback) {
+        ItemStack other = player.getOffhandItem();
+        if (other.getItem() instanceof BlockItem item && canCopy(item.getBlock().defaultBlockState())) {
+            return fallback != null && fallback.is(item.getBlock()) ? fallback : item.getBlock().defaultBlockState();
+        }
+        return fallback;
+    }
+
+    /**
+     * A click at the air: sneaking, it lets go of a box being marked out, or else takes the last use back; standing, it
+     * fills a box marked out.
+     */
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        ItemStack wand = player.getItemInHand(hand);
+        if (!FeatureGate.wand()) {
+            return InteractionResult.PASS;
+        }
+        WandBox box = wand.get(ModDataComponents.WAND_BOX.get());
+        if (player.isSecondaryUseActive()) {
+            if (level instanceof ServerLevel server) {
+                if (box != null && hasModes(wand)) {
+                    wand.remove(ModDataComponents.WAND_BOX.get());
+                    WandWork.say(player, "cancelled");
+                } else {
+                    WandWork.undo(server, player, wand);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (box != null && box.second().isPresent() && mode(wand).box()) {
+            if (level instanceof ServerLevel server && box.first().dimension() == level.dimension()) {
+                fill(server, player, wand, mode(wand), box);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
+    }
+
+    /** What a click with {@code wand} does: its mode, if it has modes; a plain wand only spreads. */
+    public static WandMode mode(ItemStack wand) {
+        return hasModes(wand) ? wand.getOrDefault(ModDataComponents.WAND_MODE.get(), WandMode.SPREAD) : WandMode.SPREAD;
+    }
+
+    /** Steps the wand's mode (scrolled while sneaking), letting go of a box being marked out; a plain wand has none. */
+    public static void stepMode(ServerPlayer player, ItemStack wand, int steps) {
+        if (!hasModes(wand)) {
+            return;
+        }
+        WandMode mode = mode(wand).step(steps);
+        wand.set(ModDataComponents.WAND_MODE.get(), mode);
+        wand.remove(ModDataComponents.WAND_BOX.get());
+        player.sendOverlayMessage(Component.translatable("message.nookworks.wand.mode", mode.title()));
+        player.level().playSound(null, player.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.3F, 1.8F);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+            Consumer<Component> tooltip, TooltipFlag flag) {
+        if (!this.modes) {
+            return;
+        }
+        tooltip.accept(Component.translatable("item.nookworks.building_wand.mode", mode(stack).title()).withStyle(ChatFormatting.GRAY));
     }
 
     /**
@@ -124,7 +279,7 @@ public class BuildingWandItem extends Item {
      * survive, and does anything else object. Returns false when the block was not placed, so the caller can
      * keep the materials.
      */
-    private static boolean place(ServerLevel level, Player player, BlockPos target, Direction face, BlockState placing,
+    static boolean place(ServerLevel level, Player player, BlockPos target, Direction face, BlockState placing,
             ItemStack wand) {
         if (!level.mayInteract(player, target) || !player.mayUseItemAt(target, face, wand)) {
             return false;
@@ -193,9 +348,13 @@ public class BuildingWandItem extends Item {
 
     /** A fresh block of the same kind, turned the way the clicked one was. */
     public static BlockState toPlace(BlockState clicked) {
-        BlockState fresh = clicked.getBlock().defaultBlockState();
+        return oriented(clicked, clicked.getBlock().defaultBlockState());
+    }
+
+    /** {@code fresh} turned the way {@code from} is, as far as they share how they sit. */
+    public static BlockState oriented(BlockState from, BlockState fresh) {
         for (Property<?> property : ORIENTATION) {
-            fresh = copy(clicked, fresh, property);
+            fresh = copy(from, fresh, property);
         }
         return fresh;
     }
@@ -256,16 +415,23 @@ public class BuildingWandItem extends Item {
         return carried == null ? placing : carried.apply(placing);
     }
 
+    /** Where the wand takes its blocks from: the inventory, then the other hand (where the block to use is held). */
+    static List<ItemStack> stacks(Player player) {
+        List<ItemStack> stacks = new java.util.ArrayList<>(player.getInventory().getNonEquipmentItems());
+        stacks.add(player.getOffhandItem());
+        return stacks;
+    }
+
     /** How many of these the player has. */
-    private static int count(Player player, BlockState placing) {
+    static int count(Player player, BlockState placing) {
         ItemStack wanted = new ItemStack(placing.getBlock());
-        return player.getInventory().getNonEquipmentItems().stream().filter(s -> !s.isEmpty() && ItemStack.isSameItem(s, wanted))
+        return stacks(player).stream().filter(s -> !s.isEmpty() && ItemStack.isSameItem(s, wanted))
                 .mapToInt(ItemStack::getCount).sum();
     }
 
     /** Takes {@code cost} matching blocks, starting with the one in {@code slot}. */
-    private static void take(Player player, BlockState placing, int slot, int cost) {
-        var items = player.getInventory().getNonEquipmentItems();
+    static void take(Player player, BlockState placing, int slot, int cost) {
+        var items = stacks(player);
         int left = cost - Math.min(cost, items.get(slot).getCount());
         items.get(slot).shrink(cost - left);
         while (left > 0) {
@@ -279,9 +445,9 @@ public class BuildingWandItem extends Item {
         }
     }
 
-    private static int find(Player player, BlockState placing) {
+    static int find(Player player, BlockState placing) {
         ItemStack wanted = new ItemStack(placing.getBlock());
-        var items = player.getInventory().getNonEquipmentItems();
+        var items = stacks(player);
         for (int slot = 0; slot < items.size(); slot++) {
             ItemStack stack = items.get(slot);
             if (!stack.isEmpty() && ItemStack.isSameItem(stack, wanted)) {

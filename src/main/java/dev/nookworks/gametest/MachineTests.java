@@ -62,6 +62,7 @@ import dev.nookworks.storage.StorageBlockEntity;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -99,6 +100,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
 /** The powered machines, the Laser and Planter, pipe and cable sides, and experience pipes. */
 final class MachineTests {
@@ -443,17 +445,26 @@ final class MachineTests {
     /**
      * The metal recipes are written against {@code #c:dusts/<metal>}, which only an industrial mod fills. On
      * their own they must not exist at all - the Crusher should refuse the ore rather than grind it to nothing,
-     * because doubling metal is the mercury chain's job.
+     * because doubling metal is the mercury chain's job. With such a mod installed (nookTechnology fills them), each
+     * grinds into that mod's dust instead; the test checks whichever the game it runs in has.
      */
     static void metalOnlyGrindsForOtherMods(GameTestHelper helper) {
         var crusher = helper.getBlockEntity(place(helper, new BlockPos(2, 2, 2), ModBlocks.CRUSHER.get()),
                 CrusherBlockEntity.class);
-        for (ItemStack metal : List.of(new ItemStack(Items.IRON_ORE), new ItemStack(Items.RAW_IRON),
-                new ItemStack(Items.IRON_INGOT), new ItemStack(Items.GOLD_INGOT), new ItemStack(Items.COPPER_INGOT))) {
-            check(helper, CrushingRecipe.of(metal) == null,
-                    metal.getItem() + " must not be crushable with no dust tag filled");
-            check(helper, !crusher.canPlaceItem(CrusherBlockEntity.INPUT, metal),
-                    "and a hopper must not be able to feed it in either");
+        record Metal(ItemStack stack, String dust) {}
+        for (Metal metal : List.of(new Metal(new ItemStack(Items.IRON_ORE), "iron"), new Metal(new ItemStack(Items.RAW_IRON), "iron"),
+                new Metal(new ItemStack(Items.IRON_INGOT), "iron"), new Metal(new ItemStack(Items.GOLD_INGOT), "gold"),
+                new Metal(new ItemStack(Items.COPPER_INGOT), "copper"))) {
+            var dust = dust(metal.dust());
+            var recipe = CrushingRecipe.of(metal.stack());
+            if (dust == null) {
+                check(helper, recipe == null, metal.stack().getItem() + " must not be crushable with no dust tag filled");
+                check(helper, !crusher.canPlaceItem(CrusherBlockEntity.INPUT, metal.stack()),
+                        "and a hopper must not be able to feed it in either");
+            } else {
+                check(helper, recipe != null && recipe.output().is(dust) && crusher.canPlaceItem(CrusherBlockEntity.INPUT, metal.stack()),
+                        metal.stack().getItem() + " grinds into the " + metal.dust() + " dust a mod has: " + (recipe == null ? null : recipe.output()));
+            }
         }
         // The same tag machinery does work: our own sulfur dust is in #c:dusts/sulfur, so a recipe written
         // against that tag resolves. This is what an industrial mod's iron dust would do.
@@ -495,9 +506,20 @@ final class MachineTests {
         var sword = CrushingRecipe.of(new ItemStack(Items.DIAMOND_SWORD));
         check(helper, sword != null && sword.output().is(Items.DIAMOND) && sword.output().getCount() == 2,
                 "a diamond sword gives its two diamonds back");
-        check(helper, CrushingRecipe.of(new ItemStack(Items.IRON_SWORD)) == null,
-                "an iron sword needs a mod that has iron dust");
+        var ironDust = dust("iron");
+        var ironSword = CrushingRecipe.of(new ItemStack(Items.IRON_SWORD));
+        check(helper, ironDust == null ? ironSword == null : ironSword != null && ironSword.output().is(ironDust),
+                "an iron sword needs a mod that has iron dust, and grinds into it where one does");
         helper.succeed();
+    }
+
+    /** The first item in {@code #c:dusts/<metal>}, or null: only another mod puts one there. */
+    private static @Nullable Item dust(String metal) {
+        for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(TagKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath("c", "dusts/" + metal)))) {
+            return holder.value();
+        }
+        return null;
     }
 
     static BlockPos place(GameTestHelper helper, BlockPos pos, Block block) {
@@ -585,10 +607,32 @@ final class MachineTests {
                     layout + ": the screen shows " + layout.slotCount() + " slots of " + info.slots().getContainerSize());
             var menu = new MachineMenu(1, player.getInventory(), layout, info.slots(),
                     MachineMenu.data(info), entity);
-            check(helper, menu.slots.size() == layout.slotCount() + 36, layout + ": machine slots and the inventory");
+            int liquid = dev.nookworks.machine.MachineLiquids.any(layout) ? 2 : 0; // the Liquid tab's, after the inventory
+            int ours = layout.slotCount() + 36 + liquid;
+            for (int s = 0; s < ours && s < menu.slots.size(); s++) {
+                var container = menu.slots.get(s).container;
+                boolean right = s < layout.slotCount() ? container == info.slots()
+                        : s < layout.slotCount() + 36 ? container == player.getInventory()
+                        : container != info.slots() && container != player.getInventory();
+                check(helper, right, layout + ": slot " + s + " is the machine's, then the inventory's, then the Liquid tab's");
+            }
+            // an add-on may add its own after them (nookTechnology's power slider and gear slots); with none, there are none
+            check(helper, addOnLoaded() ? menu.slots.size() >= ours : menu.slots.size() == ours,
+                    layout + ": machine slots, the inventory and the Liquid tab's, " + menu.slots.size() + " of " + ours);
+            for (int s = ours; s < menu.slots.size(); s++) {
+                var container = menu.slots.get(s).container;
+                check(helper, container != info.slots() && container != player.getInventory(),
+                        layout + ": a slot past ours is an add-on's own, not the machine's or the inventory's again");
+            }
         }
         check(helper, seen.size() == MachineLayout.values().length, "every layout has a machine");
         helper.succeed();
+    }
+
+    /** Whether a mod that needs Nookworks is loaded (nookTechnology, Nook of the Dead): a game the tests run in beside it. */
+    static boolean addOnLoaded() {
+        return net.neoforged.fml.ModList.get().getMods().stream().anyMatch(mod -> !mod.getModId().equals(Nookworks.MODID)
+                && mod.getDependencies().stream().anyMatch(need -> need.getModId().equals(Nookworks.MODID)));
     }
 
     /** Menu data travels as shorts; a laser's 120,000 FE must still arrive as 120,000. */
@@ -630,18 +674,12 @@ final class MachineTests {
                 "crude salt went to the hotbar: " + player.getInventory().getItem(0));
         menu.quickMoveStack(player, layout.slotCount() + 1);
         check(helper, retort.getItem(0).is(Items.COPPER_INGOT), "copper shift-clicks into the input");
-        // glass bottles into the fill box (the slot with a bottle drawn in it), not the reagents, which take them too...
+        // glass bottles: no fill box since 1.5, and nothing of the Retort takes them, so they cross to the hotbar; into the
+        // Liquid tab's top slot only while the tab is open, and one at a time
         player.getInventory().setItem(11, new ItemStack(Items.GLASS_BOTTLE, 16));
         menu.quickMoveStack(player, layout.slotCount() + 2);
-        check(helper, retort.getItem(RetortBlockEntity.FILL).getCount() == 16, "bottles shift-click into the fill box: "
-                + retort.getItem(RetortBlockEntity.FILL));
-        // ...but with logs in, which cook with bottles into wood vinegar, to the reagents
-        retort.setItem(RetortBlockEntity.FILL, ItemStack.EMPTY);
-        retort.setItem(0, new ItemStack(Items.OAK_LOG, 4));
-        player.getInventory().setItem(11, new ItemStack(Items.GLASS_BOTTLE, 16));
-        menu.quickMoveStack(player, layout.slotCount() + 2);
-        check(helper, retort.getItem(RetortBlockEntity.FILL).isEmpty() && player.getInventory().getItem(11).isEmpty(),
-                "with logs in, bottles go to the reagents");
+        check(helper, player.getInventory().getItem(11).isEmpty() && player.getInventory().countItem(Items.GLASS_BOTTLE) == 16,
+                "with the Liquid tab shut, bottles go to the hotbar: " + player.getInventory().getItem(1));
         helper.succeed();
     }
 

@@ -1,7 +1,5 @@
 package dev.nookworks.client.gui;
 
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -9,6 +7,8 @@ import java.util.Locale;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.NookworksConfig;
+import dev.nookworks.client.gui.tab.ScreenTabs;
+import dev.nookworks.client.gui.tab.TabbedScreen;
 import dev.nookworks.machine.Electrolysis;
 import dev.nookworks.machine.ElectrolyticCellBlockEntity;
 import dev.nookworks.machine.GuiTank;
@@ -16,11 +16,10 @@ import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineMenu;
 import dev.nookworks.machine.MachineStatus;
 import dev.nookworks.machine.MachineTuning;
+import dev.nookworks.menu.tab.TabSlot;
 import dev.nookworks.mercury.RetortBlockEntity;
-import dev.nookworks.mercury.RetortBottles;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.registry.ModItems;
-import dev.nookworks.NookworksNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -34,10 +33,12 @@ import net.minecraft.client.input.MouseButtonEvent;
 /**
  * The screen of every FE machine, drawn from its {@link MachineLayout}: a recessed bay holding power down the left, the
  * work in the middle (an arrow from inputs to outputs, a flame, a beam) and the machine's tanks on the right, each gauge
- * headed by an icon for what it measures; the redstone mode in the corner; and under the bay a status display saying
- * what the machine is doing - or why it is not. Empty slots that take one particular thing show it, faded.
+ * headed by an icon for what it measures; under the bay a status display saying what the machine is doing - or why it
+ * is not. Empty slots that take one particular thing show it, faded. On its right edge, the tabs (the user's design,
+ * 2026-11-08; {@link ScreenTabs}): Settings with the redstone mode, the Liquid tab where a machine has tanks, the Add-on
+ * tab where an add-on put something.
  */
-public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
+public class MachineScreen extends AbstractContainerScreen<MachineMenu> implements TabbedScreen {
     private static final int ENERGY_X = 8;
     /** Icons stand in the top of the bay; gauges run from under them to its bottom. */
     private static final int ICON_Y = MachineLayout.BAY_TOP + 3;
@@ -46,12 +47,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int TANK_W = 14;
     private static final int DISPLAY_X = 7;
     private static final int DISPLAY_H = 12;
-    private static final int RS_X = RedstoneButton.X;
-    private static final int RS_Y = 3;
 
     /** Set while drawing when the status or the title had to be cut short: its tooltip shows the whole. */
     private boolean statusCut;
     private boolean titleCut;
+    private ScreenTabs tabs;
 
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, MachineLayout.WIDTH, MachineLayout.HEIGHT);
@@ -63,18 +63,49 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new RedstoneButton(this.leftPos + RS_X, this.topPos + RS_Y, this.menu::redstoneMode,
-                () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, MachineMenu.BUTTON_REDSTONE)));
-        if (this.layout() == MachineLayout.RETORT) {
-            this.addRenderableWidget(new RetortBottlesButton(this.leftPos + this.titleEnd(), this.topPos + RS_Y,
-                    () -> RetortBottles.byId(this.menu.extra()),
-                    () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, MachineMenu.BUTTON_RETORT_BOTTLES)));
-        }
+        this.tabs = new ScreenTabs(this, this.menu.tabs());
+        // the redstone mode lives in the Settings tab (the user's design, 2026-11-08), its mode named beside it
+        this.tabs.addSetting(this.addRenderableWidget(new RedstoneButton(0, 0, this.menu::redstoneMode,
+                () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, MachineMenu.BUTTON_REDSTONE))),
+                () -> Component.translatable(this.menu.redstoneMode().translationKey()));
+        this.tabs.liquidChoices(new ScreenTabs.LiquidChoices() {
+            @Override
+            public void icon(GuiGraphicsExtractor g, int tank, int x, int y) {
+                MachineStyle.icon(g, MachineScreen.icon(MachineScreen.this.menu.tankKind(tank)), x, y, false);
+            }
+
+            @Override
+            public Component name(int tank) {
+                return Component.translatable(MachineScreen.this.menu.tankKind(tank).translationKey());
+            }
+
+            @Override
+            public ItemStack drawHint() {
+                return MachineHints.emptyContainer();
+            }
+
+            @Override
+            public ItemStack pourHint() {
+                return MachineHints.filledContainer(MachineScreen.this.menu);
+            }
+        });
+        this.leftPos -= this.tabs.fit(this.children()); // an open tab kept inside a small window
     }
 
-    /** Where the title has to stop: at the buttons in the top right corner. */
+    @Override
+    public ScreenTabs tabs() {
+        return this.tabs;
+    }
+
+    /** Where the title has to stop: the panel's edge, the top bar holding nothing else since the tabs came (1.5). */
     private int titleEnd() {
-        return this.layout() == MachineLayout.RETORT ? RS_X - RetortBottlesButton.SIZE - 2 : RS_X;
+        return this.imageWidth - 4;
+    }
+
+    /** A click on a tab is no click outside the screen: it throws nothing. */
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top) {
+        return super.hasClickedOutside(mouseX, mouseY, left, top) && !this.tabs.inside(mouseX, mouseY);
     }
 
     /** Where the Laser's beam ends: the screen's edge, or short of a tank (its hover area as long as it is drawn). */
@@ -90,16 +121,21 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
+        this.leftPos -= this.tabs.fit(this.children()); // first: all that follows is drawn from the left edge
         super.extractBackground(g, mouseX, mouseY, a);
         int x = this.leftPos;
         int y = this.topPos;
         MachineLayout layout = this.layout();
+        this.tabs.extractBackground(g, mouseX, mouseY); // under the panel, which covers their inner edge
         MachineStyle.panel(g, x, y, this.imageWidth, this.imageHeight);
         MachineStyle.bay(g, x + 5, y + MachineLayout.BAY_TOP, this.imageWidth - 10, MachineLayout.BAY_BOTTOM - MachineLayout.BAY_TOP);
         MachineStyle.display(g, x + DISPLAY_X, y + MachineLayout.STATUS_Y, this.imageWidth - 2 * DISPLAY_X, DISPLAY_H,
                 this.menu.status().tone());
         for (int i = 0; i < this.menu.slots.size(); i++) {
             Slot slot = this.menu.slots.get(i);
+            if (slot instanceof TabSlot) {
+                continue; // the tabs frame their own
+            }
             if (i < layout.slotCount() && layout.spots().get(i).fitting()) {
                 MachineStyle.fittingSlot(g, x + slot.x - 1, y + slot.y - 1, slot.hasItem());
             } else {
@@ -144,12 +180,21 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case LIQUID_FUEL -> MachineStyle.Icon.LIQUID_FUEL;
             case EXPERIENCE -> MachineStyle.Icon.EXPERIENCE;
             case NETHER_AIR -> MachineStyle.Icon.NETHER_AIR;
+            case METHANOL -> MachineStyle.Icon.METHANOL;
+            case WOOD_VINEGAR -> MachineStyle.Icon.WOOD_VINEGAR;
         };
     }
 
     /** Empty slots that take one thing show that thing, faded: the Sifter's mesh, the Stirring Tank's caustic soda. */
     @Override
     protected void extractSlot(GuiGraphicsExtractor g, Slot slot, int mouseX, int mouseY) {
+        if (slot instanceof TabSlot && !slot.hasItem()) {
+            ItemStack hint = this.tabs.hint(slot);
+            if (!hint.isEmpty()) {
+                MachineStyle.ghost(g, hint, slot.x, slot.y);
+                return;
+            }
+        }
         if (slot.index < this.layout().slotCount() && !slot.hasItem()) {
             ItemStack hint = MachineHints.hint(this.layout(), slot.index, this.menu);
             if (!hint.isEmpty()) {
@@ -234,6 +279,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             // how much a batch takes, as the cell says how much mercury it wants
             return Component.translatable("gui.nookworks.machine.status.low_oil.detail", StirringTankBlockEntity.OIL_PER_BATCH);
         }
+        if (this.menu.status() == MachineStatus.LOW_METHANOL) {
+            return Component.translatable("gui.nookworks.machine.status.low_methanol.detail", StirringTankBlockEntity.METHANOL_PER_BATCH);
+        }
         // what more a status has to say: the Barter Terminal's own lines first (its crowded room), then the status's
         String key = this.menu.status().translationKey() + ".detail";
         String own = "gui.nookworks.machine.status." + this.layout().name().toLowerCase(Locale.ROOT) + "."
@@ -268,7 +316,10 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
 
     private List<Component> tooltipAt(int mouseX, int mouseY) {
-        List<Component> lines = new ArrayList<>();
+        List<Component> lines = new ArrayList<>(this.tabs.tooltip(mouseX, mouseY));
+        if (!lines.isEmpty()) {
+            return lines;
+        }
         MachineLayout layout = this.layout();
         String k = "gui.nookworks.machine.";
         if (this.menu.energyCapacity() > 0 && this.isHovering(ENERGY_X, ICON_Y, 10, GAUGE_Y + GAUGE_H - ICON_Y, mouseX, mouseY)) {
@@ -347,23 +398,10 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         return lines;
     }
 
-    /**
-     * A bucket or bottle on the cursor clicked on a tank's gauge pours into it or draws out of it (GaugePouring), the
-     * server deciding. Only on the gauge itself, as drawn - not its icon, nor anything round it.
-     */
+    /** The tabs first: a click on one opens it, on the Liquid tab's choices picks the liquid drawn. */
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && !this.menu.getCarried().isEmpty()) {
-            MachineLayout layout = this.layout();
-            for (int i = 0; i < layout.tanks().size(); i++) {
-                if (this.menu.tankKind(i) != GuiTank.Kind.NETHER_AIR
-                        && this.isHovering(layout.tanks().get(i).x(), GAUGE_Y, TANK_W, GAUGE_H, event.x(), event.y())) {
-                    ClientPacketDistributor.sendToServer(new NookworksNetwork.PourGauge(this.menu.containerId, i));
-                    return true;
-                }
-            }
-        }
-        return super.mouseClicked(event, doubleClick);
+        return this.tabs.mouseClicked(event) || super.mouseClicked(event, doubleClick);
     }
 
     private boolean overGauge(MachineLayout layout, int mouseX, int mouseY) {

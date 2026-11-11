@@ -35,7 +35,8 @@ are AI-made too.
 ## Licence
 
 MIT - see [LICENSE](LICENSE). All of the mod's textures are its own; no vanilla images are included. The mod's own
-sounds are cut from Kenney's sound packs (kenney.nl, CC0): see `tools/sounds/make_sounds.py`.
+sounds are computed (`tools/sounds/gen_sounds.py`), but for two cut from Kenney's sound packs (kenney.nl, CC0): see
+`tools/sounds/make_sounds.py`.
 
 ---
 

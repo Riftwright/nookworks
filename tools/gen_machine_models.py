@@ -592,7 +592,7 @@ def mercury_tank_states():
     return {"multipart": parts}
 
 # ---------------------------------------------------------------- the copper line
-LINE_CONTENTS = ("water", "oil", "biodiesel", "other")
+LINE_CONTENTS = ("water", "oil", "biodiesel", "methanol", "other")
 
 
 def copper_tank():
@@ -666,7 +666,8 @@ def sight_glass_model():
 
 
 LIQUID_TEXTURE = {"water": "minecraft:block/water_still", "oil": nw("vegetable_oil_still"),
-                  "biodiesel": nw("biodiesel_still"), "other": "minecraft:block/water_still"}
+                  "biodiesel": nw("biodiesel_still"), "methanol": nw("methanol_still"),
+                  "other": "minecraft:block/water_still"}
 STEP_HEIGHT = (0, 1, 3, 4, 5, 7, 8)  # of the chamber's 8 px, at each LEVEL
 
 

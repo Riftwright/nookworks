@@ -1,5 +1,7 @@
 package dev.nookworks.gametest;
 
+import dev.nookworks.machine.MachineMenu;
+import dev.nookworks.menu.tab.LiquidTab;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.component.DataComponents;
@@ -1179,8 +1181,8 @@ final class PlayTests {
     }
 
     /**
-     * The way to a Bottle o' Enchanting without a cleric: the Retort's fill box fills a glass bottle from the
-     * experience its charges left (a bucket too); an Experience Tank fills and empties a bottle by hand; and on an
+     * The way to a Bottle o' Enchanting without a cleric: a glass bottle in the Retort's Liquid tab is filled from the
+     * experience its charges left (a bucket too; since 1.5, by hand - the fill box is gone); an Experience Tank fills and empties a bottle by hand; and on an
      * Enchanting Table the bottle becomes a Bottle o' Enchanting for one lapis and no levels.
      */
     private static void experienceBottlesFillAndEnchant(GameTestHelper helper) {
@@ -1190,21 +1192,23 @@ final class PlayTests {
         var retort = helper.getBlockEntity(pos, RetortBlockEntity.class);
         var xp = FluidResource.of(ExperienceFluids.SOURCE.get());
         ((FluidStacksResourceHandler) retort.experienceHandler()).set(0, xp, 1_000);
-        check(helper, retort.canPlaceItem(RetortBlockEntity.FILL, new ItemStack(Items.GLASS_BOTTLE))
-                && !retort.canPlaceItem(RetortBlockEntity.FILL, new ItemStack(Items.STICK)), "the fill box takes bottles and buckets only");
-        retort.setItem(RetortBlockEntity.FILL, new ItemStack(Items.GLASS_BOTTLE, 3));
-        for (int i = 0; i < 5; i++) {
-            RetortBlockEntity.serverTick(level, helper.absolutePos(pos), helper.getBlockState(pos), retort);
+        ServerPlayer player = MockPlayers.inLevel(helper);
+        var retortMenu = new MachineMenu(1, player.getInventory(), retort.layout(), retort.slots(), MachineMenu.data(retort), retort);
+        LiquidTab liquid = retortMenu.tabs().liquid();
+        check(helper, liquid != null && liquid.slot(LiquidTab.DRAW).mayPlace(new ItemStack(Items.GLASS_BOTTLE))
+                && !liquid.slot(LiquidTab.DRAW).mayPlace(new ItemStack(Items.STICK)), "the Liquid tab's top slot takes bottles and buckets only");
+        liquid.slot(LiquidTab.DRAW).set(new ItemStack(Items.GLASS_BOTTLE));
+        for (int i = 0; i < LiquidTab.TICKS; i++) {
+            retortMenu.tabs().tick(player);
         }
-        ItemStack filled = retort.getItem(RetortBlockEntity.FILLED);
-        check(helper, filled.is(ModItems.LIQUID_EXPERIENCE_BOTTLE.get()) && filled.getCount() == 3, "three bottles filled: " + filled);
-        check(helper, retort.experienceStored() == 250, "750 mB taken, " + retort.experienceStored() + " left");
+        ItemStack filled = liquid.slot(LiquidTab.DRAW).getItem();
+        check(helper, filled.is(ModItems.LIQUID_EXPERIENCE_BOTTLE.get()) && filled.getCount() == 1, "a bottle filled: " + filled);
+        check(helper, retort.experienceStored() == 750, "250 mB taken, " + retort.experienceStored() + " left");
 
         BlockPos tankPos = new BlockPos(5, 2, 2);
         helper.setBlock(tankPos, ModBlocks.EXPERIENCE_TANK.get());
         var tank = helper.getBlockEntity(tankPos, ExperienceTankBlockEntity.class);
         tank.fill(500);
-        ServerPlayer player = MockPlayers.inLevel(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE));
         BlockPos tankAt = helper.absolutePos(tankPos);
         player.gameMode.useItemOn(player, level, player.getMainHandItem(), InteractionHand.MAIN_HAND,

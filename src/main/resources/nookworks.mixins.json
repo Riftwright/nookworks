@@ -31,14 +31,17 @@
     "CampfireBlockMixin",
     "EnchantmentHelperMixin",
     "EnchantRandomlyFunctionMixin",
-    "ServerPlayerGameModeMixin"
+    "ServerPlayerGameModeMixin",
+    "CrossCollisionJoinMixin",
+    "WallBlockJoinMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin",
     "client.CreateWorldMoreTabMixin",
     "client.EnchantmentScreenMixin",
     "client.AbstractContainerScreenMixin",
-    "client.ClientLevelMirrorMixin"
+    "client.ClientLevelMirrorMixin",
+    "client.GameRendererMirrorLightMixin"
   ],
   "injectors": {
     "defaultRequire": 0

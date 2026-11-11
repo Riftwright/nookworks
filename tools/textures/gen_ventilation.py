@@ -3,6 +3,8 @@ steel, its zinc crystallised into the spangle it has), the rest vanilla textures
 terracotta chimney pot, beaten copper for the hood, black iron for the fan guard. Deterministic.
 
 - block/galvanized_steel.png   spangled sheet steel, with the seam of the sheet folded along one edge (texkit.shade, metal)
+- block/<masonry>_flue_inside.png   the walls down inside each flue: its masonry, sooted (texkit.shade, brick and mortar)
+- block/chimney_soot.png       the floor of the chimney pot's mouth: soot deepening to the dark of the flue below
 - models/block/ventilation_fan.json (the housing, the guard, the motor and the louvres behind; facing north),
   ventilation_fan_blades.json (turned by client/render/VentFanRenderer), ventilation_fan_item.json (both, for the item)
 - models/block/range_hood.json: a copper canopy in tiers, open underneath, a collar on top
@@ -156,7 +158,7 @@ def duct_arm():
 # ---------------------------------------------------------------------------------------------------------- chimney
 CHIMNEY_TEX = {"particle": "minecraft:block/bricks", "brick": "minecraft:block/bricks", "cap": "minecraft:block/smooth_stone",
                "cap_side": "minecraft:block/smooth_stone_slab_side", "pot": "minecraft:block/terracotta",
-               "soot": "minecraft:block/black_concrete"}
+               "soot": "nookworks:block/chimney_soot"}
 
 
 # each chimney's masonry (the user, 2026-10-24 and 10-31): (id prefix of the chimney, of the flue, vanilla texture);
@@ -168,6 +170,103 @@ MASONRY = [("", "brick_", "minecraft:block/bricks"), ("stone_brick_", "stone_bri
 
 def masonry_tex(texture):
     return dict(CHIMNEY_TEX, particle=texture, brick=texture)
+
+
+# ------------------------------------------------------------------------------------------ the soot inside the flue
+# The user, 2026-11-10: the flue's inside, plain black concrete, looked 手抜き. Drawn instead: the masonry carried on
+# down inside the shaft, its courses the outside's own (our own drawing, not vanilla's pixels), blackened with soot -
+# streaks running down where the smoke went, the soot thickest on the brick faces and thinner on the mortar, so a few
+# joints show lighter - and dim, as a shaft is. A model face of the flue shows columns 5..10 of it (the inside is 6 px
+# across), every row; it tiles up and down, so a stack of flues runs on unbroken. No fall of light down it: a block does
+# not know how deep in the stack it is, and a gradient would band at every block - the game's own shading dims it.
+# (kind: the masonry's fill colours - brick, a second brick tone, mortar - and its course layout)
+FLUE_INSIDE = {
+    "brick_": ((104, 54, 40), (86, 46, 36), (100, 92, 84), "brick"),
+    "stone_brick_": ((84, 84, 86), (74, 74, 77), (100, 98, 96), "stone_brick"),
+    "nether_brick_": ((54, 26, 32), (44, 22, 28), (72, 52, 56), "nether_brick"),
+    "cobblestone_": ((86, 85, 86), (72, 71, 73), (52, 50, 52), "cobble"),
+}
+SOOT = (30, 26, 25)
+
+
+def _course_layout(kind, x, y):
+    """Which stone (a number) the pixel is in, or None for mortar; the courses as each masonry lays them."""
+    if kind in ("brick", "nether_brick"):
+        course, row = divmod(y, 4)  # three rows of brick over a row of mortar
+        if row == 3:
+            return None
+        shift = 7 if course % 2 == 0 else 3  # the head joints alternate, one in the 6 px a face shows every other course
+        if (x - shift) % 8 == 0:
+            return None
+        return course * 4 + (x - shift) // 8 % 2
+    if kind == "stone_brick":
+        course, row = divmod(y, 8)  # seven rows of stone over a row of mortar
+        if row == 7:
+            return None
+        shift = 8 if course % 2 == 0 else 12
+        if (x - shift) % 16 == 0 or (course % 2 and (x - shift) % 8 == 0):
+            return None
+        return course * 4 + (x - shift) // 8 % 4
+    return None
+
+
+def _cobbles(x, y):
+    """Cobblestone: rounded stones round seeds, the gaps between them dark (cobble is laid without much mortar)."""
+    seeds = ((2, 1), (8, 2), (13, 0), (5, 5), (11, 6), (1, 8), (7, 9), (14, 10), (4, 13), (10, 13), (15, 15))
+    best = []
+    for i, (sx, sy) in enumerate(seeds):
+        d = min(((x - sx + ox) ** 2 + (y - sy + oy) ** 2) ** 0.5 for ox in (-16, 0, 16) for oy in (-16, 0, 16))
+        best.append((d, i))
+    best.sort()
+    if best[1][0] - best[0][0] < 1.0:
+        return None
+    return best[0][1]
+
+
+def flue_inside(prefix):
+    stone_a, stone_b, mortar, kind = FLUE_INSIDE[prefix]
+    img = Image.new("RGBA", (16, 16))
+    joint = set()
+    for y in range(16):
+        for x in range(16):
+            sid = _cobbles(x, y) if kind == "cobble" else _course_layout(kind, x, y)
+            if sid is None:
+                joint.add((x, y))
+            px(img, x, y, mortar if sid is None else (stone_a if sid % 3 else stone_b))
+    material = {stone_a: "brick", stone_b: "brick", mortar: "mortar" if kind != "cobble" else "plain"}
+    img = texkit.shade(img, 1110 + len(prefix), tile=True, material=material, **texkit.ROUGH)
+    # the soot: streaks down the wall where the smoke ran, a patchy coat over it, thinner on the joints
+    out = img.load()
+    rng = random.Random(1120 + len(prefix))
+    runs = [rng.uniform(-1, 1) for _ in range(16)]  # how heavily the smoke ran down each column
+    runs = [0.25 * runs[x - 1] + 0.5 * runs[x] + 0.25 * runs[(x + 1) % 16] for x in range(16)]
+    for y in range(16):
+        for x in range(16):
+            r, g, b, a = out[x, y]
+            along = texkit._smooth(x, y, 4, 8, 1125 + len(prefix), 16, 16, True)  # a streak thickening and thinning
+            patch = texkit._smooth(x, y, 4, 4, 1130 + len(prefix), 16, 16, True)
+            k = 0.66 + 0.42 * runs[x] + 0.14 * along + 0.08 * patch
+            if (x, y) in joint:
+                k += 0.1 if kind == "cobble" else -0.26  # mortar shows through lighter; cobble's gaps are the darkest
+            k = max(0.32, min(0.95, k))
+            out[x, y] = (round(r + (SOOT[0] - r) * k), round(g + (SOOT[1] - g) * k), round(b + (SOOT[2] - b) * k), a)
+    return img
+
+
+def chimney_soot():
+    """
+    The floor of the chimney pot's mouth (the soot box's top, 4 px: columns and rows 6..9) - the flue going down out
+    of sight: soot-brown at its edges where the pot's wall meets it, deepening to near black in the middle, patchy.
+    """
+    img = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        for x in range(16):
+            d = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** 0.5
+            t = min(1.0, d / 3.0) + 0.25 * texkit._smooth(x, y, 2, 2, 1140, 16, 16, True)
+            t = max(0.0, min(1.0, t))
+            lo, hi = (16, 14, 14), (60, 51, 46)
+            px(img, x, y, tuple(round(lo[i] + (hi[i] - lo[i]) * t) for i in range(3)))
+    return img
 
 
 def chimney(top, tex=CHIMNEY_TEX):
@@ -190,8 +289,8 @@ def chimney_collar(tex=CHIMNEY_TEX):
 
 
 def flue(tex):
-    """A whole block of the masonry with the flue down its middle, 6 px square, sooty inside: four walls, their outer
-    faces culled against neighbours as a full block's are, the opening only at top and bottom."""
+    """A whole block of the masonry with the flue down its middle, 6 px square, sooty inside (flue_inside): four walls,
+    their outer faces culled against neighbours as a full block's are, the opening only at top and bottom."""
     walls = [([0, 0, 0], [16, 16, 5]), ([0, 0, 11], [16, 16, 16]), ([0, 0, 5], [5, 16, 11]), ([11, 0, 5], [16, 16, 11])]
     els = []
     for frm, to in walls:
@@ -199,7 +298,7 @@ def flue(tex):
         for f, name in (("n", "north"), ("s", "south"), ("e", "east"), ("w", "west"), ("u", "up"), ("d", "down")):
             outer = (f == "n" and frm[2] == 0) or (f == "s" and to[2] == 16) or (f == "w" and frm[0] == 0) or (f == "e" and to[0] == 16)
             inner = not outer and f in "nsew"
-            face = {"texture": "#soot" if inner else "#brick"}
+            face = {"texture": "#flue" if inner else "#brick"}
             if outer or f in "ud":
                 face["cullface"] = name
             faces[name] = face
@@ -218,6 +317,9 @@ def write_json(path, data):
 
 def main():
     texkit.shade(galvanized(), 90, tile=True, keep=[ZINC[4], ZINC[1]], material="metal", **texkit.SMOOTH).save(ASSETS / "textures/block/galvanized_steel.png")
+    for flue_prefix in FLUE_INSIDE:
+        flue_inside(flue_prefix).save(ASSETS / f"textures/block/{flue_prefix}flue_inside.png")
+    chimney_soot().save(ASSETS / "textures/block/chimney_soot.png")
     m = ASSETS / "models/block"
     write_json(m / "ventilation_fan.json", {"parent": "minecraft:block/block", "textures": FAN_TEX, "elements": fan_body()})
     write_json(m / "ventilation_fan_blades.json", {"textures": FAN_TEX, "elements": fan_blades()})
@@ -257,7 +359,7 @@ def main():
         write_json(ASSETS / f"blockstates/{name}.json", {"multipart": parts})
         write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}_top"}})
         flue_name = flue_prefix + "flue"
-        write_json(m / f"{flue_name}.json", flue(tex))
+        write_json(m / f"{flue_name}.json", flue(dict(tex, flue=f"nookworks:block/{flue_name}_inside")))
         write_json(ASSETS / f"blockstates/{flue_name}.json", {"multipart": [{"apply": {"model": f"nookworks:block/{flue_name}"}}]})
         write_json(ASSETS / f"items/{flue_name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{flue_name}"}})
         loot = {"type": "minecraft:block", "pools": [{"bonus_rolls": 0.0, "rolls": 1, "condition": {"type": "minecraft:survives_explosion"},

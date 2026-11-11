@@ -12,6 +12,8 @@ Two families:
 - Benches, one per wood, on block/template_bench and its parts (tools/textures/gen_bench.py): the seat in that wood's
   planks, the legs and rails in its stripped log; the blockstate leaves an end's legs out where the bench is joined to
   another on that side (BenchBlock), and runs the rail on instead. Made of three of the wood's slabs over two sticks.
+- Turned planks and slabs, one each per wood: the planks' texture turned 90 in the model, loot tables that give the
+  planks and the slab (dev.nookworks.wood.TurnedPlanks), in the block tags #minecraft:planks and #minecraft:wooden_slabs.
 - Wall shelves, one per wood: that wood's planks on block/template_wall_shelf_board, and the black iron brackets the
   same for all (tools/textures/gen_wall_shelf.py); the blockstate leaves a bracket out where the shelf is joined to
   another on that side (WallShelfBlock). Made of the wood's trapdoor and two iron nuggets.
@@ -424,6 +426,66 @@ def wall_shelves():
     return len(WOODS)
 
 
+# ---------------------------------------------------------------- Turned planks and slabs
+
+# The planks with their boards turned a quarter, and the wooden slabs (the user, 2026-11-10; dev.nookworks.wood.TurnedPlanks):
+# the wood's own planks texture by name, every face turned 90 in the model. A slab's side shows the half of the turned
+# texture the same half of a turned plank shows, so a turned slab on a turned slab, or beside turned planks, runs on.
+# No item, no recipe: the loot tables give the planks and the slab, two from a double as vanilla's do.
+
+def turned_cube(texture, y0=0, y1=16):
+    """A box y0..y1 the width of the block, every face in {@code texture} turned 90."""
+    half = None if (y0, y1) == (0, 16) else ([8, 0, 16, 16] if y0 == 0 else [0, 0, 8, 16])
+    faces = {}
+    for side in ("north", "south", "west", "east"):
+        faces[side] = {"texture": "#all", "uv": half or [0, 0, 16, 16], "rotation": 90, "cullface": side}
+    faces["up"] = {"texture": "#all", "uv": [0, 0, 16, 16], "rotation": 90}
+    faces["down"] = {"texture": "#all", "uv": [0, 0, 16, 16], "rotation": 90}
+    if y1 == 16:
+        faces["up"]["cullface"] = "up"
+    if y0 == 0:
+        faces["down"]["cullface"] = "down"
+    return {"parent": "minecraft:block/block", "textures": {"all": texture, "particle": texture},
+            "elements": [{"from": [0, y0, 0], "to": [16, y1, 16], "faces": faces}]}
+
+
+def slab_loot(block, item):
+    """Vanilla's slab loot (26.3's form): the slab, two from a double - the half read off this block's own state."""
+    return {"type": "minecraft:block", "pools": [{"entries": [{"type": "minecraft:item", "modifier": [
+        {"type": "minecraft:set_count", "condition": {"type": "minecraft:match_block", "blocks": block, "state": {"type": "double"}},
+         "count": 2}, {"type": "minecraft:explosion_decay"}], "name": item}], "rolls": 1}],
+            "random_sequence": block.replace(":", ":blocks/", 1)}
+
+
+def planks_loot(block, item):
+    """Vanilla's planks loot: the planks, unless an explosion took them."""
+    return {"type": "minecraft:block", "pools": [{"condition": {"type": "minecraft:survives_explosion"},
+                                                  "entries": [{"type": "minecraft:item", "name": item}], "rolls": 1}],
+            "random_sequence": block.replace(":", ":blocks/", 1)}
+
+
+def turned_planks():
+    planks, slabs = ["nookworks:dawnwood_planks"], ["nookworks:dawnwood_slab"]
+    for wood in WOODS:
+        item, texture = planks_of(wood)
+        name, slab = f"turned_{wood}_planks", f"turned_{wood}_slab"
+        write(ASSETS / f"models/block/{name}.json", turned_cube(texture))
+        write(ASSETS / f"models/block/{slab}.json", turned_cube(texture, 0, 8))
+        write(ASSETS / f"models/block/{slab}_top.json", turned_cube(texture, 8, 16))
+        write(ASSETS / f"blockstates/{name}.json", {"variants": {"": {"model": f"nookworks:block/{name}"}}})
+        write(ASSETS / f"blockstates/{slab}.json", {"variants": {
+            "type=bottom": {"model": f"nookworks:block/{slab}"}, "type=double": {"model": f"nookworks:block/{name}"},
+            "type=top": {"model": f"nookworks:block/{slab}_top"}}})
+        write(DATA / f"loot_table/blocks/{name}.json", planks_loot(f"nookworks:{name}", item))
+        write(DATA / f"loot_table/blocks/{slab}.json", slab_loot(f"nookworks:{slab}", slab_of(wood)))
+        planks.append(f"nookworks:{name}")
+        slabs.append(f"nookworks:{slab}")
+    # in the block tags only (never the item tags): an axe's, fire's, suffocation and the rest come from these
+    write(RES / "data/minecraft/tags/block/planks.json", {"replace": False, "values": planks})
+    write(RES / "data/minecraft/tags/block/wooden_slabs.json", {"replace": False, "values": slabs})
+    return len(WOODS)
+
+
 if __name__ == "__main__":
     print(f"dawnwood: {dawnwood()} files; supports: {supports()} woods; chairs, stools and desks: {furniture()} woods; "
-          f"benches: {benches()} woods; wall shelves: {wall_shelves()} woods")
+          f"benches: {benches()} woods; wall shelves: {wall_shelves()} woods; turned planks: {turned_planks()} woods")

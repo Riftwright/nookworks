@@ -1,5 +1,7 @@
 """The data of recycling (DECISIONS, "Recycling", 2026-10-18): the blockstates, models and item definitions of what is
-built of scrap, the loot tables, recipes, tags and data maps of the whole set,, its sounds and its part in features.json.
+built of scrap, the loot tables, recipes, tags and data maps of the whole set, and its part in features.json. Not its
+sounds: the Compressor's and the Recycler's are tools/sounds/gen_sounds.py's, as the user chose them (writing its old
+stand-ins into sounds.json here took them back at every gen_all.py, r22 CXC-002).
 
 - The Recycler's list (data map nookworks:recycling): how many ingots each piece of metal junk took to make; gear as
   the Crusher counts it (data_maps/item/crushing.json), the rest from vanilla's recipes. The tag #nookworks:recyclable
@@ -124,9 +126,9 @@ def write_assets():
     write(ASSETS / "blockstates/patched_sheet_metal.json", {"variants": {"": [
         {"model": f"nookworks:block/patched_sheet_metal_{which}", "weight": weight} for which, weight in enumerate(weights)]}})
     write(ASSETS / "items/patched_sheet_metal.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/patched_sheet_metal_2"}})
-    for item in ("scrap", "baler"):
-        write(ASSETS / f"models/item/{item}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"nookworks:item/{item}"}})
-        write(ASSETS / f"items/{item}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/{item}"}})
+    # (the Baler is a block since 2026-11-10: its model, faces and item definition are tools/textures/gen_baler.py's)
+    write(ASSETS / "models/item/scrap.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "nookworks:item/scrap"}})
+    write(ASSETS / "items/scrap.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/scrap"}})
     write(ASSETS / "items/compressor.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/compressor"}})
     write(ASSETS / "items/recycler.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/recycler"}})
     write(ASSETS / "models/item/recycler.json", recycler_item())
@@ -190,6 +192,7 @@ def write_loot():
     for name in bales() + bare_sheets() + painted_sheets() + ["patched_sheet_metal"]:
         write(DATA / f"loot_table/blocks/{name}.json", drop_self(name))
     write(DATA / "loot_table/blocks/compressor.json", drop_self("compressor", keep_energy=True))
+    write(DATA / "loot_table/blocks/baler.json", drop_self("baler"))
     write(DATA / "loot_table/blocks/recycler.json", drop_self("recycler", keep_energy=True, lower_only=True))
 
 
@@ -398,21 +401,10 @@ def write_maps_and_tags():
     for tag_file in ("mineable/pickaxe", "blocks_motion_no_leaves"):
         path = RES / f"data/minecraft/tags/block/{tag_file}.json"
         tag = json.loads(path.read_text(encoding="utf-8"))
-        for name in ["compressor", "recycler", "patched_sheet_metal"] + bales() + bare_sheets() + painted_sheets():
+        for name in ["compressor", "recycler", "baler", "patched_sheet_metal"] + bales() + bare_sheets() + painted_sheets():
             if f"nookworks:{name}" not in tag["values"]:
                 tag["values"].append(f"nookworks:{name}")
         write(path, tag)
-
-
-def write_sounds():
-    sounds_path = ASSETS / "sounds.json"
-    sounds = json.loads(sounds_path.read_text(encoding="utf-8"))
-    sounds["block.compressor.run"] = {"subtitle": "subtitles.nookworks.block.compressor.run",
-                                      "sounds": [{"name": "minecraft:block.piston.extend", "type": "event", "volume": 0.3, "pitch": 0.7}]}
-    sounds["block.recycler.run"] = {"subtitle": "subtitles.nookworks.block.recycler.run",
-                                    "sounds": [{"name": "minecraft:block.anvil.land", "type": "event", "volume": 0.15, "pitch": 1.6},
-                                               {"name": "minecraft:block.grindstone.use", "type": "event", "volume": 0.4, "pitch": 0.6}]}
-    write(sounds_path, sounds)
 
 
 def write_feature():
@@ -443,7 +435,6 @@ def main():
     write_loot()
     write_recipes()
     write_maps_and_tags()
-    write_sounds()
     write_feature()
     print("wrote the recycling data")
 

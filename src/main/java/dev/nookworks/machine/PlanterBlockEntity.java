@@ -358,4 +358,11 @@ public class PlanterBlockEntity extends BaseContainerBlockEntity implements Mach
         this.redstone = RedstoneMode.load(input);
         this.owner = input.read("Owner", UUIDUtil.CODEC).orElse(null);
     }
+
+    /** Its stop heard, as every machine's is (MachineAlerts). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        dev.nookworks.machine.MachineAlerts.track(this);
+    }
 }

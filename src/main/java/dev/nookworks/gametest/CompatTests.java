@@ -46,6 +46,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.MultiPackResourceManager;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -188,20 +191,29 @@ final class CompatTests {
      * What JEI is given to search by, with the game in another language: each name worked out from the English texts
      * as the game works it out. The server reads English, so every item in the creative tabs - potions, tipped arrows,
      * goat horns, ours - comes out as the server names it; and an enchanted book's enchantment, with its level.
+     * <p>
+     * The English is every mod's en_us.json, read from the resource packs as the game's server reads it (NeoForge's
+     * LanguageHook) and as EnglishSearch reads the client's: an add-on that names one of our things with a text of its own
+     * (nookTechnology's Speed Gears) is read with it. Read from our jar and Minecraft's alone, that add-on's names showed
+     * as their keys here and failed this test beside it, though the search itself had them.
      */
     private static void englishNamesReadAsTheGameReadsThem(GameTestHelper helper) {
         var level = helper.getLevel();
         Map<String, String> english = new HashMap<>();
-        for (Class<?> owner : List.of(Item.class, Nookworks.class)) { // each jar's own, asked of a class in it
-            String path = "/assets/" + (owner == Item.class ? "minecraft" : Nookworks.MODID) + "/lang/en_us.json";
-            try (InputStream in = owner.getResourceAsStream(path)) {
-                check(helper, in != null, path + " is there");
-                JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject().entrySet()
-                        .forEach(e -> english.put(e.getKey(), e.getValue().getAsString()));
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
+        var server = level.getServer().getServerResources().resourceManager();
+        var clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, server.listPacks().toList());
+        for (String namespace : clientResources.getNamespaces()) {
+            for (Resource resource : clientResources.getResourceStack(Identifier.fromNamespaceAndPath(namespace, "lang/en_us.json"))) {
+                try (InputStream in = resource.open()) {
+                    JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject().entrySet()
+                            .forEach(e -> english.put(e.getKey(), e.getValue().getAsString()));
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
             }
         }
+        check(helper, english.containsKey("item.minecraft.stick") && english.containsKey("block.nookworks.crusher"),
+                "Minecraft's English and ours are both read");
         CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), true, level.registryAccess());
         List<String> wrong = new ArrayList<>();
         int read = 0;

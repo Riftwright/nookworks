@@ -900,19 +900,28 @@ final class BlockTests {
      * through, a place event carrying air among them, and a claimed field was planted from outside that way (2026-10-05).
      */
     static void underClaim(UUID owner, Runnable body) {
+        underClaim(owner, pos -> true, body);
+    }
+
+    /**
+     * {@link #underClaim(UUID, Runnable)} with the claim's edge: only the places {@code claimed} says are in it are
+     * kept from anyone else, so what stands outside it can be asked about too (r22: a dispenser outside a claim).
+     */
+    static void underClaim(UUID owner, java.util.function.Predicate<BlockPos> claimed, Runnable body) {
         Consumer<BlockEvent.EntityPlaceEvent> place = event -> {
-            if ((event.getEntity() == null || !owner.equals(event.getEntity().getUUID()))
+            if (claimed.test(event.getPos()) && (event.getEntity() == null || !owner.equals(event.getEntity().getUUID()))
                     && !event.getPlacedBlock().isAir() && event.getBlockSnapshot().getState().isAir()) {
                 event.setCanceled(true);
             }
         };
         Consumer<BreakBlockEvent> breaking = event -> {
-            if (event.getPlayer() == null || !owner.equals(event.getPlayer().getUUID())) {
+            if (claimed.test(event.getPos()) && (event.getPlayer() == null || !owner.equals(event.getPlayer().getUUID()))) {
                 event.setCanceled(true);
             }
         };
         Consumer<EntityTeleportEvent> teleport = event -> {
-            if (event.getEntity() instanceof Player player && !owner.equals(player.getUUID())) {
+            if (event.getEntity() instanceof Player player && !owner.equals(player.getUUID())
+                    && claimed.test(BlockPos.containing(event.getTargetX(), event.getTargetY(), event.getTargetZ()))) {
                 event.setCanceled(true);
             }
         };

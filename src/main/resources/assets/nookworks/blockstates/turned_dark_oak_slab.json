@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nookworks:block/turned_dark_oak_slab"
+    },
+    "type=double": {
+      "model": "nookworks:block/turned_dark_oak_planks"
+    },
+    "type=top": {
+      "model": "nookworks:block/turned_dark_oak_slab_top"
+    }
+  }
+}

@@ -1,6 +1,20 @@
 {
   "replace": false,
   "values": [
-    "nookworks:dawnwood_slab"
+    "nookworks:dawnwood_slab",
+    "nookworks:turned_oak_slab",
+    "nookworks:turned_spruce_slab",
+    "nookworks:turned_birch_slab",
+    "nookworks:turned_jungle_slab",
+    "nookworks:turned_acacia_slab",
+    "nookworks:turned_dark_oak_slab",
+    "nookworks:turned_mangrove_slab",
+    "nookworks:turned_cherry_slab",
+    "nookworks:turned_pale_oak_slab",
+    "nookworks:turned_poplar_slab",
+    "nookworks:turned_crimson_slab",
+    "nookworks:turned_warped_slab",
+    "nookworks:turned_bamboo_slab",
+    "nookworks:turned_dawnwood_slab"
   ]
 }

@@ -156,6 +156,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> MERCURY_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.MERCURY_PIPE);
     public static final DeferredItem<BlockItem> RETORT = ITEMS.registerSimpleBlockItem(ModBlocks.RETORT);
     public static final DeferredItem<BlockItem> STIRRING_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.STIRRING_TANK);
+    public static final DeferredItem<BlockItem> MACHINE_BELL = ITEMS.registerSimpleBlockItem(ModBlocks.MACHINE_BELL);
     public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL = ITEMS.registerSimpleBlockItem(ModBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> DISTILLER = ITEMS.registerSimpleBlockItem(ModBlocks.DISTILLER);
     public static final DeferredItem<BlockItem> DISTILLATION_COLUMN = ITEMS.registerSimpleBlockItem(ModBlocks.DISTILLATION_COLUMN);
@@ -241,6 +242,14 @@ public final class ModItems {
             WrenchItem::new, p -> p.durability(512));
     public static final DeferredItem<BuildingWandItem> BUILDING_WAND = ITEMS.registerItem("building_wand",
             BuildingWandItem::new, p -> p.durability(1024));
+    /**
+     * The Building Wand with modes - Replace and the three Box modes beside Spread (the user, 2026-11-07: the modes were
+     * too strong on the plain wand). Made from a Building Wand and velarium, keeping what the wand carried. Eight times
+     * the wand's wear: one use of it can put down up to 4,096 blocks (a box) where the wand puts 32, so it lasts two of
+     * the biggest boxes - at 4,096 a new one would stop a block short of its first.
+     */
+    public static final DeferredItem<BuildingWandItem> REINFORCED_BUILDING_WAND = ITEMS.registerItem("reinforced_building_wand",
+            p -> new BuildingWandItem(p, true), p -> p.durability(8192).fireResistant());
 
     public static final DeferredItem<PosterItem> POSTER = ITEMS.registerItem("poster",
             PosterItem::new, p -> p.stacksTo(16));

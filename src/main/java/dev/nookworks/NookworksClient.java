@@ -125,6 +125,16 @@ public class NookworksClient {
                 new Material(Nookworks.id("block/biodiesel_flow")),
                 null, (FluidTintSource) null),
                 OilFluids.BIODIESEL.get(), OilFluids.FLOWING_BIODIESEL.get());
+        event.register(new FluidModel.Unbaked(
+                new Material(Nookworks.id("block/methanol_still")),
+                new Material(Nookworks.id("block/methanol_flow")),
+                null, (FluidTintSource) null),
+                OilFluids.METHANOL.get(), OilFluids.FLOWING_METHANOL.get());
+        event.register(new FluidModel.Unbaked(
+                new Material(Nookworks.id("block/wood_vinegar_still")),
+                new Material(Nookworks.id("block/wood_vinegar_flow")),
+                null, (FluidTintSource) null),
+                OilFluids.WOOD_VINEGAR.get(), OilFluids.FLOWING_WOOD_VINEGAR.get());
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {

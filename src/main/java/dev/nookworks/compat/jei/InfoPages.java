@@ -65,6 +65,10 @@ public final class InfoPages {
         info(page, ModItems.REINFORCED_ROD.get(), "reinforced_rod");
         info(page, ModItems.BRASS_INGOT.get(), "brass");
         info(page, ModItems.MACHINE_CHASSIS.get(), "machine_chassis");
+        info(page, ModItems.CRUSHER.get(), "crusher");
+        info(page, ModItems.STIRRING_TANK.get(), "stirring_tank");
+        info(page, ModItems.SPAWN_EGG_BREWER.get(), "spawn_egg_brewer");
+        info(page, ModItems.MACHINE_BELL.get(), "machine_bell");
         info(page, ModRecycling.COMPRESSOR_ITEM.get(), "compressor");
         info(page, ModRecycling.RECYCLER_ITEM.get(), "recycler");
         info(page, ModRecycling.BALER.get(), "baler");
@@ -100,6 +104,7 @@ public final class InfoPages {
         }
         info(page, ModItems.ENERGY_CABLE.get(), "energy_cable");
         info(page, ModItems.BUILDING_WAND.get(), "building_wand");
+        info(page, ModItems.REINFORCED_BUILDING_WAND.get(), "reinforced_building_wand");
         info(page, ModItems.ITEM_SORTER.get(), "item_sorter");
         info(page, ModItems.PRECISION_SORTER.get(), "precision_sorter");
         for (var gear : List.of(ModItems.GOLD_SORTER_GEAR, ModItems.DIAMOND_SORTER_GEAR, ModItems.NETHERITE_SORTER_GEAR, ModItems.VELARIUM_SORTER_GEAR)) {
@@ -150,6 +155,7 @@ public final class InfoPages {
         info(page, ModRope.THIN_CHAIN.get(), "thin_chain");
         info(page, ModRope.FILAMENT_BULB_ITEM.get(), "filament_bulb");
         info(page, ModRope.HOOK_ITEM.get(), "hook");
+        info(page, ModRope.WIND_CHIME.get(), "wind_chime");
         info(page, ModRope.DRIED_FISH.get(), "dried_fish");
         info(page, ModItems.WATER_PUMP.get(), "water_pump");
         info(page, ModItems.NESTED_TIMER.get(), "nested_timer");
@@ -214,6 +220,7 @@ public final class InfoPages {
         info(page, ModOil.WOOD_VINEGAR.get(), "wood_vinegar");
         info(page, ModOil.METHANOL.get(), "methanol", on, "kitchen");
         info(page, ModOil.BIODIESEL_BOTTLE.get(), "biodiesel_bottle", on, "kitchen");
+        info(page, ModItems.RETORT.get(), "retort"); // what it is for first, the experience it keeps second
         info(page, ModItems.RETORT.get(), "retort_experience", on, "liquid_experience");
         info(page, ModItems.SIFTER.get(), "sifter");
         info(page, ModItems.BRASS_MESH.get(), "brass_mesh");
@@ -260,7 +267,8 @@ public final class InfoPages {
 
     /** The pages that give a machine's power or pace in figures. */
     private static final Set<String> TUNED_PAGES = Set.of("stone_maker", "generator", "diesel_generator", "laser", "planter",
-            "electric_furnace", "electrolytic_cell", "water_pump", "motor", "spawner_control", "compressor", "recycler");
+            "electric_furnace", "electrolytic_cell", "water_pump", "motor", "spawner_control", "compressor", "recycler",
+            "crusher", "stirring_tank", "retort");
 
     private static String factor(ModConfigSpec.DoubleValue value) {
         double f = MachineTuning.factor(value);

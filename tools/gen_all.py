@@ -9,8 +9,10 @@ is artwork no script draws - or its script was changed and not run.
 The order: the texture scripts (tools/textures/gen_*.py) by name, as none reads what another writes; then the data
 scripts; then gen_item_displays.py, last because it adds the in-hand and in-frame transforms to the item models the
 others write bare. Left out: make_icon.py and make_logo.py (the desktop shortcut's icon and the page's logo, not the
-mod's files) import_posters.py (it takes the poster packs the author supplies, by hand, one at a time) and
-tools/sounds/make_sounds.py (it cuts the sounds out of Kenney's packs, downloaded by hand).
+mod's files) import_posters.py (it takes the poster packs the author supplies, by hand, one at a time),
+tools/sounds/make_sounds.py (it cuts two sounds out of Kenney's packs, downloaded by hand) and
+tools/sounds/gen_sounds.py (it computes the other sounds and needs ffmpeg; the same bytes on one machine, but another
+numpy, scipy or ffmpeg may round a sample differently, so its files are kept as committed and made again on purpose).
 """
 import subprocess
 import sys

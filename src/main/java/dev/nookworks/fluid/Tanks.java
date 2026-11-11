@@ -18,6 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 /** One-fluid tanks for machines: what they hold, and whether the outside may fill them, draw from them, or both. */
@@ -202,6 +203,20 @@ public final class Tanks {
             return tank.fluidHandler();
         }
         return level.getCapability(Capabilities.Fluid.BLOCK, up, Direction.DOWN);
+    }
+
+    /**
+     * Whether {@code handler} would take some {@code resource} now (asked, never committed): a millibucket - or, if it
+     * refuses that, {@code most}, the most the asker could hand over at once. A cauldron takes whole buckets or nothing
+     * (NeoForge's cauldron handler, a level being a third of one), so asked for a millibucket it said no, and a pipe line
+     * pulled from a tank, or an empty one from a machine, never counted it as somewhere to go and never filled it - ours
+     * (oil, methanol, wood vinegar, biodiesel), vanilla's water one and an add-on's alike (nookTechnology, 2026-11-10).
+     */
+    public static boolean wouldTake(ResourceHandler<FluidResource> handler, FluidResource resource, int most) {
+        try (Transaction test = Transaction.openRoot()) {
+            // (refused, the millibucket changed nothing, so the second asking may share the transaction)
+            return handler.insert(resource, 1, test) > 0 || most > 1 && handler.insert(resource, most, test) > 0;
+        }
     }
 
     /**

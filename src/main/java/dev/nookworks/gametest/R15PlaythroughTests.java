@@ -48,8 +48,8 @@ final class R15PlaythroughTests {
         test("missing_reagent_is_named", R15PlaythroughTests::missingReagentNamed);
         test("sifter_has_a_jei_page", R15PlaythroughTests::sifterPage);
         test("advancement_tab_opens_with_the_first_log", R15PlaythroughTests::tabOpensWithTheFirstLog);
-        test("distiller_makes_eight_methanol_of_eight_wood_vinegar_into_a_chest", R15PlaythroughTests::methanolIntoAChest);
-        test("distiller_with_no_container_drops_every_methanol", R15PlaythroughTests::methanolOnTheGround);
+        test("distiller_pours_eight_wood_vinegar_and_lets_every_empty_bottle_into_a_chest", R15PlaythroughTests::methanolIntoAChest);
+        test("distiller_with_no_container_drops_every_empty_bottle", R15PlaythroughTests::methanolOnTheGround);
     }
 
     private static BooleanSupplier done(GameTestHelper helper, ServerPlayer player, String id) {
@@ -163,7 +163,9 @@ final class R15PlaythroughTests {
         helper.setBlock(pos.above(3), ModBlocks.CONDENSER.get());
         var distiller = helper.getBlockEntity(pos, DistillerBlockEntity.class);
         distiller.setItem(DistillerBlockEntity.INPUT, new ItemStack(ModOil.WOOD_VINEGAR.get(), 8));
-        for (int tick = 0; tick < 8 * (DistillerBlockEntity.TICKS + 5) * 4 && !distiller.getItem(DistillerBlockEntity.INPUT).isEmpty(); tick++) {
+        // poured into its tank (since 2026-11-10) and distilled from there until its methanol tank is full
+        for (int tick = 0; tick < 8 * (DistillerBlockEntity.TICKS + 5) * 4 && (!distiller.getItem(DistillerBlockEntity.INPUT).isEmpty()
+                || distiller.methanolStored() < DistillerBlockEntity.METHANOL_TANK); tick++) {
             distiller.energy().set((int) distiller.energy().getCapacityAsLong());
             DistillerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), distiller);
         }
@@ -174,25 +176,28 @@ final class R15PlaythroughTests {
     }
 
     /**
-     * Eight wood vinegar make eight methanol, every one in the chest under the Distiller (the playthrough counted five,
-     * with nothing under it and creepers going off by the tower).
+     * Eight wood vinegar are poured in and every bottle comes out empty into the chest under the Distiller (the playthrough
+     * counted five methanol of eight, with nothing under it and creepers going off by the tower); none of the liquid is
+     * lost: a bucket of methanol in its tank, the other bucket of wood vinegar waiting.
      */
     private static void methanolIntoAChest(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 2, 2);
         helper.setBlock(pos.below(), Blocks.CHEST);
         var distiller = distil(helper, pos);
         var chest = helper.getBlockEntity(pos.below(), ChestBlockEntity.class);
-        int inChest = chest.countItem(ModOil.METHANOL.get());
+        int inChest = chest.countItem(Items.GLASS_BOTTLE);
         int inMachine = 0;
         for (int slot = 1; slot < distiller.getContainerSize(); slot++) {
-            inMachine += distiller.getItem(slot).is(ModOil.METHANOL.get()) ? distiller.getItem(slot).getCount() : 0;
+            inMachine += distiller.getItem(slot).getCount();
         }
-        check(helper, inChest == 8 && inMachine == 0, "eight methanol in the chest, got " + inChest + " (and " + inMachine + " in the machine)");
+        check(helper, inChest == 8 && inMachine == 0, "eight empty bottles in the chest, got " + inChest + " (and " + inMachine + " in the machine)");
+        check(helper, distiller.methanolStored() + distiller.woodVinegarStored() == 8 * dev.nookworks.oil.OilFluids.BOTTLE,
+                "none of it lost: " + distiller.methanolStored() + " methanol, " + distiller.woodVinegarStored() + " wood vinegar");
         helper.succeed();
     }
 
     /**
-     * With nothing under it to take them, the methanol comes out into the world - beside it, the ground under it being
+     * With nothing under it to take them, the emptied bottles come out into the world - beside it, the ground under it being
      * solid and the column on top (it was set down inside the column, which pushed it out: MachineIO.dropOut, 2026-11-01)
      * - and every one of the eight is still there a few seconds on.
      */
@@ -203,10 +208,10 @@ final class R15PlaythroughTests {
         helper.runAfterDelay(60, () -> {
             int lying = 0;
             for (var item : helper.getLevel().getEntities(EntityTypes.ITEM, new AABB(helper.absolutePos(pos)).inflate(4),
-                    e -> e.getItem().is(ModOil.METHANOL.get()))) {
+                    e -> e.getItem().is(Items.GLASS_BOTTLE))) {
                 lying += item.getItem().getCount();
             }
-            check(helper, lying == 8, "eight methanol lying about the tower, got " + lying);
+            check(helper, lying == 8, "eight empty bottles lying about the tower, got " + lying);
             helper.succeed();
         });
     }

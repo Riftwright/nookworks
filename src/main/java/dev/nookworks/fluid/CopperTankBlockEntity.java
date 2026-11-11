@@ -73,7 +73,8 @@ public class CopperTankBlockEntity extends BlockEntity implements Readout, DrawR
 
     /** What the copper line carries, ours or another mod's water. */
     public static boolean holds(Fluid fluid) {
-        return fluid.isSame(Fluids.WATER) || fluid.isSame(OilFluids.SOURCE.get()) || fluid.isSame(OilFluids.BIODIESEL.get());
+        return fluid.isSame(Fluids.WATER) || fluid.isSame(OilFluids.SOURCE.get()) || fluid.isSame(OilFluids.BIODIESEL.get())
+                || fluid.isSame(OilFluids.METHANOL.get()) || fluid.isSame(OilFluids.WOOD_VINEGAR.get());
     }
 
     public FluidStacksResourceHandler fluidHandler() {

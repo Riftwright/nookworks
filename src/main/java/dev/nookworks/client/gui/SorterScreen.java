@@ -13,7 +13,6 @@ import dev.nookworks.sorter.SorterGear;
 import dev.nookworks.sorter.SorterGearItem;
 import dev.nookworks.sorter.SorterMenu;
 import dev.nookworks.sorter.SorterSettings;
-import dev.nookworks.sorter.SorterTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
@@ -21,51 +20,67 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Sorter GUI: the filter slots, which outlet registered items use - in words and in a little picture of the sorter
  * seen from its front - the gear slot, brass-framed as the Sifter's mesh slot is, and a button to swap the outlets. A
  * Precision Sorter also gets a second row of filter slots, its Exclude and Exact switches (each with a lamp that is lit
- * while it is on), and a Tags button that opens the tag picker in the filter's place: a sample slot, the sample's mod
- * and then its tags to tick - each with how many items it holds, and what they are on hover - Register and Back, and under
- * them Keep Out, which wears the row's no-entry sign and puts what is ticked in the Keep Out row. A tag entry wears a
+ * while it is on), and a Tags button that opens the tag picker in the filter's place ({@link TagPickerView}, the one
+ * add-ons' screens share): a sample slot, the sample's mod and then its tags to tick - each with how many items it holds,
+ * and what they are on hover - Register, under it Keep Out, which wears the row's no-entry sign and puts what is ticked
+ * in the Keep Out row, and Back. A tag entry wears a
  * brass "#", a mod entry a brass "@", in the filter and in the row alike, and each says on hover what it catches - or,
  * in the row, keeps out. Under it all, the Keep Out row: red-framed ghost slots behind a no-entry sign, for what the
  * sorter never takes in.
  */
 public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     private static final String[] FLAG_KEYS = {"blacklist", "tags", "components"};
-    /** The picker's list: where it sits, and its rows. */
-    private static final int LIST_X = 30;
-    private static final int LIST_Y = 19;
-    private static final int LIST_W = 138;
-    private static final int ROW_H = 11;
-    private static final int ROWS = 6;
-    private static final int BAR_W = 4;
 
     private final SteelButton[] flagButtons = new SteelButton[SorterSettings.COUNT];
     private final List<SteelButton> sortingWidgets = new ArrayList<>();
-    private final List<SteelButton> pickerWidgets = new ArrayList<>();
-    private SteelButton register;
-    private SteelButton registerDeny;
-    private int scroll;
-    /** The list's scrollbar is held, this far below its thumb's top. */
-    private boolean draggingBar;
-    /** The last press was taken by one of the screen's buttons: its release is not a slot's click. */
-    private boolean pressTaken;
-    private int barGrab;
+    /** The Precision Sorter's tag picker: Register into the filter, Keep Out into the row; none on an Item Sorter. */
+    private final @Nullable TagPickerView picker;
+
+    /** Where the screen's left edge is: JEI's drop targets are its slots' places from here. */
+    public int left() {
+        return this.leftPos;
+    }
+
+    /** Where the screen's top edge is. */
+    public int top() {
+        return this.topPos;
+    }
 
     public SorterScreen(SorterMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 176, SorterMenu.playerY(menu.tier()) + 82);
         this.inventoryLabelY = SorterMenu.playerY(menu.tier()) - 11;
+        TagPickerView.Destination filter = TagPickerView.Destination.plain(
+                () -> Component.translatable("gui.nookworks.sorter.picker.register"),
+                () -> Component.translatable("gui.nookworks.sorter.picker.full"),
+                () -> Component.translatable("gui.nookworks.sorter.picker.taken"));
+        // the Keep Out row's sign beside its words, so it reads as that row's; what it does said on hover
+        TagPickerView.Destination keepOut = new TagPickerView.Destination(
+                () -> Component.translatable(this.row("gui.nookworks.sorter.picker.deny")),
+                new TagPickerView.Sign() {
+                    @Override
+                    public int width() {
+                        return 14;
+                    }
+
+                    @Override
+                    public void draw(GuiGraphicsExtractor g, int x, int y) {
+                        SorterScreen.this.drawKeepOut(g, x, y);
+                    }
+                },
+                () -> Component.translatable(this.row("gui.nookworks.sorter.picker.deny.tooltip")),
+                () -> Component.translatable(this.row("gui.nookworks.sorter.picker.deny_full")),
+                () -> Component.translatable(this.row("gui.nookworks.sorter.picker.taken_deny")));
+        this.picker = menu.tier().configurable
+                ? new TagPickerView(this, menu.picker(), List.of(filter, keepOut), this::showMode) : null;
     }
 
     private int rowsBottom() {
@@ -76,7 +91,6 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     protected void init() {
         super.init();
         this.sortingWidgets.clear();
-        this.pickerWidgets.clear();
         // The swap button wears a picture of the outlets it swaps; the words are its tooltip.
         SteelButton swap = this.addRenderableWidget(new SteelButton(this.leftPos + 130, this.topPos + this.rowsBottom() + 5, 38, 20,
                 Component.empty(), () -> this.press(SorterMenu.BUTTON_SWAP)) {
@@ -99,8 +113,11 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             SteelButton button;
             if (flag == SorterSettings.MATCH_TAGS) {
                 // tags are entries of their own now: this opens the picker that makes them
-                button = new SteelButton(x, y, 52, 18, Component.translatable("gui.nookworks.sorter.pick_tags"),
-                        () -> this.pick(SorterMenu.BUTTON_PICKER_OPEN));
+                button = new SteelButton(x, y, 52, 18, Component.translatable("gui.nookworks.sorter.pick_tags"), () -> {
+                    if (this.picker != null) {
+                        this.picker.open();
+                    }
+                });
                 button.setTooltip(Tooltip.create(Component.translatable("gui.nookworks.sorter.pick_tags.tooltip")));
             } else {
                 button = new SteelButton(x, y, 52, 18, this.flagLabel(flag), () -> this.press(SorterMenu.BUTTON_FLAG + flag));
@@ -109,31 +126,9 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             }
             this.sortingWidgets.add(this.addRenderableWidget(button));
         }
-        int buttonsY = this.topPos + LIST_Y + ROWS * ROW_H + 5;
-        this.register = this.addRenderableWidget(new SteelButton(this.leftPos + LIST_X, buttonsY, 66, 16,
-                Component.translatable("gui.nookworks.sorter.picker.register"), () -> this.pick(SorterMenu.BUTTON_REGISTER_TAGS)));
-        this.pickerWidgets.add(this.register);
-        this.pickerWidgets.add(this.addRenderableWidget(new SteelButton(this.leftPos + LIST_X + LIST_W - 66, buttonsY, 66, 16,
-                Component.translatable("gui.nookworks.sorter.picker.back"), () -> this.pick(SorterMenu.BUTTON_PICKER_CLOSE))));
-        // under them, the list's width: the Keep Out row's sign beside its words, so it reads as that row's
-        this.registerDeny = this.addRenderableWidget(new SteelButton(this.leftPos + LIST_X, buttonsY + 19, LIST_W, 16,
-                Component.empty(), () -> this.pick(SorterMenu.BUTTON_REGISTER_DENY)) {
-            @Override
-            protected MutableComponent createNarrationMessage() {
-                return wrapDefaultNarrationMessage(Component.translatable(SorterScreen.this.row("gui.nookworks.sorter.picker.deny")));
-            }
-
-            @Override
-            protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
-                super.extractContents(g, mouseX, mouseY, a);
-                Component label = Component.translatable(SorterScreen.this.row("gui.nookworks.sorter.picker.deny"));
-                int w = 14 + 4 + SorterScreen.this.font.width(label);
-                int x = this.getX() + (this.getWidth() - w) / 2;
-                SorterScreen.this.drawKeepOut(g, x, this.getY() + 1);
-                g.text(SorterScreen.this.font, label, x + 18, this.getY() + 4, this.active ? MachineStyle.TEXT : MachineStyle.DIM, false);
-            }
-        });
-        this.pickerWidgets.add(this.registerDeny);
+        if (this.picker != null) {
+            this.picker.init(this.leftPos, this.topPos, this::addRenderableWidget);
+        }
         this.showMode();
     }
 
@@ -141,25 +136,10 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, id);
     }
 
-    /** A picker button: done here at once, on this screen's copy, and sent for the server's. */
-    private void pick(int id) {
-        this.menu.pickerButton(this.minecraft.player, id);
-        this.press(id);
-        if (id == SorterMenu.BUTTON_PICKER_OPEN || id == SorterMenu.BUTTON_PICKER_CLOSE) {
-            this.scroll = 0;
-        }
-        this.showMode();
-    }
-
-    /** The widgets of whichever the screen shows: the sorter's own, or the picker's. */
+    /** The sorter's own widgets, hidden while the picker is open (it shows its own). */
     private void showMode() {
         boolean picking = this.menu.picking();
         this.sortingWidgets.forEach(w -> w.visible = !picking);
-        this.pickerWidgets.forEach(w -> w.visible = picking);
-        if (this.register != null) {
-            this.register.active = this.menu.anyChosen() && this.menu.freeSlots() > 0;
-            this.registerDeny.active = this.menu.anyChosen() && this.menu.freeDenySlots() > 0;
-        }
     }
 
     private Component flagLabel(int flag) {
@@ -178,66 +158,14 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             }
         }
         this.showMode();
-        this.scroll = Math.max(0, Math.min(this.scroll, this.maxScroll()));
-    }
-
-    // ---- the picker's list ----
-
-    /** The list's lines: the sample's mod, then its tags; none without a sample. */
-    private int lines() {
-        return this.menu.sample().isEmpty() ? 0 : 1 + this.menu.choices().size();
-    }
-
-    private int maxScroll() {
-        return Math.max(0, this.lines() - ROWS);
-    }
-
-    private int thumbH() {
-        return Math.max(8, ROWS * ROW_H * ROWS / Math.max(1, this.lines()));
-    }
-
-    /** The thumb's top on the screen, for the rows shown. */
-    private int thumbTop() {
-        return this.topPos + LIST_Y + (ROWS * ROW_H - this.thumbH()) * this.scroll / Math.max(1, this.maxScroll());
-    }
-
-    /** On the scrollbar, a pixel wider each side than it is drawn: it is thin. */
-    private boolean onBar(double mouseX, double mouseY) {
-        double x = mouseX - this.leftPos - LIST_X;
-        double y = mouseY - this.topPos - LIST_Y;
-        return this.menu.picking() && this.maxScroll() > 0 && x >= LIST_W - BAR_W - 1 && x < LIST_W + 1 && y >= 0 && y < ROWS * ROW_H;
-    }
-
-    /** Puts the thumb's top {@link #barGrab} above the pointer, as near as a row allows. */
-    private void dragBar(double mouseY) {
-        int free = ROWS * ROW_H - this.thumbH();
-        double f = free <= 0 ? 0 : (mouseY - this.barGrab - this.topPos - LIST_Y) / free;
-        this.scroll = Math.max(0, Math.min((int) Math.round(f * this.maxScroll()), this.maxScroll()));
-    }
-
-    /** The list line under the pointer - 0 for the mod, 1 on for the sample's tags in order - or -1. */
-    private int rowAt(double mouseX, double mouseY) {
-        double x = mouseX - this.leftPos - LIST_X;
-        double y = mouseY - this.topPos - LIST_Y;
-        if (!this.menu.picking() || x < 0 || x >= LIST_W - BAR_W - 1 || y < 0 || y >= ROWS * ROW_H) {
-            return -1;
+        if (this.picker != null) {
+            this.picker.tick();
         }
-        int index = this.scroll + (int) (y / ROW_H);
-        return index < this.lines() ? index : -1;
     }
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.onBar(event.x(), event.y())) {
-            // held where it is taken, so a click on the thumb moves nothing; a click beside it brings it there
-            int top = this.thumbTop();
-            if (event.y() >= top && event.y() < top + this.thumbH()) {
-                this.barGrab = (int) event.y() - top;
-            } else {
-                this.barGrab = this.thumbH() / 2;
-                this.dragBar(event.y());
-            }
-            this.draggingBar = true;
+        if (this.picker != null && this.picker.mouseClicked(event)) {
             return true;
         }
         // the Keep Out row's sign: the row turned round, letting in only what is in it, or back
@@ -247,24 +175,14 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
             return true;
         }
-        int row = this.rowAt(event.x(), event.y());
-        if (row >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
-            this.pick(row == 0 ? SorterMenu.BUTTON_CHOOSE_MOD : SorterMenu.BUTTON_CHOOSE + row - 1);
-            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(
-                    SoundEvents.UI_BUTTON_CLICK.value(), 1.2F, 0.4F));
-            return true;
-        }
         // a press one of its buttons takes is that button's: its release is no click on the slot it comes up over (the
-        // picker's buttons lie over the Keep Out row, whose slots are back the moment a button closes the picker, and
-        // the release put the sample carried into one)
-        this.pressTaken = this.getChildAt(event.x(), event.y()).isPresent();
+        // picker notes it: its buttons lie over the Keep Out row, whose slots are back the moment one closes it)
         return super.mouseClicked(event, doubleClick);
     }
 
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
-        if (this.draggingBar) {
-            this.dragBar(event.y());
+        if (this.picker != null && this.picker.mouseDragged(event)) {
             return true;
         }
         return super.mouseDragged(event, dx, dy);
@@ -272,16 +190,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        this.draggingBar = false;
-        if (this.pressTaken) {
-            this.pressTaken = false;
-            // the button let go of, as a screen does, and nothing more
-            if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.isDragging()) {
-                this.setDragging(false);
-                if (this.getFocused() != null) {
-                    this.getFocused().mouseReleased(event);
-                }
-            }
+        if (this.picker != null && this.picker.mouseReleased(event)) {
             return true;
         }
         return super.mouseReleased(event);
@@ -289,8 +198,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
 
     @Override
     public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
-        if (this.menu.picking() && this.isHovering(LIST_X, LIST_Y, LIST_W, ROWS * ROW_H, x, y)) {
-            this.scroll = Math.max(0, Math.min(this.scroll - (int) Math.signum(scrollY), this.maxScroll()));
+        if (this.picker != null && this.picker.mouseScrolled(x, y, scrollY)) {
             return true;
         }
         return super.mouseScrolled(x, y, scrollX, scrollY);
@@ -307,8 +215,8 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         if (!this.menu.picking()) {
             this.drawKeepOut(graphics, this.leftPos + 8, this.topPos + SorterMenu.denyY(this.menu.tier()) + 2);
         }
-        if (this.menu.picking()) {
-            this.extractPicker(graphics, mouseX, mouseY);
+        if (this.picker != null) {
+            this.picker.extractBackground(graphics, mouseX, mouseY); // only while it is open
         }
         int usable = this.menu.tier().filterSlots;
         for (int i = 0; i < this.menu.slots.size(); i++) {
@@ -332,7 +240,9 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
                     MachineStyle.ghost(graphics, new ItemStack(ModItems.GOLD_SORTER_GEAR.get()),
                             this.leftPos + slot.x, this.topPos + slot.y);
                 }
-            } else if (filter || i == SorterMenu.SAMPLE_SLOT) {
+            } else if (i == SorterMenu.SAMPLE_SLOT) {
+                continue; // the picker draws its sample's frame
+            } else if (filter) {
                 MachineStyle.filterSlot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
             } else {
                 MachineStyle.slot(graphics, this.leftPos + slot.x - 1, this.topPos + slot.y - 1);
@@ -340,78 +250,8 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         }
     }
 
-    /**
-     * The list: a sunken well, a line for the sample's mod and one for each of its tags - its box, its name, how many
-     * items - and a scrollbar.
-     */
-    private void extractPicker(GuiGraphicsExtractor g, int mouseX, int mouseY) {
-        int x = this.leftPos + LIST_X;
-        int y = this.topPos + LIST_Y;
-        int h = ROWS * ROW_H;
-        MachineStyle.well(g, x - 1, y - 1, LIST_W + 2, h + 2);
-        String mod = this.menu.sampleMod();
-        if (mod == null) {
-            this.extractHint(g, Component.translatable("gui.nookworks.sorter.picker.hint"), x, y + 4);
-            return;
-        }
-        List<TagKey<Item>> choices = this.menu.choices();
-        int lines = 1 + choices.size();
-        int hovered = this.rowAt(mouseX, mouseY);
-        int textRight = x + LIST_W - BAR_W - 3;
-        for (int row = 0; row < ROWS && this.scroll + row < lines; row++) {
-            int index = this.scroll + row;
-            TagKey<Item> tag = index == 0 ? null : choices.get(index - 1);
-            int ry = y + row * ROW_H;
-            boolean taken = this.taken(mod, tag);
-            boolean ticked = tag == null ? this.menu.modChosen() : this.menu.chosen(index - 1);
-            if (index == hovered) {
-                g.fill(x, ry, x + LIST_W - BAR_W - 1, ry + ROW_H, 0xFF2C3037);
-            }
-            // the box: brass edged, ticked in green; a tag or mod already in the filter or the Keep Out row is shown
-            // ticked and dim
-            g.fill(x + 2, ry + 2, x + 9, ry + 9, 0xFFB08A3E);
-            g.fill(x + 3, ry + 3, x + 8, ry + 8, 0xFF15171B);
-            if (ticked || taken) {
-                // ticked shows over taken: one kept out may still be ticked for the filter, and the other way round
-                g.fill(x + 4, ry + 4, x + 7, ry + 7, ticked ? 0xFF7EDC7E : 0xFF5A616B);
-            }
-            String count = String.valueOf(tag == null ? SorterTags.modSize(mod) : SorterTags.size(tag));
-            int countX = textRight - this.font.width(count);
-            g.text(this.font, count, countX, ry + 2, MachineStyle.DIM, false);
-            // the mod's line short ("Mod: Minecraft"), for the room beside its count; its tooltip says what it catches
-            Component name = tag == null ? Component.translatable("gui.nookworks.sorter.mod", SorterTags.modName(mod))
-                    : SorterTags.name(tag);
-            MachineStyle.fitText(g, this.font, name, x + 12, ry + 2, countX - x - 16,
-                    taken ? MachineStyle.DIM : MachineStyle.TEXT, false);
-        }
-        if (choices.isEmpty()) {
-            // under the mod's line, which every sample has
-            this.extractHint(g, Component.translatable("gui.nookworks.sorter.picker.no_tags"), x, y + ROW_H + 4);
-        }
-        if (this.maxScroll() > 0) {
-            int barX = x + LIST_W - BAR_W;
-            g.fill(barX, y, barX + BAR_W, y + h, 0xFF23262B);
-            int top = this.thumbTop();
-            g.fill(barX, top, barX + BAR_W, top + this.thumbH(), this.draggingBar ? 0xFF8A919B : 0xFF6A717B);
-        }
-    }
-
-    /** Words in the list's well, dim, wrapped to its width from {@code top} down, as far as it goes. */
-    private void extractHint(GuiGraphicsExtractor g, Component hint, int x, int top) {
-        List<FormattedCharSequence> lines = this.font.split(hint, LIST_W - 8);
-        for (int i = 0; i < lines.size() && top + i * 10 + 8 <= this.topPos + LIST_Y + ROWS * ROW_H; i++) {
-            g.text(this.font, lines.get(i), x + 4, top + i * 10, MachineStyle.DIM, false);
-        }
-    }
-
     private static boolean isDenySlot(@Nullable Slot slot) {
         return slot != null && slot.index >= SorterMenu.DENY_SLOT && slot.index < SorterMenu.DENY_SLOT + SorterBlockEntity.DENY_SLOTS;
-    }
-
-    /** Whether the mod ({@code tag} null) or the tag is in the filter or the Keep Out row already. */
-    private boolean taken(String mod, @Nullable TagKey<Item> tag) {
-        return tag == null ? this.menu.hasModEntryFor(mod) || this.menu.hasDenyModEntryFor(mod)
-                : this.menu.hasEntryFor(tag) || this.menu.hasDenyEntryFor(tag);
     }
 
     /** A tag entry, in the filter or the Keep Out row: its sample, marked with a brass "#"; a mod entry, with a brass "@". */
@@ -419,10 +259,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     protected void extractSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY) {
         super.extractSlot(graphics, slot, mouseX, mouseY);
         if (slot.index < SorterMenu.GEAR_SLOT || isDenySlot(slot)) {
-            String mark = SorterTags.of(slot.getItem()) != null ? "#" : SorterTags.modOf(slot.getItem()) != null ? "@" : null;
-            if (mark != null) {
-                graphics.text(this.font, mark, slot.x, slot.y - 1, 0xFFE2C27A, true);
-            }
+            TagPickerView.markEntry(graphics, slot);
         }
     }
 
@@ -430,70 +267,15 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
         String entry = isDenySlot(this.hoveredSlot) ? this.row("gui.nookworks.sorter.tag_entry.deny") : "gui.nookworks.sorter.tag_entry";
-        TagKey<Item> tag = SorterTags.of(stack);
-        if (tag != null) {
-            return tagTooltip(tag, entry);
-        }
-        String mod = SorterTags.modOf(stack);
-        return mod != null ? modTooltip(mod, entry) : super.getTooltipFromContainerItem(stack);
-    }
-
-    private static List<Component> tagTooltip(TagKey<Item> tag, String sizeKey) {
-        return groupTooltip(SorterTags.name(tag), "#" + tag.location(), SorterTags.size(tag), SorterTags.members(tag, 8), sizeKey);
-    }
-
-    private static List<Component> modTooltip(String mod, String sizeKey) {
-        return groupTooltip(Component.translatable("gui.nookworks.sorter.mod.all", SorterTags.modName(mod)), "@" + mod,
-                SorterTags.modSize(mod), SorterTags.modMembers(mod, 8), sizeKey);
-    }
-
-    /**
-     * A tag's or a mod's tooltip: its name, its id, how many items it holds (in the words of {@code sizeKey}: what an
-     * entry sorts, keeps out, or what a picker line holds) and the first of them.
-     */
-    private static List<Component> groupTooltip(Component name, String id, int size, List<ItemStack> first, String sizeKey) {
-        List<Component> lines = new ArrayList<>();
-        lines.add(name.copy().withStyle(ChatFormatting.WHITE));
-        lines.add(Component.literal(id).withStyle(ChatFormatting.DARK_GRAY));
-        lines.add(Component.translatable(sizeKey, size).withStyle(ChatFormatting.GRAY));
-        for (ItemStack member : first) {
-            lines.add(Component.literal("  ").append(member.getHoverName()).withStyle(ChatFormatting.GRAY));
-        }
-        if (size > first.size()) {
-            lines.add(Component.translatable("gui.nookworks.sorter.picker.more", size - first.size()).withStyle(ChatFormatting.DARK_GRAY));
-        }
-        return lines;
+        List<Component> lines = TagPickerView.entryTooltip(stack, entry);
+        return lines != null ? lines : super.getTooltipFromContainerItem(stack);
     }
 
     /** The empty gear slot's hint, what the gear fitted does, and in the picker, the items of each tag's or the mod's line. */
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        int row = this.rowAt(mouseX, mouseY);
-        String mod = this.menu.sampleMod();
-        if (row >= 0 && mod != null && this.menu.getCarried().isEmpty()) {
-            TagKey<Item> tag = row == 0 ? null : this.menu.choices().get(row - 1);
-            String members = "gui.nookworks.sorter.picker.members";
-            List<Component> lines = tag == null ? modTooltip(mod, members) : tagTooltip(tag, members);
-            if (tag == null ? this.menu.hasModEntryFor(mod) : this.menu.hasEntryFor(tag)) {
-                lines.add(Component.translatable("gui.nookworks.sorter.picker.taken").withStyle(ChatFormatting.DARK_GRAY));
-            }
-            if (tag == null ? this.menu.hasDenyModEntryFor(mod) : this.menu.hasDenyEntryFor(tag)) {
-                lines.add(Component.translatable(this.row("gui.nookworks.sorter.picker.taken_deny")).withStyle(ChatFormatting.DARK_GRAY));
-            }
-            graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
-            return;
-        }
-        if (this.menu.picking() && this.register.isHovered() && !this.register.active) {
-            graphics.setTooltipForNextFrame(this.font, Component.translatable(this.menu.freeSlots() == 0
-                    ? "gui.nookworks.sorter.picker.full" : "gui.nookworks.sorter.picker.choose"), mouseX, mouseY);
-            return;
-        }
-        if (this.menu.picking() && this.registerDeny.isHovered()) {
-            // what it does; switched off, why
-            String key = this.registerDeny.active ? this.row("gui.nookworks.sorter.picker.deny.tooltip")
-                    : this.menu.freeDenySlots() == 0 ? this.row("gui.nookworks.sorter.picker.deny_full") : "gui.nookworks.sorter.picker.choose";
-            graphics.setTooltipForNextFrame(this.font, this.font.split(Component.translatable(key), 200), mouseX, mouseY);
-            return;
+        if (this.picker != null && this.picker.extractTooltip(graphics, mouseX, mouseY)) {
+            return; // its lines, its buttons, its empty sample slot
         }
         // the Keep Out row: what it is, on its mark and on an empty slot of it
         int denyY = SorterMenu.denyY(this.menu.tier());
@@ -532,12 +314,6 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
                             .withStyle(ChatFormatting.GRAY)), Optional.empty(), mouseX, mouseY);
             return;
         }
-        Slot sample = this.menu.getSlot(SorterMenu.SAMPLE_SLOT);
-        if (sample.isActive() && !sample.hasItem() && this.menu.getCarried().isEmpty()
-                && this.isHovering(sample.x - 1, sample.y - 1, 18, 18, mouseX, mouseY)) {
-            graphics.setTooltipForNextFrame(this.font, Component.translatable("gui.nookworks.sorter.picker.sample.tooltip"), mouseX, mouseY);
-            return;
-        }
         super.extractTooltip(graphics, mouseX, mouseY);
     }
 
@@ -556,11 +332,8 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
             graphics.itemDecorations(this.font, held, SorterMenu.HELD_X, y);
         }
         if (this.menu.picking()) {
-            // under the slot, in the room between the screen's edge and the list: a word too wide for it (English's
-            // "Sample" ran into the list's text) is left out, the hint beside the slot naming it already
-            Component caption = Component.translatable("gui.nookworks.sorter.picker.sample");
-            if (this.font.width(caption) <= LIST_X - 6) {
-                graphics.centeredText(this.font, caption, SorterMenu.SAMPLE_X + 9, SorterMenu.SAMPLE_Y + 21, MachineStyle.DIM);
+            if (this.picker != null) {
+                this.picker.extractLabels(graphics); // "Sample" under its slot
             }
             return;
         }

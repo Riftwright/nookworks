@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:methanol_bucket",
+        "nookworks:methanol"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bucket",
+    "nookworks:methanol",
+    "nookworks:methanol",
+    "nookworks:methanol",
+    "nookworks:methanol"
+  ],
+  "result": {
+    "id": "nookworks:methanol_bucket",
+    "count": 1
+  }
+}

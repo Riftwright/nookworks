@@ -41,6 +41,7 @@ import dev.nookworks.registry.ModTravel;
 import dev.nookworks.registry.ModVentilation;
 import dev.nookworks.registry.ModWoods;
 import dev.nookworks.registry.RenamedIds;
+import dev.nookworks.wood.TurnedPlanks;
 import dev.nookworks.storage.StorageSpillsCondition;
 import dev.nookworks.travel.TravelLog;
 import net.minecraft.resources.Identifier;
@@ -60,6 +61,7 @@ public class Nookworks {
         modContainer.registerConfig(ModConfig.Type.SYNCED, NookworksConfig.SPEC, "nookworks-server.toml");
         modContainer.registerConfig(ModConfig.Type.STARTUP, NookworksStartupConfig.SPEC);
         ModWoods.init();
+        TurnedPlanks.init();
         GlazedPots.init();
         ModCrops.init();
         ModCooking.init();
@@ -85,6 +87,8 @@ public class Nookworks {
         TrimmedVines.ATTACHMENT_TYPES.register(modEventBus);
         TravelLog.ATTACHMENT_TYPES.register(modEventBus);
         Squinting.ATTACHMENT_TYPES.register(modEventBus);
+        dev.nookworks.feature.JoinOverrides.ATTACHMENT_TYPES.register(modEventBus);
+        dev.nookworks.feature.DrawRights.ATTACHMENT_TYPES.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
         PickOneFunction.FUNCTIONS.register(modEventBus);
         VillageMap.FUNCTIONS.register(modEventBus);
