@@ -18,25 +18,46 @@ import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
  * A machine's liquid on its way out: pushed by the machine itself into what takes it beside it - a Copper Pipe whose line
  * leads to something that takes it (an empty line not finished yet, or one that only brings something in, is left
  * alone), a Copper Tank, another mod's tank or machine - never across a claim's edge ({@link DrawRights#mayMove}). The
- * Vacuum Distiller's methanol (not up, into its column) and the Sealed Retort's wood vinegar go out so.
+ * Sealed Retort's wood vinegar goes out so, and the Vacuum Distiller's water from its sides; its methanol from its
+ * Condenser, into pipes only ({@link #LiquidOutlet(boolean, boolean)}).
  */
 public final class LiquidOutlet {
     /** How far along a pipe line it looks for something that takes the liquid, as the Stirring Tank does for biodiesel. */
     private static final int LINE_LOOK = 512;
 
     private final boolean up;
+    /** Whether only our Copper Pipes take it: no machine or tank set against it (a Condenser's outlet). */
+    private final boolean pipesOnly;
     private final long[] askedAt = {Long.MIN_VALUE / 2, Long.MIN_VALUE / 2, Long.MIN_VALUE / 2, Long.MIN_VALUE / 2,
             Long.MIN_VALUE / 2, Long.MIN_VALUE / 2};
     private final boolean[] leads = new boolean[6];
 
     /** {@code up}: whether the block above may take it too (not a Distiller's column). */
     public LiquidOutlet(boolean up) {
+        this(up, false);
+    }
+
+    /**
+     * {@code pipesOnly}: only Copper Pipes take it - the user, 2026-11-12, of the Distiller's Condenser: 「冷却器の横に機械を
+     * 置くのはさすがに格好悪いし…そこはパイプで運ぶ設計にしましょう」.
+     */
+    public LiquidOutlet(boolean up, boolean pipesOnly) {
         this.up = up;
+        this.pipesOnly = pipesOnly;
     }
 
     /** Pours what {@code tank} holds into what takes it around {@code pos}, as much as each will take. */
     public void push(ServerLevel level, BlockPos pos, BlockEntity machine, FluidStacksResourceHandler tank) {
+        this.push(level, pos, machine, tank, side -> true);
+    }
+
+    /** As {@link #push(ServerLevel, BlockPos, BlockEntity, FluidStacksResourceHandler)}, on the sides {@code may} lets. */
+    public void push(ServerLevel level, BlockPos pos, BlockEntity machine, FluidStacksResourceHandler tank,
+            java.util.function.Predicate<Direction> may) {
         for (Direction side : Direction.values()) {
+            if (!may.test(side)) {
+                continue;
+            }
             int stored = tank.getAmountAsInt(0);
             if (stored <= 0) {
                 return;
@@ -62,6 +83,9 @@ public final class LiquidOutlet {
             return null;
         }
         FluidResource resource = FluidResource.of(fluid);
+        if (this.pipesOnly && !(there instanceof FluidPipeBlockEntity)) {
+            return null;
+        }
         if (there instanceof FluidPipeBlockEntity pipe && pipe.stored() <= 0) {
             return this.leadsOn(level, pos, side, pipe, resource) ? target : null;
         }

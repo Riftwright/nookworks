@@ -8,12 +8,15 @@ uncompressed sounds in DIR, for looking at (tools/sounds/look.py). The same byte
 
 How they are meant (DECISIONS.md, "Sound is left to me"):
 - A machine's work sound is heard now and then, a second or two of it, never a loop: each is a short phrase of what the
-  machine is doing, faded in and out, in several variants so two in a row are not the same sound.
+  machine is doing, faded in and out, in several variants so two in a row are not the same sound. The Motor alone hums
+  for as long as it runs (the user, 2026-11-12: it ran all the while and sounded and fell silent by turns): one loop
+  made whole (sfx.Loop), which the game fades in and out.
 - Soft and dull rather than bright, as vanilla's are: heard through a machine's case, in a workshop's air.
 - What turns keeps one pitch in every variant (a pitch that wanders reads as a motor changing speed).
 - No creaking wood, and no steady tone on the mains' 50/60 Hz or their doubles.
-The Motor, the Spawner Controller and the Trash Can keep the sounds the user picked (make_sounds.py); the Drive
-Wheel's is ours since the outside listener's second look.
+The Trash Can keeps the sound the user picked from Kenney's packs (make_sounds.py); the other three picked then are
+ours now - the Drive Wheel's since the outside listener's second look, the Spawner Controller's and the Motor's by the
+user's own ear.
 
 A script cannot listen, and nobody else is asked to (the user plays with the sound off and has no one to ask): the
 recipes are worked on against judges that can hear. tools/sounds/hear.py puts a recipe before two of them at once
@@ -37,7 +40,7 @@ from sfx import (SR, n_of, white, colored, lp, hp, bp, reson, reson_bank, svf, e
                  place, mix, drive, modes, modal, click, strike, thump, bubble, bubbles, crackles, crunches,
                  harmonics, pulses, room, norm, bed, hiss, boxed, PLATE, BAR, CUP,
                  burst, clang, thud, cracks, whirr, buzz, boil, ring_of, dense_modes, WOOD, STONE, HEAVY,
-                 air_chord, clicks, band_tone, rmsn, loopable, breathy_boil)
+                 air_chord, clicks, band_tone, rmsn, loopable, breathy_boil, Loop)
 
 ROOT = Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "src/main/resources/assets/nookworks"
@@ -429,17 +432,24 @@ def oil_can_squirt(rng, v):
 
 
 def motor_run(rng, v):
-    """A small motor running: a whirr in the middle of the ear, the armature's poles fluttering by, the brushes
-    ticking - a thing going round, and no drone under it."""
-    dur = 1.4
-    n = n_of(dur)
-    t = np.arange(n) / SR
-    flutter = 1 + 0.4 * np.sin(2 * np.pi * 37.0 * t + 0.8 * wobble(n, rng, 2.0))  # the armature's poles going by
-    air = bp(colored(n, rng, -3), 450, 2200) * flutter
-    whine = band_tone(n, rng, 520.0, 0.05) + 0.5 * band_tone(n, rng, 1040.0, 0.05)  # the same pitch in every variant
-    brushes = cracks(dur, rng, 37, 1500, 4500, sigma=0.4, ms=(0.6, 2.0), ring=0.2)[:n]
-    x = bed(air, -21) * wobble(n, rng, 1.5, 0.9, 1.0) + bed(whine, -21) * flutter + 0.15 * norm(brushes)
-    return fade(lp(hp(x, 300), 4500), 0.12, 0.45)
+    """A workshop's motor running, three seconds that go round (a loop made whole): four soft pushes a turn run
+    together into a low hum that is plainly something turning, the rotor's slots singing faintly over it, the cooling
+    fan's air. The hum is at 86.7 Hz, four times the shaft's 21.7 turns a second - clear of the mains' 100 and 120.
+
+    The one the user picked by ear, 2026-11-12, of five on a listening page (D, 「工場のモーターの低いうなり」), over
+    whirrs that the judges had found more motor-like: so it is drawn from the random source that candidate was drawn
+    from, not this event's own - the same bars, the same roughness, the sound that was heard."""
+    rng = sfx.rng_for(MODID, "motor_loop", "hum")
+    loop = Loop(3.0)
+    lead = loop.lead(rng)
+    shaft = 21.667
+    push = loop.pulses(rng, shaft, (1.0, 0.86, 0.95, 0.8), lead, jitter=0.02, rough=0.08, lo=60, hi=1500, tilt=-7.0)
+    push = loop.body(push, ((173.0, 3.0, 1.0), (410.0, 4.0, 0.7), (930.0, 5.0, 0.35)), dry=0.5)
+    slots = loop.pulses(rng, shaft, rng.uniform(0.55, 1.0, 28), lead, jitter=0.03, rough=0.1, lo=500, hi=2500, tilt=-6.0)
+    air = (loop.noise(rng, 250, 1800, tilt=-4.5) * loop.turn(rng, shaft * 5, lead, 0.25)
+           * loop.slow(rng, ((1, 1.0), (3, 0.6), (4, 0.4)), 0.85, 1.0))
+    x = rmsn(push) + bed(slots, -19) + bed(air, -14)
+    return loop.room(loop.keep(x, 50, 3800), rng)
 
 
 def drive_wheel_turn(rng, v):
@@ -615,8 +625,14 @@ SOUNDS = {
     # recipes for three of the four the user picked from Kenney's packs (make_sounds.py), which the outside listener
     # called a rumble, a mains hum and a buzzer: the user, 2026-11-10, of those picks - asked to choose, they chose, and
     # cannot tell good from bad; if better can be made, replace them. Heard blind beside Kenney's, the Drive Wheel's
-    # was taken (Kenney's a mains hum to it both times); the other two it called as unfit as what they would replace
-    "block.motor.run": (motor_run, 3, 0.17, dict(fout=0.3)),
+    # was taken (Kenney's a mains hum to it both times); the other two it called as unfit as what they would replace.
+    # The Motor's, 2026-11-12 (the user: 「モーターの音がイマイチ。音自体もあまりモーターに聞こえないし、ずっと動いてるのに
+    # なったり止まったりしてるのも変。」): one loop, played for as long as the Motor runs, picked by their ear of five and
+    # at the loudness they picked (「やや小さい」: -42.5 dB at the block, a little under the -38.5 Kenney's played at).
+    # Finished to -26 and not the others' -23: a hum this low has its level in its lowest tones, which the ear weighs
+    # little, and at -23 its peaks would be at full scale. The filters are set clear of it (it is cut to its band
+    # round the loop already).
+    "block.motor.run": (motor_run, 1, 0.15, dict(loop=True, level=-26.0, lowcut=20.0, highcut=20000.0)),
     "block.drive_wheel.turn": (drive_wheel_turn, 3, 0.2, {}),
     "block.spawner_controller.run": (spawner_controller_run, 3, 0.17, {}),
     # for the features of 2026-11-11 (the user: 「できそうなことはぜんぶやっていいよ」): a machine's stop heard, the bell that
@@ -633,9 +649,10 @@ SOUNDS = {
 # Held back: their recipes stay above to be worked on; their events go on playing what they played (the vanilla event,
 # the volume and the pitch written here, or Kenney's file), and no file of theirs ships. Decided by the user's own ear
 # (2026-11-10 night: 「実際に聞き比べて比較したい」): every sound heard beside what it would replace, both as the game plays
-# them (AI_review/sounds/compare in the main checkout, made by compare_tool/compare_page.py there), and these five kept as
-# they were - with the Oil Can's, which the judgings had let in. The judgings before it (tools/sounds/judge.py, and
-# Gemini in Antigravity twice, DECISIONS.md "Sound is left to me") had held back sixteen; the user took eleven of them.
+# them (AI_review/sounds/compare in the main checkout, made by compare_tool/compare_page.py there), and five kept as
+# they were (the Motor's among them, Kenney's then; a loop of ours since 2026-11-12) - with the Oil Can's, which the
+# judgings had let in. The judgings before it (tools/sounds/judge.py, and Gemini in Antigravity twice, DECISIONS.md
+# "Sound is left to me") had held back sixteen; the user took eleven of them.
 HELD_BACK = {
     "block.diesel_generator.run": [("minecraft:entity.minecart.riding", 0.25, 0.55)],
     "block.water_pump.run": [("minecraft:block.water.ambient", 0.25, 1.3)],
@@ -643,8 +660,6 @@ HELD_BACK = {
     "block.laser.run": [("minecraft:block.beacon.ambient", 0.3, 1.8)],
     # the honey block's slide it played before, at the pitch the code gave it then (the code plays it at 1.0 now)
     "item.oil_can.squirt": [("minecraft:block.honey_block.slide", 1.0, 1.4)],
-    # Kenney's file, the user's pick of 2026-10-11, kept by their ear
-    "block.motor.run": [("nookworks:block/motor_run", 0.5, None)],
     # A new sound waits here for the user's ear as None: its event plays the placeholder sounds.json has for it, left as
     # it is there. The five of 2026-11-11 (a machine's stop, the Machine Bell, the sorter, sitting down, the Wind Chime)
     # waited so, and were all taken over their vanilla stand-ins the same day (AI_review/sounds/compare_new).

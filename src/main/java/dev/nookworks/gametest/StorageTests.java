@@ -172,6 +172,7 @@ final class StorageTests {
         test("spawner_controller_pairs_and_pays", StorageTests::controllerPairsAndPays);
         // Spawning rolls against the level's own random, so give it room rather than let it time out at random.
         test("spawner_controller_spawns_without_player", 1200, StorageTests::controllerSpawnsWithoutPlayer);
+        test("spawner_controller_silences_its_mobs_at_a_cost", 1200, StorageTests::controllerSilences);
         test("spawner_controller_off_stops_spawner", StorageTests::controllerOffStopsSpawner);
         test("spawner_controller_menu_buttons", StorageTests::controllerMenuButtons);
         test("spawner_controller_faces_the_player", StorageTests::controllerFacesThePlayer);
@@ -1229,6 +1230,35 @@ final class StorageTests {
                         + ", controller powered " + controller.powered() + ", linked " + controller.linked()
                         + ", spawner " + (be == null ? "gone" : "there") + ")");
             }
+        });
+    }
+
+    /**
+     * A controller set to silence its mobs (the user, 2026-11-12: 「トラップがうるさい」) makes them spawn silent, at a
+     * quarter more power (「オンにするには多少電気代がかかる」); a setting saved before it reads as not silenced.
+     */
+    static void controllerSilences(GameTestHelper helper) {
+        SpawnerSettings loud = SpawnerSettings.DEFAULT;
+        SpawnerSettings quiet = loud.withSilent(true);
+        check(helper, quiet.energyPerTick() > loud.energyPerTick()
+                && quiet.energyPerTick() == Math.round(loud.energyPerTick() * SpawnerSettings.SILENT_COST),
+                "silenced costs a quarter more: " + loud.energyPerTick() + " -> " + quiet.energyPerTick());
+        var old = new com.google.gson.JsonParser().parse("{\"enabled\":true,\"interval\":200,\"count\":4,\"max_nearby\":6,"
+                + "\"any_light\":false,\"needs_player\":true}");
+        check(helper, !SpawnerSettings.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, old).getOrThrow().silent(),
+                "a setting saved before it: not silenced");
+        var world = helper.getLevel();
+        world.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> {
+            long was = world.getServer().clockManager().getInstance(clock).totalTicks();
+            world.getServer().clockManager().setTotalTicks(clock, 6_000);
+            AfterTest.undo(helper, () -> world.getServer().clockManager().setTotalTicks(clock, was));
+        });
+        var controller = buildControl(helper, quiet.withInterval(20).withCount(16).withAnyLight(true).withNeedsPlayer(false), 20_000);
+        helper.succeedWhen(() -> {
+            controller.energy().set((int) controller.energy().getCapacityAsLong());
+            var pigs = helper.getEntities(EntityTypes.PIG);
+            check(helper, !pigs.isEmpty(), "pigs spawned");
+            check(helper, pigs.stream().allMatch(net.minecraft.world.entity.Entity::isSilent), "every pig it made is silent");
         });
     }
 

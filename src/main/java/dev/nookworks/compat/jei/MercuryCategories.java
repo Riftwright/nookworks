@@ -169,12 +169,16 @@ public final class MercuryCategories {
         public void setRecipe(IRecipeLayoutBuilder builder, Distil r, IFocusGroup focuses) {
             builder.addInputSlot(1, 5).setStandardSlotBackground().add(r.input());
             if (DistillerBlockEntity.pours(r.input()) && r.recipe().result().map(h -> h.value() == ModOil.METHANOL.get()).orElse(false)) {
-                // wood vinegar, poured into its tank or piped in, distils to methanol in its tank, bottle by bottle (since 1.5)
-                builder.addInputSlot(1, 24).setStandardSlotBackground().add(OilFluids.WOOD_VINEGAR.get(), OilFluids.BOTTLE)
-                        .setFluidRenderer(OilFluids.BOTTLE, false, 16, 16);
-                builder.addOutputSlot(61, 5).setOutputSlotBackground()
-                        .add(OilFluids.METHANOL.get(), (long) OilFluids.BOTTLE * r.recipe().count())
-                        .setFluidRenderer(OilFluids.BOTTLE, false, 16, 16);
+                // wood vinegar, poured into its tank or piped in, distils to methanol in its tank and water, a bucket's
+                // worth a run (since the play-test after 1.5)
+                int run = DistillerBlockEntity.WOOD_VINEGAR_RUN;
+                long methanol = (long) OilFluids.BOTTLE * r.recipe().count();
+                builder.addInputSlot(1, 24).setStandardSlotBackground().add(OilFluids.WOOD_VINEGAR.get(), run)
+                        .setFluidRenderer(run, false, 16, 16);
+                builder.addOutputSlot(61, 5).setOutputSlotBackground().add(OilFluids.METHANOL.get(), methanol)
+                        .setFluidRenderer(run, false, 16, 16);
+                builder.addOutputSlot(83, 5).setOutputSlotBackground().add(net.minecraft.world.level.material.Fluids.WATER, run - methanol)
+                        .setFluidRenderer(run, false, 16, 16);
             } else if (r.recipe().result().isPresent()) {
                 builder.addOutputSlot(61, 5).setOutputSlotBackground().add(new ItemStack(r.recipe().result().get(), r.recipe().count()));
                 if (r.recipe().result().get().value() == ModOil.METHANOL.get()) {

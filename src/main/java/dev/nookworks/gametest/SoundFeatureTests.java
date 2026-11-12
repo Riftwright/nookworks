@@ -42,8 +42,11 @@ final class SoundFeatureTests {
         test("machine_bell_rings_and_signals_for_a_stopped_machine_but_never_to_it", 300, SoundFeatureTests::bell);
         test("a_machine_with_a_screen_of_its_own_is_watched_and_rung_for", 200, SoundFeatureTests::ownScreen);
         test("a_machine_bell_found_ringing_rings_on_without_a_second_ring", 200, SoundFeatureTests::bellLoaded);
+        test("a_machine_bell_set_gives_no_signal_until_switched_on", 300, SoundFeatureTests::bellSwitch);
+        test("a_machine_bell_fits_the_face_it_is_on", SoundFeatureTests::bellFits);
         test("a_water_pump_with_its_tank_full_is_no_stop_to_see_to", SoundFeatureTests::pumpFull);
         test("a_wind_chime_hangs_and_chimes_more_in_rain_and_storm", SoundFeatureTests::windChime);
+        test("a_wind_chime_is_a_block_hung_under_a_block_and_drawn_as_it_on_a_rope", SoundFeatureTests::windChimeBlock);
     }
 
     private static void workSoundCap(GameTestHelper helper) {
@@ -220,6 +223,122 @@ final class SoundFeatureTests {
             check(helper, machine.guiStatus() == MachineStatus.NO_POWER, "the Crusher stood out of power: " + machine.guiStatus());
             helper.succeed();
         });
+    }
+
+    /**
+     * A bell newly set gives no signal, though it rings, so nothing beside it is set off unasked; an empty-hand click
+     * switches its signal on and off, said over the hotbar (the user, 2026-11-12: 「うっかり隣にTNT置いてしまったら、大変
+     * なことになりますから」). A bell from before (its state's default) keeps giving it: the other bell tests.
+     */
+    private static void bellSwitch(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        java.util.List<net.minecraft.network.chat.Component> said = new java.util.ArrayList<>();
+        net.minecraft.server.level.ServerPlayer player = MockPlayers.hearing(helper, net.minecraft.world.level.GameType.SURVIVAL, said);
+        BlockPos crusher = new BlockPos(1, 2, 2);
+        BlockPos bell = crusher.east();
+        BlockPos wire = bell.east();
+        for (BlockPos p : new BlockPos[] {crusher, bell, wire}) {
+            helper.setBlock(p.below(), Blocks.STONE);
+        }
+        helper.setBlock(crusher, ModBlocks.CRUSHER.get());
+        // set on the Crusher's side as a player sets it (sneaking, or the click opens the Crusher's screen)
+        player.setShiftKeyDown(true);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ModBlocks.MACHINE_BELL.get()));
+        BlockPos at = helper.absolutePos(crusher);
+        player.gameMode.useItemOn(player, level, player.getMainHandItem(), net.minecraft.world.InteractionHand.MAIN_HAND,
+                new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(at).add(0.5, 0, 0), Direction.EAST, at, false));
+        check(helper, helper.getBlockState(bell).is(ModBlocks.MACHINE_BELL.get()) && !helper.getBlockState(bell).getValue(MachineBellBlock.SIGNAL),
+                "set on the Crusher's side, its signal off: " + helper.getBlockState(bell));
+        helper.setBlock(wire, Blocks.REDSTONE_WIRE);
+        CrusherBlockEntity machine = helper.getBlockEntity(crusher, CrusherBlockEntity.class);
+        machine.setItem(CrusherBlockEntity.INPUT, new ItemStack(Items.COBBLESTONE, 16)); // work, and no power for it
+        net.minecraft.world.phys.BlockHitResult onBell = new net.minecraft.world.phys.BlockHitResult(
+                net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(bell)), Direction.EAST, helper.absolutePos(bell), false);
+        helper.startSequence()
+                .thenWaitUntil(() -> check(helper, helper.getBlockState(bell).getValue(MachineBellBlock.POWERED),
+                        "the bell has rung for a Crusher with no power: " + machine.guiStatus()))
+                .thenExecute(() -> {
+                    check(helper, helper.getBlockState(wire).getValue(RedstoneWireBlock.POWER) == 0, "but, switched off, gives the dust no signal");
+                    player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                    player.setShiftKeyDown(false);
+                    player.gameMode.useItemOn(player, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, onBell);
+                    check(helper, helper.getBlockState(bell).getValue(MachineBellBlock.SIGNAL)
+                            && said.stream().anyMatch(c -> c.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc
+                                    && tc.getKey().equals("message.nookworks.machine_bell.signal_on")), "an empty-hand click: switched on, said so " + said);
+                })
+                .thenWaitUntil(() -> check(helper, helper.getBlockState(wire).getValue(RedstoneWireBlock.POWER) > 0, "now the dust has its signal"))
+                .thenExecute(() -> {
+                    player.gameMode.useItemOn(player, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, onBell);
+                    check(helper, !helper.getBlockState(bell).getValue(MachineBellBlock.SIGNAL), "clicked again: off");
+                })
+                .thenWaitUntil(() -> check(helper, helper.getBlockState(wire).getValue(RedstoneWireBlock.POWER) == 0, "and the signal gone"))
+                .thenSucceed();
+    }
+
+    /**
+     * A bell fits the face it is on (the user, 2026-11-12: a gap showed between it and a machine's side, set in from its
+     * frame, 「高さが低めの機械や形が特殊な機械にも」): on a Crusher's side its pad reaches the neck, set in two pixels;
+     * on a Generator's, a pixel in; on a Printing Press, lower than its top, it sits lower; on a Sifter, open between its
+     * legs, higher; on a stone wall, flat; and it changes when what it is on changes.
+     */
+    private static void bellFits(GameTestHelper helper) {
+        BlockPos crusher = new BlockPos(1, 2, 1);
+        BlockPos generator = new BlockPos(1, 2, 4);
+        helper.setBlock(crusher, ModBlocks.CRUSHER.get());
+        helper.setBlock(generator, ModBlocks.GENERATOR.get());
+        net.minecraft.world.level.block.state.BlockState wall = ModBlocks.MACHINE_BELL.get().defaultBlockState()
+                .setValue(MachineBellBlock.FACE, AttachFace.WALL).setValue(MachineBellBlock.FACING, Direction.EAST);
+        ServerLevel level = helper.getLevel();
+        BlockPos onCrusher = crusher.east();
+        net.minecraft.world.level.block.state.BlockState fitted = MachineBellBlock.fitted(wall, level, helper.absolutePos(onCrusher));
+        int level3 = MachineBellBlock.LEVEL;
+        check(helper, fitted.getValue(MachineBellBlock.INSET) == 2 && fitted.getValue(MachineBellBlock.SHIFT) == level3,
+                "on a Crusher's side: in to its neck, as high as made: " + fitted);
+        fitted = MachineBellBlock.fitted(wall, level, helper.absolutePos(generator.east()));
+        check(helper, fitted.getValue(MachineBellBlock.INSET) == 1 && fitted.getValue(MachineBellBlock.SHIFT) == level3,
+                "on a Generator's side: a pixel in: " + fitted);
+        BlockPos press = new BlockPos(4, 2, 1);
+        BlockPos sifter = new BlockPos(4, 2, 4);
+        helper.setBlock(press, ModBlocks.PRINTING_PRESS.get());
+        helper.setBlock(sifter, ModBlocks.SIFTER.get());
+        fitted = MachineBellBlock.fitted(wall, level, helper.absolutePos(press.east()));
+        check(helper, fitted.getValue(MachineBellBlock.SHIFT) < level3 && fitted.getValue(MachineBellBlock.INSET) > 0,
+                "on a Printing Press's side: lower, in to its panel: " + fitted);
+        fitted = MachineBellBlock.fitted(wall, level, helper.absolutePos(sifter.east()));
+        check(helper, fitted.getValue(MachineBellBlock.SHIFT) > level3 && fitted.getValue(MachineBellBlock.INSET) > 0,
+                "on a Sifter's side: higher, clear of the open frame between its legs: " + fitted);
+        net.minecraft.world.level.block.state.BlockState ceiling = ModBlocks.MACHINE_BELL.get().defaultBlockState()
+                .setValue(MachineBellBlock.FACE, AttachFace.CEILING);
+        fitted = MachineBellBlock.fitted(ceiling, level, helper.absolutePos(generator.below()));
+        check(helper, fitted.getValue(MachineBellBlock.INSET) == 1 && fitted.getValue(MachineBellBlock.SHIFT) == level3,
+                "under a Generator: a pixel up into its underside: " + fitted);
+        // set on the Crusher, then the Crusher taken and stone put there: flat
+        helper.setBlock(onCrusher, fitted = MachineBellBlock.fitted(wall, level, helper.absolutePos(onCrusher)));
+        helper.setBlock(crusher, Blocks.STONE);
+        net.minecraft.world.level.block.state.BlockState now = helper.getBlockState(onCrusher);
+        check(helper, now.is(ModBlocks.MACHINE_BELL.get()) && now.getValue(MachineBellBlock.INSET) == 0 && now.getValue(MachineBellBlock.SHIFT) == level3,
+                "on stone now: flat " + now);
+        helper.succeed();
+    }
+
+    /**
+     * The Wind Chime is a block (the user, 2026-11-12: 「ちゃんとブロックとして作ろう」): it hangs under a block, comes down
+     * when that goes, will not stand on a floor, and on a rope it hangs drawn as its block, as a lantern does.
+     */
+    private static void windChimeBlock(GameTestHelper helper) {
+        BlockPos beam = new BlockPos(2, 4, 2);
+        BlockPos chime = beam.below();
+        helper.setBlock(beam, Blocks.OAK_PLANKS);
+        helper.setBlock(chime, ModRope.WIND_CHIME_BLOCK.get());
+        check(helper, helper.getBlockState(chime).canSurvive(helper.getLevel(), helper.absolutePos(chime)), "hung under a plank");
+        helper.setBlock(beam, Blocks.AIR);
+        check(helper, helper.getBlockState(chime).isAir(), "its beam gone, it comes down: " + helper.getBlockState(chime));
+        BlockPos floor = new BlockPos(4, 1, 2);
+        check(helper, !ModRope.WIND_CHIME_BLOCK.get().defaultBlockState().canSurvive(helper.getLevel(), helper.absolutePos(floor)),
+                "on a floor with nothing over it: no");
+        var drawn = HungItemEntity.drawnBlock(new ItemStack(ModRope.WIND_CHIME.get()));
+        check(helper, drawn != null && drawn.is(ModRope.WIND_CHIME_BLOCK.get()), "hung on a rope, drawn as its block: " + drawn);
+        helper.succeed();
     }
 
     /**

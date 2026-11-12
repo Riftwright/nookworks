@@ -357,8 +357,8 @@
     "subtitle": "subtitles.nookworks.block.motor.run",
     "sounds": [
       {
-        "name": "nookworks:block/motor_run",
-        "volume": 0.5
+        "name": "nookworks:block/motor_run_1",
+        "volume": 0.15
       }
     ]
   },

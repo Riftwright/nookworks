@@ -33,23 +33,13 @@ public class MotorBlock extends MachineBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    /** A low hum now and then while it runs, at one pitch. */
+    /**
+     * No sound now and then: a running Motor hums on, one sound held while it runs (client/MotorHum - the user,
+     * 2026-11-12: 「ずっと動いてるのになったり止まったりしてるのも変」); oiled (the Oil Can), it runs without it, as before.
+     */
     @Override
     public @Nullable SoundEvent workSound(BlockState state) {
-        return state.getValue(POWERED) ? ModSounds.MOTOR_RUN.get() : null;
-    }
-
-    /** Oiled (the Oil Can), it runs without its hum (the user, 2026-10-25: a motor that always runs hums always). */
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (!Lubrication.isLubricated(level, pos)) {
-            super.animateTick(state, level, pos, random);
-        }
-    }
-
-    @Override
-    protected boolean steadyPitch() {
-        return true;
+        return null;
     }
 
     public MotorBlock(BlockBehaviour.Properties properties) {

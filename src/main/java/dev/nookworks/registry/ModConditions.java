@@ -16,7 +16,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 /**
  * Conditions for our data files. {@code {"type": "nookworks:setting", "setting": "flour_bakery", "is": true}} holds
  * while that startup setting is as given ({@link NookworksStartupConfig#byName}): the bakery's recipes load with it on,
- * vanilla's own bread, cookie, cake and pie with it off.
+ * vanilla's own cookie, cake and pie with it off; vanilla's bread by {@code "vanilla_bread"} - the bakery off, or the
+ * Bread From Wheat setting on ({@link NookworksStartupConfig#vanillaBread}).
  */
 public final class ModConditions {
     public static final DeferredRegister<MapCodec<? extends ICondition>> CONDITIONS =
@@ -31,6 +32,9 @@ public final class ModConditions {
         public boolean test(IContext context) {
             if (this.setting.equals("flour_bakery")) {
                 return NookworksStartupConfig.flourBakery() == this.is; // the bakery goes with the kitchen
+            }
+            if (this.setting.equals("vanilla_bread")) {
+                return NookworksStartupConfig.vanillaBread() == this.is; // bread from wheat: the bakery off, or kept beside it
             }
             var value = NookworksStartupConfig.byName(this.setting);
             if (value == null) {

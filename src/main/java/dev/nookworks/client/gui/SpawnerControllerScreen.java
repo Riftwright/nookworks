@@ -36,7 +36,9 @@ import net.minecraft.world.item.ItemStack;
 public class SpawnerControllerScreen extends AbstractContainerScreen<SpawnerControllerMenu> {
     private static final int ROW_Y = 24;
     private static final int ROW_H = 20;
-    private static final int BAY_BOTTOM = ROW_Y + 6 * ROW_H - 4;
+    /** The settings' rows: on, interval, count, nearby, light, player, silent. */
+    private static final int ROWS = 7;
+    private static final int BAY_BOTTOM = ROW_Y + ROWS * ROW_H - 4;
     private static final int BAR_Y = BAY_BOTTOM + 5;
     private static final int STATUS_Y = BAR_Y + 13;
     private static final int STATUS_H = 22;
@@ -87,6 +89,7 @@ public class SpawnerControllerScreen extends AbstractContainerScreen<SpawnerCont
         this.stepper(3, SpawnerControllerMenu.NEARBY_DOWN, SpawnerControllerMenu.NEARBY_UP);
         this.toggle(4, SpawnerControllerMenu.TOGGLE_LIGHT);
         this.toggle(5, SpawnerControllerMenu.TOGGLE_PLAYER);
+        this.toggle(6, SpawnerControllerMenu.TOGGLE_SILENT);
         this.addRenderableWidget(new RedstoneButton(this.leftPos + RedstoneButton.X, this.topPos + 3,
                 this.menu::redstoneMode, () -> this.press(SpawnerControllerMenu.BUTTON_REDSTONE)));
     }
@@ -249,7 +252,7 @@ public class SpawnerControllerScreen extends AbstractContainerScreen<SpawnerCont
             return;
         }
         MachineStyle.bay(graphics, this.leftPos + 5, this.topPos + 16, this.imageWidth - 10, BAY_BOTTOM - 16);
-        for (int row = 1; row < 6; row++) {
+        for (int row = 1; row < ROWS; row++) {
             MachineStyle.divider(graphics, this.leftPos + 8, this.topPos + ROW_Y + row * ROW_H - 7, this.imageWidth - 16);
         }
         int energy = this.menu.energy();
@@ -279,6 +282,7 @@ public class SpawnerControllerScreen extends AbstractContainerScreen<SpawnerCont
         this.row(graphics, 3, k + "nearby", Component.literal(String.valueOf(this.menu.maxNearby())));
         this.row(graphics, 4, k + "light", Component.translatable(k + (this.menu.anyLight() ? "light.any" : "light.normal")));
         this.row(graphics, 5, k + "player", Component.translatable(k + (this.menu.needsPlayer() ? "player.needed" : "player.not_needed")));
+        this.row(graphics, 6, k + "silent", Component.translatable(k + (this.menu.silent() ? "silent.on" : "silent.off")));
         int width = this.imageWidth - 28;
         boolean first = MachineStyle.fitText(graphics, this.font, this.status(), 18, STATUS_Y + 3, width,
                 MachineStyle.toneColour(this.statusTone()), false);

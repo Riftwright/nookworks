@@ -165,7 +165,7 @@ final class R15PlaythroughTests {
         distiller.setItem(DistillerBlockEntity.INPUT, new ItemStack(ModOil.WOOD_VINEGAR.get(), 8));
         // poured into its tank (since 2026-11-10) and distilled from there until its methanol tank is full
         for (int tick = 0; tick < 8 * (DistillerBlockEntity.TICKS + 5) * 4 && (!distiller.getItem(DistillerBlockEntity.INPUT).isEmpty()
-                || distiller.methanolStored() < DistillerBlockEntity.METHANOL_TANK); tick++) {
+                || distiller.woodVinegarStored() >= DistillerBlockEntity.WOOD_VINEGAR_RUN); tick++) {
             distiller.energy().set((int) distiller.energy().getCapacityAsLong());
             DistillerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), distiller);
         }
@@ -177,8 +177,8 @@ final class R15PlaythroughTests {
 
     /**
      * Eight wood vinegar are poured in and every bottle comes out empty into the chest under the Distiller (the playthrough
-     * counted five methanol of eight, with nothing under it and creepers going off by the tower); none of the liquid is
-     * lost: a bucket of methanol in its tank, the other bucket of wood vinegar waiting.
+     * counted five methanol of eight, with nothing under it and creepers going off by the tower); none of the wood vinegar
+     * is lost: what is not distilled waits, and what is made a quarter of what it took (the rest water).
      */
     private static void methanolIntoAChest(GameTestHelper helper) {
         BlockPos pos = new BlockPos(2, 2, 2);
@@ -191,7 +191,7 @@ final class R15PlaythroughTests {
             inMachine += distiller.getItem(slot).getCount();
         }
         check(helper, inChest == 8 && inMachine == 0, "eight empty bottles in the chest, got " + inChest + " (and " + inMachine + " in the machine)");
-        check(helper, distiller.methanolStored() + distiller.woodVinegarStored() == 8 * dev.nookworks.oil.OilFluids.BOTTLE,
+        check(helper, distiller.methanolStored() * 4 + distiller.woodVinegarStored() == 8 * dev.nookworks.oil.OilFluids.BOTTLE,
                 "none of it lost: " + distiller.methanolStored() + " methanol, " + distiller.woodVinegarStored() + " wood vinegar");
         helper.succeed();
     }

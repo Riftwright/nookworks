@@ -101,6 +101,9 @@ public final class PartGraph {
         if (setting.equals("flour_bakery")) {
             return NookworksStartupConfig.FLOUR_BAKERY.getAsBoolean() && Features.enabled("kitchen", partOn);
         }
+        if (setting.equals("vanilla_bread")) {
+            return !setting("flour_bakery", partOn) || NookworksStartupConfig.WHEAT_BREAD.getAsBoolean();
+        }
         if (setting.startsWith("feature.")) {
             return Features.enabled(setting.substring("feature.".length()), partOn);
         }
@@ -136,7 +139,9 @@ public final class PartGraph {
             boolean holds = true;
             for (Condition c : source.conditions()) {
                 boolean now = c.part() != null ? Features.enabled(c.part(), partOn)
-                        : "flour_bakery".equals(c.setting()) ? bakery : setting(c.setting(), partOn);
+                        : "flour_bakery".equals(c.setting()) ? bakery
+                        : "vanilla_bread".equals(c.setting()) ? !bakery || NookworksStartupConfig.WHEAT_BREAD.getAsBoolean()
+                        : setting(c.setting(), partOn);
                 if (now != c.is()) {
                     holds = false;
                     break;

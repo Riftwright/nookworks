@@ -143,7 +143,19 @@ public final class MercuryNetwork {
      * claim's edge whose owner may not take it from there (a stranger's tank on a pipe spliced in outside the claim).
      */
     public static int push(ServerLevel level, BlockPos origin, MercuryHandler source, int max) {
+        return push(level, origin, source, max, false);
+    }
+
+    /**
+     * As {@link #push(ServerLevel, BlockPos, MercuryHandler, int)}; {@code pipesOnly}: to what Mercury Pipes reach from
+     * {@code origin}, not to a tank or machine set against it (a Distiller's Condenser: 「そこはパイプで運ぶ設計にしましょう」).
+     */
+    public static int push(ServerLevel level, BlockPos origin, MercuryHandler source, int max, boolean pipesOnly) {
         List<MercuryHandler> targets = new ArrayList<>(handlers(level, origin));
+        if (pipesOnly) {
+            targets.removeIf(h -> h instanceof net.minecraft.world.level.block.entity.BlockEntity be
+                    && be.getBlockPos().distManhattan(origin) == 1);
+        }
         targets.removeIf(h -> h.mercuryRole() == MercuryHandler.Role.PRODUCER);
         targets.sort(Comparator.comparing(h -> h.mercuryRole() == MercuryHandler.Role.CONSUMER ? 0 : 1));
         int moved = 0;

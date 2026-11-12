@@ -11,6 +11,7 @@ import dev.nookworks.decor.BottleLook;
 import dev.nookworks.decor.ChevalMirrorBlock;
 import dev.nookworks.decor.StandingMirrorBlockEntity;
 import dev.nookworks.decor.Lanterns;
+import dev.nookworks.decor.MirrorSight;
 import dev.nookworks.decor.PlacedBooksBlock;
 import dev.nookworks.decor.PlacedBooksBlockEntity;
 import dev.nookworks.decor.PlacedBottlesBlock;
@@ -63,6 +64,7 @@ final class DecorTests {
         test("bookend_holds_books", DecorTests::bookendHoldsBooks);
         test("standing_mirror_stands_whole", DecorTests::standingMirrorStandsWhole);
         test("standing_mirror_recipe_without_dice", DecorTests::standingMirrorRecipe);
+        test("standing_mirror_is_veiled_by_water_and_glass", DecorTests::standingMirrorVeiled);
     }
 
     private static void use(GameTestHelper helper, ServerPlayer player, BlockPos pos, Direction face, ItemStack held) {
@@ -539,6 +541,47 @@ final class DecorTests {
                     .mapToInt(item -> item.getItem().getCount()).sum();
             check(helper, dropped == 1, "one mirror drops: " + dropped);
         });
+    }
+
+    /**
+     * What the client asks before it draws a mirror's glass under a shader pack: water or glass between the eye and the
+     * glass veils it (the glass could not be painted behind them, and the board the pack's light is measured on showed
+     * through - the user's mirror seen from under water, 2026-11-12); a wall of stone does not (the depth hides the
+     * glass there), nor glass that stands aside, nor nothing at all.
+     */
+    private static void standingMirrorVeiled(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos at = new BlockPos(2, 2, 1);
+        helper.setBlock(at.below(), Blocks.STONE);
+        BlockPos lower = helper.absolutePos(at);
+        BlockPos ahead = helper.absolutePos(at.south());
+        Direction facing = Direction.getApproximateNearest(ahead.getX() - lower.getX(), 0, ahead.getZ() - lower.getZ());
+        BlockState mirror = ModBlocks.STANDING_MIRROR.get().defaultBlockState().setValue(ChevalMirrorBlock.FACING, facing);
+        level.setBlock(lower, mirror, Block.UPDATE_CLIENTS);
+        level.setBlock(lower.above(), mirror.setValue(ChevalMirrorBlock.HALF, DoubleBlockHalf.UPPER), Block.UPDATE_CLIENTS);
+        Vec3 out = Vec3.atLowerCornerOf(facing.getUnitVec3i());
+        Vec3 eye = MirrorSight.glassCentre(lower, facing).add(out.scale(3.4)).add(0, 0.3, 0);
+        java.util.function.Predicate<BlockState> glassy = state -> state.is(net.neoforged.neoforge.common.Tags.Blocks.GLASS_BLOCKS)
+                || state.is(net.neoforged.neoforge.common.Tags.Blocks.GLASS_PANES);
+        BlockPos between = lower.relative(facing, 2);
+        BlockPos aside = between.relative(facing.getClockWise(), 2);
+        check(helper, !MirrorSight.veiled(level, lower, facing, eye, glassy), "nothing before the glass: it is drawn");
+        record Case(Block block, BlockPos where, boolean veils, String what) {}
+        for (Case c : List.of(
+                new Case(Blocks.STONE, between, false, "a wall of stone before it is the depth's to hide"),
+                new Case(Blocks.GLASS, between, true, "a window before it veils it"),
+                new Case(Blocks.GLASS_PANE, between, true, "a pane before it veils it"),
+                new Case(Blocks.WATER, between, true, "water before it veils it"),
+                new Case(Blocks.GLASS, aside, false, "glass that stands aside does not"),
+                new Case(Blocks.WATER, BlockPos.containing(eye), true, "an eye in water sees it veiled"))) {
+            level.setBlock(c.where(), c.block().defaultBlockState(), Block.UPDATE_CLIENTS);
+            level.setBlock(c.where().above(), c.block().defaultBlockState(), Block.UPDATE_CLIENTS);
+            boolean veiled = MirrorSight.veiled(level, lower, facing, eye, glassy);
+            level.setBlock(c.where().above(), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+            level.setBlock(c.where(), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+            check(helper, veiled == c.veils(), c.what() + ": " + veiled);
+        }
+        helper.succeed();
     }
 
     /** The If Mirror's recipe with no Die: Dawnwood planks round a glass pane, a Mercury Bucket below. With a Die, the If Mirror. */

@@ -120,7 +120,7 @@ final class MethanolTests {
         ServerLevel level = helper.getLevel();
         // poured into its tank first (since 2026-11-10), then distilled from there
         for (int tick = 0; tick < vinegar * (DistillerBlockEntity.TICKS + 5) * 4
-                && (!distiller.getItem(DistillerBlockEntity.INPUT).isEmpty() || distiller.woodVinegarStored() > 0); tick++) {
+                && (!distiller.getItem(DistillerBlockEntity.INPUT).isEmpty() || distiller.woodVinegarStored() >= DistillerBlockEntity.WOOD_VINEGAR_RUN); tick++) {
             distiller.energy().set((int) distiller.energy().getCapacityAsLong());
             DistillerBlockEntity.serverTick(level, helper.absolutePos(pos), helper.getBlockState(pos), distiller);
         }
@@ -149,30 +149,35 @@ final class MethanolTests {
     }
 
     /**
-     * Four wood vinegar each: with a Copper Tank beside the tower the methanol goes into it, the bottles into the chest
-     * below empty; with a Copper Pipe beside it leading to a tank, down the pipe into that tank; with only a pipe leading
-     * nowhere, or nothing at all, it stays in the Distiller's tank, the bottles below empty - none bottled (the wood
-     * vinegar is poured in as a liquid since 2026-11-10, its bottle never filled again).
+     * Four bottles (a run) each; the methanol leaves at the Condenser, by pipe only (the user, 2026-11-12): a Copper Tank
+     * set against the Condenser, or beside the Distiller, gets none; a Copper Pipe on the Condenser leading to a tank sends
+     * it down into that tank; a pipe leading nowhere, or nothing at all, and it stays in the Distiller's tank; a pipe on the
+     * Condenser whose line also runs down to the Distiller gets none (it would plug the line). Never bottled.
      */
     private static void distillerPipes(GameTestHelper helper) {
+        int run = OilFluids.BOTTLE; // a run's methanol, of four bottles of wood vinegar
         BlockPos byTank = new BlockPos(1, 2, 1);
         helper.setBlock(byTank.below(), Blocks.CHEST);
-        helper.setBlock(byTank.east(), ModBlocks.COPPER_TANK.get());
-        var besideTank = helper.getBlockEntity(byTank.east(), CopperTankBlockEntity.class);
+        tower(helper, byTank);
+        helper.setBlock(byTank.above(3).east(), ModBlocks.COPPER_TANK.get());
+        var againstCondenser = helper.getBlockEntity(byTank.above(3).east(), CopperTankBlockEntity.class);
         var first = distil(helper, byTank, 4);
         var firstChest = helper.getBlockEntity(byTank.below(), ChestBlockEntity.class);
-        check(helper, besideTank.amount() == 4 * OilFluids.BOTTLE && besideTank.resource().getFluid() == OilFluids.METHANOL.get(),
-                "the tank beside it has the methanol, a bucket of it: " + besideTank.amount());
+        check(helper, againstCondenser.amount() == 0 && first.methanolStored() == run,
+                "a tank set against the Condenser gets none; it stays in the Distiller: " + againstCondenser.amount() + ", " + first.methanolStored());
         check(helper, count(firstChest, Items.GLASS_BOTTLE) == 4 && count(firstChest, ModOil.METHANOL.get()) == 0,
                 "the four bottles below, empty: " + count(firstChest, Items.GLASS_BOTTLE) + " empty, " + count(firstChest, ModOil.METHANOL.get()) + " filled");
-        check(helper, first.methanolStored() == 0, "none left in the Distiller: " + first.methanolStored());
+        check(helper, helper.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK,
+                helper.absolutePos(byTank.above(3)), Direction.DOWN) == null
+                && helper.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK,
+                        helper.absolutePos(byTank.above(3)), Direction.EAST) != null, "the Condenser shows it on its sides, not underneath");
 
         BlockPos byPipe = new BlockPos(5, 2, 1);
         helper.setBlock(byPipe.below(), Blocks.CHEST);
         tower(helper, byPipe);
-        BlockPos far = byPipe.east(2);
+        BlockPos far = byPipe.above(3).east(2);
         helper.setBlock(far, ModBlocks.COPPER_TANK.get());
-        pipe(helper, byPipe.east());
+        pipe(helper, byPipe.above(3).east());
         var farTank = helper.getBlockEntity(far, CopperTankBlockEntity.class);
         var second = distil(helper, byPipe, 4);
         var secondChest = helper.getBlockEntity(byPipe.below(), ChestBlockEntity.class);
@@ -184,23 +189,38 @@ final class MethanolTests {
         BlockPos deadEnd = new BlockPos(1, 2, 6);
         helper.setBlock(deadEnd.below(), Blocks.CHEST);
         tower(helper, deadEnd);
-        pipe(helper, deadEnd.east()); // a pipe that goes nowhere
-        distil(helper, deadEnd, 2);
+        pipe(helper, deadEnd.above(3).east()); // a pipe that goes nowhere
+        distil(helper, deadEnd, 4);
         var thirdChest = helper.getBlockEntity(deadEnd.below(), ChestBlockEntity.class);
         var third = helper.getBlockEntity(deadEnd, DistillerBlockEntity.class);
-        check(helper, count(thirdChest, ModOil.METHANOL.get()) == 0 && count(thirdChest, Items.GLASS_BOTTLE) == 2
-                && third.methanolStored() == 2 * OilFluids.BOTTLE,
+        check(helper, count(thirdChest, ModOil.METHANOL.get()) == 0 && count(thirdChest, Items.GLASS_BOTTLE) == 4
+                && third.methanolStored() == run,
                 "a pipe leading nowhere takes none: it stays in its tank: " + third.methanolStored());
 
         BlockPos alone = new BlockPos(5, 2, 6);
         helper.setBlock(alone.below(), Blocks.CHEST);
-        var fourth = distil(helper, alone, 2);
+        var fourth = distil(helper, alone, 4);
         var fourthChest = helper.getBlockEntity(alone.below(), ChestBlockEntity.class);
-        check(helper, count(fourthChest, ModOil.METHANOL.get()) == 0 && fourth.methanolStored() == 2 * OilFluids.BOTTLE,
+        check(helper, count(fourthChest, ModOil.METHANOL.get()) == 0 && fourth.methanolStored() == run,
                 "nothing beside it: in its tank, none bottled: " + fourth.methanolStored());
+
+        // a line from the Condenser down to the Distiller, a tank at its foot: no methanol into it
+        BlockPos looped = new BlockPos(1, 2, 10);
+        helper.setBlock(looped.below(), Blocks.CHEST);
+        tower(helper, looped);
+        for (int y = 0; y <= 3; y++) {
+            pipe(helper, looped.east().above(y));
+        }
+        helper.setBlock(looped.east().below(), ModBlocks.COPPER_TANK.get());
+        var footTank = helper.getBlockEntity(looped.east().below(), CopperTankBlockEntity.class);
+        var fifth = distil(helper, looped, 4);
         // the pipe carries what it took on into the tank at its end, as the level ticks it
-        helper.succeedWhen(() -> check(helper, farTank.amount() == 4 * OilFluids.BOTTLE,
-                "down the pipe into the tank at its end: " + farTank.amount()));
+        helper.succeedWhen(() -> {
+            check(helper, farTank.amount() == run && farTank.resource().getFluid() == OilFluids.METHANOL.get(),
+                    "down the pipe from the Condenser into the tank at its end: " + farTank.amount());
+            check(helper, footTank.resource().getFluid() != OilFluids.METHANOL.get() && fifth.methanolStored() == run,
+                    "no methanol down a line that runs to the Distiller too: " + footTank.resource() + ", " + fifth.methanolStored());
+        });
     }
 
     /**

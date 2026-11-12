@@ -3,7 +3,302 @@
     {
       "when": {
         "face": "wall",
-        "facing": "north"
+        "facing": "north",
+        "shift": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "0",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "1",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "2",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_wall"
@@ -12,7 +307,711 @@
     {
       "when": {
         "face": "wall",
-        "facing": "east"
+        "facing": "north",
+        "shift": "3",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "3",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "4",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up1"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "5",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up2"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "shift": "6",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up3"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "0",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "1",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "2",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_wall",
@@ -22,7 +1021,746 @@
     {
       "when": {
         "face": "wall",
-        "facing": "south"
+        "facing": "east",
+        "shift": "3",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "3",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "4",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "5",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "shift": "6",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "0",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "1",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "2",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_wall",
@@ -32,10 +1770,1166 @@
     {
       "when": {
         "face": "wall",
-        "facing": "west"
+        "facing": "south",
+        "shift": "3",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "3",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "4",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "5",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "shift": "6",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "0",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "1",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "2",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_down1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_wall",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "3",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "4",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "5",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_wall_lamp_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_1_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_2_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_3_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_4_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_5_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_6_up3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "shift": "6",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_wall_7_up3",
         "y": 270
       }
     },
@@ -51,10 +2945,178 @@
     {
       "when": {
         "face": "ceiling",
+        "facing": "north",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
         "facing": "east"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_ceiling",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
         "y": 90
       }
     },
@@ -71,10 +3133,186 @@
     {
       "when": {
         "face": "ceiling",
+        "facing": "south",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
         "facing": "west"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_ceiling",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
         "y": 270
       }
     },
@@ -92,10 +3330,202 @@
     {
       "when": {
         "face": "floor",
+        "facing": "north",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
         "facing": "east"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_ceiling",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
         "x": 180,
         "y": 270
       }
@@ -114,10 +3544,202 @@
     {
       "when": {
         "face": "floor",
+        "facing": "south",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
         "facing": "west"
       },
       "apply": {
         "model": "nookworks:block/machine_bell_ceiling",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "signal": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_ceiling_lamp",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "1"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_1",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "2"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_2",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "3"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_3",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_4",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "5"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_5",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "6"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_6",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "inset": "7"
+      },
+      "apply": {
+        "model": "nookworks:block/machine_bell_pad_ceiling_7",
         "x": 180,
         "y": 90
       }

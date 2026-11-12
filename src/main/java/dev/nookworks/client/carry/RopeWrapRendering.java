@@ -108,7 +108,9 @@ public final class RopeWrapRendering {
                 float w = LOOP_WIDTH / 2;
                 out.box(x - w, base, z - c, x - w + LOOP_CORD, base + LOOP_HEIGHT, z + c, Direction.Axis.Y);
                 out.box(x + w - LOOP_CORD, base, z - c, x + w, base + LOOP_HEIGHT, z + c, Direction.Axis.Y);
-                out.box(x - w, base + LOOP_HEIGHT - LOOP_CORD, z - c, x + w, base + LOOP_HEIGHT, z + c, Direction.Axis.X);
+                // the bar between the posts' tops, not over them: no two faces of the loop in one plane (they flickered)
+                out.box(x - w + LOOP_CORD, base + LOOP_HEIGHT - LOOP_CORD, z - c, x + w - LOOP_CORD, base + LOOP_HEIGHT, z + c,
+                        Direction.Axis.X, false);
             }
         });
     }
@@ -117,7 +119,9 @@ public final class RopeWrapRendering {
 
     /**
      * One band round {@code box}, crossing {@code axis} at {@code at}: over the top, down two sides, under the bottom.
-     * {@code over} lifts its top and bottom runs off the block that much more.
+     * {@code over} lifts its top and bottom runs off the block that much more. The sides run the band's whole height and
+     * the top and bottom runs only between them, so at a corner no face of one lies in a plane with a face of the other
+     * (they did, and flickered, the user 2026-11-12); the runs' ends, inside the sides, are not drawn.
      */
     private static void band(Out out, Direction.Axis axis, float at, Box box, float over) {
         float a0 = at - WIDTH / 2;
@@ -128,15 +132,15 @@ public final class RopeWrapRendering {
             // along z: the sides are the north and south faces
             float n = box.z0 - GAP - THICK;
             float s = box.z1 + GAP + THICK;
-            out.box(a0, top0, n, a1, top0 + THICK, s, Direction.Axis.Z); // over the top
-            out.box(a0, bottom1 - THICK, n, a1, bottom1, s, Direction.Axis.Z); // under the bottom
+            out.box(a0, top0, n + THICK, a1, top0 + THICK, s - THICK, Direction.Axis.Z, false); // over the top
+            out.box(a0, bottom1 - THICK, n + THICK, a1, bottom1, s - THICK, Direction.Axis.Z, false); // under the bottom
             out.box(a0, bottom1 - THICK, n, a1, top0 + THICK, n + THICK, Direction.Axis.Y); // down the north face
             out.box(a0, bottom1 - THICK, s - THICK, a1, top0 + THICK, s, Direction.Axis.Y); // and the south
         } else {
             float w = box.x0 - GAP - THICK;
             float e = box.x1 + GAP + THICK;
-            out.box(w, top0, a0, e, top0 + THICK, a1, Direction.Axis.X);
-            out.box(w, bottom1 - THICK, a0, e, bottom1, a1, Direction.Axis.X);
+            out.box(w + THICK, top0, a0, e - THICK, top0 + THICK, a1, Direction.Axis.X, false);
+            out.box(w + THICK, bottom1 - THICK, a0, e - THICK, bottom1, a1, Direction.Axis.X, false);
             out.box(w, bottom1 - THICK, a0, w + THICK, top0 + THICK, a1, Direction.Axis.Y);
             out.box(e - THICK, bottom1 - THICK, a0, e, top0 + THICK, a1, Direction.Axis.Y);
         }
@@ -149,6 +153,11 @@ public final class RopeWrapRendering {
          * ({@code along} null: each face a square of the cord's twist).
          */
         void box(float x0, float y0, float z0, float x1, float y1, float z1, Direction.@Nullable Axis along) {
+            this.box(x0, y0, z0, x1, y1, z1, along, true);
+        }
+
+        /** As above; {@code ends} false leaves out the two ends of a length that butts against another. */
+        void box(float x0, float y0, float z0, float x1, float y1, float z1, Direction.@Nullable Axis along, boolean ends) {
             if (along == null) {
                 for (Direction face : Direction.values()) {
                     this.quad(face, x0, y0, z0, x1, y1, z1, null, 1);
@@ -168,7 +177,7 @@ public final class RopeWrapRendering {
                     if (face.getAxis() == along) {
                         // a piece's ends: only the band's own two ends show, the rest lie inside the next piece
                         boolean bandEnd = face.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? from == start : to >= end - 1.0E-4F;
-                        if (!bandEnd) {
+                        if (!bandEnd || !ends) {
                             continue;
                         }
                     }

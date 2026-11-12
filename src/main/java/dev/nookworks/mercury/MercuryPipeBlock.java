@@ -75,7 +75,8 @@ public class MercuryPipeBlock extends PipeBlock {
 
     private static boolean connectsTo(LevelReader level, BlockPos neighbour) {
         return level.getBlockState(neighbour).getBlock() instanceof MercuryPipeBlock
-                || level.getBlockEntity(neighbour) instanceof MercuryHandler;
+                || level.getBlockEntity(neighbour) instanceof MercuryHandler
+                || DistillerBlockEntity.isTowerCondenser(level, neighbour); // its mercury comes out at the top (2026-11-12)
     }
 
     @Override

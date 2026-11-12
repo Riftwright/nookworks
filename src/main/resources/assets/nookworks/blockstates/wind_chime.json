@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/wind_chime"
+    },
+    "facing=east": {
+      "model": "nookworks:block/wind_chime",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/wind_chime",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/wind_chime",
+      "y": 270
+    }
+  }
+}

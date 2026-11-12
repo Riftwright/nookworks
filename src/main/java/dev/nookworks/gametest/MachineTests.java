@@ -147,6 +147,7 @@ final class MachineTests {
         test("repair_box_pair_screen_shows_its_whole_store", MachineTests::repairBoxScreenWholeStore);
         test("printing_press_waits_for_redstone", MachineTests::printingPressWaitsForRedstone);
         test("spawner_controller_redstone_switches_spawners_off", MachineTests::controllerRedstoneOff);
+        test("other_mods_pipes_meet_a_machine_from_any_face_but_a_sorter_keeps_its_faces", MachineTests::anyFace);
         test("spawn_egg_brewer_redstone_button", MachineTests::brewerRedstoneButton);
         test("planter_plants_tall_flowers_whole", MachineTests::planterPlantsTallFlowersWhole);
         test("absorption_pad_rises_to_its_pipes", MachineTests::absorptionPadRisesToItsPipes);
@@ -876,6 +877,33 @@ final class MachineTests {
     }
 
     /** Stopped by redstone, the controller keeps its spawners off instead of handing them back to vanilla. */
+    /**
+     * Other mods' pipes meet a machine from any face as the pipe is set (the user, 2026-11-12): from its side, a pipe
+     * takes what the Crusher made, not what it works on; from below, it puts cobblestone in, into the slot that takes it,
+     * and nothing that is no input of it.
+     */
+    static void anyFace(GameTestHelper helper) {
+        BlockPos at = new BlockPos(2, 2, 2);
+        helper.setBlock(at, ModBlocks.CRUSHER.get());
+        var crusher = helper.getBlockEntity(at, CrusherBlockEntity.class);
+        crusher.setItem(CrusherBlockEntity.INPUT, new ItemStack(Items.COBBLESTONE, 4));
+        crusher.setItem(CrusherBlockEntity.OUTPUT, new ItemStack(Items.GRAVEL, 3));
+        var level = helper.getLevel();
+        var side = level.getCapability(Capabilities.Item.BLOCK, helper.absolutePos(at), Direction.NORTH);
+        var below = level.getCapability(Capabilities.Item.BLOCK, helper.absolutePos(at), Direction.DOWN);
+        check(helper, side != null && below != null, "its item capability on every face");
+        var gravel = net.neoforged.neoforge.transfer.item.ItemResource.of(Items.GRAVEL);
+        var cobble = net.neoforged.neoforge.transfer.item.ItemResource.of(Items.COBBLESTONE);
+        check(helper, dev.nookworks.experience.Move.extract(side, cobble, 64) == 0 && crusher.getItem(CrusherBlockEntity.INPUT).getCount() == 4,
+                "from its side, none of what it works on");
+        int taken = dev.nookworks.experience.Move.extract(side, gravel, 64);
+        check(helper, taken == 3 && crusher.getItem(CrusherBlockEntity.OUTPUT).isEmpty(), "from its side, what it made: " + taken);
+        int put = dev.nookworks.experience.Move.insert(below, cobble, 8);
+        check(helper, put == 8 && crusher.getItem(CrusherBlockEntity.INPUT).getCount() == 12, "from below, into its input: " + put);
+        check(helper, dev.nookworks.experience.Move.insert(below, gravel, 8) == 0, "and nothing that is no input of it");
+        helper.succeed();
+    }
+
     static void controllerRedstoneOff(GameTestHelper helper) {
         var controller = buildControl(helper,
                 SpawnerSettings.DEFAULT.withInterval(20).withCount(16).withAnyLight(true).withNeedsPlayer(false), 20_000);

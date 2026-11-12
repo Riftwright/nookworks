@@ -203,22 +203,29 @@ abstract class BaseSpawnerMixin implements ControlledSpawner {
      * The mob's own say over where it spawns, which NeoForge asks after the placement rules above. For an animal it
      * weighs the light as well - a pig will not stand on stone in the dark - so "any light" has to be heard here too, or
      * a controlled pig spawner on a stone floor quietly stops at nightfall. With any light, only room to stand counts -
-     * of the mob's own say: other mods' say through NeoForge's position check is still asked.
+     * of the mob's own say: other mods' say through NeoForge's position check is still asked. A mob that may spawn from a
+     * controller set to silence them is silenced here, before it joins the world (the user, 2026-11-12: a trap's noise).
      */
     @WrapOperation(method = "serverTick", at = @At(value = "INVOKE",
             target = "Lnet/neoforged/neoforge/event/EventHooks;checkSpawnPositionSpawner(Lnet/minecraft/world/entity/Mob;Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/level/SpawnData;Lnet/minecraft/world/level/BaseSpawner;)Z"))
     private boolean nookworks$anyLightMob(Mob mob, ServerLevelAccessor level, EntitySpawnReason reason,
             SpawnData data, BaseSpawner spawner, Operation<Boolean> original, @Local(argsOnly = true) ServerLevel serverLevel) {
         SpawnerSettings s = this.nookworks$activeControl(serverLevel);
+        boolean may;
         if (s != null && s.anyLight()) {
             var event = new net.neoforged.neoforge.event.entity.living.MobSpawnEvent.PositionCheck(mob, level, reason, spawner);
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(event);
-            return switch (event.getResult()) {
+            may = switch (event.getResult()) {
                 case DEFAULT -> mob.checkSpawnObstruction(level);
                 case SUCCEED -> true;
                 case FAIL -> false;
             };
+        } else {
+            may = original.call(mob, level, reason, data, spawner);
         }
-        return original.call(mob, level, reason, data, spawner);
+        if (may && s != null && s.silent()) {
+            mob.setSilent(true);
+        }
+        return may;
     }
 }

@@ -34,6 +34,7 @@ NOOKWORKS = [
         ("block.water_pump.run", "水の環境音", "ポンプの2ストローク。弁のカタン、水を吸い上げるゴボッ", 1.0, 1.0, "work"),
         ("block.ventilation_fan.run", "ビーコンを高く、ごく小さく", "羽根の低い回転音と、やわらかい風音", 1.0, 1.0, "work"),
         ("block.printing_press.run", "クラフターの音", "レバー、圧盤のドン、紙を引く音、レバーが戻る", 1.0, 1.0, "work"),
+        ("block.motor.run", "以前選んだ低いうなり（Kenney の音）", "作業場のモーターの低いうなり（ループ。動いている間ずっと鳴る。ボタンは6秒）", 1.0, 1.0, "hum"),
         ("block.drive_wheel.turn", "以前選んだ低いうなり（Kenney の音）", "ベルトの継ぎ目が1回転ごとにコトッと当たり、その間をベルトが擦れる", 1.0, 1.0, "work"),
     ]),
     ("手回しの機械と台所", [
@@ -60,7 +61,6 @@ NOOKWORKS = [
         ("block.wind_chime.chime", "アメジストの響き", "金属の筒が数本、風で続けて鳴る（ソ・ラ・シ・レ・ミの5音なので、どの組み合わせでも濁らない）", 1.0, 1.0, "cue"),
     ]),
     ("参考：以前あなたが選んだ音（そのまま残してある）", [
-        ("block.motor.run", None, "モーターの低いうなり。ほかの作業音の大きさはこれを目安にした", 1.0, 1.0, "ref"),
         ("block.spawner_controller.run", None, "スポナーコントローラー", 1.0, 1.0, "ref"),
         ("block.trash_can.swallow", None, "ゴミ箱", 1.0, 1.0, "ref"),
     ]),
@@ -286,6 +286,11 @@ h3 { font-size: 13px; font-weight: 700; color: var(--brass); letter-spacing: .08
         var lo = game ? 0.15 * sound.vol / 0.6 : 0.3, hi = game ? 0.7 * sound.vol / 0.6 : 1;
         gain.gain.setValueAtTime(0.0001, now); gain.gain.linearRampToValueAtTime(lo, now + 0.15);
         gain.gain.linearRampToValueAtTime(hi, now + 3); gain.gain.linearRampToValueAtTime(lo, now + 5.8); gain.gain.linearRampToValueAtTime(0.0001, now + 6);
+        src.start(now); src.stop(now + 6.05);
+      } else if (sound.kind === 'hum') {  // a loop that only runs: six seconds of it, faded in and out as the game fades it
+        src.loop = true;
+        gain.gain.setValueAtTime(0.0001, now); gain.gain.linearRampToValueAtTime(level, now + 0.2);
+        gain.gain.setValueAtTime(level, now + 5.8); gain.gain.linearRampToValueAtTime(0.0001, now + 6);
         src.start(now); src.stop(now + 6.05);
       } else {
         src.playbackRate.value = rate; gain.gain.value = level; src.start(now);

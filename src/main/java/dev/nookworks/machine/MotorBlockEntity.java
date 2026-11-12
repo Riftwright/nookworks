@@ -81,6 +81,9 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
             motor.step = 0.0F;
         }
         motor.shaft = (motor.shaft + motor.step) % 360.0F;
+        if (level.isClientSide()) {
+            dev.nookworks.client.MotorHum.keep(level, pos, state); // its hum held on while it runs
+        }
     }
 
     /**

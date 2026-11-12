@@ -137,7 +137,8 @@ final class LiquidCauldronTests {
      * line pulled from a tank, or an empty one from a machine, never counted it as somewhere to go and never filled it
      * (nookTechnology, 2026-11-10). A Copper Tank of methanol, two Copper Pipes - the first pulling from the tank - and
      * a cauldron: it fills, and nothing is lost on the way. A Distiller holding a bucket of methanol fills a cauldron at
-     * the end of an empty pipe, and another Distiller one stood right beside it.
+     * the end of an empty pipe on its tower's Condenser; a cauldron set against the Condenser itself gets none (pipes
+     * only, since the play-test after 1.5).
      */
     private static void lines(GameTestHelper helper) {
         BlockPos tankAt = new BlockPos(1, 2, 1);
@@ -155,12 +156,12 @@ final class LiquidCauldronTests {
                 "the first pipe pulls from the tank");
 
         BlockPos piped = new BlockPos(1, 2, 4);
-        helper.setBlock(piped.east(2), Blocks.CAULDRON);
-        helper.setBlock(piped, ModBlocks.DISTILLER.get());
-        pipe(helper, piped.east(), ModBlocks.COPPER_PIPE.get());
+        tower(helper, piped);
+        helper.setBlock(piped.above(3).east(2), Blocks.CAULDRON);
+        pipe(helper, piped.above(3).east(), ModBlocks.COPPER_PIPE.get());
         BlockPos beside = new BlockPos(5, 2, 4);
-        helper.setBlock(beside, ModBlocks.DISTILLER.get());
-        helper.setBlock(beside.south(), Blocks.CAULDRON);
+        tower(helper, beside);
+        helper.setBlock(beside.above(3).south(), Blocks.CAULDRON);
         var throughPipe = helper.getBlockEntity(piped, DistillerBlockEntity.class);
         var byItself = helper.getBlockEntity(beside, DistillerBlockEntity.class);
         Tanks.set(throughPipe.methanolTank(), OilFluids.METHANOL.get(), 1_000);
@@ -172,11 +173,18 @@ final class LiquidCauldronTests {
             check(helper, tank.amount() + puller.stored() + last.stored() + 1_000 == 3_000,
                     "a bucket in the cauldron, the rest in the tank and the pipes: " + tank.amount() + " + " + puller.stored()
                             + " + " + last.stored());
-            check(helper, full(helper, piped.east(2), ModBlocks.METHANOL_CAULDRON.get()) && throughPipe.methanolStored() == 0,
-                    "the Distiller fills the cauldron at the end of its pipe: " + helper.getBlockState(piped.east(2)));
-            check(helper, full(helper, beside.south(), ModBlocks.METHANOL_CAULDRON.get()) && byItself.methanolStored() == 0,
-                    "and the one beside it: " + helper.getBlockState(beside.south()));
+            check(helper, full(helper, piped.above(3).east(2), ModBlocks.METHANOL_CAULDRON.get()) && throughPipe.methanolStored() == 0,
+                    "the Distiller fills the cauldron at the end of the pipe on its Condenser: " + helper.getBlockState(piped.above(3).east(2)));
+            check(helper, helper.getBlockState(beside.above(3).south()).is(Blocks.CAULDRON) && byItself.methanolStored() == 1_000,
+                    "and none into one set against the Condenser: " + helper.getBlockState(beside.above(3).south()));
         });
+    }
+
+    private static void tower(GameTestHelper helper, BlockPos pos) {
+        helper.setBlock(pos, ModBlocks.DISTILLER.get());
+        helper.setBlock(pos.above(1), ModBlocks.DISTILLATION_COLUMN.get());
+        helper.setBlock(pos.above(2), ModBlocks.DISTILLATION_COLUMN.get());
+        helper.setBlock(pos.above(3), ModBlocks.CONDENSER.get());
     }
 
     /**

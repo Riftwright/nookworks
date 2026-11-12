@@ -2,8 +2,8 @@
   "neoforge:conditions": [
     {
       "type": "nookworks:setting",
-      "setting": "flour_bakery",
-      "is": false
+      "setting": "vanilla_bread",
+      "is": true
     }
   ],
   "type": "minecraft:crafting_shaped",

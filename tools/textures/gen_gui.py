@@ -282,28 +282,25 @@ def bucket(img, ox):
 
 
 def puzzle(img, ox):
-    """Add-on: a puzzle piece, a knob out of its top and its right, a hollow in its left."""
-    rows = [
-        "................",
-        ".....####.......",
-        "....######......",
-        "....######......",
-        ".....####.......",
-        "..##########....",
-        "..##########....",
-        "..############..",
-        "..#############.",
-        "..#############.",
-        "..############..",
-        "..##########....",
-        "..##########....",
-        "..##########....",
-        "..##########....",
-        "................",
-    ]
-    piece = {(x, y) for y, row in enumerate(rows) for x, ch in enumerate(row) if ch == "#"}
-    piece -= {(2, 8), (2, 9), (3, 8), (3, 9), (2, 10), (2, 7)}  # the hollow in its left side
-    shaped(img, ox, 0, piece, COPPER, COPPER_LIT, COPPER_DARK)
+    """Add-on: a jigsaw piece, as one is drawn - a round knob on a narrower neck out of its top and its right, a round
+    socket into its left and its bottom - outlined outside its edge, so the knobs keep their copper (drawn as the gauge
+    icons are, with the outline inside, the knobs were all outline and the piece read as a clay figure: the user,
+    2026-11-12, 「パズルのピースにみえない。土偶ですか？」)."""
+    # a square body twelve across, small round knobs on narrow necks (big ones read as a head and an arm: a figure again)
+    piece = rect(1, 4, 12, 15)
+    piece |= {(6, 1), (7, 1)} | {(x, 2) for x in range(5, 9)} | {(6, 3), (7, 3)}
+    piece |= {(13, 9), (13, 10)} | {(14, y) for y in range(8, 12)} | {(15, 9), (15, 10)}
+    piece -= {(1, 9), (1, 10)} | {(2, y) for y in range(8, 12)} | {(3, 9), (3, 10)}
+    piece -= {(6, 15), (7, 15)} | {(x, 14) for x in range(5, 9)} | {(6, 13), (7, 13)}
+    for (x, y) in piece:
+        lit = (x - 1, y) not in piece or (x, y - 1) not in piece
+        dark = (x + 1, y) not in piece or (x, y + 1) not in piece
+        colour = COPPER_DARK if dark and not lit else COPPER_LIT if lit and not dark else COPPER
+        img.putpixel((ox + x, y), colour + (255,))
+    for y in range(16):
+        for x in range(16):
+            if (x, y) not in piece and any((x + dx, y + dy) in piece for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                img.putpixel((ox + x, y), TAB_EDGE + (255,))
 
 
 def tab_icons():

@@ -406,8 +406,9 @@ public final class NookworksNetwork {
     static void register(RegisterPayloadHandlersEvent event) {
         // "2" since 1.4: PotContents carries a note, so a 1.3 client on a 1.4 server (or the reverse) is turned away at
         // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check). "3" since
-        // 1.5: the machine screens' tabs add slots to their menus, and the gauge click's payload is gone
-        var registrar = event.registrar("3");
+        // 1.5: the machine screens' tabs add slots to their menus, and the gauge click's payload is gone. "4" since 1.6:
+        // the Spawner Controller's menu sends a fifteenth value (its mob sounds), which a 1.5 client's menu has no room for
+        var registrar = event.registrar("4");
         registrar.playToServer(StepWandMode.TYPE, StepWandMode.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && BuildingWandItem.hasModes(player.getMainHandItem())
                     && payload.steps() != 0) {

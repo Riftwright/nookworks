@@ -152,7 +152,8 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         float done = this.menu.progressMax() > 0 ? Math.min(1.0F, (float) this.menu.progress() / this.menu.progressMax()) : 0.0F;
         int beamEnd = this.beamEnd(layout);
         switch (layout.gauge()) {
-            case ARROW -> MachineStyle.arrow(g, gx, gy, done);
+            // still while a Distiller works its tank's wood vinegar, a liquid into liquids (its extra says so)
+            case ARROW -> MachineStyle.arrow(g, gx, gy, layout == MachineLayout.DISTILLER && this.menu.extra() == 1 ? 0.0F : done);
             case FLAME -> MachineStyle.flame(g, gx, gy, done);
             case BEAM -> MachineStyle.beam(g, gx, gy, beamEnd - layout.gaugeX(), done, this.menu.status() == MachineStatus.RUNNING);
             case NONE -> {}

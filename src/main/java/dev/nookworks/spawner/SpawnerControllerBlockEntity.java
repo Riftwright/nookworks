@@ -69,6 +69,7 @@ public class SpawnerControllerBlockEntity extends BlockEntity implements MenuPro
                 // in two halves, as the energy is: a slot is sent as 16 bits, and six strong spawners cost more
                 case 12 -> SpawnerControllerBlockEntity.this.costPerTick() & 0xFFFF;
                 case 13 -> SpawnerControllerBlockEntity.this.costPerTick() >>> 16;
+                case 14 -> s.silent() ? 1 : 0;
                 default -> 0;
             };
         }

@@ -1,19 +1,18 @@
-"""Two of the mod's own sound files, cut out of Kenney's CC0 sound packs (kenney.nl - free to use, change and pass on, no credit
+"""One of the mod's own sound files, cut out of Kenney's CC0 sound packs (kenney.nl - free to use, change and pass on, no credit
 needed): mono (Minecraft places only a mono sound where it plays; a stereo one is heard everywhere at full volume),
-faded in and out, levelled to one loudness, the same bytes every run.
+faded out, levelled to one loudness, the same bytes every run.
 
-The packs are not kept here. Download them from kenney.nl into a folder of their own (as they come, zipped):
-    Sci-fi Sounds   kenney_sci-fi-sounds.zip
+The pack is not kept here. Download it from kenney.nl into a folder of its own (as it comes, zipped):
     Impact Sounds   kenney_impact-sounds.zip
 then, from the repo root (needs ffmpeg on the PATH):
     python tools/sounds/make_sounds.py <that folder>
 
-Picked by the user from three candidates each (2026-10-11, the listening page): the Motor's low running hum and the
-Trash Can's tin knock. sounds.json sets how loud each plays; the code plays the Motor's at one pitch (a pitch that
-wanders reads as a motor changing speed). Two more were picked then and are computed by gen_sounds.py now: the Drive
-Wheel's hum (engineCircular_002 of the sci-fi pack, slowed to 0.85), from 2026-11-10, when a listener heard a mains hum
-in it; and the Spawner Controller's swell (forceField_001, slowed to 0.8), the same night, by the user's own ear beside
-the computed one.
+Picked by the user from three candidates (2026-10-11, the listening page): the Trash Can's tin knock. sounds.json sets
+how loud it plays. Three more were picked then, from the Sci-fi Sounds pack, and are computed by gen_sounds.py now:
+the Drive Wheel's hum (engineCircular_002, slowed to 0.85), from 2026-11-10, when a listener heard a mains hum in it;
+the Spawner Controller's swell (forceField_001, slowed to 0.8), the same night, by the user's own ear beside the
+computed one; and the Motor's low running hum (spaceEngineLow_000, 1.3 seconds from its first second), from
+2026-11-12, when the user found it little like a motor and odd for sounding now and then - a loop of ours since.
 """
 import re
 import subprocess
@@ -27,7 +26,6 @@ OUT = ROOT / "src/main/resources/assets/nookworks/sounds"
 
 # file: (pack, path in the pack, start s, length s, fade in s, fade out s, speed - the pitch, as a record played faster)
 SOUNDS = {
-    "block/motor_run": ("kenney_sci-fi-sounds.zip", "Audio/spaceEngineLow_000.ogg", 1.0, 1.3, 0.15, 0.5, 1.0),
     "block/trash_can_swallow": ("kenney_impact-sounds.zip", "Audio/impactTin_medium_000.ogg", 0.0, 0.16, 0.0, 0.05, 1.0),
 }
 TARGET_MEAN = -20.0  # dB, each sound's mean loudness; its peak is held under -1 dB

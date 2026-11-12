@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0", "1_6_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -361,6 +361,21 @@ final class SaveCompat {
                 properties.put(key, "false");
             }
             StringBuilder out = new StringBuilder(furniture.substring(0, furniture.indexOf('[') + 1));
+            properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
+            now.addProperty("state", out.append(']').toString());
+        }
+        if (state.startsWith(Nookworks.MODID + ":machine_bell[") && !state.contains("signal=")) {
+            // the play-test after 1.5: a Machine Bell fits what it is on (inset, shift) and has its signal switched
+            // (signal); one from before loads as made - flat, as high as made - giving its signal as it did, and is fitted
+            // as its chunk loads... only when what it is on next changes (a block from before stays flat until then)
+            TreeMap<String, String> properties = new TreeMap<>();
+            for (String pair : state.substring(state.indexOf('[') + 1, state.length() - 1).split(",")) {
+                properties.put(pair.substring(0, pair.indexOf('=')), pair.substring(pair.indexOf('=') + 1));
+            }
+            properties.put("inset", "0");
+            properties.put("shift", "3");
+            properties.put("signal", "true");
+            StringBuilder out = new StringBuilder(state.substring(0, state.indexOf('[') + 1));
             properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
             now.addProperty("state", out.append(']').toString());
         }

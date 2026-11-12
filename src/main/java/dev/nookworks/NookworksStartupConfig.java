@@ -23,6 +23,11 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class NookworksStartupConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue FLOUR_BAKERY;
+    /**
+     * Vanilla's bread from three wheat kept beside the bakery's dough (the user, 2026-11-12: two things in one setting -
+     * the vanilla recipe kept or taken, and another way to make it - 「パンだけは小麦3つでも作れるのがデフォルトの方がいい」).
+     */
+    public static final ModConfigSpec.BooleanValue WHEAT_BREAD;
     public static final ModConfigSpec.BooleanValue EDIBLE_RAW_FOODS;
     /** Whether each new world chooses its parts on the Create World screen ({@link dev.nookworks.feature.WorldFeatures}). */
     public static final ModConfigSpec.BooleanValue WORLD_MENU;
@@ -33,9 +38,12 @@ public final class NookworksStartupConfig {
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-        FLOUR_BAKERY = builder.comment("Bread, cookies, cake and pumpkin pie are made of flour, as they are: bread from dough that",
-                "is left to rise and then baked. Off, the vanilla recipes from wheat come back (bread dough stays, as another way).")
+        FLOUR_BAKERY = builder.comment("Cookies, cake and pumpkin pie are made of flour, as they are, and bread from dough that is left",
+                "to rise and then baked. Off, the vanilla recipes from wheat come back (bread dough stays, as another way).")
                 .translation("nookworks.configuration.flourBakery").define("flourBakery", true);
+        WHEAT_BREAD = builder.comment("Bread can also be made the vanilla way, from three wheat, beside the bakery's dough. Off, with the",
+                "flour bakery on, bread comes from dough only.")
+                .translation("nookworks.configuration.wheatBread").define("wheatBread", true);
         EDIBLE_RAW_FOODS = builder.comment("Things that can be eaten raw can be: kelp, sugar cane, sugar, salt, short grass, mushrooms",
                 "and fungi (the red ones are poisonous), honeycomb, cocoa beans.")
                 .translation("nookworks.configuration.edibleRawFoods").define("edibleRawFoods", true);
@@ -77,6 +85,7 @@ public final class NookworksStartupConfig {
     public static Map<String, Boolean> values() {
         Map<String, Boolean> values = new LinkedHashMap<>();
         values.put("flour_bakery", FLOUR_BAKERY.getAsBoolean());
+        values.put("wheat_bread", WHEAT_BREAD.getAsBoolean());
         values.put("edible_raw_foods", EDIBLE_RAW_FOODS.getAsBoolean());
         return values;
     }
@@ -114,6 +123,7 @@ public final class NookworksStartupConfig {
         }
         return switch (name) {
             case "flour_bakery" -> FLOUR_BAKERY;
+            case "wheat_bread" -> WHEAT_BREAD;
             case "edible_raw_foods" -> EDIBLE_RAW_FOODS;
             default -> null;
         };
@@ -151,6 +161,14 @@ public final class NookworksStartupConfig {
      */
     public static boolean flourBakery() {
         return FLOUR_BAKERY.getAsBoolean() && Features.enabled("kitchen") && Features.available(PartGraph.BREAD_DOUGH);
+    }
+
+    /**
+     * Whether vanilla's bread from three wheat loads ({@code nookworks:setting "vanilla_bread"}): with the bakery stood
+     * down, or kept beside it ({@link #WHEAT_BREAD}).
+     */
+    public static boolean vanillaBread() {
+        return !flourBakery() || WHEAT_BREAD.getAsBoolean();
     }
 
     private NookworksStartupConfig() {}

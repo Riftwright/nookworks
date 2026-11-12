@@ -17,6 +17,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.MovingBlockRenderState;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.block.model.BlockStateModelWrapper;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -27,7 +30,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.ProblemReporter;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.TagValueInput;
@@ -50,6 +55,16 @@ public final class CarriedBlockRendering {
 
     public static void submit(CarriedLook look, PoseStack pose, SubmitNodeCollector collector, int light, float partialTick,
             CameraRenderState camera) {
+        submit(look, pose, collector, light, partialTick, camera, null);
+    }
+
+    /**
+     * As above, with {@code at} the world cell of the first part, where one is known: a plain model is then drawn as a
+     * falling block is, tinted by the biome there (a grass block's green, leaves) and lit there, where without it a
+     * grass block came out in the tint's no-world green (the user, 2026-11-12: 「草ブロック縛ったら、なんか色変わるし」).
+     */
+    public static void submit(CarriedLook look, PoseStack pose, SubmitNodeCollector collector, int light, float partialTick,
+            CameraRenderState camera, @Nullable BlockPos at) {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         if (level == null || look.isEmpty()) {
@@ -66,7 +81,18 @@ public final class CarriedBlockRendering {
             pose.translate(part.offset().getX(), part.offset().getY(), part.offset().getZ());
             // a plain model is meshed in the world beside its renderer; a special one (a chest's) is the renderer's own
             // drawing, which the world leaves to the renderer
-            if (renderer == null || mc.getModelManager().getBlockModelSet().get(state) instanceof BlockStateModelWrapper) {
+            boolean plain = renderer == null || mc.getModelManager().getBlockModelSet().get(state) instanceof BlockStateModelWrapper;
+            if (plain && at != null && state.getRenderShape() == RenderShape.MODEL) {
+                BlockPos cell = at.offset(part.offset());
+                MovingBlockRenderState moving = new MovingBlockRenderState();
+                moving.randomSeedPos = cell;
+                moving.blockPos = cell;
+                moving.blockState = state;
+                moving.biome = level.getBiome(cell);
+                moving.cardinalLighting = level.cardinalLighting();
+                moving.lightEngine = level.getLightEngine();
+                collector.submitMovingBlock(pose, moving, 0);
+            } else if (plain) {
                 BlockModelRenderState model = new BlockModelRenderState();
                 mc.getBlockModelResolver().update(model, state, CONTEXT);
                 model.submitMultiLayer(pose, collector, LightCoordsUtil.max(light, model.blockLightCoords), OverlayTexture.NO_OVERLAY, 0);
@@ -83,6 +109,33 @@ public final class CarriedBlockRendering {
                 }
             }
             pose.popPose();
+        }
+    }
+
+    /**
+     * A block's cracks over each part with a model, {@code progress} 0-9 as on a block being dug (none below 0): a Tied
+     * Load being hit. The pose as for {@link #submit}.
+     */
+    public static void submitCracks(CarriedLook look, PoseStack pose, SubmitNodeCollector collector, int progress) {
+        if (progress < 0 || look.isEmpty()) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        RandomSource random = RandomSource.create();
+        for (CarriedLook.LookPart part : look.parts()) {
+            BlockState state = part.state();
+            if (state.getRenderShape() != RenderShape.MODEL) {
+                continue;
+            }
+            BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(state);
+            random.setSeed(42L);
+            model.collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter.EMPTY, BlockPos.ZERO, state, random, parts);
+            pose.pushPose();
+            pose.translate(part.offset().getX(), part.offset().getY(), part.offset().getZ());
+            collector.submitBreakingBlockModel(pose, List.copyOf(parts), Math.min(9, progress), model.hasMaterialFlag(1));
+            pose.popPose();
+            parts.clear();
         }
     }
 

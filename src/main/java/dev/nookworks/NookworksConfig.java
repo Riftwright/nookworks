@@ -203,7 +203,7 @@ public final class NookworksConfig {
                 "flint and steel, a fire charge or a burning arrow lights it. Off, it is lit as soon as it is placed, as in",
                 "vanilla. Campfires already in the world are left as they are. On, a campfire item looks unlit as well and casts no",
                 "light from the hand under a shader pack; off, it is vanilla's burning one.")
-                .translation(key("campfiresPlacedUnlit")).define("campfiresPlacedUnlit", true);
+                .translation(key("campfiresPlacedUnlit")).define("campfiresPlacedUnlit", false);
 
         RECIPE_CHOICE = BUILDER.comment("When a crafting grid matches recipes that make different things (two mods' recipes for the same",
                 "ingredients), a button by the result lets the player pick which to make, and the pick is remembered. Off by itself",

@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
  * asks for it, each there only while its page is shown. Without extensions it has no slots at all, as it always had.
  */
 public class SpawnerControllerMenu extends AbstractContainerMenu {
-    public static final int DATA_COUNT = 14;
+    public static final int DATA_COUNT = 15;
 
     public static final int TOGGLE_ENABLED = 0;
     public static final int INTERVAL_DOWN = 1;
@@ -37,6 +37,7 @@ public class SpawnerControllerMenu extends AbstractContainerMenu {
     public static final int TOGGLE_LIGHT = 7;
     public static final int TOGGLE_PLAYER = 8;
     public static final int BUTTON_REDSTONE = 9;
+    public static final int TOGGLE_SILENT = 10;
 
     /** Where the player's inventory goes on a page that shows it, relative to the panel (the hotbar 58 lower). */
     public static final int INVENTORY_X = 8;
@@ -274,13 +275,19 @@ public class SpawnerControllerMenu extends AbstractContainerMenu {
         return this.data.get(5) != 0;
     }
 
+    /** Whether the mobs it makes are silenced. */
+    public boolean silent() {
+        return this.data.get(14) != 0;
+    }
+
     public int energy() {
         return (this.data.get(6) & 0xFFFF) | (this.data.get(11) & 0xFFFF) << 16;
     }
 
     /** The settings as synced, for what the screen works out of them (a spawner's cost). */
     public SpawnerSettings settings() {
-        return new SpawnerSettings(this.enabled(), this.data.get(1), this.count(), this.maxNearby(), this.anyLight(), this.needsPlayer());
+        return new SpawnerSettings(this.enabled(), this.data.get(1), this.count(), this.maxNearby(), this.anyLight(), this.needsPlayer(),
+                this.silent());
     }
 
     /** FE a tick it costs now, for all its spawners. */
@@ -338,6 +345,7 @@ public class SpawnerControllerMenu extends AbstractContainerMenu {
             case NEARBY_UP -> s.withMaxNearby(s.maxNearby() + 1);
             case TOGGLE_LIGHT -> s.withAnyLight(!s.anyLight());
             case TOGGLE_PLAYER -> s.withNeedsPlayer(!s.needsPlayer());
+            case TOGGLE_SILENT -> s.withSilent(!s.silent());
             default -> s;
         });
         return true;

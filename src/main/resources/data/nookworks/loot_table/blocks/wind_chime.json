@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/wind_chime",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:wind_chime"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

@@ -55,6 +55,7 @@ OURS = {
     "nookworks:item.wrench.turn": ("click", "a ratchet wrench clicking"),
     "nookworks:item.oil_can.squirt": ("click", "a tin oil can clicking as it is squeezed"),
     "nookworks:block.drive_wheel.turn": ("roll", "a belt-driven wheel turning, the belt knocking softly on the rim"),
+    "nookworks:block.motor.run": ("hum", "an electric motor humming steadily in a workshop"),
     "nookworks:block.machine.stop": ("thump", "a machine shutting down with a clack and a clunk"),
     "nookworks:block.machine_bell.ring": ("bell", "a small electric alarm bell ringing"),
     "nookworks:block.sorter.sort": ("click", "a small flap clicking shut"),

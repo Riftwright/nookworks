@@ -68,7 +68,10 @@ final class SoundTests {
         helper.succeed();
     }
 
-    /** Every machine that shows it is working (its lamp, its fire) has a sound for it, and none while it stands. */
+    /**
+     * Every machine that shows it is working (its lamp, its fire) has a sound for it, and none while it stands - but the
+     * Motor, whose hum is held on while it runs (client/MotorHum), not a sound now and then: none either way here.
+     */
     private static void machinesSoundWhileTheyWork(GameTestHelper helper) {
         int checked = 0;
         for (var block : BuiltInRegistries.BLOCK) {
@@ -83,6 +86,11 @@ final class SoundTests {
                 continue; // nothing shows it working: it says nothing either
             }
             check(helper, machine.workSound(state.setValue(working, false)) == null, block + " is quiet while it stands");
+            if (block instanceof MotorBlock) {
+                check(helper, machine.workSound(state.setValue(working, true)) == null, "the Motor hums on instead, not now and then");
+                checked++;
+                continue;
+            }
             check(helper, machine.workSound(state.setValue(working, true)) != null, block + " sounds while it works");
             checked++;
         }

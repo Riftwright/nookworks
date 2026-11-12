@@ -2,6 +2,7 @@ package dev.nookworks.rope;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
@@ -22,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
@@ -30,7 +32,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -56,12 +60,21 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public final class TiedLoads {
     private TiedLoads() {}
 
+    /** The sides a rope is wound round: the four and the top (under it, the floor it stands on is no matter). */
+    private static final Direction[] WOUND_ROUND = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP};
+
     /**
      * Ties up the block at {@code pos} as {@code actor} (a player, a machine's fake player, or null): taken out of the world
-     * and a Tied Load set in its place. Null when it may not be - the actor, a player, told why over the hotbar. Uses no
-     * rope: the caller does.
+     * and a Tied Load set in its place, at rest. Null when it may not be - the actor, a player, told why over the hotbar:
+     * as {@link Carrying#check} says, or a full block against a side or the top that the rope would go round
+     * ({@link #walledIn}). Uses no rope: the caller does.
      */
     public static @Nullable TiedLoadEntity tie(ServerLevel level, BlockPos pos, @Nullable Player actor) {
+        Carrying.Check check = Carrying.check(level, pos, actor);
+        if (check.isOk() && walledIn(level, check.set())) {
+            tell(actor, Component.translatable("message.nookworks.tied_load.walled_in"));
+            return null;
+        }
         Optional<CarriedBlock> taken = Carrying.take(level, pos, actor);
         if (taken.isEmpty()) {
             tell(actor, inRopeWords(Carrying.check(level, pos, actor))); // asked again only to say why
@@ -80,6 +93,23 @@ public final class TiedLoads {
         level.playSound(null, pos, SoundEvents.LEAD_TIED, SoundSource.BLOCKS, 1.0F, 0.9F);
         level.gameEvent(actor, GameEvent.ENTITY_PLACE, pos);
         return load;
+    }
+
+    /**
+     * Whether a full block stands against one of {@code set}'s four sides or its top (not one of the set's own: a double
+     * chest's halves): with the ground packed round it, a rope cannot be wound round it (the user, 2026-11-12: 「「四方と
+     * 上面にフルブロックが存在しない」という状態のときだけ縛れたほうがいい」). Safe on the client, for the click's swing.
+     */
+    public static boolean walledIn(Level level, Set<BlockPos> set) {
+        for (BlockPos cell : set) {
+            for (Direction side : WOUND_ROUND) {
+                BlockPos next = cell.relative(side);
+                if (!set.contains(next) && level.getBlockState(next).isCollisionShapeFullBlock(level, next)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -197,6 +227,87 @@ public final class TiedLoads {
     }
 
     /**
+     * {@code player}'s hit on {@code load}: a hit's worth of digging at its block with what the hand holds
+     * ({@link TiedLoadEntity#HIT_TICKS} ticks), cracks shown as on a block, so the harder the block, the more hits - one in
+     * creative. Broken, its block is set back where it stands and broken there by the player, as they would break the
+     * block: drops by their tool, the tool worn, a chest's spill, the rope dropped. Not where they may not break it,
+     * nor with what may not break a block (a sword in creative). True when the hit landed.
+     */
+    static boolean hit(ServerLevel level, TiedLoadEntity load, ServerPlayer player) {
+        CarriedBlock carried = load.carried();
+        if (carried == null || !player.mayBuild()) {
+            return false;
+        }
+        BlockPos at = load.base();
+        BlockState state = carried.state();
+        if (!Permission.mayBreak(level, at, player)) {
+            return false; // a claim's own words say so, as for its blocks
+        }
+        if (!player.getMainHandItem().canDestroyBlock(state, level, at, player)) {
+            return false;
+        }
+        float step = player.hasInfiniteMaterials() ? 1.0F : state.getDestroyProgress(player, level, at) * TiedLoadEntity.HIT_TICKS;
+        if (step <= 0) {
+            return false;
+        }
+        level.playSound(null, load.getX(), load.getY() + 0.5, load.getZ(), state.getSoundType().getHitSound(), SoundSource.BLOCKS, 0.5F, 0.75F);
+        if (load.hit(step, level.getGameTime())) {
+            breakBy(level, load, player);
+        }
+        return true;
+    }
+
+    /**
+     * Broken by {@code player}: set back and broken as they would break the block. With no room or leave to set it back it
+     * stays tied; a block that will not break by hand when set back (a Storage Barrel too full) stays there, untied.
+     */
+    private static void breakBy(ServerLevel level, TiedLoadEntity load, ServerPlayer player) {
+        CarriedBlock carried = load.takeCarried();
+        if (carried == null) {
+            return;
+        }
+        BlockPos at = load.base();
+        if (!Carrying.put(level, at, Rotation.NONE, carried, player, load).placed()) {
+            load.setCarried(carried);
+            return;
+        }
+        load.discard();
+        for (CarriedBlock.Part part : carried.parts()) {
+            player.gameMode.destroyBlock(at.offset(part.offset()));
+        }
+        if (!player.hasInfiniteMaterials()) {
+            Block.popResource(level, at, new ItemStack(ModItems.ROPE.get()));
+        }
+    }
+
+    /**
+     * Whether {@code explosion} is strong enough where {@code load} stands to break its block, as it would break the block
+     * standing there: its strength at that distance (vanilla's ray loses about 0.75 a block) over what the block's blast
+     * resistance takes off it. TNT breaks a tied chest or machine close by, not one of obsidian; an explosion that breaks
+     * no blocks (mobGriefing off, a wind charge) breaks none.
+     */
+    static boolean blownApartBy(TiedLoadEntity load, Explosion explosion) {
+        CarriedBlock carried = load.carried();
+        if (carried == null || !explosion.getBlockInteraction().shouldAffectBlocklikeEntities()) { // one that breaks blocks
+            return false;
+        }
+        float resistance = 0;
+        for (CarriedBlock.Part part : carried.parts()) {
+            resistance = Math.max(resistance, part.state().getBlock().getExplosionResistance());
+        }
+        double distance = Math.sqrt(load.getBoundingBox().getCenter().distanceToSqr(explosion.center()));
+        return explosion.radius() - 0.75 * distance > (resistance + 0.3F) * 0.3F;
+    }
+
+    /** Broken by an explosion that reached it ({@link #blownApartBy}): broken open as a killed load is, the rope dropped. */
+    static void blownUp(ServerLevel level, TiedLoadEntity load) {
+        BlockPos at = load.base();
+        breakOpen(level, load, load.takeCarried());
+        load.discard();
+        Block.popResource(level, at, new ItemStack(ModItems.ROPE.get()));
+    }
+
+    /**
      * Sets {@code carried} down tied at {@code at} (its first part's bottom middle), as a new Tied Load. Should the world
      * refuse it (an add-on cancelling its joining), what it holds is broken open there instead, as a killed load's is,
      * and the load returned is in no world and holds nothing ({@link TiedLoadEntity#carried()} null): nothing is
@@ -250,7 +361,7 @@ public final class TiedLoads {
                 result = Clicks.REFUSED;
             }
         } else {
-            result = Carrying.couldCarry(state) ? InteractionResult.SUCCESS : Clicks.REFUSED;
+            result = Carrying.couldCarry(state) && !walledIn(level, Set.of(pos)) ? InteractionResult.SUCCESS : Clicks.REFUSED;
         }
         event.setCanceled(true);
         event.setCancellationResult(result);

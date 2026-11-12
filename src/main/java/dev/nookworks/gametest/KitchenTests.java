@@ -178,15 +178,18 @@ final class KitchenTests {
     }
 
     /**
-     * With the bakery on (the default), bread, cookies, cake and pumpkin pie are made of flour: vanilla's recipes from
-     * wheat are not loaded, ours are; the dough recipes are there. The Iron Pot knows the new dishes.
+     * With the bakery on (the default), cookies, cake and pumpkin pie are made of flour: vanilla's recipes from wheat are
+     * not loaded, ours are; the dough recipes are there. Vanilla's bread from three wheat stays beside the dough, with Bread
+     * From Wheat on, its default (the user, 2026-11-12). The Iron Pot knows the new dishes.
      */
     private static void breadIsMadeOfFlour(GameTestHelper helper) {
         var recipes = helper.getLevel().getServer().getRecipeManager();
         Function<String, Boolean> has = id -> recipes.byKey(ResourceKey.create(Registries.RECIPE, Identifier.parse(id))).isPresent();
-        for (String gone : new String[] {"minecraft:bread", "minecraft:cookie", "minecraft:cake", "minecraft:pumpkin_pie"}) {
+        for (String gone : new String[] {"minecraft:cookie", "minecraft:cake", "minecraft:pumpkin_pie"}) {
             check(helper, !has.apply(gone), gone + " from wheat is not loaded");
         }
+        check(helper, has.apply("minecraft:bread") == dev.nookworks.NookworksStartupConfig.WHEAT_BREAD.getAsBoolean(),
+                "bread from three wheat loaded as Bread From Wheat says (on by default)");
         for (String there : new String[] {"nookworks:cookie_from_flour", "nookworks:cake_from_flour", "nookworks:pumpkin_pie_from_flour",
                 "nookworks:bread_dough", "nookworks:udon_dough", "nookworks:pancake_batter", "nookworks:rice_bale"}) {
             check(helper, has.apply(there), there + " is loaded");

@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.6.0 (2026-11-13)
+- 1.6.0: the play-test after 1.5 - tied loads that rest where tied, can be broken and are drawn in the biome's colour; the Wind Chime a block; the Machine Bell fitted to every machine, with a signal switch; spawners' mobs silenced; a Motor that hums; the Distiller's tower sending out at its Condenser, wood vinegar's water let off; Bread From Wheat apart from the bakery; other mods' pipes from any face; new Storage Barrel faces; the Standing Mirror under water.
+- Changed: the rope wound round a tied block no longer flickers where its bands meet and at the knot's loop, and a tied grass block (or leaves) keeps the green of where it stands.
+- Changed: a block tied where it stands stays there, in the air too, as it did as a block; only a load a rope has moved falls when the rope goes.
+- Changed: a tied load can be broken - hit it, the harder its block the more hits, cracks showing - and comes down as its block would, the rope with it; an explosion strong enough for its block breaks it too (it stood up to both, a cage that held a wither).
+- Changed: a block with a full block against one of its four sides or its top cannot be tied: no room round it for the rope.
+- Fixed: a Standing Mirror seen from under water was a flat dark blue: it shows what stands before it in the fog of where it stands (the air's for one on land), and its glass is fogged as a block is by what lies between the eye and it - under water, at a distance, in rain.
+- Fixed: under a shader pack, a Standing Mirror seen through water or glass showed a dark face with a pale stripe (since 1.5.0); it shows its silver there now. Without a pack it reflects through water.
+- Changed: the Storage Barrels have new faces: staves and two bands of their tier's metal, softer and paler, riveted corner plates, a lid framed by a soft groove, the wood nearer vanilla's barrel and the grain smoother; open, a warm inside.
+- Changed: the Wind Chime is a block, a real chime of a wooden disc, five tubes, a clapper and a sail - hung under a beam, an eave, a fence or a chain, and on a Thin Rope it hangs as that block, as a lantern does.
+- Added: the Spawner Controller can silence the mobs its spawner makes, wherever they go ("Mob sounds"), for a quarter more power.
+- Changed: the Machine Bell fits the machine it is on: a black iron pad behind it reaches a machine's panel set in from its frame, it sits lower on a lower machine and higher on a Sifter, and it hangs on a machine of any shape. Its red is quieter, and its icon new.
+- Changed: a Machine Bell set now gives no redstone signal until switched on with an empty-hand click (a small lamp on it lights while it is on), so nothing beside it is set off unasked; a bell already set keeps giving it.
+- Changed: the Add-ons tab on machine screens shows a jigsaw piece.
+- Changed: a running Motor hums on while it runs, rather than now and then - a low workshop hum of our own in place of the borrowed sound, faded in as it starts and out as it stops.
+- Changed: the Vacuum Distiller's tower sends its methanol and its mercury out at the top: from Copper or Mercury Pipes on the Condenser's sides or top - nothing set against it - and the Distiller itself sends out neither. Move pipes from a tower's Distiller to its Condenser.
+- Changed: distilling wood vinegar, a bucket gives a quarter bucket of methanol and the rest as water, and a log in the Sealed Retort gives a bucket of wood vinegar - a log's methanol is what it was. The water leaves the Distiller's sides and bottom, never back up the line its wood vinegar comes in by, and with nowhere to go it is let off as steam, so the still never stops for it.
+- Changed: the Distiller's screen arrow stays still while it distils a liquid into liquids; the status line says how far the run has come.
+- Changed: bread from three wheat is a setting of its own, Bread From Wheat, on by default: bread can be made the vanilla way beside the bakery's dough. Flour Bakery keeps cookies, cake and pumpkin pie to flour, as before. A server and its players must have the same.
+- Changed: Campfires Placed Unlit is off by default for a new install (a settings file already written keeps its value).
+- Changed: other mods' pipes and conveyors meet a machine from any face as the pipe is set: what goes in goes only into a slot that takes it, and only what the machine made comes out - never its fuel or what it works on. A vanilla hopper keeps a machine's faces, as a furnace's.
+- Added (for add-ons): data/<namespace>/bell_mounts/*.json lists how a Machine Bell sits on an add-on's machines (tools/textures/gen_machine_bell.py --mod writes it from the add-on's models).
+
 ## 1.5.0 (2026-11-11)
 - 1.5.0: tabs on the machine screens (Settings, Liquids, Add-ons), blocks tied up with rope and hoisted, the Reinforced Building Wand with Replace and Box modes and a take-back, the Wrench's Recover mode, wood vinegar and methanol as liquids, cauldrons of every liquid of ours and dispensers that pour them, machines that sound like themselves - with settings, a stop you hear and the Machine Bell - the Wind Chime, turned planks, and under a shader pack a Standing Mirror lit as the room is.
 - Changed: with a shader pack (Iris), a Standing Mirror's reflection is as dark and as warm as the room around it - by torchlight, at dusk, at night - where it stood out as a bright window onto the game without shaders. The pack's light is measured from the pack itself, so it needs no pack by name; the pack's shadows, sky and water still do not show in the mirror. Mods > Nookworks > Config has a switch for it.

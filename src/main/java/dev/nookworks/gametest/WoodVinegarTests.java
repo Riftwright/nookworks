@@ -62,6 +62,7 @@ final class WoodVinegarTests {
         test("a_retort_with_nowhere_for_its_wood_vinegar_waits", WoodVinegarTests::retortWaits);
         test("the_distiller_takes_wood_vinegar_by_pipe_bottle_and_bucket", 200, WoodVinegarTests::distiller);
         test("a_distiller_with_nowhere_for_its_methanol_waits_and_bottles_nothing", WoodVinegarTests::distillerWaits);
+        test("a_distillers_mercury_leaves_by_pipe_at_its_condenser_and_its_water_not_by_its_feed", 200, WoodVinegarTests::distillerOutlets);
         test("retorts_and_distillers_saved_before_wood_vinegar_load_with_it_empty", WoodVinegarTests::saves);
     }
 
@@ -128,13 +129,14 @@ final class WoodVinegarTests {
 
     /**
      * Logs alone, no bottle with them, char into charcoal (into the chest below) and wood vinegar, which goes into the
-     * Copper Tank beside the Retort: a quarter bucket a log. Its screen shows a wood vinegar tank, a place for each.
+     * Copper Tank beside the Retort: a bucket a log (a quarter bucket before the play-test after 1.5, when a run of the
+     * Distiller came to take a bucket of it for a quarter of methanol). Its screen shows a wood vinegar tank.
      */
     private static void retort(GameTestHelper helper) {
         var recipe = MercuryRecipes.retorting(new ItemStack(Items.OAK_LOG));
         check(helper, recipe != null && !recipe.needsReagents() && recipe.byproduct().value() == Items.CHARCOAL
-                && recipe.liquid().map(l -> l.getFluid() == OilFluids.WOOD_VINEGAR.get() && l.getAmount() == OilFluids.BOTTLE).orElse(false),
-                "a log gives charcoal and a quarter bucket of wood vinegar, with no bottle: " + recipe);
+                && recipe.liquid().map(l -> l.getFluid() == OilFluids.WOOD_VINEGAR.get() && l.getAmount() == PER_LOG).orElse(false),
+                "a log gives charcoal and a bucket of wood vinegar, with no bottle: " + recipe);
         BlockPos at = new BlockPos(1, 2, 1);
         helper.setBlock(at.below(), Blocks.CHEST);
         helper.setBlock(at.east(), ModBlocks.COPPER_TANK.get());
@@ -142,7 +144,7 @@ final class WoodVinegarTests {
         var retort = retort(helper, at, 4, 4 * (RetortBlockEntity.TICKS + 5) * 4);
         RetortBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(at), helper.getBlockState(at), retort);
         check(helper, retort.getItem(RetortBlockEntity.INPUT).isEmpty(), "all four logs charred");
-        check(helper, tank.amount() == 4 * OilFluids.BOTTLE && tank.resource().getFluid() == OilFluids.WOOD_VINEGAR.get(),
+        check(helper, tank.amount() == 4 * PER_LOG && tank.resource().getFluid() == OilFluids.WOOD_VINEGAR.get(),
                 "the tank beside it has the wood vinegar: " + tank.amount());
         check(helper, retort.liquidStored() == 0, "none left in the Retort: " + retort.liquidStored());
         var chest = helper.getBlockEntity(at.below(), ChestBlockEntity.class);
@@ -157,7 +159,7 @@ final class WoodVinegarTests {
     private static void retortWaits(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         helper.setBlock(at.below(), Blocks.CHEST);
-        int fits = RetortBlockEntity.LIQUID_TANK / OilFluids.BOTTLE;
+        int fits = RetortBlockEntity.LIQUID_TANK / PER_LOG;
         var retort = retort(helper, at, fits + 2, (fits + 2) * (RetortBlockEntity.TICKS + 5) * 4);
         check(helper, retort.liquidStored() == RetortBlockEntity.LIQUID_TANK, "its tank full: " + retort.liquidStored());
         check(helper, retort.getItem(RetortBlockEntity.INPUT).getCount() == 2 && retort.guiStatus() == MachineStatus.TANK_FULL,
@@ -168,6 +170,9 @@ final class WoodVinegarTests {
                 "and nothing pours it back in");
         helper.succeed();
     }
+
+    /** The wood vinegar a log gives, a bucket: a Distiller's run of it. */
+    private static final int PER_LOG = DistillerBlockEntity.WOOD_VINEGAR_RUN;
 
     private static DistillerBlockEntity tower(GameTestHelper helper, BlockPos pos) {
         helper.setBlock(pos, ModBlocks.DISTILLER.get());
@@ -186,9 +191,10 @@ final class WoodVinegarTests {
     }
 
     /**
-     * Piped in (half a bucket), poured from two bottles in its charge slot and a bucket after them: the eight bottles'
-     * worth distil to methanol in the Copper Tank beside it; below, two empty bottles and an empty bucket, and no bottle of
-     * methanol. A pipe cannot draw the wood vinegar back out. A bucket clicked on it pours into its tank.
+     * Piped in (half a bucket), poured from two bottles in its charge slot and a bucket after them: two buckets' worth,
+     * two runs, a quarter of each methanol kept in its tank for its Condenser's pipes, the rest water, which goes into the
+     * Copper Tank beside it; below, two empty bottles and an empty bucket, and no bottle of methanol. The Distiller itself
+     * gives no methanol to a pipe, and a pipe cannot draw the wood vinegar back out. A bucket clicked on it pours in.
      */
     private static void distiller(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
@@ -208,8 +214,12 @@ final class WoodVinegarTests {
         run(helper, at, distiller, 8 * (DistillerBlockEntity.TICKS + 5) * 4);
         check(helper, distiller.getItem(DistillerBlockEntity.INPUT).isEmpty() && distiller.woodVinegarStored() == 0,
                 "all of it distilled: " + distiller.woodVinegarStored());
-        check(helper, tank.amount() == 8 * OilFluids.BOTTLE && tank.resource().getFluid() == OilFluids.METHANOL.get(),
-                "eight bottles' worth of methanol in the tank beside it: " + tank.amount());
+        check(helper, distiller.methanolStored() == 2 * OilFluids.BOTTLE, "two runs' methanol in its tank: " + distiller.methanolStored());
+        check(helper, tank.amount() == 2 * (DistillerBlockEntity.WOOD_VINEGAR_RUN - OilFluids.BOTTLE)
+                && tank.resource().getFluid() == net.minecraft.world.level.material.Fluids.WATER,
+                "the rest of it water, in the tank beside it: " + tank.amount() + " " + tank.resource());
+        check(helper, Move.extract(distiller.fluidHandler(), FluidResource.of(OilFluids.METHANOL.get()), 100) == 0,
+                "no methanol for a pipe on the Distiller itself");
         var chest = helper.getBlockEntity(at.below(), ChestBlockEntity.class);
         check(helper, chest.countItem(Items.GLASS_BOTTLE) == 2 && chest.countItem(Items.BUCKET) == 1
                 && chest.countItem(ModOil.METHANOL.get()) == 0,
@@ -226,24 +236,27 @@ final class WoodVinegarTests {
     }
 
     /**
-     * Eight bottles with nothing beside it: their wood vinegar poured in and the bottles out empty below; its methanol
-     * tank fills (a bucket) and it waits, saying so, with the rest of the wood vinegar still in - not one bottle of
-     * methanol. A bucket on its gauge draws the methanol. Broken, its item keeps both liquids, and the Recycler turns it down.
+     * Five buckets' worth (a tankful and four bottles) with nothing beside it: the bottles poured in as there is room and
+     * out empty below; four runs fill its methanol tank (a bucket) and it waits, saying so, with the last bucket of wood
+     * vinegar still in - not one bottle of methanol. Its water, with nowhere to go, let off as steam: it never waits for
+     * that. A bucket on its gauge draws the methanol. Broken, its item keeps its liquids, and the Recycler turns it down.
      */
     private static void distillerWaits(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         helper.setBlock(at.below(), Blocks.CHEST);
         var distiller = tower(helper, at);
-        distiller.setItem(DistillerBlockEntity.INPUT, new ItemStack(ModOil.WOOD_VINEGAR.get(), 8));
-        run(helper, at, distiller, 8 * (DistillerBlockEntity.TICKS + 5) * 4);
+        Tanks.set(distiller.woodVinegarTank(), OilFluids.WOOD_VINEGAR.get(), DistillerBlockEntity.WOOD_VINEGAR_TANK);
+        distiller.setItem(DistillerBlockEntity.INPUT, new ItemStack(ModOil.WOOD_VINEGAR.get(), 4));
+        run(helper, at, distiller, 6 * (DistillerBlockEntity.TICKS + 5) * 4);
         var chest = helper.getBlockEntity(at.below(), ChestBlockEntity.class);
-        check(helper, chest.countItem(Items.GLASS_BOTTLE) == 8 && chest.countItem(ModOil.METHANOL.get()) == 0,
-                "eight empty bottles below, no methanol in a bottle: " + chest.countItem(Items.GLASS_BOTTLE) + ", "
+        check(helper, chest.countItem(Items.GLASS_BOTTLE) == 4 && chest.countItem(ModOil.METHANOL.get()) == 0,
+                "four empty bottles below, no methanol in a bottle: " + chest.countItem(Items.GLASS_BOTTLE) + ", "
                         + chest.countItem(ModOil.METHANOL.get()));
         check(helper, distiller.methanolStored() == DistillerBlockEntity.METHANOL_TANK
-                && distiller.woodVinegarStored() == 8 * OilFluids.BOTTLE - DistillerBlockEntity.METHANOL_TANK,
-                "its methanol tank full, the rest of the wood vinegar waiting: " + distiller.methanolStored() + ", "
+                && distiller.woodVinegarStored() == DistillerBlockEntity.WOOD_VINEGAR_RUN,
+                "its methanol tank full, the last bucket of wood vinegar waiting: " + distiller.methanolStored() + ", "
                         + distiller.woodVinegarStored());
+        check(helper, distiller.waterStored() == DistillerBlockEntity.WATER_TANK, "its water tank full, the rest let off: " + distiller.waterStored());
         check(helper, distiller.guiStatus() == MachineStatus.TANK_FULL, "and it says so: " + distiller.guiStatus());
         var player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.inventoryMenu.setCarried(new ItemStack(Items.BUCKET));
@@ -260,6 +273,50 @@ final class WoodVinegarTests {
                 "broken, its item keeps the wood vinegar: " + item.getComponentsPatch());
         check(helper, RecyclingRecipe.holdsThings(item), "and the Recycler turns it down");
         helper.succeed();
+    }
+
+    /**
+     * The tower's outlets (the user, 2026-11-12): its mercury leaves at the Condenser by a Mercury Pipe only - a Mercury
+     * Tank set against the Condenser gets none - and its water leaves the Distiller's sides, but never the side its wood
+     * vinegar came in by: so not back up the Retort's line.
+     */
+    private static void distillerOutlets(GameTestHelper helper) {
+        BlockPos at = new BlockPos(2, 2, 2);
+        var distiller = tower(helper, at);
+        BlockPos top = at.above(3);
+        helper.setBlock(top.south(), ModBlocks.MERCURY_TANK.get());
+        mercuryPipe(helper, top.north());
+        helper.setBlock(top.north(2), ModBlocks.MERCURY_TANK.get());
+        ItemStack held = new ItemStack(Items.STONE); // the mercury a run of amalgam gives back, as its item would carry it
+        held.set(dev.nookworks.registry.ModDataComponents.HELD_FLUIDS.get(), java.util.List.of(net.neoforged.neoforge.fluids.SimpleFluidContent.copyOf(
+                new net.neoforged.neoforge.fluids.FluidStack(dev.nookworks.mercury.MercuryFluids.SOURCE.get(), 500))));
+        distiller.applyComponentsFromItemStack(held);
+        check(helper, distiller.mercury() == 500, "500 mB of mercury in it: " + distiller.mercury());
+        // wood vinegar comes in by its west side; a tank on each side of it
+        helper.setBlock(at.west(), ModBlocks.COPPER_TANK.get());
+        helper.setBlock(at.east(), ModBlocks.COPPER_TANK.get());
+        check(helper, Move.insert(distiller.fluidHandler(Direction.WEST), FluidResource.of(OilFluids.WOOD_VINEGAR.get()),
+                DistillerBlockEntity.WOOD_VINEGAR_RUN) == DistillerBlockEntity.WOOD_VINEGAR_RUN, "a run of wood vinegar in by its west side");
+        var west = helper.getBlockEntity(at.west(), CopperTankBlockEntity.class);
+        var east = helper.getBlockEntity(at.east(), CopperTankBlockEntity.class);
+        var against = helper.getBlockEntity(top.south(), dev.nookworks.mercury.MercuryTankBlockEntity.class);
+        var piped = helper.getBlockEntity(top.north(2), dev.nookworks.mercury.MercuryTankBlockEntity.class);
+        helper.onEachTick(() -> distiller.energy().set((int) distiller.energy().getCapacityAsLong()));
+        helper.succeedWhen(() -> {
+            check(helper, piped.fillMercury(Integer.MAX_VALUE, true) < dev.nookworks.mercury.MercuryTankBlockEntity.CAPACITY,
+                    "the mercury down the pipe from the Condenser into the tank at its end");
+            check(helper, against.fillMercury(Integer.MAX_VALUE, true) == dev.nookworks.mercury.MercuryTankBlockEntity.CAPACITY,
+                    "none into the tank set against the Condenser");
+            check(helper, east.amount() == DistillerBlockEntity.WOOD_VINEGAR_RUN - OilFluids.BOTTLE && west.amount() == 0,
+                    "the water out of its east side, none by the west its wood vinegar came in by: " + east.amount() + ", " + west.amount());
+        });
+    }
+
+    private static void mercuryPipe(GameTestHelper helper, BlockPos pipe) {
+        helper.setBlock(pipe, ModBlocks.MERCURY_PIPE.get().getStateForPlacement(new net.minecraft.world.item.context.BlockPlaceContext(
+                helper.getLevel(), null, net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ModBlocks.MERCURY_PIPE.get()),
+                new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(pipe)),
+                        Direction.UP, helper.absolutePos(pipe), false))));
     }
 
     /** Saved before 1.5 - no "liquid", no "wood_vinegar" - they load with those tanks empty; saved with them, read back. */

@@ -36,6 +36,7 @@ import com.mojang.renderpearl.api.textures.GpuTexture;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
 
 import dev.nookworks.Nookworks;
+import dev.nookworks.decor.MirrorSight;
 import dev.nookworks.decor.StandingMirrorBlockEntity;
 
 import net.minecraft.client.Minecraft;
@@ -70,8 +71,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.FogType;
+import net.minecraft.client.renderer.fog.FogData;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -111,10 +116,17 @@ public final class MirrorReflections {
     /** Entities and block entities within this many blocks of the glass are drawn in it. */
     private static final double ENTITY_REACH = 24;
 
+    /**
+     * The glass as the game draws a block: fogged by the world's fog between the eye and it (MIRROR_FOG), as the frame
+     * beside it is - from under water, the water's (the user, 2026-11-12: seen from under water the glass was a flat
+     * navy, its picture drawn in the water's fog though it stands in the air, and stood out clear at any distance).
+     */
     public static final RenderPipeline GLASS = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
             .withLocation(Nookworks.id("pipeline/mirror_glass"))
             .withBindGroupLayout(BindGroupLayouts.PROJECTION)
             .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
+            .withBindGroupLayout(BindGroupLayouts.FOG)
+            .withShaderDefine("MIRROR_FOG")
             .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
             .withVertexShader(Nookworks.id("core/mirror_glass"))
             .withFragmentShader(Nookworks.id("core/mirror_glass"))
@@ -172,20 +184,42 @@ public final class MirrorReflections {
 
     /** Where the glass's face is: the plane it reflects in, through its middle. */
     static Vec3 glassCentre(BlockPos lower, Direction facing) {
-        return Vec3.atLowerCornerOf(lower).add(0.5 + facing.getStepX() * GLASS_OUT, 1.0, 0.5 + facing.getStepZ() * GLASS_OUT);
+        return MirrorSight.glassCentre(lower, facing);
     }
 
     /** The glass's face, half a pixel in front of the block's middle (as the model has it). */
-    static final float GLASS_OUT = 0.5F / 16;
+    static final float GLASS_OUT = MirrorSight.GLASS_OUT;
 
     /** A mirror's renderer, extracting it: it is in view, and may be drawn. */
     static void offer(BlockPos lower, Direction facing, Vec3 camera) {
         Vec3 centre = glassCentre(lower, facing);
         Vec3 normal = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         double distance = camera.distanceTo(centre);
-        if (camera.subtract(centre).dot(normal) > 0.01 && distance < REACH && offered.stream().noneMatch(glass -> glass.lower.equals(lower))) {
+        if (camera.subtract(centre).dot(normal) > 0.01 && distance < REACH && offered.stream().noneMatch(glass -> glass.lower.equals(lower))
+                && !veiledUnderAPack(lower, facing, camera)) {
             offered.add(new Glass(lower.immutable(), facing, distance));
         }
+    }
+
+    /**
+     * Under a shader pack: whether water, glass or the like lies between the eye and this glass ({@link MirrorSight}).
+     * The glass could not be painted behind them there, and the board the pack's light is measured on showed through
+     * them; such a mirror is not drawn, and its silver shows. Without a pack the glass is drawn with the world, and the
+     * water over it.
+     */
+    private static boolean veiledUnderAPack(BlockPos lower, Direction facing, Vec3 camera) {
+        ClientLevel level = Minecraft.getInstance().level;
+        return level != null && IrisHooks.shaderPackInUse()
+                && MirrorSight.veiled(level, lower, facing, camera, MirrorReflections::drawnSeeThrough);
+    }
+
+    /**
+     * A block a pack may draw in its see-through pass: one with a translucent texture (stained glass, ice, slime), and
+     * plain glass and panes, which the game cuts out but packs draw as glass (Complementary does).
+     */
+    private static boolean drawnSeeThrough(BlockState state) {
+        return state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES)
+                || Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state).hasMaterialFlag(BakedQuad.FLAG_TRANSLUCENT);
     }
 
     /** A mirror's picture this frame, for its glass: the render type that reads it where it is on the screen, and its slot. */
@@ -441,19 +475,22 @@ public final class MirrorReflections {
             }
         }
 
-        // and all of it into the slot's picture: the fog's colour, the sky as the reflected camera sees it, the rest
+        // and all of it into the slot's picture: the fog's colour, the sky as the reflected camera sees it, the rest - in
+        // the fog of where the glass looks out, not of where the eye is (from under water, a mirror in the air)
+        FogType seen = fogTypeAt(level, glass.lower.relative(glass.facing));
+        FogData pictureFog = seen == camera.fogType ? camera.fogData : fogFor(seen, level, mc);
         TextureTarget target = slot.target;
-        Vector4f fogColour = camera.fogData.color;
+        Vector4f fogColour = pictureFog.color;
         RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(target.getColorTexture(),
                 new Vector4f(fogColour.x, fogColour.y, fogColour.z, 1.0F), target.getDepthTexture(), 0.0);
         GpuBufferSlice fogBefore = RenderSystem.getShaderFog();
         RenderSystem.backupProjectionMatrix();
-        fog.updateBuffer(camera.fogData);
+        fog.updateBuffer(pictureFog);
         GpuBufferSlice worldFog = fog.getBuffer(FogRenderer.FogMode.WORLD);
         var modelView = RenderSystem.getModelViewStack();
         modelView.pushMatrix();
         SkyRenderState sky = mc.gameRenderer.gameRenderState().levelRenderState.skyRenderState;
-        if (sky.skybox != DimensionType.Skybox.NONE && camera.fogType != FogType.POWDER_SNOW && camera.fogType != FogType.LAVA
+        if (sky.skybox != DimensionType.Skybox.NONE && seen != FogType.POWDER_SNOW && seen != FogType.LAVA
                 && !camera.entityRenderState.doesMobEffectBlockSky) {
             // the sky only turns: the reflection's turn without its shift, and the camera's own frustum
             modelView.set(new Matrix4f(view).setTranslation(0, 0, 0));
@@ -486,6 +523,36 @@ public final class MirrorReflections {
                 RenderSystem.setShaderFog(fogBefore);
             }
         }
+    }
+
+    /** The fog of a place: the water's in water, lava's in lava, the air's anywhere else. */
+    static FogType fogTypeAt(ClientLevel level, BlockPos pos) {
+        var fluid = level.getFluidState(pos);
+        return fluid.is(net.minecraft.tags.FluidTags.WATER) ? FogType.WATER
+                : fluid.is(net.minecraft.tags.FluidTags.LAVA) ? FogType.LAVA : FogType.ATMOSPHERIC;
+    }
+
+    /**
+     * The fog the camera would have, were it in {@code type} where it is: its colour and distances worked out as the
+     * game works out its own (FogRenderer#setupFog), from the environment for that place - the air's, the water's - so a
+     * mirror in the air seen from under water shows the air's sky and distance, and one in water the water's.
+     */
+    static FogData fogFor(FogType type, ClientLevel level, Minecraft mc) {
+        net.minecraft.client.Camera real = mc.gameRenderer.mainCamera();
+        int chunks = mc.options.getEffectiveRenderDistance();
+        float blocks = chunks * 16;
+        var tracker = mc.getDeltaTracker();
+        var environment = type == FogType.WATER ? new net.minecraft.client.renderer.fog.environment.WaterFogEnvironment()
+                : type == FogType.LAVA ? new net.minecraft.client.renderer.fog.environment.LavaFogEnvironment()
+                : new net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment();
+        FogData data = new FogData();
+        var colour = environment.getBaseColor(level, real, chunks, tracker.getGameTimeDeltaPartialTick(false));
+        data.color.set(colour.x(), colour.y(), colour.z(), 1.0F);
+        environment.setupFog(data, real, level, blocks, tracker);
+        float span = Math.clamp(blocks / 10.0F, 4.0F, 64.0F);
+        data.renderDistanceStart = blocks - span;
+        data.renderDistanceEnd = blocks;
+        return data;
     }
 
     /**

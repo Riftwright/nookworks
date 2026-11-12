@@ -141,6 +141,10 @@ final class CarryTests {
         test("tied_load_refused_by_the_world_leaves_the_block_where_it_was", CarryTests::spawnRefused);
         test("tied_load_is_stood_on_as_a_block", 100, CarryTests::stoodOn);
         test("tied_load_and_what_hangs_never_share_a_place", 100, CarryTests::hungApart);
+        test("tied_load_rests_where_it_is_tied_even_in_the_air", 100, CarryTests::restsWhereTied);
+        test("tied_load_is_refused_walled_in_by_full_blocks", CarryTests::walledIn);
+        test("tied_load_breaks_when_hit_as_its_block", CarryTests::brokenByHits);
+        test("tied_load_is_broken_by_an_explosion_strong_enough_for_its_block", CarryTests::blownUp);
     }
 
     // ---- the stand-in ----
@@ -796,7 +800,7 @@ final class CarryTests {
         ServerPlayer player = player(helper, said);
         List<Block> slabs = List.of(Blocks.OAK_SLAB, Blocks.SMOOTH_STONE_SLAB, ModWoods.DAWNWOOD_SLAB.get(), TurnedPlanks.SLABS.get("spruce").get());
         for (int i = 0; i < slabs.size(); i++) {
-            BlockPos rel = new BlockPos(1 + i, 1, 1);
+            BlockPos rel = i < 3 ? new BlockPos(1 + 2 * i, 1, 1) : new BlockPos(1, 1, 5); // apart: a full block beside one walls it in
             BlockState doubled = slabs.get(i).defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);
             helper.setBlock(rel, doubled);
             check(helper, Carrying.check(level, helper.absolutePos(rel), null).isOk(), doubled + ": whole, so carried");
@@ -844,9 +848,9 @@ final class CarryTests {
         helper.setBlock(right.below(), Blocks.STONE);
         chestWith(helper, left, leftState, 1);
         chestWith(helper, right, leftState.setValue(ChestBlock.TYPE, ChestType.RIGHT), 1);
-        helper.setBlock(right.above(), Blocks.OAK_PLANKS);
         TiedLoadEntity load = TiedLoads.tie(level, helper.absolutePos(left), null);
         check(helper, load != null && load.cells().size() == 2, "the pair tied as one");
+        helper.setBlock(right.above(), Blocks.OAK_PLANKS); // set over it once tied (a full block on top refuses the tying)
         double y = load.getY();
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         use(helper, player, new BlockPos(3, 5, 3), Direction.NORTH);
@@ -901,6 +905,7 @@ final class CarryTests {
         helper.setBlock(above, Blocks.CHEST);
         TiedLoadEntity chest = TiedLoads.tie(level, helper.absolutePos(above), null);
         check(helper, chest != null && !chest.held(), "a load held by nothing over the bottle");
+        check(helper, TiedLoads.hoist(chest, 1), "moved by a rope (at rest where it was tied, it would stay there)");
         helper.succeedWhen(() -> {
             check(helper, bottle.isRemoved() && chest.aligned() && chest.getY() < bottle.getY(),
                     "the falling load knocked the bottle down and came to rest below it: " + chest.getY());
@@ -1041,6 +1046,143 @@ final class CarryTests {
         int diamonds = drops.stream().filter(i -> i.getItem().is(Items.DIAMOND)).mapToInt(i -> i.getItem().getCount()).sum();
         check(helper, diamonds == 5 && drops.stream().anyMatch(i -> i.getItem().is(Items.CHEST)),
                 "what it held broken open where it would have stood: " + drops);
+        helper.succeed();
+    }
+
+    /**
+     * A block tied where it stands stays there, in the air too, as the block did (the user, 2026-11-12: one tied in the
+     * air dropped like gravel); once a rope has moved it, held by nothing it falls, and comes to rest again.
+     */
+    private static void restsWhereTied(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(3, 4, 3);
+        helper.setBlock(rel, Blocks.BARREL);
+        TiedLoadEntity load = TiedLoads.tie(helper.getLevel(), helper.absolutePos(rel), null);
+        check(helper, load != null && load.resting(), "tied in the air, at rest");
+        double y = load.getY();
+        int floor = helper.absolutePos(BlockPos.ZERO).getY();
+        helper.runAfterDelay(20, () -> {
+            check(helper, !load.isRemoved() && load.getY() == y, "still where it was tied: " + (load.getY() - y));
+            check(helper, TiedLoads.hoist(load, 1) && !load.resting(), "moved up a block: no longer at rest");
+            helper.runAfterDelay(40, () -> {
+                check(helper, load.aligned() && load.getY() == floor + 1 && load.resting(),
+                        "held by nothing, it fell and came to rest on the ground: " + (load.getY() - floor));
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * A block with a full block against a side or its top cannot be tied: no rope goes round it (the user, 2026-11-12:
+     * 「四方と上面にフルブロックが存在しない」 state only). The floor under it, and what is no full block beside it, are no
+     * matter; a double chest's halves are not each other's walls.
+     */
+    private static void walledIn(GameTestHelper helper) {
+        List<Component> said = new ArrayList<>();
+        ServerPlayer player = player(helper, said);
+        player.setShiftKeyDown(true);
+        BlockPos side = new BlockPos(1, 1, 1);
+        helper.setBlock(side, Blocks.BARREL);
+        helper.setBlock(side.east(), Blocks.DIRT);
+        BlockPos under = new BlockPos(5, 1, 1);
+        helper.setBlock(under, Blocks.BARREL);
+        helper.setBlock(under.above(), Blocks.STONE);
+        for (BlockPos rel : List.of(side, under)) {
+            said.clear();
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.ROPE.get(), 2));
+            use(helper, player, rel, Direction.NORTH);
+            check(helper, loadAt(helper, rel) == null && helper.getBlockState(rel).is(Blocks.BARREL) && player.getMainHandItem().getCount() == 2
+                    && saidKey(said, "message.nookworks.tied_load.walled_in"), "walled in at " + rel + ": not tied, nothing used, said why " + said);
+        }
+        BlockPos free = new BlockPos(3, 1, 4);
+        helper.setBlock(free, Blocks.BARREL);
+        helper.setBlock(free.west(), Blocks.OAK_FENCE);
+        helper.setBlock(free.east(), Blocks.CHEST);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.ROPE.get(), 2));
+        use(helper, player, free, Direction.UP);
+        check(helper, loadAt(helper, free) != null, "a fence and a chest beside it, the floor under it: tied " + said);
+        helper.succeed();
+    }
+
+    /**
+     * A tied load is broken by hitting it, as its block is dug - the harder, the more hits, cracks shown - and comes down
+     * as the block broken by hand would, with the rope (the user, 2026-11-12: proof against hits it was a wither's cage).
+     */
+    private static void brokenByHits(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ServerPlayer player = player(helper, new ArrayList<>());
+        BlockPos rel = new BlockPos(2, 1, 2);
+        chestWith(helper, rel, Blocks.CHEST.defaultBlockState(), 5);
+        TiedLoadEntity load = TiedLoads.tie(level, helper.absolutePos(rel), null);
+        check(helper, load != null && load.isAttackable(), "tied, and can be hit");
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        int bare = 0;
+        while (!load.isRemoved() && bare < 200) {
+            check(helper, load.hurtServer(level, level.damageSources().playerAttack(player), 1.0F), "a hit lands");
+            bare++;
+            if (bare == 1) {
+                check(helper, !load.isRemoved() && load.crack() >= 0, "one bare-handed hit: cracked, not broken");
+            }
+        }
+        check(helper, load.isRemoved() && bare > 1, "broken by hand, in more than one hit: " + bare);
+        List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, helper.getBounds().inflate(2));
+        int diamonds = drops.stream().filter(i -> i.getItem().is(Items.DIAMOND)).mapToInt(i -> i.getItem().getCount()).sum();
+        check(helper, helper.getBlockState(rel).isAir() && diamonds == 5 && drops.stream().anyMatch(i -> i.getItem().is(Items.CHEST))
+                && drops.stream().anyMatch(i -> i.getItem().is(Items.IRON_SWORD)) && drops.stream().anyMatch(i -> i.getItem().is(ModItems.ROPE.get())),
+                "the chest, all it held and the rope came down: " + drops);
+        // an axe digs a chest quicker, so fewer hits
+        BlockPos second = new BlockPos(5, 1, 2);
+        helper.setBlock(second, Blocks.CHEST);
+        TiedLoadEntity other = TiedLoads.tie(level, helper.absolutePos(second), null);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_AXE));
+        int axe = 0;
+        while (other != null && !other.isRemoved() && axe < 200) {
+            other.hurtServer(level, level.damageSources().playerAttack(player), 1.0F);
+            axe++;
+        }
+        check(helper, other != null && other.isRemoved() && axe < bare, "an axe breaks it in fewer hits: " + axe + " against " + bare);
+        // obsidian by hand: hits do next to nothing
+        BlockPos hard = new BlockPos(2, 1, 5);
+        helper.setBlock(hard, Blocks.OBSIDIAN);
+        TiedLoadEntity obsidian = TiedLoads.tie(level, helper.absolutePos(hard), null);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        for (int i = 0; i < 20; i++) {
+            obsidian.hurtServer(level, level.damageSources().playerAttack(player), 1.0F);
+        }
+        check(helper, obsidian != null && !obsidian.isRemoved(), "tied obsidian stands twenty bare-handed hits");
+        helper.succeed();
+    }
+
+    /**
+     * An explosion breaks a tied load if it would break its block standing there: TNT close by breaks a chest, not
+     * obsidian, nor a chest far off; one that breaks no blocks breaks no load. Broken, it comes down as the block would.
+     */
+    private static void blownUp(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos chestAt = new BlockPos(2, 1, 2);
+        chestWith(helper, chestAt, Blocks.CHEST.defaultBlockState(), 5);
+        BlockPos obsidianAt = new BlockPos(5, 1, 2);
+        helper.setBlock(obsidianAt, Blocks.OBSIDIAN);
+        TiedLoadEntity chest = TiedLoads.tie(level, helper.absolutePos(chestAt), null);
+        TiedLoadEntity obsidian = TiedLoads.tie(level, helper.absolutePos(obsidianAt), null);
+        check(helper, chest != null && obsidian != null, "both tied");
+        Vec3 near = helper.absoluteVec(new Vec3(3.5, 1.5, 2.5));
+        Vec3 far = helper.absoluteVec(new Vec3(2.5, 1.5, 9.5));
+        var tnt = new net.minecraft.world.level.ServerExplosion(level, null, null, null, near, 4.0F, false,
+                net.minecraft.world.level.Explosion.BlockInteraction.DESTROY);
+        var keep = new net.minecraft.world.level.ServerExplosion(level, null, null, null, near, 4.0F, false,
+                net.minecraft.world.level.Explosion.BlockInteraction.KEEP);
+        var distant = new net.minecraft.world.level.ServerExplosion(level, null, null, null, far, 4.0F, false,
+                net.minecraft.world.level.Explosion.BlockInteraction.DESTROY);
+        check(helper, !chest.ignoreExplosion(tnt) && obsidian.ignoreExplosion(tnt), "TNT a block off breaks a tied chest, not tied obsidian");
+        check(helper, chest.ignoreExplosion(keep), "an explosion that breaks no blocks breaks no load");
+        check(helper, chest.ignoreExplosion(distant), "nor one seven blocks off");
+        check(helper, chest.hurtServer(level, level.damageSources().explosion(null, null), 4.0F), "the blast reaches it");
+        List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, helper.getBounds().inflate(2));
+        int diamonds = drops.stream().filter(i -> i.getItem().is(Items.DIAMOND)).mapToInt(i -> i.getItem().getCount()).sum();
+        check(helper, chest.isRemoved() && helper.getBlockState(chestAt).isAir() && diamonds == 5
+                && drops.stream().anyMatch(i -> i.getItem().is(Items.CHEST)) && drops.stream().anyMatch(i -> i.getItem().is(ModItems.ROPE.get())),
+                "blown apart: the chest, all it held and the rope: " + drops);
+        check(helper, !obsidian.isRemoved(), "the obsidian still tied");
         helper.succeed();
     }
 

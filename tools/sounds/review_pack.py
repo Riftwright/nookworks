@@ -52,7 +52,7 @@ PAIRED = ["nookworks:block.crusher.run", "nookworks:block.printing_press.run", "
           "nooktech:block.tar_still.run", "nooktech:block.loading_arm.pick", "nooktech:block.mob_data_bank.rewind",
           "nooktech:block.ropeway_tower.clatter", "nooktech:entity.gondola.rattle", "nooktech:block.block_breaker.run",
           "nooktech:block.centrifuge.run", "nooktech:block.storage_terminal.run"]
-KENNEY = {"block.motor.run": "小さなモーターが回る音", "block.drive_wheel.turn": "ベルトをかけた滑車が回る音",
+KENNEY = {"block.drive_wheel.turn": "ベルトをかけた滑車が回る音",
           "block.spawner_controller.run": "不思議な装置が作動している音", "block.trash_can.swallow": "ゴミ箱が物を飲み込む、ブリキを叩くような音"}
 # left alone between the two looks, and sent again: does the listener mark the same sound the same way twice?
 ANCHORS = ["nookworks:block.crusher.run", "nookworks:item.wrench.turn", "nookworks:block.oil_press.turn",
@@ -166,6 +166,12 @@ def ride(loop_wave):
     return np.concatenate([np.zeros(sfx.n_of(0.2)), sfx.fade(y, 0.15, 0.3), np.zeros(sfx.n_of(0.3))])
 
 
+def going_round(event, loop_wave):
+    """A loop as it is heard: a ride's rises and falls with the speed; any other only runs (the Motor's hum) - three
+    turns of it, eased in and out."""
+    return ride(loop_wave) if "trolley" in event else sfx.fade(np.tile(loop_wave, 3), 0.3, 0.5)
+
+
 def old_generator(repo, rev, rel, name):
     """gen_sounds.py and its kit as they were at rev, loaded from a folder of their own."""
     tmp = Path(tempfile.mkdtemp(prefix="sounds_before_"))
@@ -189,14 +195,14 @@ def gather_changed(args):
         before_of = {}
         for event, (_, variants, _, extra) in old.SOUNDS.items():
             waves = [as_played(old.render(event, v), event) for v in range(variants)]
-            before_of[event] = ride(waves[0]) if extra.get("loop") else in_a_row(waves)
+            before_of[event] = going_round(event, waves[0]) if extra.get("loop") else in_a_row(waves)
         gen = load(gen_path, f"gen_{modid}")
         names = json.loads((assets / "lang" / "ja_jp.json").read_bytes())
         aims = {event: re.sub(r"（[^）]*）", "", aim) for _, rows in table for event, _, aim, _, _, _ in rows}
         aims.update(KENNEY)
         for event, (_, variants, _, extra) in gen.SOUNDS.items():
             waves = [as_played(gen.render(event, v), event) for v in range(variants)]
-            new = ride(waves[0]) if extra.get("loop") else in_a_row(waves)
+            new = going_round(event, waves[0]) if extra.get("loop") else in_a_row(waves)
             base = dict(mod=modid, event=event, name=names[f"subtitles.{modid}.{event}"], aim=aims.get(event, ""), held=False)
             if event in before_of:
                 before = before_of[event]

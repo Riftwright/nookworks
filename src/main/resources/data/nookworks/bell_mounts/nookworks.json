@@ -1,0 +1,2994 @@
+{
+ "nookworks:acacia_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:acacia_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:baler": {
+  "south": {
+   "up": [
+    3,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    3,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    3,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:bamboo_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:bamboo_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:barter_terminal": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:birch_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:birch_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:brass_workbench": {
+  "north": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "south": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:cherry_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:cherry_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:chimney": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:cobblestone_chimney": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:compressor": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:condenser": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ],
+   "up": [
+    4,
+    0
+   ]
+  }
+ },
+ "nookworks:copper_pipe": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ]
+  }
+ },
+ "nookworks:copper_tank": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:crate": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:creative_generator": {
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:crimson_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:crimson_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:crusher": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:dark_oak_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:dark_oak_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:dawnwood_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:dawnwood_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:diesel_generator": {
+  "east": {
+   "north": [
+    1,
+    -1
+   ],
+   "south": [
+    1,
+    -1
+   ],
+   "east": [
+    1,
+    -1
+   ],
+   "west": [
+    1,
+    -1
+   ],
+   "up": [
+    4,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    -1
+   ],
+   "south": [
+    1,
+    -1
+   ],
+   "east": [
+    1,
+    -1
+   ],
+   "west": [
+    1,
+    -1
+   ],
+   "up": [
+    4,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    -1
+   ],
+   "south": [
+    1,
+    -1
+   ],
+   "east": [
+    1,
+    -1
+   ],
+   "west": [
+    1,
+    -1
+   ],
+   "up": [
+    4,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    -1
+   ],
+   "south": [
+    1,
+    -1
+   ],
+   "east": [
+    1,
+    -1
+   ],
+   "west": [
+    1,
+    -1
+   ],
+   "up": [
+    4,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:distillation_column": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:distiller": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:electric_furnace": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:electrolytic_cell": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:experience_tank": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:generator": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:hanging_planter_green": {
+  "none": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:hanging_planter_pink": {
+  "none": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:iron_workbench": {
+  "north": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "south": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:jungle_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:jungle_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:laser": {
+  "north": {
+   "north": [
+    5,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  },
+  "east": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ]
+  },
+  "none": {
+   "north": [
+    5,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:mangrove_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:mangrove_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:mercury_pipe": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ]
+  }
+ },
+ "nookworks:mercury_tank": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:motor": {
+  "north": {
+   "north": [
+    3,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    2,
+    0
+   ]
+  },
+  "east": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    2,
+    0
+   ]
+  },
+  "south": {
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    2,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    2,
+    0
+   ]
+  },
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    2,
+    0
+   ]
+  }
+ },
+ "nookworks:nether_brick_chimney": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:noodle_maker": {
+  "east": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    -3
+   ]
+  },
+  "north": {
+   "south": [
+    5,
+    -3
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    5,
+    -3
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    5,
+    -3
+   ]
+  }
+ },
+ "nookworks:nukadoko": {
+  "none": {
+   "north": [
+    1,
+    -2
+   ],
+   "south": [
+    1,
+    -2
+   ],
+   "east": [
+    1,
+    -2
+   ],
+   "west": [
+    1,
+    -2
+   ],
+   "up": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:oak_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:oak_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:pale_oak_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:pale_oak_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:poplar_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:poplar_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:printing_press": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    1,
+    -1
+   ],
+   "west": [
+    1,
+    -1
+   ],
+   "up": [
+    4,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:range_hood": {
+  "north": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ],
+   "down": [
+    5,
+    0
+   ]
+  },
+  "east": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ],
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ],
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    5,
+    0
+   ],
+   "south": [
+    5,
+    0
+   ],
+   "east": [
+    5,
+    0
+   ],
+   "west": [
+    5,
+    0
+   ],
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:recycler": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:retort": {
+  "east": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:rice_polisher": {
+  "east": {
+   "north": [
+    4,
+    0
+   ],
+   "south": [
+    4,
+    0
+   ],
+   "east": [
+    4,
+    0
+   ],
+   "west": [
+    4,
+    0
+   ],
+   "up": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "north": [
+    4,
+    0
+   ],
+   "south": [
+    4,
+    0
+   ],
+   "east": [
+    4,
+    0
+   ],
+   "west": [
+    4,
+    0
+   ],
+   "up": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "north": [
+    4,
+    0
+   ],
+   "south": [
+    4,
+    0
+   ],
+   "east": [
+    4,
+    0
+   ],
+   "west": [
+    4,
+    0
+   ],
+   "up": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "north": [
+    4,
+    0
+   ],
+   "south": [
+    4,
+    0
+   ],
+   "east": [
+    4,
+    0
+   ],
+   "west": [
+    4,
+    0
+   ],
+   "up": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:sifter": {
+  "none": {
+   "north": [
+    4,
+    1
+   ],
+   "south": [
+    4,
+    1
+   ],
+   "east": [
+    4,
+    1
+   ],
+   "west": [
+    4,
+    1
+   ],
+   "up": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:spawn_egg_brewer": {
+  "none": {
+   "north": [
+    7,
+    -2
+   ],
+   "south": [
+    7,
+    -2
+   ],
+   "east": [
+    4,
+    -3
+   ],
+   "west": [
+    4,
+    -3
+   ]
+  }
+ },
+ "nookworks:spruce_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:spruce_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:stirring_tank": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:stone_brick_chimney": {
+  "none": {
+   "north": [
+    3,
+    0
+   ],
+   "south": [
+    3,
+    0
+   ],
+   "east": [
+    3,
+    0
+   ],
+   "west": [
+    3,
+    0
+   ]
+  }
+ },
+ "nookworks:stone_maker": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:trading_counter": {
+  "north": {
+   "north": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ]
+  },
+  "east": {
+   "east": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "south": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:trash_can": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:warped_bench": {
+  "east": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    5,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    5,
+    0
+   ]
+  }
+ },
+ "nookworks:warped_chair": {
+  "south": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "west": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "north": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  },
+  "east": {
+   "up": [
+    7,
+    0
+   ],
+   "down": [
+    6,
+    0
+   ]
+  }
+ },
+ "nookworks:water_pump": {
+  "none": {
+   "north": [
+    2,
+    0
+   ],
+   "south": [
+    2,
+    0
+   ],
+   "east": [
+    2,
+    0
+   ],
+   "west": [
+    2,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ }
+}

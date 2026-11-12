@@ -599,6 +599,102 @@ def loopable(x, loop_len, cross=0.15):
     return out
 
 
+class Loop:
+    """A sound that goes round and round, made whole: everything in it fits the loop's length a whole number of times
+    - what turns is whole turns, noise is made in the frequency domain (so it is periodic by construction), the slow
+    changes are whole cycles a loop, filters, the case and the room run round it. The sample after its last is its
+    first: there is no end to fold (loopable folds a longer sound), and nothing to crossfade. finish(loop=True) keeps
+    it so; a hard start or stop of it clicks, so whatever plays it fades it in and out.
+
+    What the judges that can hear taught about a motor (2026-11-12): tones laid over one another are an instrument or a
+    spaceship - a foghorn, a singing bowl, a siren. A motor is one thing going round, giving a push at every pole or
+    bar, no two bars quite alike (the same every turn - that is what puts the turning into the sound) and no two
+    turns quite alike (that is its roughness), ringing in its own case: pulses(), then body()."""
+
+    def __init__(self, seconds):
+        self.seconds = float(seconds)
+        self.n = n_of(seconds)
+        self.t = np.arange(self.n) / SR
+        self.f = np.fft.rfftfreq(self.n, 1.0 / SR)
+
+    def fit(self, f):
+        """f moved to the nearest pitch that fits the loop a whole number of times."""
+        return round(f * self.seconds) / self.seconds
+
+    def band(self, lo, hi, soft=0.3):
+        """A band's shape over the spectrum: 1 inside lo..hi, rounded off over `soft` octaves at each end."""
+        f = np.maximum(self.f, self.f[1])
+        up = np.clip(np.log2(f / lo) / soft + 0.5, 0, 1)
+        down = np.clip(np.log2(hi / f) / soft + 0.5, 0, 1)
+        return (up * up * (3 - 2 * up)) * (down * down * (3 - 2 * down))
+
+    def noise(self, rng, lo, hi, tilt=-3.0, soft=0.3):
+        """Noise in a band, falling by tilt dB an octave, one loop long and periodic."""
+        f = np.maximum(self.f, self.f[1])
+        mag = (f / 1000.0) ** (tilt / 6.0206) * self.band(lo, hi, soft)
+        return rmsn(np.fft.irfft(np.fft.rfft(rng.standard_normal(self.n)) * mag, self.n))
+
+    def keep(self, x, lo, hi, soft=0.3):
+        """x kept between lo and hi, the filter run round the loop (no start, no end)."""
+        return np.fft.irfft(np.fft.rfft(x) * self.band(lo, hi, soft), self.n)
+
+    def slow(self, rng, cycles, lo, hi):
+        """A slow change between lo and hi that comes round with the loop: cycles = ((turns a loop, weight), ...)."""
+        x = sum(w * np.sin(2 * np.pi * k * self.t / self.seconds + rng.uniform(0, 2 * np.pi)) for k, w in cycles)
+        x = (x - x.min()) / (x.max() - x.min())
+        return lo + (hi - lo) * x
+
+    def lead(self, rng, depth=0.0012, cycles=((1, 1.0), (2, 0.7), (3, 0.5), (5, 0.3))):
+        """The speed never quite still: how far ahead or behind the thing runs, in seconds, over the loop, its speed
+        off by `depth` at most (a tenth of a percent is life, not a change of pitch). Everything that turns is read
+        off it, so the whole machine wanders as one."""
+        total = sum(w for _, w in cycles)
+        lead = np.zeros(self.n)
+        for k, w in cycles:
+            lead += (depth * (w / total) * -np.cos(2 * np.pi * k * self.t / self.seconds + rng.uniform(0, 2 * np.pi))
+                     * self.seconds / (2 * np.pi * k))
+        return lead
+
+    def turn(self, rng, rate, lead, depth):
+        """Something going round `rate` times a second: stronger and weaker by `depth` each turn."""
+        return 1 + depth * np.sin(2 * np.pi * self.fit(rate) * (self.t + lead) + rng.uniform(0, 2 * np.pi))
+
+    def pulses(self, rng, shaft, pattern, lead, jitter=0.03, rough=0.1, lo=120.0, hi=4000.0, tilt=-3.0):
+        """Pulses round the loop: len(pattern) to a turn of the shaft, their strengths the pattern's (the same every
+        turn), each `jitter` of a gap early or late and `rough` stronger or weaker by chance; a pulse's own shape is
+        the band lo..hi."""
+        turns = int(round(shaft * self.seconds))
+        count = turns * len(pattern)
+        gap = self.seconds / count
+        times = (np.arange(count) + rng.normal(0, jitter, count)) * gap
+        times = times + np.interp(times % self.seconds, self.t, lead)
+        amps = np.tile(np.asarray(pattern, dtype=float), turns) * (1 + rng.normal(0, rough, count))
+        spec = np.zeros(len(self.f), dtype=complex)
+        for i in range(0, count, 128):
+            spec += (amps[None, i:i + 128] * np.exp(-2j * np.pi * self.f[:, None] * times[None, i:i + 128])).sum(axis=1)
+        f = np.maximum(self.f, self.f[1])
+        return rmsn(np.fft.irfft(spec * (f / 1000.0) ** (tilt / 6.0206) * self.band(lo, hi), self.n))
+
+    def body(self, x, modes, dry=0.4):
+        """x ringing in a case: modes = ((Hz, sharpness, gain), ...), run round the loop."""
+        f = np.maximum(self.f, 1e-6)
+        answer = np.full(len(self.f), dry, dtype=complex)
+        for f0, sharp, gain in modes:
+            r = f / f0
+            answer += gain * (1j * r / sharp) / (1 - r * r + 1j * r / sharp)
+        return np.fft.irfft(np.fft.rfft(x) * answer, self.n)
+
+    def room(self, x, rng, rt=0.22, wet=0.1, tone=3200.0, pre=0.006):
+        """A small room's answer, run round the loop."""
+        k = n_of(min(self.seconds * 0.8, rt * 1.6))
+        ir = lp(rng.standard_normal(k) * np.exp(-6.91 * np.arange(k) / SR / rt), tone)
+        full = np.zeros(self.n)
+        p = n_of(pre)
+        full[p:p + k] = ir
+        tail = np.fft.irfft(np.fft.rfft(x) * np.fft.rfft(full), self.n)
+        return x + wet * tail * (np.std(x) / (np.std(tail) + 1e-12))
+
+
 # ---------------------------------------------------------------- measuring, finishing, writing
 
 def a_weighted(x):

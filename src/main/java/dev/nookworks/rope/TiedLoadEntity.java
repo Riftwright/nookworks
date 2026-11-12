@@ -12,8 +12,11 @@ import dev.nookworks.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -40,18 +43,36 @@ import net.neoforged.neoforge.common.IShearable;
  * round it, and is saved with its value.
  * <p>
  * A Rope hanging with its bottom end right over it holds it up ({@link TiedLoads}): the rope's own clicks wind it up and
- * let it down a block at a time. Held by nothing, it falls until something is under it, and rests there, still tied.
- * Untied (sneak with an empty hand, shears, a dispenser firing shears) it is put back as the block where it stands.
+ * let it down a block at a time. Tied, it rests where it stands, as the block did, in the air or not; once a rope has
+ * moved it, held by nothing it falls until something is under it, and rests there, still tied (the user, 2026-11-12:
+ * a block tied in the air dropped like gravel). Untied (sneak with an empty hand, shears, a dispenser firing shears) it
+ * is put back as the block where it stands. Hit, it breaks as its block would, the harder the more hits; an explosion
+ * strong enough for its block breaks it too (it was proof against both, a wither's cage in the making).
  */
 public class TiedLoadEntity extends Entity implements IShearable {
     private static final EntityDataAccessor<CarriedLook> DATA_LOOK = SynchedEntityData.defineId(TiedLoadEntity.class, CarriedLook.ENTITY_SERIALIZER);
     /** Falling: how much faster each tick, and the fastest, in blocks a tick (no faster than a block, so no cell is skipped). */
     private static final double GRAVITY = 0.04;
     private static final double MAX_FALL = 0.98;
+    /** How far its breaking has come, 0-9 as a block's cracks, or -1 whole: for the client to draw the cracks. */
+    private static final EntityDataAccessor<Integer> DATA_CRACK = SynchedEntityData.defineId(TiedLoadEntity.class, EntityDataSerializers.INT);
+    /** What one hit takes off it: this many ticks of digging at its block with what the hand holds. */
+    static final float HIT_TICKS = 10.0F;
+    /** Hits forgotten this long after the last, as digging stopped part way. */
+    private static final int HITS_LAST = 40;
 
     private @Nullable CarriedBlock carried;
     /** How fast it is falling, blocks a tick; 0 at rest or held. */
     private double falling;
+    /**
+     * At rest where it stands - tied there, or come down onto something - so held by nothing it stays, as a block does;
+     * false once a rope has moved it, until it comes to rest again. Null for a load saved before this was kept, until
+     * its first tick says.
+     */
+    private @Nullable Boolean resting = Boolean.TRUE;
+    /** How far its breaking has come, 0 to 1, and when it was last hit. */
+    private float hits;
+    private long lastHit;
 
     public TiedLoadEntity(EntityType<? extends TiedLoadEntity> type, Level level) {
         super(type, level);
@@ -62,6 +83,7 @@ public class TiedLoadEntity extends Entity implements IShearable {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         entityData.define(DATA_LOOK, CarriedLook.EMPTY);
+        entityData.define(DATA_CRACK, -1);
     }
 
     /** What it holds (server side; null on a client, which has only {@link #look()}). */
@@ -147,9 +169,33 @@ public class TiedLoadEntity extends Entity implements IShearable {
         return false;
     }
 
+    /** How far its breaking has come, 0-9, or -1 whole (both sides). */
+    public int crack() {
+        return this.entityData.get(DATA_CRACK);
+    }
+
+    /** A hit taking {@code step} off it (a whole block's digging is 1) at {@code time}: true once that breaks it. */
+    boolean hit(float step, long time) {
+        this.hits += step;
+        this.lastHit = time;
+        this.entityData.set(DATA_CRACK, Math.min(9, (int) (this.hits * 10.0F)));
+        return this.hits >= 1.0F;
+    }
+
+    private void forgetHits() {
+        this.hits = 0;
+        this.entityData.set(DATA_CRACK, -1);
+    }
+
+    /** Whether it is at rest where it stands, so held by nothing it stays put. */
+    public boolean resting() {
+        return Boolean.TRUE.equals(this.resting);
+    }
+
     /** Moved up (or down) {@code rows} whole blocks at once - the client draws it moving there - and not falling. */
     void moveRows(int rows) {
         this.falling = 0;
+        this.resting = Boolean.FALSE; // a rope has it now: let go, it falls
         this.setPos(this.getX(), Math.rint(this.getY()) + rows, this.getZ());
         this.needsSync = true;
     }
@@ -165,8 +211,20 @@ public class TiedLoadEntity extends Entity implements IShearable {
             this.discard(); // taken out of it (TiedLoads.release), or never given anything
             return;
         }
+        if (this.hits > 0 && level.getGameTime() - this.lastHit > HITS_LAST) {
+            this.forgetHits();
+        }
         if (this.held()) {
             this.falling = 0;
+            if (this.resting == null) {
+                this.resting = Boolean.FALSE; // saved hanging from a rope
+            }
+            return;
+        }
+        if (this.resting == null) {
+            this.resting = this.falling == 0; // saved standing, or saved falling
+        }
+        if (this.resting) {
             return;
         }
         this.fall(level);
@@ -197,6 +255,7 @@ public class TiedLoadEntity extends Entity implements IShearable {
         }
         boolean wasFalling = this.falling > GRAVITY;
         this.falling = 0;
+        this.resting = Boolean.TRUE;
         if (!this.aligned()) {
             this.setPos(this.getX(), row + 1, this.getZ()); // landed: on whole blocks again
             this.needsSync = true;
@@ -238,17 +297,28 @@ public class TiedLoadEntity extends Entity implements IShearable {
 
     @Override
     public boolean isAttackable() {
-        return false; // a hit does nothing: untie it to have the block again
+        return true; // hit, it breaks as its block would (TiedLoads.hit)
     }
 
+    /** A player's hit (TiedLoads.hit) or an explosion that reached it (one too weak for its block passes it by). */
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+        if (this.isRemoved() || this.carried == null) {
+            return false;
+        }
+        if (source.is(DamageTypeTags.IS_EXPLOSION)) {
+            TiedLoads.blownUp(level, this);
+            return true;
+        }
+        if (source.getEntity() instanceof ServerPlayer player && source.getDirectEntity() == player) {
+            return TiedLoads.hit(level, this, player);
+        }
         return false;
     }
 
     @Override
     public boolean ignoreExplosion(Explosion explosion) {
-        return true;
+        return !TiedLoads.blownApartBy(this, explosion);
     }
 
     @Override
@@ -305,11 +375,15 @@ public class TiedLoadEntity extends Entity implements IShearable {
         if (this.falling > 0) {
             output.putDouble("falling", this.falling);
         }
+        if (this.resting != null) {
+            output.putBoolean("resting", this.resting);
+        }
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         input.read("carried", CarriedBlock.CODEC).ifPresent(this::setCarried);
         this.falling = input.getDoubleOr("falling", 0);
+        this.resting = input.read("resting", com.mojang.serialization.Codec.BOOL).orElse(null); // none in a load saved before it was kept
     }
 }

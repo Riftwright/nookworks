@@ -98,8 +98,15 @@ public final class ModRope {
      * and it rattles and sways a little when something goes through it ({@link dev.nookworks.rope.ChainSway}).
      */
     public static final DeferredItem<ThinChainItem> THIN_CHAIN = ModItems.ITEMS.registerItem("thin_chain", ThinChainItem::new);
-    /** A garden wind chime, hung as a bottle is, that chimes in the wind (HungItemEntity#windChime). */
-    public static final DeferredItem<Item> WIND_CHIME = ModItems.ITEMS.registerSimpleItem("wind_chime");
+    /**
+     * A garden wind chime that chimes in the wind (HungItemEntity#windChime): a block hung under a block as a lantern is,
+     * and hung on a Thin Rope as a lantern is too, drawn as its block (it was an item, its picture on a string: the user,
+     * 2026-11-12, 「ちゃんとブロックとして作ろう」). The id is the item's as it was, so chimes kept and hung carry over.
+     */
+    public static final DeferredBlock<dev.nookworks.block.WindChimeBlock> WIND_CHIME_BLOCK = ModBlocks.BLOCKS.registerBlock("wind_chime",
+            dev.nookworks.block.WindChimeBlock::new, p -> p.mapColor(MapColor.WOOD).strength(0.3F).sound(SoundType.BAMBOO_WOOD)
+                    .noCollision().noOcclusion().pushReaction(PushReaction.POPPED));
+    public static final DeferredItem<BlockItem> WIND_CHIME = ModItems.ITEMS.registerSimpleBlockItem(WIND_CHIME_BLOCK);
 
     /**
      * Fish opened out and dried in the sun (干物): a day of sun makes it keep, and a little better eating than a fish

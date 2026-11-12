@@ -198,6 +198,36 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
         return false;
     }
 
+    /**
+     * Whether this pipe's line, as far as {@code limit} pipes, is joined to the block at {@code target}: a line from a
+     * Distiller's Condenser that also runs to the Distiller below it (its wood vinegar coming in, its water going out) gets
+     * no methanol, which would plug it (nookTechnology's Tar Still keeps its benzene out of such a line the same way).
+     */
+    public boolean lineReaches(ServerLevel level, BlockPos target, int limit) {
+        java.util.ArrayDeque<FluidPipeBlockEntity> queue = new java.util.ArrayDeque<>();
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        queue.add(this);
+        seen.add(this.worldPosition);
+        while (!queue.isEmpty()) {
+            FluidPipeBlockEntity pipe = queue.poll();
+            BlockPos at = pipe.worldPosition;
+            for (Direction side : SIDES) {
+                BlockPos next = at.relative(side);
+                if (!pipe.open(level, at, side)) {
+                    continue;
+                }
+                if (next.equals(target)) {
+                    return true;
+                }
+                FluidPipeBlockEntity other = pipe.pipeOn(level, at, side);
+                if (other != null && seen.size() < limit && seen.add(next)) {
+                    queue.add(other);
+                }
+            }
+        }
+        return false;
+    }
+
     /** How many pipes away the nearest taker of this pipe's fluid is, or {@link #NOWHERE}. */
     public int reach() {
         return this.reach;

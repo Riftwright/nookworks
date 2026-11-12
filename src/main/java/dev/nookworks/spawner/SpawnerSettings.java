@@ -15,16 +15,21 @@ import net.minecraft.util.Mth;
  * @param maxNearby   stop while this many of the mob are already around the spawner
  * @param anyLight    skip the mob's own spawn rules (light level, ground), only room is needed
  * @param needsPlayer vanilla behaviour: only run with a player within 16 blocks
+ * @param silent      the mobs it makes make no sound, wherever they go - a trap's killing floor quiet (the user,
+ *                    2026-11-12: 「トラップがうるさい」), at a quarter more power (「オンにするには多少電気代がかかる」)
  */
-public record SpawnerSettings(boolean enabled, int interval, int count, int maxNearby, boolean anyLight, boolean needsPlayer) {
+public record SpawnerSettings(boolean enabled, int interval, int count, int maxNearby, boolean anyLight, boolean needsPlayer,
+        boolean silent) {
     public static final int MIN_INTERVAL = 20;
     public static final int MAX_INTERVAL = 20 * 120;
     public static final int MAX_COUNT = 16;
     public static final int MAX_NEARBY = 64;
 
-    public static final SpawnerSettings DEFAULT = new SpawnerSettings(true, 20 * 10, 4, 6, false, true);
+    public static final SpawnerSettings DEFAULT = new SpawnerSettings(true, 20 * 10, 4, 6, false, true, false);
     /** FE a tick a spawner costs at the default settings, and the least it costs running at all. */
     public static final int BASE_FE_PER_TICK = 20;
+    /** What silencing its mobs costs on top: a quarter more. */
+    public static final double SILENT_COST = 1.25;
 
     public static final Codec<SpawnerSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.BOOL.fieldOf("enabled").forGetter(SpawnerSettings::enabled),
@@ -32,7 +37,13 @@ public record SpawnerSettings(boolean enabled, int interval, int count, int maxN
             Codec.INT.fieldOf("count").forGetter(SpawnerSettings::count),
             Codec.INT.fieldOf("max_nearby").forGetter(SpawnerSettings::maxNearby),
             Codec.BOOL.fieldOf("any_light").forGetter(SpawnerSettings::anyLight),
-            Codec.BOOL.fieldOf("needs_player").forGetter(SpawnerSettings::needsPlayer)).apply(i, SpawnerSettings::new));
+            Codec.BOOL.fieldOf("needs_player").forGetter(SpawnerSettings::needsPlayer),
+            Codec.BOOL.optionalFieldOf("silent", false).forGetter(SpawnerSettings::silent)).apply(i, SpawnerSettings::new));
+
+    /** As before the mobs could be silenced: they are not (for add-ons built against it). */
+    public SpawnerSettings(boolean enabled, int interval, int count, int maxNearby, boolean anyLight, boolean needsPlayer) {
+        this(enabled, interval, count, maxNearby, anyLight, needsPlayer, false);
+    }
 
     public SpawnerSettings {
         interval = Mth.clamp(interval, MIN_INTERVAL, MAX_INTERVAL);
@@ -45,7 +56,7 @@ public record SpawnerSettings(boolean enabled, int interval, int count, int maxN
      * player near) cost {@link #BASE_FE_PER_TICK}, about 1,000 FE a mob; more at a time or more often costs as much
      * more, so a mob costs the same whichever way it is asked for. Ignoring the mob's rules doubles it, and so does
      * running with nobody near - a spawner working anywhere, any time, pays for it. It never costs less than the base
-     * running; switched off it costs nothing.
+     * running; switched off it costs nothing. Its mobs silenced, it costs a quarter more.
      */
     public int energyPerTick() {
         if (!this.enabled) {
@@ -53,7 +64,8 @@ public record SpawnerSettings(boolean enabled, int interval, int count, int maxN
         }
         double perMob = BASE_FE_PER_TICK * DEFAULT.interval() / (double) DEFAULT.count();
         double cost = perMob * this.count / this.interval * (this.anyLight ? 2 : 1) * (this.needsPlayer ? 1 : 2);
-        return MachineTuning.energy(Math.max(BASE_FE_PER_TICK, (int) Math.round(cost)));
+        double running = Math.max(BASE_FE_PER_TICK, cost) * (this.silent ? SILENT_COST : 1);
+        return MachineTuning.energy((int) Math.round(running));
     }
 
     /** Interval steps: one second below 10 s, five seconds above. */
@@ -64,26 +76,30 @@ public record SpawnerSettings(boolean enabled, int interval, int count, int maxN
     }
 
     public SpawnerSettings withEnabled(boolean v) {
-        return new SpawnerSettings(v, this.interval, this.count, this.maxNearby, this.anyLight, this.needsPlayer);
+        return new SpawnerSettings(v, this.interval, this.count, this.maxNearby, this.anyLight, this.needsPlayer, this.silent);
     }
 
     public SpawnerSettings withInterval(int v) {
-        return new SpawnerSettings(this.enabled, v, this.count, this.maxNearby, this.anyLight, this.needsPlayer);
+        return new SpawnerSettings(this.enabled, v, this.count, this.maxNearby, this.anyLight, this.needsPlayer, this.silent);
     }
 
     public SpawnerSettings withCount(int v) {
-        return new SpawnerSettings(this.enabled, this.interval, v, this.maxNearby, this.anyLight, this.needsPlayer);
+        return new SpawnerSettings(this.enabled, this.interval, v, this.maxNearby, this.anyLight, this.needsPlayer, this.silent);
     }
 
     public SpawnerSettings withMaxNearby(int v) {
-        return new SpawnerSettings(this.enabled, this.interval, this.count, v, this.anyLight, this.needsPlayer);
+        return new SpawnerSettings(this.enabled, this.interval, this.count, v, this.anyLight, this.needsPlayer, this.silent);
     }
 
     public SpawnerSettings withAnyLight(boolean v) {
-        return new SpawnerSettings(this.enabled, this.interval, this.count, this.maxNearby, v, this.needsPlayer);
+        return new SpawnerSettings(this.enabled, this.interval, this.count, this.maxNearby, v, this.needsPlayer, this.silent);
     }
 
     public SpawnerSettings withNeedsPlayer(boolean v) {
-        return new SpawnerSettings(this.enabled, this.interval, this.count, this.maxNearby, this.anyLight, v);
+        return new SpawnerSettings(this.enabled, this.interval, this.count, this.maxNearby, this.anyLight, v, this.silent);
+    }
+
+    public SpawnerSettings withSilent(boolean v) {
+        return new SpawnerSettings(this.enabled, this.interval, this.count, this.maxNearby, this.anyLight, this.needsPlayer, v);
     }
 }

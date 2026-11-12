@@ -29,7 +29,6 @@ recovered from code.
 | `block/generator_side.png` | Generator east/west fans | `gen_machines.py: firebox` overlay |
 | `block/generator_top.png` | Generator vents | `gen_machines.py: vents()` |
 | `block/generator_bottom.png` | Generator underside | — |
-| `block/diamond_storage_barrel_side/top/bottom.png` | Diamond Storage Barrel; every other tier is made from them by `gen_storage.py`, the metal recoloured | `gen_storage.py` (drawn by the user, 2026-10-11; the lid's and base's wood matched to the side's hue and saturation at their ask) |
 
 `block/retort_front.png` and `block/retort_side.png` are the exception to the rule above: they are built
 from the lit ones by `gen_retort_cold.py`, which puts the fire out and copies every other pixel across, so
