@@ -3,6 +3,7 @@ package dev.nookworks.cooking;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.sounds.SoundEvent;
 import org.jspecify.annotations.Nullable;
 
 import com.mojang.logging.LogUtils;
@@ -13,6 +14,7 @@ import dev.nookworks.block.Clicks;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModCooking;
+import dev.nookworks.registry.ModKitchen;
 import dev.nookworks.registry.ModOil;
 import dev.nookworks.ventilation.Ventilation;
 import dev.nookworks.registry.ModSounds;
@@ -136,6 +138,16 @@ public class IronPotBlock extends BaseEntityBlock {
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    /** Whether this is the Frying Pan: shallow, a bottle of oil at most, its own recipes ({@code "pan": true}). */
+    public boolean pan() {
+        return false;
+    }
+
+
+    protected VoxelShape shape(boolean onGrill) {
+        return onGrill ? ON_GRILL_SHAPE : SHAPE;
     }
 
     /** A grill astride a campfire with nothing on its grate: a pot may take its place. */
@@ -297,7 +309,7 @@ public class IronPotBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(ON_GRILL) ? ON_GRILL_SHAPE : SHAPE;
+        return this.shape(state.getValue(ON_GRILL));
     }
 
     /** What pouring {@code stack} in would add, or null for something that is not water or oil. */
@@ -330,6 +342,27 @@ public class IronPotBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof IronPotBlockEntity pot)) {
             return InteractionResult.PASS;
         }
+        if (!pot.dish().isEmpty() && stack.is(ModKitchen.PLATE_ITEM.get()) && !Plating.of(pot.dish()).isEmpty()) {
+            // a Plate in hand: the dish is served onto it instead of into a bowl (the user, 2026-11-14: チャーハンや
+            // 野菜炒めは、皿に盛るのが普通). The bowl its rice came in stays in the pan, to be taken out as ever.
+            if (!Plating.onPlate(stack).isEmpty()) {
+                // a Plate lifted with food on it is the same item: served onto, it was used up and its food with it
+                // (seen in review, 2026-11-14). Said as a Plate on the table says it
+                if (!level.isClientSide()) {
+                    player.sendOverlayMessage(Component.translatable("message.nookworks.plate.taken").withStyle(ChatFormatting.RED));
+                }
+                return Clicks.REFUSED;
+            }
+            if (!level.isClientSide()) {
+                ItemStack plated = Plating.of(pot.serve());
+                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, plated));
+                if (hand == InteractionHand.MAIN_HAND && !player.getMainHandItem().is(ModKitchen.PLATE_ITEM.get())) {
+                    TrayBlock.keepHandEmpty(player.getInventory());
+                }
+                level.playSound(null, pos, ModSounds.PLATE_CLINK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        }
         if (!pot.dish().isEmpty() && pot.container() != null && stack.is(pot.container())) {
             if (!level.isClientSide()) {
                 Item container = pot.container();
@@ -339,21 +372,28 @@ public class IronPotBlock extends BaseEntityBlock {
                     // Bowl of Rice back into the pot as an ingredient (round two of r21)
                     TrayBlock.keepHandEmpty(player.getInventory());
                 }
-                level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.6F, 0.8F);
+                level.playSound(null, pos, ModSounds.IRON_POT_SERVE.get(), SoundSource.BLOCKS, 0.6F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }
         PotRecipe.Liquid pour = pours(stack);
+        if (pour != null && this.pan() && pour == PotRecipe.Liquid.WATER) {
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable("nookworks.frying_pan.only_oil").withStyle(ChatFormatting.RED));
+            }
+            return Clicks.REFUSED;
+        }
         if (pour != null) {
             boolean bucket = stack.is(Items.WATER_BUCKET) || stack.is(ModOil.VEGETABLE_OIL_BUCKET.get());
             if (!level.isClientSide()) {
                 int mB = bucket ? IronPotBlockEntity.CAPACITY : OilFluids.BOTTLE;
                 IronPotBlockEntity.Refusal refusal = pot.refusesLiquid(pour, mB);
                 if (refusal != null) {
+                    // the pan's own words where the pot's speak of the pot
                     player.sendOverlayMessage(Component.translatable(switch (refusal) {
                         case DISH_WAITING -> "nookworks.iron_pot.take_dish_first";
                         case OTHER_LIQUID -> "nookworks.iron_pot.no_mixing";
-                        case FULL -> "nookworks.iron_pot.no_room";
+                        case FULL -> this.pan() ? "nookworks.frying_pan.no_room" : "nookworks.iron_pot.no_room";
                     }).withStyle(ChatFormatting.RED));
                     return Clicks.REFUSED;
                 }
@@ -380,8 +420,8 @@ public class IronPotBlock extends BaseEntityBlock {
                     return InteractionResult.SUCCESS;
                 }
                 if (!pot.drainLiquid(mB)) {
-                    player.sendOverlayMessage(Component.translatable(pot.dish().isEmpty() ? "nookworks.iron_pot.too_little"
-                            : "nookworks.iron_pot.take_dish_first").withStyle(ChatFormatting.RED));
+                    player.sendOverlayMessage(Component.translatable(!pot.dish().isEmpty() ? "nookworks.iron_pot.take_dish_first"
+                            : this.pan() ? "nookworks.frying_pan.too_little" : "nookworks.iron_pot.too_little").withStyle(ChatFormatting.RED));
                     return Clicks.REFUSED;
                 }
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled));
@@ -389,19 +429,31 @@ public class IronPotBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        if (!stack.isEmpty() && PotRecipe.isIngredient(level, stack)) {
+        if (!stack.isEmpty() && PotRecipe.isIngredient(level, stack, this.pan())) {
             if (!level.isClientSide()) {
                 if (!pot.addIngredient(stack)) {
-                    player.sendOverlayMessage(Component.translatable(pot.dish().isEmpty() ? "nookworks.iron_pot.full"
-                            : "nookworks.iron_pot.take_dish_first").withStyle(ChatFormatting.RED));
+                    player.sendOverlayMessage(Component.translatable(!pot.dish().isEmpty() ? "nookworks.iron_pot.take_dish_first"
+                            : this.pan() ? "nookworks.frying_pan.full" : "nookworks.iron_pot.full").withStyle(ChatFormatting.RED));
                     return Clicks.REFUSED;
                 }
                 boolean frying = pot.liquid() == PotRecipe.Liquid.OIL;
                 stack.consume(1, player); // a bowl it came in stays with it in the pot until the cooking frees it
-                level.playSound(null, pos, frying ? SoundEvents.GENERIC_EXTINGUISH_FIRE : SoundEvents.ITEM_FRAME_ADD_ITEM,
-                        SoundSource.BLOCKS, frying ? 0.3F : 0.6F, frying ? 1.8F : 1.2F);
+                // heard as what it lands in: water plops, hot oil spits, cold oil and bare iron only take it (it hissed
+                // by the oil alone, on a cold stove too)
+                SoundEvent in = pot.liquid() == PotRecipe.Liquid.WATER ? ModSounds.IRON_POT_PLOP.get()
+                        : frying && heated(level, pos) ? ModSounds.IRON_POT_SEAR.get() : ModSounds.IRON_POT_ADD.get();
+                level.playSound(null, pos, in, SoundSource.BLOCKS, 0.6F, 0.95F + level.getRandom().nextFloat() * 0.1F);
             }
             return InteractionResult.SUCCESS;
+        }
+        if (!stack.isEmpty() && PotRecipe.isIngredient(level, stack, !this.pan())) {
+            // the other vessel's (cooked rice into the pot, which fries it no more; a chicken into the pan): said so, not
+            // eaten or let drop with no word (the cooking review, 2026-11-14)
+            if (!level.isClientSide()) {
+                player.sendOverlayMessage(Component.translatable(this.pan() ? "nookworks.frying_pan.goes_in_pot"
+                        : "nookworks.iron_pot.goes_in_pan").withStyle(ChatFormatting.RED));
+            }
+            return Clicks.REFUSED;
         }
         if (stack.getItem() instanceof net.minecraft.world.item.BucketItem filledBucket
                 && filledBucket.getContent() != net.minecraft.world.level.material.Fluids.EMPTY
@@ -409,7 +461,8 @@ public class IronPotBlock extends BaseEntityBlock {
             // any other bucket went on to be poured out over the pot: lava on a pot over a fire, and the kitchen burned
             // (the kitchen play-test, 2026-10-19)
             if (!level.isClientSide()) {
-                player.sendOverlayMessage(Component.translatable("nookworks.iron_pot.only_water_or_oil").withStyle(ChatFormatting.RED));
+                player.sendOverlayMessage(Component.translatable(this.pan() ? "nookworks.frying_pan.only_oil"
+                        : "nookworks.iron_pot.only_water_or_oil").withStyle(ChatFormatting.RED));
             }
             return Clicks.REFUSED;
         }
@@ -417,7 +470,8 @@ public class IronPotBlock extends BaseEntityBlock {
             // a food no pot recipe takes (a Boiled Egg into the oil) went on to be eaten, or did nothing at all, with no
             // word why (the kitchen play-test, item 8); other things in hand still act as on any block (one is set down)
             if (!level.isClientSide()) {
-                player.sendOverlayMessage(Component.translatable("nookworks.iron_pot.not_an_ingredient").withStyle(ChatFormatting.RED));
+                player.sendOverlayMessage(Component.translatable(this.pan() ? "nookworks.frying_pan.not_an_ingredient"
+                        : "nookworks.iron_pot.not_an_ingredient").withStyle(ChatFormatting.RED));
             }
             return Clicks.REFUSED;
         }
@@ -434,7 +488,10 @@ public class IronPotBlock extends BaseEntityBlock {
             if (player.isSecondaryUseActive()) {
                 out.add(pot.takeIngredient());
             } else if (!pot.dish().isEmpty() && pot.container() == null) {
-                out.add(pot.takeDish());
+                // every dish done that a hand takes, at once: what fried side by side comes out together
+                for (int n = 0; n <= IronPotBlockEntity.SLOTS && !pot.dish().isEmpty() && pot.container() == null; n++) {
+                    out.add(pot.takeDish());
+                }
                 out.addAll(pot.takeFreed());
             } else if (!pot.dish().isEmpty()) {
                 out.addAll(pot.serveIntoFreed()); // into the bowls the rice came in
@@ -464,7 +521,7 @@ public class IronPotBlock extends BaseEntityBlock {
                     player.sendOverlayMessage(why == null ? pot.describe() : pot.describe().copy().append("  ").append(why));
                 }
             } else {
-                level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.6F, 1.0F);
+                level.playSound(null, pos, ModSounds.IRON_POT_ADD.get(), SoundSource.BLOCKS, 0.45F, 1.2F);
             }
         }
         return InteractionResult.SUCCESS;
@@ -476,7 +533,7 @@ public class IronPotBlock extends BaseEntityBlock {
         if (!state.getValue(COOKING)) {
             return;
         }
-        double top = pos.getY() + (state.getValue(ON_GRILL) ? 7.5 / 16 : 6.5 / 16);
+        double top = pos.getY() + (state.getValue(ON_GRILL) ? 7.5 / 16 : 6.5 / 16) - (this.pan() ? 4.0 / 16 : 0);
         boolean oil = state.getValue(LIQUID) == Contents.OIL;
         if (random.nextInt(oil ? 2 : 3) == 0) {
             Ventilation.smoke(level, pos, oil ? ParticleTypes.SMOKE : ParticleTypes.WHITE_SMOKE,

@@ -1,0 +1,16 @@
+{
+  "values": [
+    "#c:flours",
+    "minecraft:sugar",
+    "#c:dusts/salt",
+    "minecraft:milk_bucket",
+    {
+      "id": "nookworks:caustic_soda",
+      "required": false
+    },
+    {
+      "id": "nookworks:methanol",
+      "required": false
+    }
+  ]
+}

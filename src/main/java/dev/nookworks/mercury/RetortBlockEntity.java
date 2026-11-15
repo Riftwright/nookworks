@@ -462,6 +462,18 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         return this.liquid.getAmountAsInt(0);
     }
 
+    /**
+     * Whether it gives off a liquid now or is about to: some in its tank, or a charge whose run makes one (a log's wood
+     * vinegar). A Vacuum Distiller sends it no water then - water standing in its pipes would bar that liquid's way.
+     */
+    public boolean givesOffLiquid() {
+        if (this.liquidStored() > 0) {
+            return true;
+        }
+        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
+        return recipe != null && recipe.liquid().isPresent();
+    }
+
     /** That tank alone: drawn from, never filled. */
     public FluidStacksResourceHandler liquidTank() {
         return this.liquid;

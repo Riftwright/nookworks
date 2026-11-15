@@ -39,8 +39,10 @@ import net.minecraft.world.level.block.state.BlockState;
  * An item dragged from JEI's list onto a filter slot or the Keep Out row registers it there, and onto the picker's sample
  * slot makes it the sample, as a click with it in hand would ({@link GhostSlots}).
  */
-public class SorterMenu extends AbstractContainerMenu implements GhostSlots {
+public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev.nookworks.menu.tab.TabbedMenu {
     public static final int BUTTON_SWAP = 0;
+    /** The redstone mode, in the Settings tab: clear of the flags', the tabs' 20-39 and the picker's. */
+    public static final int BUTTON_REDSTONE = 10;
     /**
      * Button ids for the Precision Sorter's switches - {@link SorterSettings#BLACKLIST} and
      * {@link SorterSettings#MATCH_COMPONENTS} - and either sorter's Keep Out row turned round
@@ -93,6 +95,10 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots {
     private final SorterTier tier;
     private final @Nullable SorterSettings settings;
     private final DataSlot[] flags = new DataSlot[SorterSettings.COUNT];
+    /** The redstone mode, as the sorter has it (synced). */
+    private final DataSlot redstone;
+    /** The tabs on the screen's right edge, as a machine's: Settings, its redstone mode. */
+    private final dev.nookworks.menu.tab.MenuTabs tabs = new dev.nookworks.menu.tab.MenuTabs(176);
     /** The tag picker: the filter its first destination, the Keep Out row its second. */
     private final TagPicker picker;
 
@@ -245,6 +251,37 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots {
                 this.clientValue = value;
             }
         });
+        this.redstone = this.addDataSlot(new DataSlot() {
+            private int clientValue = dev.nookworks.machine.RedstoneMode.DEFAULT.ordinal();
+
+            @Override
+            public int get() {
+                return !player.level().isClientSide() && player.level().getBlockEntity(pos) instanceof SorterBlockEntity sorter
+                        ? sorter.redstoneMode().ordinal() : this.clientValue;
+            }
+
+            @Override
+            public void set(int value) {
+                this.clientValue = value;
+            }
+        });
+        this.tabs.enable(dev.nookworks.menu.tab.MachineTab.SETTINGS);
+    }
+
+    @Override
+    public dev.nookworks.menu.tab.MenuTabs tabs() {
+        return this.tabs;
+    }
+
+    /** How the sorter answers redstone, as last synced. */
+    public dev.nookworks.machine.RedstoneMode redstoneMode() {
+        return dev.nookworks.machine.RedstoneMode.byId(this.redstone.get());
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.tabs.removed(player);
     }
 
     /**
@@ -463,7 +500,13 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (this.pickerButton(player, id)) {
+        if (this.tabs.clickMenuButton(player, id) || this.pickerButton(player, id)) {
+            return true;
+        }
+        if (id == BUTTON_REDSTONE) {
+            if (player.level().getBlockEntity(this.pos) instanceof SorterBlockEntity sorter && this.settings != null) {
+                sorter.setRedstoneMode(sorter.redstoneMode().next());
+            }
             return true;
         }
         boolean keepOutOthers = id == BUTTON_FLAG + SorterSettings.KEEP_OUT_OTHERS; // the Keep Out row's sign: either sorter

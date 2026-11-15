@@ -280,6 +280,24 @@ public final class Belts {
         return !crossings(level, pos, state).isEmpty();
     }
 
+    /**
+     * Whether {@code state}, set at {@code pos} by {@code placer}, would be taken back up as {@link #onPlace} takes it:
+     * a belt crosses there that has not lapsed - for a player placer (a fake one too), a belt whose tier may no longer
+     * build there gives way, as it does to a hand. Nothing is changed (lapsing is only asked). For an add-on's placer to
+     * ask before it tries, each cell of a placement - a door's or a bed's other half too (nookTechnology's Block Placer,
+     * since 1.7: {@link #inABeltsWay} knows nothing of lapsing, and a claim's owner's Placer stood refused forever before
+     * a lapsed belt they could build through by hand).
+     */
+    public static boolean keepsOut(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.@Nullable Entity placer) {
+        for (Crossing crossing : crossings(level, pos, state)) {
+            if (placer instanceof Player && level instanceof ServerLevel server && lapsed(server, pos, crossing.belt())) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
     /** Every belt {@code state}, set at {@code pos}, would stand in the way of. */
     private static List<Crossing> crossings(Level level, BlockPos pos, BlockState state) {
         List<Crossing> crossings = new ArrayList<>();

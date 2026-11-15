@@ -6,14 +6,11 @@ import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
-import dev.nookworks.block.MachineBlock;
 import dev.nookworks.feature.Permission;
 import dev.nookworks.registry.ModBlockEntities;
-import dev.nookworks.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -43,19 +40,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * shaft the motor turns it; set against a hand-worked machine, on the line it is driven by, it turns the machine as a
  * motor would; and a belt - Rope or Thin Chain - from wheel to wheel carries the turning between them, so one motor
  * turns several machines (the user, 2026-10-10). Use the belt on one wheel and then on another; sneak-use with an empty
- * hand to take its belts off. TURNING is the look alone: the wheel and its belts go round while a motor drives them.
+ * hand to take its belts off. TURNING is the look and the sound alone: the wheel and its belts go round while a motor
+ * drives them, with a small clatter held on for as long (client/WheelClatter).
  */
 public class DriveWheelBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty TURNING = BooleanProperty.create("turning");
-
-    /** Heard now and then while it turns, as a machine at work is, at one pitch. */
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (state.getValue(TURNING)) {
-            MachineBlock.soundNowAndThen(level, pos, random, ModSounds.DRIVE_WHEEL_TURN.get(), true);
-        }
-    }
 
     /** The axle through the block and the wheel at its middle, for each axis. */
     private static final Map<Direction.Axis, VoxelShape> SHAPES = new EnumMap<>(Direction.Axis.class);

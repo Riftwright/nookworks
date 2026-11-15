@@ -637,9 +637,9 @@ final class CarryTests {
      */
     private static final Set<String> LEFT_OUT = Set.of(
             // lines and their fittings: pipes run on through the next block, a pad lies on the floor
-            "copper_pipe", "experience_pipe", "valve", "sight_glass", "absorption_pad",
-            // small things set on or against blocks: books, bottles, a plate, a tray, dice, a grill under a pot
-            "book_row", "bookend", "placed_books", "placed_bottles", "plate", "wooden_tray", "dice", "grill",
+            "copper_pipe", "experience_pipe", "valve", "sight_glass", "absorption_pad", "kitchen_tap",
+            // small things set on or against blocks: books, bottles, bowls, a plate, a tray, dice, a grill under a pot
+            "book_row", "bookend", "placed_books", "placed_bottles", "placed_bowls", "plate", "wooden_tray", "dice", "grill",
             // signs and a shelf, as vanilla's; a redstone timer; a mirror; a counter a villager is bound to
             "dawnwood_sign", "dawnwood_wall_sign", "dawnwood_hanging_sign", "dawnwood_wall_hanging_sign", "dawnwood_shelf",
             "nested_timer", "standing_mirror", "trading_counter",

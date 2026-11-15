@@ -441,6 +441,9 @@
     "nookworks:iron_pot": {
       "metal": 3
     },
+    "nookworks:frying_pan": {
+      "metal": 4
+    },
     "nookworks:bookend": {
       "metal": 0.17
     },
@@ -531,7 +534,7 @@
       "metal": 19
     },
     "nookworks:stone_maker": {
-      "metal": 19
+      "metal": 21
     },
     "nookworks:sifter": {
       "metal": 12.38
@@ -565,6 +568,12 @@
     },
     "nookworks:barter_terminal": {
       "metal": 13
+    },
+    "nookworks:electric_stove": {
+      "metal": 19
+    },
+    "nookworks:planter": {
+      "metal": 19
     }
   }
 }

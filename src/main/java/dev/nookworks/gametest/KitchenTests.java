@@ -161,9 +161,9 @@ final class KitchenTests {
                 && tray.items().stream().filter(s -> s.is(ModKitchen.RISEN_DOUGH.get())).count() == 2, "and the next click the next one");
         helper.getBlockState(pos).useWithoutItem(level, player, hit(helper, pos));
         check(helper, player.getInventory().countItem(ModKitchen.RISEN_DOUGH.get()) == 2, "into the same stack");
-        player.setShiftKeyDown(true);
+        // (sneaking, an empty hand lifts the tray with what is on it since 2026-11-14: TableSettingTests)
         helper.getBlockState(pos).useWithoutItem(level, player, hit(helper, pos));
-        check(helper, tray.isEmpty() && player.getInventory().countItem(ModKitchen.RISEN_DOUGH.get()) == 3, "sneaking, everything");
+        check(helper, tray.isEmpty() && player.getInventory().countItem(ModKitchen.RISEN_DOUGH.get()) == 3, "and the last");
         var baked = level.recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(new ItemStack(ModKitchen.RISEN_DOUGH.get())), level);
         check(helper, baked.isPresent() && baked.get().value().assemble(new SingleRecipeInput(new ItemStack(ModKitchen.RISEN_DOUGH.get()))).is(Items.BREAD),
                 "risen dough bakes into bread");

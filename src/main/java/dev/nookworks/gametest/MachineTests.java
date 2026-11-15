@@ -134,6 +134,7 @@ final class MachineTests {
         test("laser_spares_coated_wood", MachineTests::laserSparesCoatedWood);
         test("laser_sets_uncoated_wood_alight", 400, MachineTests::laserSetsWoodAlight);
         test("planter_plants_seeds_on_farmland", MachineTests::planterPlantsSeeds);
+        test("planter_plants_exactly_the_spots_it_shows", MachineTests::planterSpots);
         test("sapling_loop_delivers_to_planter", 800, MachineTests::saplingLoopFlows);
         test("sapling_loop_buffers_when_planter_full", 800, MachineTests::saplingLoopBuffers);
         test("machine_redstone_modes", MachineTests::machineRedstoneModes);
@@ -148,6 +149,7 @@ final class MachineTests {
         test("printing_press_waits_for_redstone", MachineTests::printingPressWaitsForRedstone);
         test("spawner_controller_redstone_switches_spawners_off", MachineTests::controllerRedstoneOff);
         test("other_mods_pipes_meet_a_machine_from_any_face_but_a_sorter_keeps_its_faces", MachineTests::anyFace);
+        test("sorter_feeding_a_retort_leaves_a_reagent_until_the_charge_is_in", 300, MachineTests::sorterFeedsRetort);
         test("spawn_egg_brewer_redstone_button", MachineTests::brewerRedstoneButton);
         test("planter_plants_tall_flowers_whole", MachineTests::planterPlantsTallFlowersWhole);
         test("absorption_pad_rises_to_its_pipes", MachineTests::absorptionPadRisesToItsPipes);
@@ -533,7 +535,7 @@ final class MachineTests {
         BlockPos maker = new BlockPos(3, 2, 3);
         helper.setBlock(maker, ModBlocks.STONE_MAKER.get());
         helper.setBlock(maker.east(), Blocks.REDSTONE_BLOCK);
-        StoneMakerBlockEntity be = helper.getBlockEntity(maker, StoneMakerBlockEntity.class);
+        StoneMakerBlockEntity be = StoneMakerTests.filled(helper.getBlockEntity(maker, StoneMakerBlockEntity.class));
         be.energy().set(StoneMakerBlockEntity.CAPACITY);
         BlockPos at = helper.absolutePos(maker);
         Runnable oneItem = () -> {
@@ -604,18 +606,20 @@ final class MachineTests {
             }
             var layout = info.layout();
             seen.add(layout);
-            check(helper, info.slots().getContainerSize() == layout.slotCount(),
-                    layout + ": the screen shows " + layout.slotCount() + " slots of " + info.slots().getContainerSize());
+            // the bay's slots, and the machine's own in its Extra Slots tab (the Stone Maker's soul soil)
+            check(helper, info.slots().getContainerSize() == layout.slotCount() + layout.extraSlots(),
+                    layout + ": the screen shows " + (layout.slotCount() + layout.extraSlots()) + " slots of " + info.slots().getContainerSize());
             var menu = new MachineMenu(1, player.getInventory(), layout, info.slots(),
                     MachineMenu.data(info), entity);
             int liquid = dev.nookworks.machine.MachineLiquids.any(layout) ? 2 : 0; // the Liquid tab's, after the inventory
-            int ours = layout.slotCount() + 36 + liquid;
+            int ours = layout.slotCount() + 36 + liquid + layout.extraSlots();
             for (int s = 0; s < ours && s < menu.slots.size(); s++) {
                 var container = menu.slots.get(s).container;
                 boolean right = s < layout.slotCount() ? container == info.slots()
                         : s < layout.slotCount() + 36 ? container == player.getInventory()
-                        : container != info.slots() && container != player.getInventory();
-                check(helper, right, layout + ": slot " + s + " is the machine's, then the inventory's, then the Liquid tab's");
+                        : s < layout.slotCount() + 36 + liquid ? container != info.slots() && container != player.getInventory()
+                        : container == info.slots();
+                check(helper, right, layout + ": slot " + s + " is the machine's, then the inventory's, then the Liquid tab's, then the machine's own in its Extra Slots tab");
             }
             // an add-on may add its own after them (nookTechnology's power slider and gear slots); with none, there are none
             check(helper, addOnLoaded() ? menu.slots.size() >= ours : menu.slots.size() == ours,
@@ -904,6 +908,34 @@ final class MachineTests {
         helper.succeed();
     }
 
+    /**
+     * A Sorter whose outlet is an empty Retort, a chest above it holding a reagent before the charge: the sorter leaves
+     * the reagent in the chest (the Retort takes it through no face until a charge is in), sends the wood chips, then the
+     * caustic soda after them. It drew the reagent in and held it for good, sorting nothing more (1.6 review: a
+     * machine's any-face handler answered isValid by the slot's rule alone).
+     */
+    static void sorterFeedsRetort(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        helper.setBlock(pos, ModBlocks.ITEM_SORTER.get().defaultBlockState().setValue(SorterBlock.FACING, Direction.NORTH));
+        helper.getBlockEntity(pos, SorterBlockEntity.class).filter().setItem(0, new ItemStack(Items.DIAMOND));
+        helper.setBlock(pos.west(), Blocks.CHEST); // where the diamonds would go
+        helper.setBlock(pos.east(), ModBlocks.RETORT.get()); // where the rest goes; no power, so it only fills
+        helper.setBlock(pos.above(), Blocks.CHEST);
+        var above = helper.getBlockEntity(pos.above(), ChestBlockEntity.class);
+        above.setItem(0, new ItemStack(ModItems.CAUSTIC_SODA.get(), 2));
+        above.setItem(1, new ItemStack(ModItems.WOOD_CHIPS.get(), 2));
+        var retort = helper.getBlockEntity(pos.east(), RetortBlockEntity.class);
+        helper.succeedWhen(() -> {
+            check(helper, retort.getItem(RetortBlockEntity.INPUT).is(ModItems.WOOD_CHIPS.get()), "the wood chips reach the retort");
+            boolean soda = false;
+            for (int slot = RetortBlockEntity.FIRST_REAGENT; slot < RetortBlockEntity.FIRST_REAGENT + RetortBlockEntity.REAGENT_SLOTS; slot++) {
+                soda |= retort.getItem(slot).is(ModItems.CAUSTIC_SODA.get()) && retort.getItem(slot).getCount() == 2;
+            }
+            check(helper, soda, "and the caustic soda after them");
+            check(helper, above.isEmpty(), "the chest above emptied");
+        });
+    }
+
     static void controllerRedstoneOff(GameTestHelper helper) {
         var controller = buildControl(helper,
                 SpawnerSettings.DEFAULT.withInterval(20).withCount(16).withAnyLight(true).withNeedsPlayer(false), 20_000);
@@ -938,7 +970,7 @@ final class MachineTests {
         BlockPos maker = new BlockPos(3, 2, 3);
         helper.setBlock(maker, ModBlocks.STONE_MAKER.get());
         helper.setBlock(maker.below(), Blocks.CHEST);
-        helper.getBlockEntity(maker, StoneMakerBlockEntity.class).energy().set(10_000);
+        StoneMakerTests.filled(helper.getBlockEntity(maker, StoneMakerBlockEntity.class)).energy().set(10_000);
 
         helper.succeedWhen(() -> check(helper,
                 countIn(helper.getBlockEntity(maker.below(), ChestBlockEntity.class), Items.COBBLESTONE) >= 3,
@@ -949,6 +981,7 @@ final class MachineTests {
         BlockPos maker = new BlockPos(3, 2, 3);
         helper.setBlock(maker, ModBlocks.STONE_MAKER.get());
         helper.setBlock(maker.below(), Blocks.CHEST);
+        StoneMakerTests.filled(helper.getBlockEntity(maker, StoneMakerBlockEntity.class));
 
         helper.runAfterDelay(50, () -> {
             check(helper, countIn(helper.getBlockEntity(maker.below(), ChestBlockEntity.class), Items.COBBLESTONE) == 0,
@@ -980,6 +1013,8 @@ final class MachineTests {
         helper.setBlock(east, ModBlocks.STONE_MAKER.get());
         helper.setBlock(west.below(), Blocks.CHEST);
         helper.setBlock(east.below(), Blocks.CHEST);
+        StoneMakerTests.filled(helper.getBlockEntity(west, StoneMakerBlockEntity.class));
+        StoneMakerTests.filled(helper.getBlockEntity(east, StoneMakerBlockEntity.class));
         helper.getBlockEntity(gen, GeneratorBlockEntity.class).setItem(0, new ItemStack(Items.COAL));
 
         helper.succeedWhen(() -> {
@@ -1155,6 +1190,42 @@ final class MachineTests {
         check(helper, planter.getItem(0).getCount() == 2, "three seeds used, 2 left, has " + planter.getItem(0).getCount());
         check(helper, planter.getItem(1).getCount() == 4, "saplings kept (the stone beyond the farmland grows nothing)");
         check(helper, !planter.canPlaceItem(0, new ItemStack(Items.COBBLESTONE)), "only plants go in");
+        helper.succeed();
+    }
+
+    /**
+     * The spots a Planter's field is outlined by are the spots it plants: three wide and five deep before it, fifteen
+     * seeds and no sixteenth, and nothing on the farmland beside or beyond them.
+     */
+    static void planterSpots(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 1, 0);
+        helper.setBlock(pos, ModBlocks.PLANTER.get().defaultBlockState().setValue(PlanterBlock.FACING, Direction.SOUTH));
+        for (int x = 1; x <= 5; x++) {
+            for (int z = 1; z <= 6; z++) {
+                helper.setBlock(new BlockPos(x, 0, z), Blocks.FARMLAND);
+            }
+        }
+        java.util.Set<BlockPos> spots = new java.util.HashSet<>(PlanterBlockEntity.spots(pos, Direction.SOUTH));
+        java.util.Set<BlockPos> field = new java.util.HashSet<>();
+        for (int x = 2; x <= 4; x++) {
+            for (int z = 1; z <= 5; z++) {
+                field.add(new BlockPos(x, 1, z));
+            }
+        }
+        check(helper, spots.equals(field), "three wide and five deep before it, at its own height: " + spots);
+        var planter = helper.getBlockEntity(pos, PlanterBlockEntity.class);
+        planter.setItem(0, new ItemStack(Items.WHEAT_SEEDS, 20));
+        planter.energy().set(PlanterBlockEntity.CAPACITY);
+        for (int i = 0; i < 15; i++) {
+            check(helper, planter.plantOne(helper.getLevel()), "plant #" + (i + 1));
+        }
+        check(helper, !planter.plantOne(helper.getLevel()) && planter.getItem(0).getCount() == 5, "fifteen, and no sixteenth");
+        for (int x = 1; x <= 5; x++) {
+            for (int z = 1; z <= 6; z++) {
+                BlockPos at = new BlockPos(x, 1, z);
+                check(helper, helper.getBlockState(at).is(Blocks.WHEAT) == spots.contains(at), "wheat on the spots shown and nowhere else: " + at);
+            }
+        }
         helper.succeed();
     }
 

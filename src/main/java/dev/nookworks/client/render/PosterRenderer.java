@@ -8,6 +8,7 @@ import com.mojang.math.Axis;
 
 import dev.nookworks.client.PhotoTextures;
 import dev.nookworks.photo.PhotoPrints;
+import dev.nookworks.poster.PictureFrames;
 import dev.nookworks.poster.PosterEntity;
 import dev.nookworks.poster.PosterVariant;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -23,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -34,6 +36,9 @@ import net.minecraft.world.level.Level;
  * Client-only: it is reached solely from {@link ClientRenderers}, which the client event bus registers.
  */
 public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.State> {
+    /** A picture in a glowing frame, and the frame: full light, as a glowing frame's item is drawn. */
+    private static final int FULL_BRIGHT = 0xF000F0;
+
     public PosterRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -45,6 +50,12 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
         public int height = 1;
         public int[] lightPerBlock = new int[1];
         public boolean photo;
+        /** The block texture a frame's rim is cut from; null, no frame. */
+        public @Nullable Identifier rim;
+        /** In a glowing frame: the picture shows in the dark. */
+        public boolean glow;
+        /** The rim is the brass moulding, not a plain rim ({@link FrameRims}). */
+        public boolean moulded;
     }
 
     @Override
@@ -61,6 +72,11 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
         // a photo's picture is made here from what the server sent: blank paper until then, or if it never will be
         state.texture = variant == null ? null : print != null ? PhotoTextures.textureOrBlank(print.photo(), print.size()) : variant.texture();
         state.photo = print != null;
+        ItemStack frame = entity.frame();
+        PictureFrames.Look look = frame.isEmpty() ? null : PictureFrames.look(frame);
+        state.rim = look == null ? null : look.rim();
+        state.glow = look != null && look.glow();
+        state.moulded = look != null && look.moulded();
         state.width = variant == null ? 1 : variant.width();
         state.height = variant == null ? 1 : variant.height();
         if (state.lightPerBlock.length != state.width * state.height) {
@@ -86,6 +102,9 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
                 state.lightPerBlock[column + row * state.width] = LightCoordsUtil.getLightCoords(level, new BlockPos(x, y, z));
             }
         }
+        if (state.glow) { // the picture and its frame, as round a painting (FramedPaintingRenderer)
+            java.util.Arrays.fill(state.lightPerBlock, FULL_BRIGHT);
+        }
     }
 
     @Override
@@ -100,6 +119,7 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
         int[] light = state.lightPerBlock;
         Identifier texture = state.texture;
         boolean photo = state.photo;
+        boolean glow = state.glow;
         // A photo is lit as a map in a frame is - by the light where it hangs, not dimmed again for the way the wall faces,
         // as a painting is (to three quarters facing north or south, half facing east or west): a photo's sunny sky
         // came out the grey-blue of evening on an east wall (the user, 2026-10-14: 眠い…ぼんやり).
@@ -119,7 +139,7 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
                     float u1 = (float) (width - (column + 1)) / width;
                     float v0 = (float) (height - row) / height;
                     float v1 = (float) (height - (row + 1)) / height;
-                    int lightCoords = light[column + row * width];
+                    int lightCoords = glow ? FULL_BRIGHT : light[column + row * width];
                     vertex(pose, buffer, x0, y1, u1, v0, z, lightCoords, photo);
                     vertex(pose, buffer, x1, y1, u0, v0, z, lightCoords, photo);
                     vertex(pose, buffer, x1, y0, u0, v1, z, lightCoords, photo);
@@ -127,6 +147,9 @@ public class PosterRenderer extends EntityRenderer<PosterEntity, PosterRenderer.
                 }
             }
         });
+        if (state.rim != null) { // on the wall, round the sheet
+            FrameRims.submit(poseStack, collector, state.rim, state.moulded, width, height, light, PosterEntity.DEPTH / 2.0F);
+        }
         poseStack.popPose();
         super.submit(state, poseStack, collector, camera);
     }

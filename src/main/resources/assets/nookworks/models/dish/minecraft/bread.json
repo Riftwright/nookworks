@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "crust": "nookworks:block/dish/bread_crust",
+    "top": "nookworks:block/dish/bread_top",
+    "particle": "nookworks:block/dish/bread_crust"
+  },
+  "elements": [
+    {
+      "from": [
+        3.5,
+        0,
+        6
+      ],
+      "to": [
+        12.5,
+        2,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crust"
+        },
+        "south": {
+          "texture": "#crust"
+        },
+        "east": {
+          "texture": "#crust"
+        },
+        "west": {
+          "texture": "#crust"
+        },
+        "up": {
+          "texture": "#crust"
+        },
+        "down": {
+          "texture": "#crust"
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        2,
+        6.5
+      ],
+      "to": [
+        11.5,
+        3,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crust"
+        },
+        "south": {
+          "texture": "#crust"
+        },
+        "east": {
+          "texture": "#crust"
+        },
+        "west": {
+          "texture": "#crust"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#crust"
+        }
+      }
+    }
+  ]
+}

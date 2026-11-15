@@ -56,4 +56,19 @@ public enum RedstoneMode {
     public void save(ValueOutput output) {
         output.putString(KEY, this.name());
     }
+
+    /** The mode saved under {@code key} (a block's of its own, snake_case), or {@code missing} where none is. */
+    public static RedstoneMode load(ValueInput input, String key, RedstoneMode missing) {
+        String name = input.getStringOr(key, "");
+        for (RedstoneMode mode : values()) {
+            if (mode.name().equals(name)) {
+                return mode;
+            }
+        }
+        return missing;
+    }
+
+    public void save(ValueOutput output, String key) {
+        output.putString(key, this.name());
+    }
 }

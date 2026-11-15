@@ -140,7 +140,7 @@ public final class ModBlockEntities {
             BLOCK_ENTITY_TYPES.register("nested_timer", () -> new BlockEntityType<>(
                     NestedTimerBlockEntity::new, ModBlocks.NESTED_TIMER.get()));
     public static final Supplier<BlockEntityType<IronPotBlockEntity>> IRON_POT = BLOCK_ENTITY_TYPES.register("iron_pot",
-            () -> new BlockEntityType<>(IronPotBlockEntity::new, ModCooking.IRON_POT.get()));
+            () -> new BlockEntityType<>(IronPotBlockEntity::new, ModCooking.IRON_POT.get(), ModCooking.FRYING_PAN.get()));
     public static final Supplier<BlockEntityType<NukadokoBlockEntity>> NUKADOKO = BLOCK_ENTITY_TYPES.register("nukadoko",
             () -> new BlockEntityType<>(NukadokoBlockEntity::new, ModCooking.NUKADOKO.get()));
     public static final Supplier<BlockEntityType<GrillBlockEntity>> GRILL = BLOCK_ENTITY_TYPES.register("grill",
@@ -170,6 +170,12 @@ public final class ModBlockEntities {
             "wooden_tray", () -> new BlockEntityType<>(TrayBlockEntity::new, ModKitchen.WOODEN_TRAY.get()));
     public static final Supplier<BlockEntityType<PlateBlockEntity>> PLATE = BLOCK_ENTITY_TYPES.register(
             "plate", () -> new BlockEntityType<>(PlateBlockEntity::new, ModKitchen.PLATE.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.cooking.PlacedBowlsBlockEntity>> PLACED_BOWLS = BLOCK_ENTITY_TYPES.register(
+            "placed_bowls", () -> new BlockEntityType<>(dev.nookworks.cooking.PlacedBowlsBlockEntity::new, ModKitchen.PLACED_BOWLS.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.cooking.ElectricStoveBlockEntity>> ELECTRIC_STOVE = BLOCK_ENTITY_TYPES.register(
+            "electric_stove", () -> new BlockEntityType<>(dev.nookworks.cooking.ElectricStoveBlockEntity::new, ModCooking.ELECTRIC_STOVE.get()));
+    public static final Supplier<BlockEntityType<dev.nookworks.cooking.KitchenTapBlockEntity>> KITCHEN_TAP = BLOCK_ENTITY_TYPES.register(
+            "kitchen_tap", () -> new BlockEntityType<>(dev.nookworks.cooking.KitchenTapBlockEntity::new, ModCooking.KITCHEN_TAP.get()));
     public static final Supplier<BlockEntityType<OilPressBlockEntity>> OIL_PRESS = BLOCK_ENTITY_TYPES.register("oil_press",
             () -> new BlockEntityType<>(OilPressBlockEntity::new, ModOil.OIL_PRESS.get()));
     public static final Supplier<BlockEntityType<MotorBlockEntity>> MOTOR = BLOCK_ENTITY_TYPES.register("motor",

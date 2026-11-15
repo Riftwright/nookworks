@@ -188,6 +188,7 @@ public final class InfoPages {
         info(page, ModCrops.RICE_BRAN.get(), "rice_bran");
         info(page, ModCooking.GRILL_ITEM.get(), "grill");
         info(page, ModCooking.IRON_POT_ITEM.get(), "iron_pot");
+        info(page, ModCooking.FRYING_PAN_ITEM.get(), "frying_pan");
         info(page, ModCooking.NUKADOKO_ITEM.get(), "nukadoko");
         info(page, ModItems.COPPER_PIPE.get(), "copper_pipe");
         info(page, ModItems.SIGHT_GLASS.get(), "sight_glass");
@@ -228,6 +229,10 @@ public final class InfoPages {
         info(page, ModItems.DARK_MATTER.get(), "dark_matter");
         info(page, ModItems.WARP_ANCHOR.get(), "warp_anchor");
         info(page, ModKitchen.PLATE_ITEM.get(), "plate");
+        info(page, ModKitchen.PLATED_FRIED_RICE.get(), "plated_dish");
+        info(page, ModKitchen.PLATED_STIR_FRIED_VEGETABLES.get(), "plated_dish");
+        info(page, ModCooking.ELECTRIC_STOVE_ITEM.get(), "electric_stove");
+        info(page, ModCooking.KITCHEN_TAP_ITEM.get(), "kitchen_tap");
         info(page, ModItems.WINE_GLASS.get(), "tableware");
         info(page, ModItems.MUG.get(), "tableware");
         info(page, ModTravel.DAEMON_DOOR_ITEM.get(), "daemon_door");

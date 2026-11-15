@@ -1,5 +1,5 @@
-"""Deepslate Gravel, Nether Grit and End Gravel: what the Crusher makes of cobbled deepslate, netherrack and End
-Stone, for the Sifter.
+"""Deepslate Gravel, Nether Grit, End Gravel and Basalt Gravel: what the Crusher makes of cobbled deepslate,
+netherrack, End Stone and basalt, for the Sifter.
 All original pixel art (pebbles packed close, the bed showing only in the cracks between them, drawn from scratch),
 finished with texkit.shade (stone). Deterministic.
 
@@ -28,6 +28,11 @@ PALETTES = {
     "end_gravel": {"bed": (128, 126, 86),
                    "tones": [(186, 186, 128), (198, 199, 139), (208, 209, 149), (218, 218, 158), (192, 194, 136)],
                    "lit": [(202, 203, 144), (214, 215, 155), (224, 225, 165), (232, 232, 176), (208, 210, 151)]},
+    # basalt crushed: near-black chips, neutral where deepslate's are blue-grey, with a pale grey one now and then as
+    # basalt's own streaks are; the bed between them darker still
+    "basalt_gravel": {"bed": (28, 28, 32),
+                      "tones": [(46, 46, 50), (56, 55, 59), (66, 65, 68), (86, 85, 88), (52, 52, 57)],
+                      "lit": [(60, 60, 64), (71, 70, 74), (82, 81, 84), (101, 100, 103), (67, 67, 72)]},
 }
 PEBBLES = 34
 
@@ -84,7 +89,7 @@ def grit(palette, seed):
 
 
 def main():
-    for name, seed in (("deepslate_gravel", 91), ("nether_grit", 90), ("end_gravel", 92)):
+    for name, seed in (("deepslate_gravel", 91), ("nether_grit", 90), ("end_gravel", 92), ("basalt_gravel", 93)):
         grit(PALETTES[name], seed).save(BLOCK / f"{name}.png")
     print("wrote the grits")
 

@@ -5,7 +5,7 @@
         "hanging": "false"
       },
       "apply": {
-        "model": "minecraft:block/lantern"
+        "model": "minecraft:block/soul_lantern"
       }
     },
     {
@@ -13,7 +13,7 @@
         "hanging": "true"
       },
       "apply": {
-        "model": "minecraft:block/lantern_hanging"
+        "model": "minecraft:block/soul_lantern_hanging"
       }
     },
     {

@@ -40,8 +40,8 @@ final class EggsAndCampfiresTests {
     static void register() {
         NookworksGameTests.test("a_placed_campfire_is_unlit_until_lit", EggsAndCampfiresTests::placedCampfireIsUnlit);
         NookworksGameTests.test("a_campfire_item_is_unlit_while_campfires_are_set_down_unlit", EggsAndCampfiresTests::campfireItemUnlit);
-        NookworksGameTests.test("an_egg_fries_in_a_furnace_smoker_or_campfire", EggsAndCampfiresTests::eggFries);
-        NookworksGameTests.test("the_iron_pot_boils_eggs_and_rolls_tamagoyaki", 900, EggsAndCampfiresTests::potEggs);
+        NookworksGameTests.test("an_egg_fries_in_a_furnace_smoker_or_the_frying_pan", EggsAndCampfiresTests::eggFries);
+        NookworksGameTests.test("the_iron_pot_boils_eggs_and_the_pan_rolls_tamagoyaki", 900, EggsAndCampfiresTests::potEggs);
         NookworksGameTests.test("egg_dishes_fill_as_the_table_says", EggsAndCampfiresTests::eggDishValues);
         NookworksGameTests.test("the_iron_pot_takes_no_other_bucket", EggsAndCampfiresTests::potRefusesOtherBuckets);
     }
@@ -180,19 +180,23 @@ final class EggsAndCampfiresTests {
     }
 
     /**
-     * Any egg of #c:eggs (vanilla's three, and another mod's) fries in a furnace, a smoker and on a campfire - and so on
-     * a Grill, which cooks what a campfire does. Eggs are still thrown, not eaten: a raw one has no food on it.
+     * Any egg of #c:eggs (vanilla's three, and another mod's) fries in a furnace and a smoker, and in the Frying Pan's
+     * oil - no more on a campfire or a Grill's bare grate (the cooking review, 2026-11-14: a raw egg laid on the bars).
+     * Eggs are still thrown, not eaten: a raw one has no food on it.
      */
     private static void eggFries(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         for (Item egg : List.of(Items.EGG, Items.BLUE_EGG, Items.BROWN_EGG)) {
             var input = new SingleRecipeInput(new ItemStack(egg));
-            for (RecipeType<?> type : List.of(RecipeType.SMELTING, RecipeType.SMOKING, RecipeType.CAMPFIRE_COOKING)) {
+            for (RecipeType<?> type : List.of(RecipeType.SMELTING, RecipeType.SMOKING)) {
                 @SuppressWarnings("unchecked")
                 var found = level.recipeAccess().getRecipeFor((RecipeType<net.minecraft.world.item.crafting.AbstractCookingRecipe>) type, input, level);
                 check(helper, found.isPresent() && found.get().value().assemble(input).is(ModCooking.FRIED_EGG.get()),
                         egg + " fries in a " + type + ": " + found.map(r -> r.id().identifier()).orElse(null));
             }
+            check(helper, level.recipeAccess().getRecipeFor(RecipeType.CAMPFIRE_COOKING, input, level).isEmpty(), egg + " is not cooked on a campfire");
+            var panned = dev.nookworks.cooking.PotRecipe.find(level, List.of(new ItemStack(egg)), dev.nookworks.cooking.PotRecipe.Liquid.OIL, 250, true);
+            check(helper, panned != null && panned.value().result().stack(1).is(ModCooking.FRIED_EGG.get()), egg + " fries in the pan's oil");
         }
         check(helper, !new ItemStack(Items.EGG).has(DataComponents.FOOD), "a raw egg is not food");
         ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
@@ -207,21 +211,26 @@ final class EggsAndCampfiresTests {
     }
 
     /**
-     * In the Iron Pot's water every egg in it boils at once, 50 mB an egg; three eggs and sugar in a little oil roll into
-     * three slices of tamagoyaki (a blue egg as well as any). Eggs alone in oil make nothing: an egg is fried on a fire.
+     * In the Iron Pot's water every egg in it boils at once, 50 mB an egg. Three eggs and sugar beat at the crafting table
+     * into Beaten Eggs (a blue egg as well as any), which the Frying Pan's oil rolls into three slices of tamagoyaki (the
+     * cooking review, 2026-11-14: the pot's oil made it of loose eggs and sugar). Eggs in the pot's oil make nothing.
      */
     private static void potEggs(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         var oil = PotRecipe.Liquid.OIL;
-        var rolled = PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 2), new ItemStack(Items.BLUE_EGG),
-                new ItemStack(Items.SUGAR)), oil, 1_000);
+        var grid = net.minecraft.world.item.crafting.CraftingInput.of(2, 2, List.of(new ItemStack(Items.EGG), new ItemStack(Items.BLUE_EGG),
+                new ItemStack(Items.BROWN_EGG), new ItemStack(Items.SUGAR)));
+        ItemStack beaten = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid, level)
+                .map(recipe -> recipe.value().assemble(grid)).orElse(ItemStack.EMPTY);
+        check(helper, beaten.is(ModCooking.BEATEN_EGGS.get()) && beaten.getCount() == 1, "three eggs and sugar beat into Beaten Eggs: " + beaten);
+        var rolled = PotRecipe.find(level, List.of(new ItemStack(ModCooking.BEATEN_EGGS.get())), oil, 250, true);
         check(helper, rolled != null && rolled.value().result().stack(1).is(ModCooking.TAMAGOYAKI.get())
-                && rolled.value().result().count() == 3 && rolled.value().amount() == 25, "three eggs and sugar in oil: three tamagoyaki");
-        check(helper, rolled.value().batches(List.of(new ItemStack(Items.EGG, 6), new ItemStack(Items.SUGAR, 2)), oil, 1_000) == 2,
-                "six eggs and two sugar, two rolls at once");
-        check(helper, PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 2), new ItemStack(Items.SUGAR)), oil, 1_000) == null,
-                "two eggs are not enough for a roll");
-        check(helper, PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 3)), oil, 1_000) == null, "eggs alone in oil make nothing");
+                && rolled.value().result().count() == 3 && rolled.value().amount() == 25, "Beaten Eggs in the pan's oil: three tamagoyaki");
+        check(helper, PotRecipe.find(level, List.of(new ItemStack(ModCooking.BEATEN_EGGS.get())), oil, 1_000) == null,
+                "not in the pot's oil");
+        check(helper, PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 3), new ItemStack(Items.SUGAR)), oil, 1_000) == null,
+                "loose eggs and sugar in the pot's oil make nothing");
+        check(helper, PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 3)), oil, 1_000) == null, "eggs alone in the pot's oil make nothing");
         check(helper, PotRecipe.find(level, List.of(new ItemStack(Items.EGG, 3), new ItemStack(Items.SUGAR)), PotRecipe.Liquid.WATER, 1_000) == null,
                 "sugar is not boiled with the eggs");
 

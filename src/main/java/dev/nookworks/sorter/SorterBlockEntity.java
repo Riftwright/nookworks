@@ -204,6 +204,23 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         }
     }
 
+    /** Where its redstone mode is saved (since 1.7). */
+    private static final String REDSTONE_KEY = "redstone_mode";
+    /**
+     * How it answers redstone, set in its screen's Settings tab as a machine's is (the user, 2026-11-14: 「機械と同じような
+     * GUI出るんだから、設定タブでそろえたほうがよくない？」): a new one stops while powered.
+     */
+    private dev.nookworks.machine.RedstoneMode redstone = dev.nookworks.machine.RedstoneMode.DEFAULT;
+
+    public dev.nookworks.machine.RedstoneMode redstoneMode() {
+        return this.redstone;
+    }
+
+    public void setRedstoneMode(dev.nookworks.machine.RedstoneMode mode) {
+        this.redstone = mode;
+        this.setChanged();
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, SorterBlockEntity sorter) {
         if (!(level instanceof ServerLevel server)) {
             return;
@@ -217,6 +234,15 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
             level.setBlock(pos, state.setValue(SorterBlock.GEAR, gear), Block.UPDATE_CLIENTS);
         }
         if (--sorter.cooldown > 0) {
+            return;
+        }
+        // its redstone mode (the Settings tab, as a machine's): nothing drawn in or sent on. The signal is read only when
+        // it matters - on its beat, and not for a sorter that runs whatever it is (every sorter from before 1.7): read
+        // every tick of every sorter, it was work 1.6 never did (1.7 review)
+        var mode = sorter.redstone;
+        if (mode != dev.nookworks.machine.RedstoneMode.ALWAYS
+                && (mode == dev.nookworks.machine.RedstoneMode.NEVER || !mode.allows(level.hasNeighborSignal(pos)))) {
+            sorter.cooldown = 0; // asked again next tick
             return;
         }
         sorter.cooldown = gear.interval;
@@ -456,6 +482,10 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
             ContainerHelper.saveAllItems(output.child("Deny"), this.deny.getItems());
         }
         this.settings.save(output.child("Settings"));
+        if (this.redstone != dev.nookworks.machine.RedstoneMode.ALWAYS) {
+            // as a sorter from before loads with none: an old one saves as it was
+            this.redstone.save(output, REDSTONE_KEY);
+        }
     }
 
     @Override
@@ -471,6 +501,9 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         input.child("Filter").ifPresent(f -> ContainerHelper.loadAllItems(f, this.filter.getItems()));
         input.child("Deny").ifPresent(d -> ContainerHelper.loadAllItems(d, this.deny.getItems()));
         input.child("Settings").ifPresent(this.settings::load);
+        // a sorter from before had no mode and ran whatever the signal: so it goes on (one built into a redstone
+        // contraption is not stopped by an update); a new one stops while powered, as a machine does
+        this.redstone = dev.nookworks.machine.RedstoneMode.load(input, REDSTONE_KEY, dev.nookworks.machine.RedstoneMode.ALWAYS);
         if (this.settings.get(SorterSettings.MATCH_TAGS)) {
             // A 0.2.0 Precision Sorter with its Tags switch on, where every entry stood for all of its tags at once: each
             // becomes the entry for the one tag it was meant for (planks for a plank), or stays its item where none is.

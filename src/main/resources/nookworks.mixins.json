@@ -33,7 +33,8 @@
     "EnchantRandomlyFunctionMixin",
     "ServerPlayerGameModeMixin",
     "CrossCollisionJoinMixin",
-    "WallBlockJoinMixin"
+    "WallBlockJoinMixin",
+    "PaintingMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin",

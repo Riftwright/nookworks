@@ -193,10 +193,13 @@ public final class MenuTabs {
      * shift-click loop stops there and the rest of the stack does not go on into the machine. A shut tab is never a
      * target (the user, 2026-11-10: the Liquid tab's slots only while it is open).
      * <p>
-     * A part - what a slot of the Add-on tab takes, full or not - never goes into the machine's own slots by a shift-click:
-     * with the Add-on tab open it goes there or stays put; shut, it crosses between the inventory and the hotbar, as what
-     * the machine does not take. Five gold gears shift-clicked at a Recycler fitted one and scrapped four (the user's
-     * complaint, which nookTechnology's own guard answered before the tabs).
+     * A part - what a slot of the Add-on tab takes, full or not - never goes into the machine's own slots by a shift-click
+     * (five gold gears shift-clicked at a Recycler fitted one and scrapped four: the user's complaint, which
+     * nookTechnology's own guard answered before the tabs). From the inventory it opens the Add-on tab, shut or another
+     * open, and goes into its slots there; with them full it stays put, the tab open on what holds them (the user,
+     * 2026-11-14, by nookTechnology's session: 「アドオンにギアを入れる時に、毎回アドオンのタブを開くのがちょっと面倒」 - a
+     * shift-click that opens the tab, of that and the tab open from the start). The client opens it as the server does:
+     * both run the shift-click.
      */
     public @Nullable ItemStack quickMove(Slot clicked, int inventoryStart, ShiftClick.Mover mover) {
         if (!clicked.hasItem()) {
@@ -219,17 +222,8 @@ public final class MenuTabs {
             return null;
         }
         boolean part = this.isPart(stack);
-        if (part && this.open != MachineTab.ADDON) {
-            ItemStack original = stack.copy();
-            if (!ShiftClick.acrossInventory(stack, clicked.index, inventoryStart, mover)) {
-                return ItemStack.EMPTY;
-            }
-            if (stack.isEmpty()) {
-                clicked.setByPlayer(ItemStack.EMPTY);
-            } else {
-                clicked.setChanged();
-            }
-            return original;
+        if (part) {
+            this.open = MachineTab.ADDON; // shown where it goes, and what is in the way when that is full
         }
         if (this.open == null) {
             return null;

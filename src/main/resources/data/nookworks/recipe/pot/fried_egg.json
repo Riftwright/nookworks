@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:fried_egg"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": "#c:eggs"
+    }
+  ],
+  "liquid": "oil",
+  "amount": 25,
+  "time": 100,
+  "result": {
+    "id": "nookworks:fried_egg",
+    "count": 1
+  },
+  "pan": true
+}

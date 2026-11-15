@@ -10,7 +10,8 @@ How they are meant (DECISIONS.md, "Sound is left to me"):
 - A machine's work sound is heard now and then, a second or two of it, never a loop: each is a short phrase of what the
   machine is doing, faded in and out, in several variants so two in a row are not the same sound. The Motor alone hums
   for as long as it runs (the user, 2026-11-12: it ran all the while and sounded and fell silent by turns): one loop
-  made whole (sfx.Loop), which the game fades in and out.
+  made whole (sfx.Loop), which the game fades in and out. So does the Drive Wheel clatter while it turns (2026-11-15),
+  and a Kitchen Tap's stream is heard while it pours: what goes on is a loop, what works in strokes a phrase.
 - Soft and dull rather than bright, as vanilla's are: heard through a machine's case, in a workshop's air.
 - What turns keeps one pitch in every variant (a pitch that wanders reads as a motor changing speed).
 - No creaking wood, and no steady tone on the mains' 50/60 Hz or their doubles.
@@ -40,7 +41,7 @@ from sfx import (SR, n_of, white, colored, lp, hp, bp, reson, reson_bank, svf, e
                  place, mix, drive, modes, modal, click, strike, thump, bubble, bubbles, crackles, crunches,
                  harmonics, pulses, room, norm, bed, hiss, boxed, PLATE, BAR, CUP,
                  burst, clang, thud, cracks, whirr, buzz, boil, ring_of, dense_modes, WOOD, STONE, HEAVY,
-                 air_chord, clicks, band_tone, rmsn, loopable, breathy_boil, Loop)
+                 air_chord, clicks, band_tone, rmsn, loopable, breathy_boil, Loop, glide)
 
 ROOT = Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "src/main/resources/assets/nookworks"
@@ -452,24 +453,32 @@ def motor_run(rng, v):
     return loop.room(loop.keep(x, 50, 3800), rng)
 
 
+def wheel_clatter(rng, roll_db=None):
+    """A toothed wheel taking its belt, as a small clatter that goes on: one wheel, one voice - three small clacks to a
+    tooth's time (11.5 a second), all of a kind, never quite even - made whole over eight teeth (Loop). roll_db: the
+    wheel's low turning under them, that far below the clacks. What the judges taught: two voices by turns (a clack in,
+    a duller one out) are a horse's hooves; all of a kind they are a ratchet, a clock, and with the low turning under
+    them gears."""
+    loop = Loop(8 * 0.26)  # 0.26 s a tooth, as its knocks came when it was a phrase
+    lead = loop.lead(rng, 0.006)
+    x = loop.pulses(rng, 1.0 / 0.26, (1.0, 0.8, 0.9), lead, jitter=0.05, rough=0.25, lo=500.0, hi=2400.0, tilt=-2.0)
+    x = loop.body(x, ((1050.0, 9.0, 1.0), (1700.0, 10.0, 0.6), (2500.0, 9.0, 0.3)), dry=0.4)
+    if roll_db is not None:
+        roll = loop.noise(rng, 150.0, 700.0, tilt=-4.0) * loop.slow(rng, ((3, 1.0), (5, 0.6)), 0.7, 1.0)
+        x = mix(bed(x, -18), bed(roll, -18 + roll_db))
+    return loop.room(loop.keep(x, 250.0, 4000.0), rng, 0.14, 0.05)
+
+
 def drive_wheel_turn(rng, v):
-    """A belted wheel going round: the belt's seam knocking over the rim each turn, the belt's dry rub between -
-    koto, shu, koto."""
-    dur = 1.5
-    n = n_of(dur)
-    x = np.zeros(n)
-    turn = 0.26  # seconds a turn, the same in every variant
-    at = rng.uniform(0.02, 0.1)
-    while at < dur - 0.12:
-        knock = burst(0.08, rng, ((180.0, 700.0, 0.03, 1.0), (700.0, 2600.0, 0.014, 0.6)))
-        place(x, norm(knock), at, rng.uniform(0.7, 1.0))
-        k = n_of(turn * 0.6)
-        rub = bp(colored(k + 64, rng, -2), 900, 3500)[64:] * env_points(k, [(0, 0), (turn * 0.2, 1.0), (turn * 0.6, 0.0)]) * wobble(k, rng, 40.0, 0.5, 1.0)
-        place(x, bed(rub, -24), at + turn * 0.3)
-        at += turn * (1 + rng.uniform(-0.07, 0.07))
-    roll = bp(colored(n, rng, -4), 200, 900) * wobble(n, rng, 4.0, 0.6, 1.0)
-    x = fade(x + bed(roll, -31), 0.08, 0.3)
-    return room(x, rng, 0.16, 0.06)
+    """A Drive Wheel turning (played round and round while it turns, faded in and out by client/WheelClatter): a small
+    clatter and nothing else. It was a phrase heard now and then - the belt's seam knocking over the rim, the belt's
+    dry rub between, koto, shu, koto - and the rub was 「サッサッサッサッ」 to the user playing (2026-11-15: 「ちょっと変」; the
+    judges heard sandpaper and a broom in it). Of two tries without the rub, knocks alone and a low rolling, they said
+    what it should be: 「小さなカタカタがずっと鳴ってるイメージ」. Of the two made for that they took this, the clatter alone
+    (a), over the one with the wheel's low turning under it (b: wheel_clatter(rng of (.., "b", 0), roll_db=-10)), and
+    asked for it a little quieter (「もう少し音が小さめでもいいかも」: 0.18 in the table became 0.12). From the seed it was
+    heard with."""
+    return wheel_clatter(sfx.rng_for(MODID, "block.drive_wheel.turn", "a", 0))
 
 
 def spawner_controller_run(rng, v):
@@ -554,9 +563,212 @@ def seat_sit(rng, v):
     return room(x, rng, 0.15, 0.06)
 
 
+# ------------------------------------------------------------------ the kitchen's handling, a switch, the wand, the Magnet
+# (the user, 2026-11-14, of the sound audit: a borrowed vanilla sound reads as corner-cutting even where it is natural)
+# Small things struck, set down and taken up: each a noise burst with the thing's own dense, short modes under it - a
+# few clean partials were an instrument to the judges, a ping a bubble. What a thing is made of is the same at every
+# sound of it (its modes are drawn once, from its own name); only the touch differs.
+
+def pot_iron(t60=0.3):
+    """The Iron Pot's rim: thick cast iron, dull, its ring short."""
+    return dense_modes(sfx.rng_for(MODID, "iron_pot", "rim"), 620.0, 4200.0, 16, t60, t60 * 0.22, tilt=-2.0)
+
+
+def iron_pot_done(rng, v):
+    """Done: a ladle knocked twice on the pot's rim, as a cook knocks it off - thick iron, the second knock the softer."""
+    x = np.zeros(n_of(0.75))
+    at = 0.0
+    for k in range(2):
+        gain = (1.0, 0.7)[k]
+        knock = burst(0.08, rng, ((300.0, 900.0, 0.03, 1.0), (900.0, 3200.0, 0.014, 0.7), (3200.0, 7000.0, 0.006, 0.25)), attack=0.0006)
+        place(x, norm(knock), at, 0.8 * gain)
+        place(x, norm(ring_of(0.55, pot_iron(), rng)), at, 0.55 * gain)
+        at += rng.uniform(0.16, 0.2)
+    return room(lp(x, 8000), rng, 0.2, 0.08)
+
+
+def iron_pot_add(rng, v):
+    """Something set into a pot or pan with nothing in it to splash or spit: it lands soft and damp, the iron answering faintly."""
+    x = np.zeros(n_of(0.3))
+    land = burst(0.14, rng, ((140.0, 520.0, 0.05, 1.0), (520.0, 1700.0, 0.022, 0.5), (1700.0, 5000.0, 0.008, 0.12)), attack=0.002)
+    place(x, norm(land), 0.0, 1.0)
+    place(x, norm(ring_of(0.25, pot_iron(0.12), rng)), 0.003, 0.18)
+    return room(x, rng, 0.14, 0.06)
+
+
+def iron_pot_plop(rng, v):
+    """Dropped into the pot's water: the splash, the hollow plop under it, a drop or two falling back."""
+    x = np.zeros(n_of(0.5))
+    splash = burst(0.09, rng, ((700.0, 2600.0, 0.03, 1.0), (2600.0, 7000.0, 0.014, 0.5)), attack=0.002)
+    place(x, norm(splash), 0.0, 0.5)
+    place(x, norm(bubble(rng, float(rng.uniform(330, 420)), rise=0.35)), 0.012, 1.0)
+    for _ in range(2 + v % 2):
+        place(x, norm(bubble(rng, float(rng.uniform(700, 1400)), rise=0.2)), rng.uniform(0.06, 0.22), rng.uniform(0.15, 0.3))
+    return room(lp(x, 7000), rng, 0.14, 0.06)
+
+
+def iron_pot_sear(rng, v):
+    """Food meeting hot oil or a hot grate: a rush of spitting that thins out in most of a second. All pops and
+    crackle, hardly any hiss under them: a swell of noise there, however shaped, was a whip to our judges."""
+    dur = 0.9
+    n = n_of(dur)
+    thick = env_points(n, [(0, 0.2), (0.03, 1.0), (0.2, 0.55), (0.55, 0.2), (dur, 0.0)]) * wobble(n, rng, 17.0, 0.6, 1.0)
+    pops = cracks(dur, rng, 110, 1200, 5000, sigma=0.9, density=thick, ms=(1.2, 6), ring=0.15)[:n]
+    fine = cracks(dur, rng, 420, 2000, 6000, sigma=0.7, density=thick, ms=(0.4, 1.8), ring=0.0)[:n]
+    seethe = bp(colored(n, rng, -2), 1500, 5000) * thick
+    x = fade(mix(norm(pops), 0.6 * norm(fine), bed(seethe, -33)), 0.004, 0.3)
+    return room(lp(x, 6500), rng, 0.14, 0.05, tone=5000)
+
+
+def iron_pot_serve(rng, v):
+    """Served: a ladleful poured into a bowl - a short run of soft glugs, settling. (The user, 2026-11-15, took a bottle
+    filling over a ladle knocked on the rim and the dish set down: what is poured is what they hear in it.)"""
+    dur = 0.55
+    n = n_of(dur)
+    flow = env_points(n, [(0, 0.3), (0.05, 1.0), (0.3, 0.7), (0.45, 0.25), (dur, 0.0)])
+    glug = boil(dur, rng, 30, 300, 1000, sigma=0.5, density=flow, splash=0.3, rise=0.2)[:n]
+    trickle = bp(colored(n, rng, -2), 1800, 5500) * flow * wobble(n, rng, 14.0, 0.5, 1.0)
+    x = fade(mix(norm(glug), bed(trickle, -33)), 0.01, 0.2)
+    return room(lp(x, 6000), rng, 0.14, 0.06)
+
+
+def plate_clink(rng, v):
+    """A glazed plate set down on a table: the clack of its foot, its rim rocking down after, the wood under it."""
+    x = np.zeros(n_of(0.3))
+    body = dense_modes(sfx.rng_for(MODID, "plate", "body"), 1500.0, 8000.0, 18, 0.11, 0.035, tilt=-2.5)
+    clack = burst(0.05, rng, ((900.0, 3200.0, 0.012, 1.0), (3200.0, 8000.0, 0.006, 0.6), (250.0, 900.0, 0.02, 0.5)), attack=0.0005)
+    place(x, norm(clack), 0.0, 0.8)
+    place(x, norm(ring_of(0.25, body, rng)), 0.0, 0.5)
+    rock = rng.uniform(0.035, 0.06)
+    place(x, norm(burst(0.03, rng, ((1200.0, 4000.0, 0.008, 1.0), (4000.0, 8000.0, 0.004, 0.5)))), rock, rng.uniform(0.2, 0.32))
+    place(x, norm(ring_of(0.2, body, rng)), rock, 0.14)
+    place(x, norm(burst(0.07, rng, WOOD)), 0.002, 0.18)
+    return room(x, rng, 0.14, 0.05)
+
+
+def tray_knock(rng, v):
+    """Wood set on wood - a tray, a wooden bowl: one hollow knock and its small settling."""
+    x = np.zeros(n_of(0.32))
+    knock = burst(0.14, rng, WOOD, attack=0.0008)
+    place(x, norm(knock), 0.0, 1.0)
+    hollow = reson_bank(knock, [(float(rng.uniform(380, 460)), 6.0, 1.0), (float(rng.uniform(760, 900)), 5.0, 0.5)])
+    place(x, norm(hollow), 0.0, 0.35)
+    place(x, norm(burst(0.06, rng, WOOD)), rng.uniform(0.05, 0.08), rng.uniform(0.18, 0.28))
+    return room(x, rng, 0.15, 0.06)
+
+
+def tray_dough(rng, v):
+    """Dough set down on a board: it gives as it lands - a soft, short pat and the breath of air pressed out of it,
+    nothing hard in it and nothing deep. (The user, 2026-11-15, of a firmer pat with the board answering: 「もう少し
+    柔らかいイメージで作り直して」. Made slow and low it was a far-off bang to our judges: softness is in the breath.)"""
+    x = np.zeros(n_of(0.3))
+    pat = burst(0.12, rng, ((150.0, 420.0, 0.04, 1.0), (420.0, 1100.0, 0.024, 0.5), (1100.0, 2200.0, 0.01, 0.1)), attack=0.012)
+    place(x, norm(pat), 0.0, 0.8)
+    n = n_of(0.14)
+    puff = bp(colored(n + 64, rng, -4)[64:], 300, 1100) * env_points(n, [(0, 0), (0.03, 1.0), (0.08, 0.4), (0.14, 0.0)]) ** 1.4
+    place(x, bed(puff, -25), 0.006)
+    return room(lp(x, 2400), rng, 0.12, 0.05)
+
+
+def grill_place(rng, v):
+    """Food laid on a cold iron grate: it lands soft, the thin bars ticking under it."""
+    x = np.zeros(n_of(0.3))
+    grate = dense_modes(sfx.rng_for(MODID, "grill", "bars"), 1500.0, 7000.0, 20, 0.05, 0.02, tilt=-3.0)
+    land = burst(0.12, rng, ((160.0, 600.0, 0.045, 1.0), (600.0, 2000.0, 0.02, 0.5), (2000.0, 5000.0, 0.007, 0.12)), attack=0.003)
+    place(x, norm(land), 0.0, 1.0)
+    place(x, norm(ring_of(0.12, grate, rng)), 0.002, 0.1)  # hardly more than a tick: laid, not dropped
+    return room(x, rng, 0.14, 0.05)
+
+
+def placed_bottles_clink(rng, v):
+    """A glass bottle set down: its thick foot ticking on the wood, the glass answering short - full, it hardly rings.
+    (Rung out as an empty one it was a bell to our judges; with no ring at all, a click of anything.)"""
+    x = np.zeros(n_of(0.35))
+    glass = dense_modes(sfx.rng_for(MODID, "bottle", "glass"), 2300.0, 10000.0, 20, 0.115, 0.035, tilt=-2.5)
+    tick = burst(0.04, rng, ((1300.0, 4500.0, 0.009, 1.0), (4500.0, 9000.0, 0.004, 0.5), (300.0, 1100.0, 0.02, 0.5)), attack=0.0005)
+    place(x, norm(tick), 0.0, 0.8)
+    place(x, norm(ring_of(0.22, glass, rng)), 0.0, 0.32)
+    place(x, norm(burst(0.08, rng, WOOD)), 0.002, 0.24)
+    return room(lp(x, 11000), rng, 0.14, 0.05, tone=5000)
+
+
+def switch_click(rng, v):
+    """An electric switch thrown: the contact snapping over and its spring's small second tick, in a little case."""
+    x = np.zeros(n_of(0.12))
+    snap = burst(0.03, rng, ((1200.0, 4200.0, 0.007, 1.0), (4200.0, 9000.0, 0.004, 0.5), (350.0, 1200.0, 0.012, 0.4)), attack=0.0003)
+    place(x, norm(snap), 0.0, 1.0)
+    second = burst(0.02, rng, ((1500.0, 5000.0, 0.005, 1.0), (5000.0, 9000.0, 0.003, 0.4)))
+    place(x, norm(second), rng.uniform(0.011, 0.016), rng.uniform(0.3, 0.45))
+    case = dense_modes(sfx.rng_for(MODID, "switch", "case"), 900.0, 3600.0, 8, 0.05, 0.02)
+    place(x, norm(ring_of(0.08, case, rng)), 0.0, 0.2)
+    return room(x, rng, 0.1, 0.04)
+
+
+def building_wand_mark(rng, v):
+    """The wand's tip touched to a corner: one light, dry tap."""
+    x = np.zeros(n_of(0.14))
+    tap = burst(0.05, rng, ((500.0, 1800.0, 0.014, 1.0), (1800.0, 5200.0, 0.007, 0.6), (5200.0, 9000.0, 0.003, 0.2)), attack=0.0005)
+    place(x, norm(tap), 0.0, 1.0)
+    tip = dense_modes(sfx.rng_for(MODID, "wand", "tip"), 2200.0, 7000.0, 8, 0.07, 0.03)
+    place(x, norm(ring_of(0.1, tip, rng)), 0.0, 0.25)
+    return room(x, rng, 0.1, 0.04)
+
+
+def magnet_switch(rng, v):
+    """The Magnet switched: hardly a sound - a soft "fu", a breath between the lips, as its pull takes hold or lets
+    go. (The user, 2026-11-15, of an iron keeper's clack: 「これも「フッ」みたいなかすかな音でいい」. With a low part
+    under it, it was a door shut somewhere to our judges: it is all breath now.)"""
+    n = n_of(0.22)
+    breath = bp(colored(n + 64, rng, -2.5)[64:], 800, 3600) * env_points(n, [(0, 0), (0.05, 1.0), (0.11, 0.4), (0.22, 0.0)]) ** 1.3
+    lips = reson(breath, float(rng.uniform(1350, 1650)), 2.0)
+    x = mix(norm(breath), 0.5 * norm(lips))
+    return room(lp(x, 4500), rng, 0.1, 0.04)
+
+
 # a wind chime's six tubes: G5 A5 B5 D6 E6 G6, the five notes of G major's pentatonic - any two of them agree, so
 # two chimes heard at once, or two variants one after the other, never quarrel
 CHIME_NOTES = (783.99, 880.0, 987.77, 1174.66, 1318.51, 1567.98)
+
+
+def kitchen_tap_turn(rng, v):
+    """A brass tap's lever given its quarter turn: the spindle's short, dry squeak in its gland - kyu - and the lever
+    meeting its stop. Played a little higher opening than shutting. Mostly squeak: with more of the thread's rub in it
+    the judges heard a whip, and a run of ticks was a ratchet."""
+    x = np.zeros(n_of(0.3))
+    dur = 0.09
+    n = n_of(dur)
+    env = env_points(n, [(0, 0), (0.015, 1.0), (dur * 0.65, 0.7), (dur, 0.0)])
+    f0 = float(rng.uniform(2100, 2600))
+    squeak = glide(n, rng, f0, f0 * float(rng.uniform(1.15, 1.28)), amps=(1.0, 0.35, 0.12), rough=0.5) * env
+    place(x, norm(squeak), 0.0, 0.7)
+    rub = bp(colored(n + 64, rng, -2)[64:], 900, 4000) * env * wobble(n, rng, 90.0, 0.3, 1.0)
+    place(x, norm(rub), 0.0, 0.15)
+    at = dur + 0.005 + rng.uniform(0, 0.01)
+    place(x, norm(burst(0.04, rng, ((400.0, 1500.0, 0.015, 1.0), (1500.0, 5000.0, 0.006, 0.6)))), at, 0.7)
+    place(x, norm(ring_of(0.08, dense_modes(rng, 1800.0, 5200.0, 7, 0.04, 0.015), rng)), at, 0.22)
+    return room(lp(x, 8000), rng, 0.12, 0.05)
+
+
+def tap_trickle(rng, rate, f_lo, f_hi, splash, rush_db, rush, depth, sigma, rise=0.2, cut=7000.0):
+    """A thin stream falling a block into a pot, 2.4 s folded into a loop: small bubbles close together and steady, the
+    stream's soft rush, no heavy stir under it and little spray (spray, sparse, is rain to the judges)."""
+    loop, cross = 2.4, 0.3
+    dur = loop + cross
+    n = n_of(dur)
+    plunge = boil(dur, rng, rate, f_lo, f_hi, sigma=sigma, density=wobble(n, rng, 3.0, depth, 1.0), splash=splash, rise=rise)[:n]
+    flow = bp(colored(n, rng, -2), *rush) * wobble(n, rng, 14.0, 0.75, 1.0)
+    return loopable(lp(mix(norm(plunge), bed(flow, rush_db)), cut), loop, cross)
+
+
+def kitchen_tap_pour(rng, v):
+    """A Kitchen Tap running into the pot under it (played round and round while it pours, faded in and out by
+    client/TapStream): a thin, quiet stream. The first two tries were a full plunge - a hundred and more bubbles a
+    second down to 500 Hz, spray, the water's low stir - and to the user a tap wide open: 「蛇口全開でダバダバ出ちゃってる
+    ように聞こえる。もう少しおとなしめでいいと思うな」 (2026-11-15). Of the two made for that they took this - small bubbles,
+    topo topo (a) - over the stream's soft rush foremost (b: tap_trickle(rng of (.., "b", 0), 70, 600.0, 1600.0, 0.05,
+    -20, (900.0, 4000.0), 0.85, 0.35, cut=5500.0)). From the seed it was heard with."""
+    return tap_trickle(sfx.rng_for(MODID, "block.kitchen_tap.pour", "a", 0), 100, 700.0, 1700.0, 0.1, -28, (1200.0, 5000.0),
+                       0.85, 0.35, rise=0.15)
 
 
 def chime_tube(rng, f, dur):
@@ -633,7 +845,7 @@ SOUNDS = {
     # little, and at -23 its peaks would be at full scale. The filters are set clear of it (it is cut to its band
     # round the loop already).
     "block.motor.run": (motor_run, 1, 0.15, dict(loop=True, level=-26.0, lowcut=20.0, highcut=20000.0)),
-    "block.drive_wheel.turn": (drive_wheel_turn, 3, 0.2, {}),
+    "block.drive_wheel.turn": (drive_wheel_turn, 1, 0.12, dict(loop=True)),  # a little quieter than heard, as asked
     "block.spawner_controller.run": (spawner_controller_run, 3, 0.17, {}),
     # for the features of 2026-11-11 (the user: 「できそうなことはぜんぶやっていいよ」): a machine's stop heard, the bell that
     # rings for it, a sorter's gate, sitting down, the wind chime. A cue meant to be noticed about -27 dB, the bell
@@ -643,6 +855,25 @@ SOUNDS = {
     "block.sorter.sort": (sorter_sort, 4, 0.22, {}),
     "block.seat.sit": (seat_sit, 3, 0.4, {}),
     "block.wind_chime.chime": (wind_chime_chime, 6, 0.45, dict(fout=0.25)),
+    # the sound audit of 2026-11-14 (the user: 「バニラの音を使いまわすと…手抜き感を感じやすいから、音としては自然だとしても、
+    # 良くなる音やちょっとでも違和感の原因になりそうな音は、新しく作ったほうがいい」): the kitchen's handling, a dish
+    # done, an electric switch, the Building Wand's mark, the Magnet. Things set down and taken up are about as loud as
+    # vanilla's own; the cue of a dish done a little over them.
+    "block.iron_pot.done": (iron_pot_done, 3, 0.7, {}),
+    "block.iron_pot.add": (iron_pot_add, 3, 0.6, {}),
+    "block.iron_pot.plop": (iron_pot_plop, 3, 0.7, {}),
+    "block.iron_pot.sear": (iron_pot_sear, 3, 0.5, dict(fout=0.2)),
+    "block.iron_pot.serve": (iron_pot_serve, 3, 0.6, {}),
+    "block.plate.clink": (plate_clink, 4, 0.55, {}),
+    "block.tray.knock": (tray_knock, 4, 0.6, {}),
+    "block.tray.dough": (tray_dough, 3, 0.6, {}),
+    "block.grill.place": (grill_place, 3, 0.55, {}),
+    "block.placed_bottles.clink": (placed_bottles_clink, 4, 0.5, {}),
+    "block.switch.click": (switch_click, 3, 0.5, {}),
+    "item.building_wand.mark": (building_wand_mark, 3, 0.45, {}),
+    "item.magnet.switch": (magnet_switch, 3, 0.4, {}),  # faint, as asked
+    "block.kitchen_tap.turn": (kitchen_tap_turn, 3, 0.6, {}),
+    "block.kitchen_tap.pour": (kitchen_tap_pour, 1, 0.22, dict(loop=True)),
 }
 
 
@@ -663,6 +894,15 @@ HELD_BACK = {
     # A new sound waits here for the user's ear as None: its event plays the placeholder sounds.json has for it, left as
     # it is there. The five of 2026-11-11 (a machine's stop, the Machine Bell, the sorter, sitting down, the Wind Chime)
     # waited so, and were all taken over their vanilla stand-ins the same day (AI_review/sounds/compare_new).
+    # The thirteen of the sound audit (2026-11-14) waited so. Heard by the user beside their stand-ins, 2026-11-15
+    # (AI_review/sounds/compare_audit): nine taken - a dish done, the plop, the sear, a plate, wooden tableware, a
+    # cold grill, a bottle, the switch, the Building Wand's mark. Three made again at their word and waiting once
+    # more: dough (「もう少し柔らかいイメージで」), the Magnet (「「フッ」みたいなかすかな音でいい」), and the dish served,
+    # where they took the stand-in over a ladle knocked on the rim (it is a ladleful poured now). An ingredient set in
+    # was left unchosen. At the second hearing the same day (AI_review/sounds/compare_audit2) they took the dough, the
+    # Magnet and the ingredient set in, and for the dish served chose the stand-in again, a bottle filling: twice
+    # their ear, so it stays - the recipe above is kept, and is not to be put before them again unasked.
+    "block.iron_pot.serve": None,
 }
 
 

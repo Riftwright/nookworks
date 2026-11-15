@@ -1,7 +1,10 @@
 package dev.nookworks.cooking;
 
+import dev.nookworks.registry.ModSounds;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -9,6 +12,8 @@ import java.util.function.Consumer;
 import org.jspecify.annotations.Nullable;
 
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.nookworks.NookworksNetwork;
 import dev.nookworks.feature.DrawRights;
@@ -27,7 +32,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ProblemReporter;
@@ -65,6 +69,11 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
  * <p>
  * Cooking starts {@link #SETTLE} ticks after the last thing went in - long enough to add the rest of a recipe - and
  * belongs to the recipe it started as: change what is in the pot into another recipe and it starts over.
+ * <p>
+ * Holding the makings of more than one dish, it cooks them all at once, each in its own time (the user, 2026-11-14,
+ * play-testing: a pot of oil fried the doughnut and left the pork and the fish as they were until it was taken out -
+ * 「油に入ってるんだから、いつか揚がると思うじゃん。なんでそこだけ時が止まるんだよ…」). A dish done while another waits
+ * waits behind it ({@link #later}); each comes forward as the one before it is taken out.
  */
 public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRights.Owned {
     public static final int SLOTS = 8;
@@ -86,31 +95,72 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
     private ItemStack dish = ItemStack.EMPTY;
     /** What the dish is ladled out into, or null when it is taken out by hand. */
     private @Nullable Item container;
+    /** Dishes done while the one in front waited, in the order they were done; each comes forward in its turn. */
+    private final List<Waiting> later = new ArrayList<>();
     /** Bowls and bottles the cooked ingredients came in, freed by the cooking and kept with the dish. */
     private final List<ItemStack> freed = new ArrayList<>();
-    private int progress;
-    /** The recipe the progress belongs to. */
-    private @Nullable Identifier cooking;
+    /**
+     * How far each dish cooking now has come, in ticks, by its recipe. A recipe that drops out of what cooks (its things
+     * taken out) loses its progress, and starts over if it comes back.
+     */
+    private final Map<Identifier, Integer> progress = new LinkedHashMap<>();
+
+    /** A dish done and waiting behind the one in front, with what it is ladled out into (null: by hand). */
+    public record Waiting(ItemStack dish, @Nullable Item container) {
+        static final Codec<Waiting> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ItemStack.CODEC.fieldOf("dish").forGetter(Waiting::dish),
+                BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("container").forGetter(w -> Optional.ofNullable(w.container()))
+        ).apply(i, (dish, container) -> new Waiting(dish, container.orElse(null))));
+    }
+
+    /** One dish of what cooks now: its recipe and how many batches of it the pot's things make. */
+    private record Turn(RecipeHolder<PotRecipe> recipe, int batches) {}
     /** Ticks since the contents last changed. */
     private int settled = SETTLE;
     /** Set while the pot is being moved to another block (onto or off a grill): its contents go with it, not on the floor. */
     private boolean moving;
     /**
-     * What {@link PotRecipe#find} last gave, and for what: the contents as they were (copies), the liquid and how much,
-     * and the recipes it looked in. A heated pot with no dish searched every pot recipe every tick; now only when one
-     * of those changes (the 10-19 performance audit).
+     * On a client only (the renderer's, kept with the pot it draws): the game time it first saw the pot cooking what it
+     * cooks now, for the water turning the dish's colour; -1 when it is not. Never saved or sent.
+     */
+    public long cookingSeen = -1;
+    /**
+     * What {@link #planNow} last gave, and for what: the contents as they were (copies), the liquid and how much, and the
+     * recipes it looked in. A heated pot with no dish searched every pot recipe every tick; now only when one of those
+     * changes (the 10-19 performance audit).
      */
     private final NonNullList<ItemStack> foundFor = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private PotRecipe.@Nullable Liquid foundLiquid;
     private int foundAmount = -1;
     private @Nullable Object foundIn;
-    private @Nullable RecipeHolder<PotRecipe> found;
+    private List<Turn> found = List.of();
+
+    /** Whether this is a Frying Pan's: a bottle of oil at most, four things, the pan's own recipes. */
+    public boolean pan() {
+        return this.getBlockState().getBlock() instanceof IronPotBlock block && block.pan();
+    }
+
+    /** How much water or oil it holds, in mB. */
+    public int capacity() {
+        return this.pan() ? BOTTLE : CAPACITY;
+    }
+
+    /** How many ingredients it holds. */
+    public int limit() {
+        return this.pan() ? 4 : SLOTS;
+    }
 
     /** The water or oil, filled from outside and used only by the cooking. */
     private final FluidStacksResourceHandler liquid = new OneTank(CAPACITY) {
         @Override
         public boolean isValid(int index, FluidResource resource) {
-            return PotRecipe.Liquid.of(resource.getFluid()) != null;
+            PotRecipe.Liquid liquid = PotRecipe.Liquid.of(resource.getFluid());
+            return liquid != null && (liquid == PotRecipe.Liquid.OIL || !IronPotBlockEntity.this.pan());
+        }
+
+        @Override
+        protected int getCapacity(int index, FluidResource resource) {
+            return IronPotBlockEntity.this.capacity();
         }
 
         /** A pipe keeps pouring only while nothing cooked waits in the pot, as a bottle does. */
@@ -176,7 +226,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         public long getCapacityAsLong(int index, ItemResource resource) {
             var self = IronPotBlockEntity.this;
             if (index < SLOTS) {
-                return self.contents.get(index).getCount() + (self.dish.isEmpty() ? SLOTS - self.count() : 0);
+                return self.contents.get(index).getCount() + (self.dish.isEmpty() ? self.limit() - self.count() : 0);
             }
             return index == BOWLS ? self.bowlsWanted() : this.getAmountAsLong(index);
         }
@@ -184,7 +234,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         @Override
         public boolean isValid(int index, ItemResource resource) {
             var self = IronPotBlockEntity.this;
-            return index < SLOTS ? self.level != null && PotRecipe.isIngredient(self.level, resource.toStack(1))
+            return index < SLOTS ? self.level != null && PotRecipe.isIngredient(self.level, resource.toStack(1), self.pan())
                     : index == BOWLS && self.container != null && resource.is(self.container);
         }
 
@@ -203,11 +253,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 self.free(resource.toStack(1), take);
                 return take;
             }
-            if (index >= SLOTS || !self.dish.isEmpty() || self.count() >= SLOTS || index != self.slotFor(resource)
+            if (index >= SLOTS || !self.dish.isEmpty() || self.count() >= self.limit() || index != self.slotFor(resource)
                     || !this.isValid(index, resource)) {
                 return 0;
             }
-            int take = Math.min(amount, SLOTS - self.count());
+            int take = Math.min(amount, self.limit() - self.count());
             this.updateSnapshots(transaction);
             ItemStack held = self.contents.get(index);
             if (held.isEmpty()) {
@@ -246,8 +296,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 return 0;
             }
             ItemStack freed = self.freed.get(index - FREED);
-            boolean forServing = !self.dish.isEmpty() && self.container != null && freed.is(self.container);
-            if (freed.isEmpty() || forServing || !resource.matches(freed)) {
+            if (freed.isEmpty() || self.servesInto(freed) || !resource.matches(freed)) {
                 return 0;
             }
             int take = Math.min(amount, freed.getCount());
@@ -335,6 +384,36 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         return this.dish;
     }
 
+    /** The dishes done behind the one in front, in the order they come forward. */
+    public List<Waiting> later() {
+        return java.util.Collections.unmodifiableList(this.later);
+    }
+
+    /**
+     * Whether {@code freed} is what a dish waiting in the pot is served into (the bowl the rice came in, for the fried
+     * rice): kept for it, not handed back or taken by a hopper with the rest.
+     */
+    private boolean servesInto(ItemStack freed) {
+        if (this.container != null && !this.dish.isEmpty() && freed.is(this.container)) {
+            return true;
+        }
+        for (Waiting waiting : this.later) {
+            if (waiting.container() != null && freed.is(waiting.container())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The dish in front taken out: the next one done comes forward. */
+    private void promote() {
+        if (this.dish.isEmpty() && !this.later.isEmpty()) {
+            Waiting next = this.later.removeFirst();
+            this.dish = next.dish();
+            this.container = next.container();
+        }
+    }
+
     /** What the dish waiting in the pot is ladled out into (a bowl, a glass bottle), or null for one taken by hand. */
     public @Nullable Item container() {
         return this.container;
@@ -359,7 +438,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         PotRecipe.Liquid held = this.liquid();
         return !this.dish.isEmpty() ? Refusal.DISH_WAITING
                 : held != null && held != what ? Refusal.OTHER_LIQUID
-                : this.amount() + mB > CAPACITY ? Refusal.FULL : null;
+                : this.amount() + mB > this.capacity() ? Refusal.FULL : null;
     }
 
     /** Pours in {@code mB} of water or oil if it all fits and the pot does not hold the other. */
@@ -382,7 +461,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
 
     /** Puts one of {@code stack} in, if there is room and the dish is not waiting to be taken out. */
     public boolean addIngredient(ItemStack stack) {
-        if (!this.dish.isEmpty() || this.count() >= SLOTS) {
+        if (!this.dish.isEmpty() || this.count() >= this.limit()) {
             return false;
         }
         for (int i = 0; i < SLOTS; i++) {
@@ -417,6 +496,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    /** Whether it has something to cook: what an Electric Stove under it heats for (a dish waiting stops nothing now). */
+    public boolean wantsHeat() {
+        return this.level != null && !this.planNow(this.level).isEmpty();
     }
 
     /** One serving of the dish, or empty. The container it goes into is the caller's (or {@link #serveIntoFreed}). */
@@ -461,10 +545,16 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         return out;
     }
 
-    /** The freed bowls and bottles, all of them. */
+    /** The freed bowls and bottles, but those a dish still waiting is served into. */
     public List<ItemStack> takeFreed() {
-        List<ItemStack> out = new ArrayList<>(this.freed);
-        this.freed.clear();
+        List<ItemStack> out = new ArrayList<>();
+        for (java.util.Iterator<ItemStack> it = this.freed.iterator(); it.hasNext(); ) {
+            ItemStack freed = it.next();
+            if (!this.servesInto(freed)) {
+                out.add(freed);
+                it.remove();
+            }
+        }
         if (!out.isEmpty()) {
             this.changed();
         }
@@ -481,40 +571,52 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         if (this.settled < SETTLE) {
             this.settled++;
         }
-        var found = this.dish.isEmpty() && IronPotBlock.heated(level, pos) ? this.recipeNow(level) : null;
-        boolean cooking = found != null;
+        // Off the heat, what was cooking waits where it is, to go on when the heat is back - a fire gone out, an Electric
+        // Stove out of power (it started again from nothing, and a stove on a thin supply, going dark and lighting again,
+        // never finished a long dish: 1.7 review). So the plan is still asked while there is progress to keep.
+        boolean heated = IronPotBlock.heated(level, pos);
+        List<Turn> plan = heated || !this.progress.isEmpty() ? this.planNow(level) : List.of();
+        boolean cooking = heated && !plan.isEmpty();
         if (state.getValue(IronPotBlock.COOKING) != cooking) {
             level.setBlock(pos, state.setValue(IronPotBlock.COOKING, cooking), Block.UPDATE_CLIENTS);
         }
+        // progress is kept only for what could cook now: a recipe found during the settle wait and lost again (a bottle
+        // taken out) left "Cooking 0%" for ever, over why it does not cook (the round-two fix re-check)
+        if (this.progress.keySet().removeIf(id -> plan.stream().noneMatch(turn -> turn.recipe().id().identifier().equals(id)))) {
+            this.setChanged();
+        }
         if (!cooking) {
-            // a recipe found during the settle wait and lost again (a bottle taken out) left its id: "Cooking 0%" for
-            // ever, over why it does not cook (the round-two fix re-check)
-            if (this.progress != 0 || this.cooking != null) {
-                this.progress = 0;
-                this.cooking = null;
-                this.setChanged();
-            }
             return;
         }
-        Identifier id = found.id().identifier();
-        if (!id.equals(this.cooking)) {
-            this.cooking = id; // another recipe now: what was done belonged to the old one
-            this.progress = 0;
-            this.setChanged();
+        for (Turn turn : plan) {
+            this.progress.putIfAbsent(turn.recipe().id().identifier(), 0);
         }
         if (this.settled < SETTLE) {
             return; // someone is still putting things in
         }
-        PotRecipe recipe = found.value();
-        if (++this.progress < recipe.time()) {
-            if (this.progress % 20 == 0) {
+        List<Turn> done = new ArrayList<>();
+        for (Turn turn : plan) {
+            int ticks = this.progress.merge(turn.recipe().id().identifier(), 1, Integer::sum);
+            if (ticks >= turn.recipe().value().time()) {
+                done.add(turn);
+            } else if (ticks % 20 == 0) {
                 this.setChanged(); // a save part way through keeps the progress; no need to mark the chunk every tick
             }
+        }
+        for (Turn turn : done) {
+            this.progress.remove(turn.recipe().id().identifier());
+            this.cook(level, pos, turn);
+        }
+    }
+
+    /** {@code turn}'s dish done: its own things taken out of the pot, the dish in front, or behind the one there. */
+    private void cook(ServerLevel level, BlockPos pos, Turn turn) {
+        PotRecipe recipe = turn.recipe().value();
+        // its own things only, no more than were set aside for it: what else lies in the pot cooks beside it
+        int batches = Math.min(turn.batches(), recipe.batchesAmong(this.contents, this.liquid(), this.amount()));
+        if (batches <= 0) {
             return;
         }
-        this.progress = 0;
-        this.cooking = null;
-        int batches = recipe.batches(this.contents, this.liquid(), this.amount());
         for (PotRecipe.Part part : recipe.ingredients()) {
             int left = part.count() * batches;
             for (ItemStack held : this.contents) {
@@ -529,11 +631,30 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 }
             }
         }
-        this.dish = recipe.result().stack(batches);
-        this.container = recipe.container().map(Holder::value).orElse(null);
+        ItemStack made = recipe.result().stack(batches);
+        Item into = recipe.container().map(Holder::value).orElse(null);
+        if (this.dish.isEmpty()) {
+            this.dish = made;
+            this.container = into;
+        } else if (this.joins(this.dish, this.container, made, into)) {
+            this.dish.grow(made.getCount());
+        } else {
+            boolean joined = false;
+            for (Waiting waiting : this.later) {
+                if (!joined && this.joins(waiting.dish(), waiting.container(), made, into)) {
+                    waiting.dish().grow(made.getCount());
+                    joined = true;
+                }
+            }
+            if (!joined) {
+                this.later.add(new Waiting(made, into));
+            }
+        }
         this.liquid.set(0, FluidResource.of(recipe.liquid().fluid()), this.amount() - recipe.amount() * batches);
         this.changed();
-        level.playSound(null, pos, SoundEvents.BUBBLE_COLUMN_UPWARDS_INSIDE, SoundSource.BLOCKS, 0.5F, 1.4F);
+        // its own cue, a little higher from the pan (it was vanilla's bubble column from inside: a stereo file, which
+        // the game neither places nor fades with distance - every dish done was heard alike by all within 16 blocks)
+        level.playSound(null, pos, ModSounds.IRON_POT_DONE.get(), SoundSource.BLOCKS, 0.6F, this.pan() ? 1.15F : 1.0F);
     }
 
     private void free(ItemStack one, int count) {
@@ -552,17 +673,36 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         this.changed();
     }
 
-    /** Saved, and shown to the players who can see the pot (what is in it is drawn). */
+    /** Whether {@code made} goes with the dish {@code dish} served into {@code into}: the same, served alike, in one stack. */
+    private boolean joins(ItemStack dish, @Nullable Item dishInto, ItemStack made, @Nullable Item into) {
+        return dishInto == into && ItemStack.isSameItemSameComponents(dish, made)
+                && dish.getCount() + made.getCount() <= Item.ABSOLUTE_MAX_STACK_SIZE;
+    }
+
+    /** Saved, and shown to the players who can see the pot (what is in it is drawn); a dish taken out lets the next come forward. */
     private void changed() {
+        this.promote();
         this.setChanged();
         if (this.level != null && !this.level.isClientSide()) {
             this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
-    /** {@link PotRecipe#find} for what the pot holds now: the last answer, while nothing it rests on has changed. */
-    private @Nullable RecipeHolder<PotRecipe> recipeNow(ServerLevel level) {
-        Object recipes = level.recipeAccess().recipeMap(); // a new one on every /reload
+    /** The first of what cooks now (the dish whose colour the water takes), or null when nothing does. */
+    public @Nullable RecipeHolder<PotRecipe> recipeNow(Level level) {
+        List<Turn> plan = this.planNow(level);
+        return plan.isEmpty() ? null : plan.getFirst().recipe();
+    }
+
+    /**
+     * Every dish the pot cooks now, side by side: {@link PotRecipe#findTurn} for what it holds, then again for what that
+     * dish leaves, and so on - each with its own things and its share of the liquid, so two never count the same egg or
+     * the same oil. The last answer, while nothing it rests on has changed. On a client too, among the recipes the server
+     * sent, for the water's colour (the renderer asked every frame).
+     */
+    private List<Turn> planNow(Level level) {
+        // a new one on every /reload; a client's, on every list the server sends
+        Object recipes = level instanceof ServerLevel server ? server.recipeAccess().recipeMap() : PotRecipe.all(level);
         PotRecipe.Liquid held = this.liquid();
         int amount = this.amount();
         boolean same = recipes == this.foundIn && held == this.foundLiquid && amount == this.foundAmount;
@@ -570,7 +710,36 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
             same = ItemStack.matches(this.contents.get(slot), this.foundFor.get(slot));
         }
         if (!same) {
-            this.found = PotRecipe.find(level, this.contents, held, amount);
+            List<ItemStack> left = new ArrayList<>();
+            for (ItemStack stack : this.contents) {
+                left.add(stack.copy());
+            }
+            int liquidLeft = amount;
+            List<Turn> plan = new ArrayList<>();
+            for (int n = 0; n < SLOTS; n++) {
+                RecipeHolder<PotRecipe> turn = PotRecipe.findTurn(level, left, held, liquidLeft, this.pan());
+                if (turn == null || plan.stream().anyMatch(t -> t.recipe().id().equals(turn.id()))) {
+                    break;
+                }
+                PotRecipe recipe = turn.value();
+                int batches = recipe.batchesAmong(left, held, liquidLeft);
+                if (batches <= 0) {
+                    break;
+                }
+                plan.add(new Turn(turn, batches));
+                for (PotRecipe.Part part : recipe.ingredients()) {
+                    int need = part.count() * batches;
+                    for (ItemStack stack : left) {
+                        if (need > 0 && part.ingredient().test(stack)) {
+                            int take = Math.min(need, stack.getCount());
+                            stack.shrink(take);
+                            need -= take;
+                        }
+                    }
+                }
+                liquidLeft -= recipe.amount() * batches;
+            }
+            this.found = List.copyOf(plan);
             this.foundIn = recipes;
             this.foundLiquid = held;
             this.foundAmount = amount;
@@ -612,7 +781,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 items.add(stack.copy());
             }
         }
-        return new NookworksNetwork.PotContents(held == null ? 0 : held == PotRecipe.Liquid.WATER ? 1 : 2, this.amount(), CAPACITY, items,
+        return new NookworksNetwork.PotContents(held == null ? 0 : held == PotRecipe.Liquid.WATER ? 1 : 2, this.amount(), this.capacity(), items,
                 Optional.ofNullable(this.stuck()));
     }
 
@@ -628,7 +797,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         }
         PotRecipe.Liquid held = this.liquid();
         MutableComponent line = Component.translatable(held == PotRecipe.Liquid.OIL ? "nookworks.iron_pot.oil"
-                : held == PotRecipe.Liquid.WATER ? "nookworks.iron_pot.water" : "nookworks.iron_pot.empty", this.amount(), CAPACITY);
+                : held == PotRecipe.Liquid.WATER ? "nookworks.iron_pot.water" : "nookworks.iron_pot.empty", this.amount(), this.capacity());
         for (ItemStack stack : this.contents) {
             if (!stack.isEmpty()) {
                 line = line.append(Component.translatable("nookworks.list.separator")).append(Component.translatable("nookworks.iron_pot.item", stack.getHoverName(), stack.getCount()));
@@ -645,9 +814,10 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
      */
     public @Nullable Component stuck() {
         PotRecipe.Liquid held = this.liquid();
-        if (this.level == null || !this.dish.isEmpty() || this.count() == 0 || held == null
+        // with a dish waiting too: what lies beside it cooks on now, and what cannot is told why
+        if (this.level == null || this.count() == 0 || held == null
                 || !IronPotBlock.heated(this.level, this.worldPosition)
-                || PotRecipe.find(this.level, this.contents, held, this.amount()) != null) {
+                || PotRecipe.findTurn(this.level, this.contents, held, this.amount(), this.pan()) != null) {
             return null;
         }
         // only a recipe of the liquid held can be short of it: one of the other liquid matched eggs in oil to boiled eggs
@@ -656,7 +826,11 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         boolean otherTakes = false;
         for (RecipeHolder<PotRecipe> holder : PotRecipe.all(this.level)) {
             PotRecipe recipe = holder.value();
-            if (recipe.liquid() == held && recipe.batches(this.contents, held, Integer.MAX_VALUE) > 0) {
+            if (recipe.pan() != this.pan()) {
+                continue;
+            }
+            // a dish the pot has all of but the liquid for, whatever else lies beside it
+            if (recipe.liquid() == held && recipe.batchesAmong(this.contents, held, Integer.MAX_VALUE) > 0) {
                 return Component.translatable(held == PotRecipe.Liquid.WATER ? "nookworks.iron_pot.needs_water"
                         : "nookworks.iron_pot.needs_oil", recipe.amount()).withColor(0xE0A548);
             }
@@ -700,6 +874,10 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         if (liquid || !this.dish.isEmpty()) {
             lines.accept(this.describe());
         }
+        for (Waiting waiting : this.later) {
+            // done behind the one in front, to Jade too: it lists only what is still in the pot
+            lines.accept(Component.translatable("nookworks.iron_pot.also_ready", waiting.dish().getCount(), waiting.dish().getHoverName()));
+        }
         // a hand takes them back - unless a dish waits for bowls, when a hand serves it first
         String freedKey = !this.dish.isEmpty() && this.container != null ? "nookworks.iron_pot.freed.after" : "nookworks.iron_pot.freed";
         for (ItemStack freed : this.freed) {
@@ -708,10 +886,23 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
                 lines.accept(Component.translatable(freedKey, freed.getHoverName(), freed.getCount()).withColor(0xA3A9B2));
             }
         }
+        if (liquid && !this.dish.isEmpty() && this.count() > 0) {
+            // what lies in the pot beside the dish, cooking on (Jade lists the things itself)
+            MutableComponent waiting = Component.empty();
+            for (ItemStack stack : this.contents) {
+                if (!stack.isEmpty()) {
+                    if (!waiting.getSiblings().isEmpty()) {
+                        waiting.append(Component.translatable("nookworks.list.separator"));
+                    }
+                    waiting.append(Component.translatable("nookworks.iron_pot.item", stack.getHoverName(), stack.getCount()));
+                }
+            }
+            lines.accept(Component.translatable("nookworks.iron_pot.waiting", waiting).withColor(0xA3A9B2));
+        }
         int percent = this.percent();
         if (percent >= 0) {
             lines.accept(Component.translatable("nookworks.iron_pot.cooking", percent).withColor(0x7EDC7E));
-        } else if (this.dish.isEmpty() && this.level != null && !IronPotBlock.heated(this.level, this.worldPosition)) {
+        } else if ((this.dish.isEmpty() || this.count() > 0) && this.level != null && !IronPotBlock.heated(this.level, this.worldPosition)) {
             if (this.level.getBlockState(this.worldPosition.below()).is(BlockTags.CAMPFIRES)
                     && !this.getBlockState().getValue(IronPotBlock.ON_GRILL)) {
                 // set straight on a campfire, as looks natural: say what is missing, full or empty (on its grill over a
@@ -720,7 +911,7 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
             } else if (this.count() > 0) {
                 lines.accept(Component.translatable("nookworks.iron_pot.cold").withColor(0xA3A9B2));
             }
-        } else if (this.dish.isEmpty() && this.count() > 0 && this.liquid() == null) {
+        } else if (this.count() > 0 && this.liquid() == null) {
             // over the fire with things in it and nothing to cook them in: it said nothing at all (the kitchen play-test)
             lines.accept(Component.translatable("nookworks.iron_pot.dry").withColor(0xE0A548));
         } else {
@@ -731,19 +922,31 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         }
     }
 
-    /** For the screen-less status line: how far the cooking is, 0-100, or -1 when nothing cooks. */
+    /**
+     * For the screen-less status line: how far the cooking is, 0-100 - of the dish nearest done, when several cook side
+     * by side - or -1 when nothing cooks.
+     */
     public int percent() {
-        if (this.cooking == null || this.level == null) {
-            return -1;
+        int best = -1;
+        if (this.level == null) {
+            return best;
         }
-        PotRecipe recipe = PotRecipe.byId(this.level, this.cooking);
-        return recipe == null ? -1 : Math.min(100, this.progress * 100 / Math.max(1, recipe.time()));
+        for (var entry : this.progress.entrySet()) {
+            PotRecipe recipe = PotRecipe.byId(this.level, entry.getKey());
+            if (recipe != null) {
+                best = Math.max(best, Math.min(100, entry.getValue() * 100 / Math.max(1, recipe.time())));
+            }
+        }
+        return best;
     }
 
     /** Broken, it lets go of what it held, the dish as it is (the water or oil is lost). */
     public void dropContents(Level level, BlockPos pos) {
         List<ItemStack> all = new ArrayList<>(this.contents);
         all.add(this.dish);
+        for (Waiting waiting : this.later) {
+            all.add(waiting.dish());
+        }
         all.addAll(this.freed);
         for (ItemStack held : all) {
             // in stacks it can be held in: eight soap (one to a stack) dropped as one item were cut to one by a hopper
@@ -781,12 +984,14 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         super.saveAdditional(output);
         output.storeNullable("Owner", UUIDUtil.CODEC, this.owner);
         this.saveContents(output);
-        output.putInt("Progress", this.progress);
         output.putInt("Settled", this.settled);
-        if (this.cooking != null) {
-            output.store("Cooking", Identifier.CODEC, this.cooking);
+        if (!this.progress.isEmpty()) {
+            output.store("cooking_progress", PROGRESS_CODEC, this.progress);
         }
     }
+
+    /** Each dish cooking's progress by its recipe (it was one recipe's, "Cooking" and "Progress", before 1.7). */
+    private static final Codec<Map<Identifier, Integer>> PROGRESS_CODEC = Codec.unboundedMap(Identifier.CODEC, Codec.INT);
 
     /** What is in the pot: saved, and what a client needs to draw it. */
     private void saveContents(ValueOutput output) {
@@ -796,6 +1001,9 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         }
         if (this.container != null) {
             output.store("Container", BuiltInRegistries.ITEM.byNameCodec(), this.container);
+        }
+        if (!this.later.isEmpty()) {
+            output.store("later_dishes", Waiting.CODEC.listOf(), this.later);
         }
         if (!this.freed.isEmpty()) {
             output.store("Freed", ItemStack.CODEC.listOf(), this.freed);
@@ -811,11 +1019,16 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         ContainerHelper.loadAllItems(input, this.contents);
         this.dish = input.read("Dish", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         this.container = input.read("Container", BuiltInRegistries.ITEM.byNameCodec()).orElse(null);
+        this.later.clear();
+        input.read("later_dishes", Waiting.CODEC.listOf()).ifPresent(dishes -> dishes.forEach(
+                waiting -> this.later.add(new Waiting(waiting.dish().copy(), waiting.container()))));
         this.freed.clear();
         input.read("Freed", ItemStack.CODEC.listOf()).ifPresent(this.freed::addAll);
-        this.progress = input.getIntOr("Progress", 0);
         this.settled = input.getIntOr("Settled", SETTLE);
-        this.cooking = input.read("Cooking", Identifier.CODEC).orElse(null);
+        this.progress.clear();
+        input.read("cooking_progress", PROGRESS_CODEC).ifPresentOrElse(this.progress::putAll,
+                // saved before 1.7, one recipe at a time
+                () -> input.read("Cooking", Identifier.CODEC).ifPresent(id -> this.progress.put(id, input.getIntOr("Progress", 0))));
         input.child("Liquid").or(() -> input.child("Water")).ifPresent(this.liquid::deserialize);
     }
 
@@ -843,6 +1056,6 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
 
     /** For tests: progress so far. */
     public int progress() {
-        return this.progress;
+        return this.progress.values().stream().mapToInt(Integer::intValue).max().orElse(0);
     }
 }

@@ -613,7 +613,8 @@ final class RecyclingTests {
     /**
      * The Baler is a block (the user, 2026-11-10): its item, by the same id, sets it down facing whoever set it, in a
      * shape of its own (no full cube); a pickaxe takes it and it drops itself; it does nothing; and the Recycler is
-     * still made of a Crusher, a Compressor and a Baler.
+     * still made of a Crusher, a Compressor and a Baler. An add-on may make it a machine of its own, with a block entity
+     * of the add-on's (nookTechnology's Baler, 2026-11-14): Nookworks gives it none.
      */
     static void balerIsABlock(GameTestHelper helper) {
         check(helper, BuiltInRegistries.ITEM.getKey(ModRecycling.BALER.get()).equals(Nookworks.id("baler"))
@@ -633,7 +634,10 @@ final class RecyclingTests {
         var shape = state.getShape(helper.getLevel(), helper.absolutePos(pos));
         check(helper, !shape.isEmpty() && shape != net.minecraft.world.phys.shapes.Shapes.block(), "it should have a shape of its own");
         check(helper, state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE), "a pickaxe should mine it");
-        check(helper, !state.hasBlockEntity(), "it does nothing: no block entity");
+        var placed = helper.getLevel().getBlockEntity(helper.absolutePos(pos));
+        check(helper, placed == null || !BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(placed.getType()).getNamespace().equals(Nookworks.MODID),
+                "it does nothing: no block entity of ours, found " + (placed == null ? null : placed.getType()));
+        check(helper, placed != null || !state.hasBlockEntity(), "it does nothing: no block entity");
         // turned by the Wrench, as anything that faces some way
         check(helper, dev.nookworks.item.WrenchItem.turn(state, false).getValue(BalerBlock.FACING) == Direction.WEST,
                 "a Wrench should turn it");

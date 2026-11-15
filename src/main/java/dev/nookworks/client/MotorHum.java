@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
  * only, no attack and no tail, so it is faded in and out here over {@link #FADE} ticks (a hum started or cut hard
  * clicks), at one pitch, the loudness theirs in sounds.json times the work-sound setting.
  */
+@net.neoforged.fml.common.EventBusSubscriber(modid = dev.nookworks.Nookworks.MODID, value = net.neoforged.api.distmarker.Dist.CLIENT)
 public final class MotorHum extends AbstractTickableSoundInstance {
     /** How many Motors are heard humming at once. */
     static final int MAX = 4;
@@ -51,6 +52,17 @@ public final class MotorHum extends AbstractTickableSoundInstance {
         this.y = pos.getY() + 0.5;
         this.z = pos.getZ() + 0.5;
         this.volume = 0.0F; // faded in from nothing (canStartSilent)
+    }
+
+    /**
+     * A world the client leaves (another dimension, the title screen) takes its hums with it: the sound engine drops them
+     * without a last tick, and kept here they held the old world in memory until a Motor next hummed (1.6 review).
+     */
+    @net.neoforged.bus.api.SubscribeEvent
+    static void onUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            PLAYING.values().removeIf(hum -> hum.level == event.getLevel());
+        }
     }
 
     /** It starts at no volume, to fade in. */

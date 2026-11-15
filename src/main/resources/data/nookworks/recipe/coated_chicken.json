@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:coated_chicken"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:chicken",
+    "#c:flours/wheat"
+  ],
+  "result": {
+    "id": "nookworks:coated_chicken",
+    "count": 2
+  }
+}

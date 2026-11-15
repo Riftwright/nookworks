@@ -113,7 +113,7 @@ public final class DaemonTravel {
         if (STEPPING.add(player)) {
             server.schedule(new TickTask(server.getTickCount(), () -> {
                 STEPPING.remove(player);
-                if (!player.isRemoved()) {
+                if (!player.isRemoved() && player.isAlive()) { // killed the same tick, by what ticked after them: not sent on
                     through(player, at);
                 }
             }));
@@ -127,6 +127,9 @@ public final class DaemonTravel {
 
     /** {@code player} walking into the open door whose lower half is at {@code door}. */
     public static void through(ServerPlayer player, BlockPos door) {
+        if (!player.isAlive()) {
+            return; // a body is not sent on: it took the death screen to the far side (2026-11-13 review)
+        }
         MinecraftServer server = player.level().getServer();
         int now = server.getTickCount();
         Integer last = LAST.get(player);
@@ -178,6 +181,13 @@ public final class DaemonTravel {
                 return null;
             }
             BlockPos base = log.lastPos().get(to);
+            if (DimensionType.getTeleportationScale(from.dimensionType(), target.dimensionType()) != 1.0) {
+                // a world of another measure (the Nether's eighth): its door where a portal from this door would come out,
+                // not where the player last was there - so a nether portal built beside each door joins the other's. Set
+                // where they last were, the far door's portal came out at home far off, a new portal made there (the user,
+                // 2026-11-13)
+                base = scaled(from, target, door);
+            }
             if (base == null && to.equals(Level.END)) {
                 there = endLanding(target, player); // in a dimension never seen: always the first door there
             } else {
@@ -257,7 +267,6 @@ public final class DaemonTravel {
     /** As {@link #endLanding(ServerLevel)}, asking claim mods and spawn protection as {@code actor}. */
     public static @Nullable BlockPos endLanding(ServerLevel end, @Nullable Player actor) {
         BlockPos spawn = ServerLevel.END_SPAWN_POINT;
-        EndPlatformFeature.createEndPlatform(end, spawn.below(), true); // its floor a block under where one stands
         int y = spawn.getY() - 1; // where one stands on the platform
         int west = spawn.getX() + 3; // the ledge: the five columns east of the platform's
         int east = west + 4;
@@ -300,6 +309,9 @@ public final class DaemonTravel {
         if (!clear || !DOOR.fits(end, door, Direction.WEST) || !mayChange(end, changes, actor)) {
             return setDown(end, spawn.east(5), false, DOOR, endPlatform(), actor);
         }
+        // the platform the ledge joins, made only now the ledge is to be built: made first, it broke what stood on it for a
+        // trip that then went nowhere (2026-11-13 review)
+        EndPlatformFeature.createEndPlatform(end, spawn.below(), true); // its floor a block under where one stands
         for (BlockPos cell : masonry) {
             end.setBlockAndUpdate(cell, MASONRY.defaultBlockState());
         }

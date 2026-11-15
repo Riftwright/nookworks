@@ -98,6 +98,11 @@ public abstract class FluidPipeBlock extends PipeBlock implements EntityBlock {
             return pipe.family() == this.family() && pipe.joinsSide(thereState, side.getOpposite())
                     && !PipeSides.isOff(thereState, side.getOpposite());
         }
+        if (there instanceof dev.nookworks.cooking.IronPotBlock) {
+            // an Iron Pot or a Frying Pan is filled by a Kitchen Tap over it, not by a pipe run into its side (the user,
+            // 2026-11-15: 「蛇口使うのであれば、鍋に向かって銅管が開く必要ないよね？」)
+            return false;
+        }
         if (!(level instanceof Level full)) {
             // world generation, where capabilities cannot be asked: the side stays as the template saved it (EnergyCableBlock)
             return state.getValue(PROPERTY_BY_DIRECTION.get(side));

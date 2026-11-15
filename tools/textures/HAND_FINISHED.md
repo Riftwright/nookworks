@@ -47,6 +47,11 @@ The Generator's, Retort's, Mercury Tank's and Experience Tank's models (`tools/g
 panel 1 px back inside the frame drawn round its edge; they lay these faces exactly where a cube would, so no pixel
 of them moves.
 
+The Hub Stone's three (`hub_stone_off.png`, `hub_stone_on.png`, `hub_stone_plate.png`: a bolted casing with two red
+tubes, hand-finished 2026-09-20) are no longer in the game: the user chose a new look for it on 2026-11-14 (DECISIONS,
+Look), which `gen_hub_stone.py` draws under the first two names. The hand-finished pictures are kept as they were in
+`tools/textures/retired/`, outside the jar.
+
 All of them are 16x16 and fully opaque: the blocks that used to be a vanilla texture with a cutout overlay
 laid over it are now plain cubes (or, for the Spawner Controller, a model of its own). (One pixel of
 `block/spawner_controller_console.png`, at 3,6, was at alpha 254, which made the whole sprite count as

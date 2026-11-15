@@ -6,6 +6,7 @@ import dev.nookworks.Nookworks;
 import dev.nookworks.furniture.SeatEntity;
 import dev.nookworks.label.LabelEntity;
 import dev.nookworks.pearl.ThrownLodePearl;
+import dev.nookworks.poster.NookItemFrame;
 import dev.nookworks.poster.PosterEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -25,6 +26,23 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .updateInterval(Integer.MAX_VALUE) // hanging entities never move on their own
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Nookworks.id("poster"))));
+
+    /** Item frames of dark oak and of brass, and their glowing forms, built as vanilla's item frame is: see {@link NookItemFrame}. */
+    public static final Supplier<EntityType<NookItemFrame>> DARK_OAK_ITEM_FRAME = itemFrame("dark_oak_item_frame");
+    public static final Supplier<EntityType<NookItemFrame>> DARK_OAK_GLOW_ITEM_FRAME = itemFrame("dark_oak_glow_item_frame");
+    public static final Supplier<EntityType<NookItemFrame>> BRASS_ITEM_FRAME = itemFrame("brass_item_frame");
+    public static final Supplier<EntityType<NookItemFrame>> BRASS_GLOW_ITEM_FRAME = itemFrame("brass_glow_item_frame");
+
+    private static Supplier<EntityType<NookItemFrame>> itemFrame(String name) {
+        return ENTITY_TYPES.register(name, () -> EntityType.Builder.<NookItemFrame>of(NookItemFrame::new, MobCategory.MISC)
+                .noLootTable()
+                .sized(0.5F, 0.5F)
+                .eyeHeight(0.0F)
+                .clientTrackingRange(10)
+                .noUpdateInterval()
+                .dontTrackDeltas()
+                .build(ResourceKey.create(Registries.ENTITY_TYPE, Nookworks.id(name))));
+    }
 
     public static final Supplier<EntityType<LabelEntity>> LABEL = ENTITY_TYPES.register("label",
             () -> EntityType.Builder.<LabelEntity>of(LabelEntity::new, MobCategory.MISC)

@@ -330,23 +330,24 @@ final class MachineTabTests {
                 "it stands on the tab, right of the panel, and is shut away: " + slot.x + ", " + slot.y);
         check(helper, tabs.isPart(new ItemStack(Items.COBBLESTONE)) && !tabs.isPart(new ItemStack(Items.GRAVEL)), "what it takes is a part");
         int first = crusher.layout().slotCount();
+        check(helper, tabs.liquid() == null && !tabs.isOpen(MachineTab.ADDON), "no Liquid tab; the Add-on tab shut");
         inventory.setItem(9, new ItemStack(Items.COBBLESTONE, 5));
-        menu.quickMoveStack(player, first);
-        check(helper, !slot.hasItem() && !menu.slots.get(0).hasItem() && inventory.getItem(0).is(Items.COBBLESTONE)
-                && inventory.getItem(0).getCount() == 5, "shut: the part crosses to the hotbar, not into the slot or the machine: "
-                        + menu.slots.get(0).getItem() + ", " + inventory.getItem(0));
-        check(helper, menu.clickMenuButton(player, MenuTabs.button(MachineTab.ADDON)) && slot.isActive() && tabs.liquid() == null,
-                "open, it is active");
-        inventory.setItem(10, new ItemStack(Items.COBBLESTONE, 5));
-        ItemStack back = menu.quickMoveStack(player, first + 1);
-        check(helper, slot.getItem().getCount() == 1 && inventory.getItem(10).getCount() == 4 && back.isEmpty(),
-                "open: one fitted, the rest kept, and the shift-click loop told to stop");
-        menu.quickMoveStack(player, first + 1);
-        check(helper, inventory.getItem(10).getCount() == 4 && !menu.slots.get(0).hasItem(),
-                "its slot full, the rest stays put - none into the machine: " + menu.slots.get(0).getItem());
+        ItemStack back = menu.quickMoveStack(player, first);
+        check(helper, tabs.isOpen(MachineTab.ADDON) && slot.isActive() && slot.getItem().getCount() == 1
+                && inventory.getItem(9).getCount() == 4 && !menu.slots.get(0).hasItem() && back.isEmpty(),
+                "shut, a part's shift-click opens the Add-on tab and fits one there, the rest kept, none into the machine, the loop"
+                        + " told to stop (the user, 2026-11-14): " + slot.getItem() + ", " + inventory.getItem(9) + ", " + menu.slots.get(0).getItem());
         check(helper, menu.clickMenuButton(player, MenuTabs.button(MachineTab.SETTINGS)) && !slot.isActive(), "another tab open: shut away");
+        menu.quickMoveStack(player, first);
+        check(helper, tabs.isOpen(MachineTab.ADDON) && slot.getItem().getCount() == 1 && inventory.getItem(9).getCount() == 4
+                && !menu.slots.get(0).hasItem(), "its slot full: the tab opens on what holds it, and the part stays put - none into the machine: "
+                        + menu.slots.get(0).getItem());
         menu.quickMoveStack(player, slot.index);
-        check(helper, !slot.hasItem() && inventory.countItem(Items.COBBLESTONE) == 10, "shift-clicked out, back to the inventory");
+        check(helper, !slot.hasItem() && inventory.countItem(Items.COBBLESTONE) == 5, "shift-clicked out, back to the inventory");
+        inventory.setItem(11, new ItemStack(Items.GRAVEL, 3));
+        menu.clickMenuButton(player, MenuTabs.button(null));
+        menu.quickMoveStack(player, first + 2);
+        check(helper, !tabs.isOpen(MachineTab.ADDON), "what is no part opens no tab");
         helper.succeed();
     }
 

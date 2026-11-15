@@ -3,22 +3,23 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:planter"
+        "nookworks:planter",
+        "nookworks:machine_chassis"
       ]
     }
   ],
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "P": "#minecraft:planks",
-    "A": "minecraft:piston",
+    "I": "minecraft:iron_ingot",
     "D": "minecraft:dispenser",
+    "X": "nookworks:machine_chassis",
     "R": "minecraft:redstone"
   },
   "pattern": [
-    "PAP",
-    "PDP",
-    "PRP"
+    "IDI",
+    "IXI",
+    "IRI"
   ],
   "result": {
     "id": "nookworks:planter"

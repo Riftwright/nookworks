@@ -1289,6 +1289,34 @@
    ]
   }
  },
+ "nookworks:elevator": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    2,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
  "nookworks:experience_tank": {
   "east": {
    "north": [
@@ -1513,6 +1541,60 @@
   "none": {
    "down": [
     5,
+    0
+   ]
+  }
+ },
+ "nookworks:hub_stone": {
+  "none": {
+   "north": [
+    1,
+    0
+   ],
+   "south": [
+    1,
+    0
+   ],
+   "east": [
+    1,
+    0
+   ],
+   "west": [
+    1,
+    0
+   ],
+   "up": [
+    1,
+    0
+   ],
+   "down": [
+    1,
+    0
+   ]
+  }
+ },
+ "nookworks:iron_pot": {
+  "east": {
+   "down": [
+    1,
+    0
+   ]
+  },
+  "north": {
+   "down": [
+    1,
+    0
+   ]
+  },
+  "south": {
+   "down": [
+    1,
+    0
+   ]
+  },
+  "west": {
+   "down": [
+    1,
     0
    ]
   }

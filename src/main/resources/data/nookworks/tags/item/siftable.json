@@ -4,12 +4,15 @@
     "minecraft:sand",
     "minecraft:red_sand",
     "minecraft:soul_sand",
+    "minecraft:soul_soil",
     "nookworks:crude_salt",
     "minecraft:dirt",
     "minecraft:coarse_dirt",
     "minecraft:rooted_dirt",
+    "minecraft:podzol",
     "minecraft:mud",
     "nookworks:deepslate_gravel",
+    "nookworks:basalt_gravel",
     "nookworks:nether_grit",
     "nookworks:end_gravel"
   ]

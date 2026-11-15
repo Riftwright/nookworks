@@ -1,0 +1,124 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "oil": "nookworks:block/vegetable_oil_still",
+    "particle": "nookworks:block/vegetable_oil_still"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        3
+      ],
+      "to": [
+        11,
+        0,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            5,
+            3,
+            11,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        0,
+        5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            4,
+            4,
+            12,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        5
+      ],
+      "to": [
+        13,
+        0,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            3,
+            5,
+            13,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        11
+      ],
+      "to": [
+        12,
+        0,
+        12
+      ],
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            4,
+            11,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        0,
+        12
+      ],
+      "to": [
+        11,
+        0,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#oil",
+          "uv": [
+            5,
+            12,
+            11,
+            13
+          ]
+        }
+      }
+    }
+  ]
+}

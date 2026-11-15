@@ -3,7 +3,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "soot": "nookworks:block/lantern_soot",
-    "particle": "minecraft:block/lantern"
+    "particle": "minecraft:block/soul_lantern"
   },
   "elements": [
     {

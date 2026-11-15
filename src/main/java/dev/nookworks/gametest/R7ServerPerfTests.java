@@ -180,7 +180,7 @@ final class R7ServerPerfTests {
 
         BlockPos makerPos = new BlockPos(5, 2, 1);
         helper.setBlock(makerPos, ModBlocks.STONE_MAKER.get());
-        var maker = helper.getBlockEntity(makerPos, StoneMakerBlockEntity.class);
+        var maker = StoneMakerTests.filled(helper.getBlockEntity(makerPos, StoneMakerBlockEntity.class));
         afterTheBeat.add(waitsABeat(helper, makerPos, maker, 0, new ItemStack(Items.COBBLESTONE, 5),
                 () -> StoneMakerBlockEntity.serverTick(level, helper.absolutePos(makerPos), helper.getBlockState(makerPos), maker), "the Stone Maker"));
 

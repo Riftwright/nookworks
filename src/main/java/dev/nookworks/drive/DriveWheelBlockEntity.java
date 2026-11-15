@@ -383,6 +383,9 @@ public class DriveWheelBlockEntity extends BlockEntity implements DriveSource {
         }
         wheel.shaft = (wheel.shaft + wheel.step) % 360.0F;
         wheel.travel = (wheel.travel + (float) (Math.toRadians(wheel.step) * Belts.RADIUS)) % 1.0F;
+        if (level.isClientSide() && state.getValue(DriveWheelBlock.TURNING)) {
+            dev.nookworks.client.WheelClatter.keep(level, pos, state); // its clatter held on while it turns
+        }
     }
 
     /**

@@ -304,7 +304,7 @@ def models():
         + blob(disc(8, 11.5, 1, sx=2.5), 1, 2, "cabbage", step=1, area=(3, 13, 9, 14))
     out["block/dish_tonkatsu"] = dish({"crumb": t("dish_katsu_crumb"), "cut": t("dish_katsu_cut"), "cabbage": t("dish_cabbage"),
                                        "mustard": t("dish_lemon")},
-                                      slices + cabbage + [box([11.5, 0, 4.5], [12.5, 0.5, 5.5], "mustard")])
+                                      slices + cabbage + [box([12.8, 0, 5], [13.8, 0.5, 6], "mustard")])
     # five pieces piled on a lettuce leaf, every other one turned, with a wedge of lemon
     pieces = [((6.5, 6.5), 3, 2.5, 0), ((9.7, 6.6), 2.5, 2.25, 22.5), ((6.6, 9.7), 2.5, 2.25, 22.5),
               ((9.6, 9.6), 3, 2.5, 0), ((8, 8), 2.5, 2.25, 22.5)]
@@ -316,7 +316,7 @@ def models():
     leaf = blob(disc(8, 8, 5), 0, 0.25, "leaf", step=1)
     out["block/dish_karaage"] = dish({"k": t("dish_karaage"), "lemon": t("dish_lemon"), "cut": t("dish_lemon_cut"),
                                       "leaf": t("dish_lettuce")},
-                                     leaf + karaage + [box([10.5, 0.25, 11], [13, 1.5, 12.5], "lemon", top="cut")])
+                                     leaf + karaage + [box([10.5, 0.25, 11.2], [13, 1.5, 12.7], "lemon", top="cut")])
     # a round ring of dough under its glaze
     out["block/dish_donut"] = dish({"side": t("dish_donut_side"), "top": t("dish_donut_top")},
                                    blob(disc(8, 8, 4, 1.5), 0, 2.5, "side", top="top", step=1))
@@ -359,6 +359,8 @@ def main():
     for name, draw in TEXTURES.items():
         draw().save(TEX / f"{name}.png")
     for path, model in models().items():
+        if path.startswith("block/dish_"):
+            continue  # the four dishes' models are filed under models/dish/ by gen_dishes.py, which reads them here
         write(ASSETS / "models" / f"{path}.json", model)
     # blockstates and items
     write(ASSETS / "blockstates/plate.json", {"variants": facing_variants("nookworks:block/plate")})
@@ -367,8 +369,17 @@ def main():
         for n in range(1, 5):
             variants.update(facing_variants(f"nookworks:block/{block}_{n}", f",count={n}"))
         write(ASSETS / f"blockstates/{block}.json", {"variants": variants})
-    for item, model in (("plate", "block/plate"), ("wine_glass", "block/wine_glass_1"), ("mug", "block/mug_1")):
+    for item, model in (("wine_glass", "block/wine_glass_1"), ("mug", "block/mug_1")):
         write(ASSETS / f"items/{item}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:{model}"}})
+    # a Plate lifted with its food (it has a container) shows the food on it (client/render/PlateItemRenderer); the plain
+    # plate comes first, for tools/gen_item_displays.py, which gives the first model an item shows its transforms
+    plate = "nookworks:block/plate"
+    write(ASSETS / "items/plate.json", {"model": {
+        "type": "minecraft:condition", "property": "minecraft:has_component", "component": "minecraft:container",
+        "on_false": {"type": "minecraft:model", "model": plate},
+        "on_true": {"type": "minecraft:composite", "models": [
+            {"type": "minecraft:model", "model": plate},
+            {"type": "minecraft:special", "base": plate, "model": {"type": "nookworks:plate_contents"}}]}}})
     # loot: the plate itself; a glass or mug for each in the block
     write(DATA / "loot_table/blocks/plate.json", simple_loot("plate"))
     for block in ("wine_glass", "mug"):

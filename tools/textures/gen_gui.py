@@ -16,7 +16,7 @@
 
 - textures/gui/tabs.png: 48x16. The machine screens' tab icons (1.5, the user's drawing of 2026-11-08), 16x16 each,
   outlined and lit from the top left as the gauge icons are: Settings (three slider tracks with brass knobs), Liquid
-  (an iron bucket with its handle) and Add-on (a copper puzzle piece).
+  (an iron bucket with its handle) and Extra Slots (an empty slot with a brass plus in it, even every way round).
 - textures/gui/dial.png: 294x14. The Liquid tab's timer, 21 frames of a round brass-rimmed dial filling clockwise from
   twelve o'clock in brass, one for each tick of its second.
 
@@ -281,34 +281,37 @@ def bucket(img, ox):
         img.putpixel((ox + x, y), TAB_EDGE + (255,))
 
 
-def puzzle(img, ox):
-    """Add-on: a jigsaw piece, as one is drawn - a round knob on a narrower neck out of its top and its right, a round
-    socket into its left and its bottom - outlined outside its edge, so the knobs keep their copper (drawn as the gauge
-    icons are, with the outline inside, the knobs were all outline and the piece read as a clay figure: the user,
-    2026-11-12, 「パズルのピースにみえない。土偶ですか？」)."""
-    # a square body twelve across, small round knobs on narrow necks (big ones read as a head and an arm: a figure again)
-    piece = rect(1, 4, 12, 15)
-    piece |= {(6, 1), (7, 1)} | {(x, 2) for x in range(5, 9)} | {(6, 3), (7, 3)}
-    piece |= {(13, 9), (13, 10)} | {(14, y) for y in range(8, 12)} | {(15, 9), (15, 10)}
-    piece -= {(1, 9), (1, 10)} | {(2, y) for y in range(8, 12)} | {(3, 9), (3, 10)}
-    piece -= {(6, 15), (7, 15)} | {(x, 14) for x in range(5, 9)} | {(6, 13), (7, 13)}
-    for (x, y) in piece:
-        lit = (x - 1, y) not in piece or (x, y - 1) not in piece
-        dark = (x + 1, y) not in piece or (x, y + 1) not in piece
-        colour = COPPER_DARK if dark and not lit else COPPER_LIT if lit and not dark else COPPER
+SLOT_WELL = (34, 36, 41)
+
+
+def extra_slot(img, ox):
+    """Extra Slots: an empty slot, flat, with a brass plus in it. The tab was renamed from Add-on on 2026-11-14 and the
+    puzzle piece went with the name (「アイコンも直す？」); the first plus had arms of three and four pixels and was lit from
+    the top left pixel by pixel, which read as lopsided (「＋なのに非対称なのが悪いんだと思う」), so this one is the same
+    every way round: the slot 1..14 (fourteen wide, so the tab's middle is its own), the plus over 4..11 with two-pixel
+    bars at 7..8 and arms of three each side, lit along its top edges and shaded along its bottom ones only, and the
+    slot's well left flat rather than bevelled (the user's pick of five, 「D2がいいかな」)."""
+    for y in range(1, 15):
+        for x in range(1, 15):
+            edge = x in (1, 14) or y in (1, 14)
+            img.putpixel((ox + x, y), (TAB_EDGE if edge else SLOT_WELL) + (255,))
+    bar = range(7, 9)
+    plus = {(x, y) for x in range(4, 12) for y in bar} | {(x, y) for x in bar for y in range(4, 12)}
+    for (x, y) in plus:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + dx, y + dy) not in plus:
+                img.putpixel((ox + x + dx, y + dy), TAB_EDGE + (255,))
+    for (x, y) in plus:
+        colour = BRASS_LIT if (x, y - 1) not in plus else BRASS_DARK if (x, y + 1) not in plus else BRASS
         img.putpixel((ox + x, y), colour + (255,))
-    for y in range(16):
-        for x in range(16):
-            if (x, y) not in piece and any((x + dx, y + dy) in piece for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
-                img.putpixel((ox + x, y), TAB_EDGE + (255,))
 
 
 def tab_icons():
-    """textures/gui/tabs.png, 48x16: Settings, Liquid and Add-on, 16x16 each."""
+    """textures/gui/tabs.png, 48x16: Settings, Liquid and Extra Slots, 16x16 each."""
     img = Image.new("RGBA", (48, 16), CLEAR)
     sliders(img, 0)
     bucket(img, 16)
-    puzzle(img, 32)
+    extra_slot(img, 32)
     return img
 
 

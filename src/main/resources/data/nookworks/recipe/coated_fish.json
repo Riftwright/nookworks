@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:coated_fish"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:cod",
+    "#c:flours/wheat"
+  ],
+  "result": {
+    "id": "nookworks:coated_fish",
+    "count": 2
+  }
+}

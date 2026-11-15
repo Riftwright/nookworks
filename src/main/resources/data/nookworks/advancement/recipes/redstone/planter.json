@@ -3,7 +3,8 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:planter"
+        "nookworks:planter",
+        "nookworks:machine_chassis"
       ]
     }
   ],

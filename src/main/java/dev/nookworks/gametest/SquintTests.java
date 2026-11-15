@@ -4,6 +4,7 @@ import static dev.nookworks.gametest.NookworksGameTests.check;
 import static dev.nookworks.gametest.NookworksGameTests.test;
 
 import dev.nookworks.feature.Squinting;
+import java.util.List;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
@@ -17,6 +18,7 @@ final class SquintTests {
     static void register() {
         test("squinting_is_marked_for_others_and_not_kept", SquintTests::markedAndNotKept);
         test("squinting_arithmetic", SquintTests::arithmetic);
+        test("squint_stands_aside_for_another_zoom_on_its_key", SquintTests::zoomClash);
     }
 
     /** Off to begin with; on and off at the player's word; not saved with the player (nor so carried through death). */
@@ -49,6 +51,29 @@ final class SquintTests {
             double slowed = Math.pow(Squinting.sensitivityFor(sensitivity, 0.5) * 0.6 + 0.2, 3);
             check(helper, Math.abs(slowed - turned * 0.5) < 1e-9, "the mouse at half speed for " + sensitivity + ": " + slowed / turned);
         }
+        helper.succeed();
+    }
+
+    /**
+     * Another mod's zoom on Squint's key (Zoomify's and Ok Zoomer's are on C as Squint is): Squint stands aside, so the
+     * view is not brought nearer twice over (the user, 2026-11-14). Bound apart, both work; vanilla's Save Toolbar
+     * Activator on C is no zoom; a key named for a zoom of ours is ours; Squint unbound has nothing to clash.
+     */
+    private static void zoomClash(GameTestHelper helper) {
+        String c = "key.keyboard.c:NONE";
+        String[] toolbar = {"key.saveToolbarActivator", c};
+        String[] zoomifyOnC = {"zoomify.key.zoom", c};
+        String[] zoomifyOnV = {"zoomify.key.zoom", "key.keyboard.v:NONE"};
+        String[] okZoomerShiftC = {"key.ok_zoomer.zoom", "key.keyboard.c:SHIFT"};
+        String[] oursNamedZoom = {"key.nookworks.zoom_test", c};
+        check(helper, Squinting.zoomClash(c, List.of(toolbar, zoomifyOnC)) != null
+                && Squinting.zoomClash(c, List.of(toolbar, zoomifyOnC)).equals("zoomify.key.zoom"), "a zoom on C beside Squint: it stands aside");
+        check(helper, Squinting.zoomClash(c, List.of(toolbar, zoomifyOnV)) == null, "the zoom bound to V: both work");
+        check(helper, Squinting.zoomClash(c, List.<String[]>of(toolbar)) == null, "vanilla's Save Toolbar Activator on C is no zoom");
+        check(helper, Squinting.zoomClash(c, List.<String[]>of(okZoomerShiftC)) == null, "Shift+C is another key");
+        check(helper, Squinting.zoomClash(c, List.<String[]>of(oursNamedZoom)) == null, "a key of ours is not another mod's");
+        check(helper, Squinting.zoomClash("key.keyboard.unknown:NONE", List.<String[]>of(new String[] {"zoomify.key.zoom", "key.keyboard.unknown:NONE"})) == null,
+                "Squint unbound clashes with nothing");
         helper.succeed();
     }
 }

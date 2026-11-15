@@ -1,6 +1,8 @@
 package dev.nookworks.feature;
 
+import java.util.Locale;
 import java.util.function.Supplier;
+import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -54,6 +56,26 @@ public final class Squinting {
      * turns by the cube of (setting x 0.6 + 0.2), so the setting goes through the cube root. Below the slider's own range
      * at times (a slow mouse, well zoomed), which the game takes as it is.
      */
+    /**
+     * Another mod's zoom on the key Squint is on, if one is: its key's name, else null. Each other key is a {name, bound
+     * key} pair; a zoom key is one whose name says zoom (Zoomify's, Ok Zoomer's and the others all do). Two zooms on one
+     * key would bring the view nearer twice over, so Squint stands aside for it (the user, 2026-11-14) - and only while
+     * they share a key: bound apart, both work. Vanilla's own keys on C (the Save Toolbar Activator) are no zoom.
+     */
+    public static @Nullable String zoomClash(String ourKey, Iterable<String[]> others) {
+        if (ourKey.isEmpty() || ourKey.startsWith("key.keyboard.unknown")) {
+            return null;
+        }
+        for (String[] other : others) {
+            String name = other[0];
+            if (ourKey.equals(other[1]) && !name.startsWith("key." + Nookworks.MODID + ".")
+                    && name.toLowerCase(Locale.ROOT).contains("zoom")) {
+                return name;
+            }
+        }
+        return null;
+    }
+
     public static double sensitivityFor(double sensitivity, double scale) {
         return (Math.cbrt(scale) * (sensitivity * 0.6 + 0.2) - 0.2) / 0.6;
     }

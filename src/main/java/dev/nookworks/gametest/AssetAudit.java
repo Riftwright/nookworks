@@ -71,7 +71,45 @@ public final class AssetAudit {
         for (Identifier drawn : HungItemEntity.SPRIGS.values()) { // client items with no item of their own
             audit.itemModel(drawn);
         }
+        audit.dishModels();
         return audit.problems;
+    }
+
+    /**
+     * The models no blockstate or item definition names: each dish as it lies on a Plate, a Wooden Tray or the Grill,
+     * in an Iron Pot and in a Frying Pan (client/render/DishModels finds them by file, {@code models/dish/<namespace>/
+     * <item>}), every one for an item that exists; and the pot's liquids (IronPotRenderer). The cooking review,
+     * 2026-11-14: a hundred models only a client reads.
+     */
+    private void dishModels() {
+        for (String dir : List.of("dish", "dish_in_pot", "dish_in_pan")) {
+            List<String> found = new ArrayList<>();
+            String prefix = "assets/" + Nookworks.MODID + "/models/" + dir + "/";
+            try {
+                net.neoforged.fml.ModList.get().getModFileById(Nookworks.MODID).getFile().getContents().visitContent(prefix,
+                        (path, resource) -> {
+                            if (path.endsWith(".json")) {
+                                found.add(path.substring(path.indexOf(prefix) + prefix.length(), path.length() - ".json".length()));
+                            }
+                        });
+            } catch (RuntimeException e) {
+                problems.add(prefix + ": could not be listed (" + e + ")");
+                continue;
+            }
+            if (found.isEmpty()) {
+                problems.add(prefix + " holds no dish model");
+            }
+            for (String dish : found) {
+                model(Nookworks.MODID + ":" + dir + "/" + dish, dir + " model " + dish);
+                Identifier item = Identifier.tryParse(dish.replaceFirst("/", ":"));
+                if (item == null || !BuiltInRegistries.ITEM.containsKey(item)) {
+                    problems.add("models/" + dir + "/" + dish + ".json is for no item there is");
+                }
+            }
+        }
+        for (String liquid : List.of("pot_water", "pot_oil", "pot_broth", "pan_oil")) {
+            model(Nookworks.MODID + ":block/" + liquid, "the liquid in a pot or pan");
+        }
     }
 
     private final List<String> problems = new ArrayList<>();

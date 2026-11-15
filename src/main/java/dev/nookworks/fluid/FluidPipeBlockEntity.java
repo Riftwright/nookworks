@@ -167,7 +167,9 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
      * Whether this pipe's line leads to something besides {@code except} that takes {@code resource} now (asked, never
      * committed), walking at most {@code limit} pipes. The Stirring Tank sends biodiesel up into an empty pipe only when
      * it goes somewhere: a feed pipe set on a tank already holding biodiesel was filled with it, and the oil line
-     * plugged (the round-two fix re-check).
+     * plugged (the round-two fix re-check). A pipe holding another liquid bars the way: sent in behind it, the liquid
+     * met it head on and neither could pass (a Sealed Retort's wood vinegar behind water on its way to the Retort,
+     * 2026-11-14 review) - it goes once that pipe has emptied.
      */
     public boolean leadsToTakerOf(ServerLevel level, FluidResource resource, BlockPos except, int limit) {
         java.util.ArrayDeque<FluidPipeBlockEntity> queue = new java.util.ArrayDeque<>();
@@ -184,7 +186,7 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
                 }
                 FluidPipeBlockEntity other = pipe.pipeOn(level, at, side);
                 if (other != null) {
-                    if (seen.size() < limit && seen.add(next)) {
+                    if ((other.stored() <= 0 || other.resource().equals(resource)) && seen.size() < limit && seen.add(next)) {
                         queue.add(other);
                     }
                     continue;
@@ -227,6 +229,56 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
         }
         return false;
     }
+
+    /**
+     * This pipe's line as far as {@code limit} pipes: its pipes, and what it is joined to besides them and the block at
+     * {@code except} - every block with a fluid capability on a joined side of one of its pipes (tanks, machines, another
+     * mod's pipe), whether the pipe hands to it or draws from it. Walked through shut valves (a shut valve is still the
+     * same line), never into a chunk not loaded: {@code whole} is false when the walk stopped at one, or at the limit.
+     */
+    public Line line(ServerLevel level, BlockPos except, int limit) {
+        java.util.Map<BlockPos, java.util.Set<Direction>> ends = new java.util.LinkedHashMap<>();
+        java.util.ArrayDeque<FluidPipeBlockEntity> queue = new java.util.ArrayDeque<>();
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        boolean whole = true;
+        queue.add(this);
+        seen.add(this.worldPosition);
+        while (!queue.isEmpty()) {
+            FluidPipeBlockEntity pipe = queue.poll();
+            BlockPos at = pipe.worldPosition;
+            for (Direction side : SIDES) {
+                BlockPos next = at.relative(side);
+                if (next.equals(except) || !PipeSides.joined(pipe.getBlockState(), side)) {
+                    continue;
+                }
+                if (!level.isLoaded(next)) {
+                    whole = false;
+                    continue;
+                }
+                FluidPipeBlockEntity other = pipe.pipeOn(level, at, side);
+                if (other != null) {
+                    if (seen.contains(next)) {
+                        continue;
+                    }
+                    if (seen.size() >= limit) {
+                        whole = false;
+                    } else {
+                        seen.add(next.immutable());
+                        queue.add(other);
+                    }
+                } else if (pipe.handlerOn(level, at, side) != null) {
+                    ends.computeIfAbsent(next.immutable(), end -> new java.util.LinkedHashSet<>()).add(side.getOpposite());
+                }
+            }
+        }
+        return new Line(java.util.Collections.unmodifiableSet(seen), java.util.Collections.unmodifiableMap(ends), whole);
+    }
+
+    /**
+     * A pipe line as {@link #line} found it: its pipes, what it is joined to, nearest first (each with every face of it
+     * the line touches), and whether it was walked whole.
+     */
+    public record Line(java.util.Set<BlockPos> pipes, java.util.Map<BlockPos, java.util.Set<Direction>> ends, boolean whole) {}
 
     /** How many pipes away the nearest taker of this pipe's fluid is, or {@link #NOWHERE}. */
     public int reach() {

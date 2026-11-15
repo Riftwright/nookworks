@@ -373,6 +373,12 @@ final class R15LateAuditTests {
         var stone = Blocks.STONE.defaultBlockState();
         check(helper, Belts.inABeltsWay(level, middle, stone), "a stone on the belt's line is in its way");
         check(helper, !Belts.inABeltsWay(level, aside, stone), "one beside it is not");
+        // as a placing is judged (an add-on's placer asks it first): the belt has not lapsed, so it keeps the stone out,
+        // for a player as for no one; not beside it; and nothing with no collision is in its way
+        var player = MockPlayers.inLevel(helper, net.minecraft.world.level.GameType.SURVIVAL);
+        check(helper, Belts.keepsOut(level, middle, stone, player) && Belts.keepsOut(level, middle, stone, null)
+                && !Belts.keepsOut(level, aside, stone, player) && !Belts.keepsOut(level, middle, Blocks.AIR.defaultBlockState(), player),
+                "keepsOut judges a placing as the belt does");
         CompoundTag[] saves = new CompoundTag[2];
         BlockPos[] places = new BlockPos[2];
         for (int i = 0; i < 2; i++) {

@@ -26,6 +26,12 @@ public interface MachineInfo {
         return -1;
     }
 
+    /**
+     * Its own choice in the Settings tab, stepped on ({@link MachineMenu#BUTTON_OPTION}): the Stone Maker's cobblestone or
+     * stone. Nothing for most.
+     */
+    default void nextOption() {}
+
     int guiEnergy();
 
     /** 0 for a machine that needs no power: the screen then has no energy gauge. */

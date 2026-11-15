@@ -307,6 +307,50 @@ def stir_fried_vegetables():
     return outline(img)
 
 
+PLATE = [(168, 170, 166), (212, 214, 208), (246, 247, 242)]  # a white glazed plate: its edge, its shade, its face
+
+
+def plate(img):
+    """A white plate seen a little from above; the dish drawn after it lies on it."""
+    rows = [(4, 11), (2, 13), (1, 14), (1, 14), (2, 13), (4, 11)]
+    for i, (a, b) in enumerate(rows):
+        for x in range(a, b + 1):
+            c = PLATE[2] if i < 3 else PLATE[1]
+            if i == len(rows) - 1 or i >= 3 and x in (a, b):
+                c = PLATE[0]
+            px(img, x, 9 + i, c)
+
+
+def plated_fried_rice():
+    """Fried rice turned out of a ladle onto a plate, a dome of it, with a pinch of red pickled ginger."""
+    img = Image.new("RGBA", (16, 16), CLEAR)
+    plate(img)
+    for y in range(5, 12):
+        half = [2, 3, 4, 5, 5, 5, 4][y - 5]
+        for x in range(8 - half, 8 + half):
+            c = EGG[1]
+            if x < 8 - half + 2 and y < 9:
+                c = EGG[2]
+            if x >= 8 + half - 2 or y == 11:
+                c = EGG[0]
+            px(img, x, y, c)
+    for x, y, c in ((6, 6, EGG[2]), (9, 7, GREEN[1]), (5, 8, CARROT), (10, 9, EGG[2]), (7, 9, GREEN[0]), (8, 5, CARROT),
+                    (13, 11, (206, 44, 56)), (12, 12, (226, 70, 76))):
+        px(img, x, y, c)
+    return outline(img)
+
+
+def plated_stir_fried_vegetables():
+    """Stir-fried vegetables heaped on a plate."""
+    img = Image.new("RGBA", (16, 16), CLEAR)
+    plate(img)
+    colours = [CARROT, POTATO[1], GREEN[1], GREEN[0], POTATO[2], CARROT, GREEN[1], POTATO[0]]
+    for y, (a, b) in {7: (6, 9), 8: (4, 11), 9: (3, 12), 10: (3, 12), 11: (5, 10)}.items():
+        for x in range(a, b + 1):
+            px(img, x, y, colours[(x * 3 + y * 5) % len(colours)])
+    return outline(img)
+
+
 FRY = [(150, 84, 26), (198, 128, 44), (232, 176, 80), (248, 214, 128)]   # batter, dark to light
 POTATO = [(196, 150, 60), (230, 190, 90), (250, 222, 140)]
 
@@ -872,25 +916,17 @@ def main():
              "carrot_nukazuke": carrot_nukazuke(),
              "beetroot_nukazuke": beetroot_nukazuke(), "tonkatsu": tonkatsu(), "flour": flour(),
              "breadcrumbs": breadcrumbs(), "breaded_pork": breaded_pork(),
-             "fried_egg": fried_egg(), "boiled_egg": boiled_egg(), "tamagoyaki": tamagoyaki()}
+             "fried_egg": fried_egg(), "boiled_egg": boiled_egg(), "tamagoyaki": tamagoyaki(),
+             # after the others: each is finished by its place in this list
+             "plated_fried_rice": plated_fried_rice(), "plated_stir_fried_vegetables": plated_stir_fried_vegetables()}
     finished = {"fried_fish", "carrot_nukazuke", "beetroot_nukazuke", "tonkatsu",  # ringed piece by piece already, and left smooth
                 "fried_egg", "boiled_egg", "tamagoyaki"}  # finished with what they keep exact, and ringed, as drawn
     for i, (name, img) in enumerate(items.items()):
         (img if name in finished else texkit.icon(img, 10 + i)).save(tex / f"item/{name}.png")
         write_json(ASSETS / f"models/item/{name}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"nookworks:item/{name}"}})
         write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/{name}"}})
-    parts = [{"when": {"on_grill": "true"}, "apply": {"model": "nookworks:block/grill"}}]
-    for liquid in ("empty", "water", "oil"):
-        for grill in ("false", "true"):
-            name = "iron_pot" + ("" if liquid == "empty" else "_" + liquid) + ("_on_grill" if grill == "true" else "")
-            write_json(ASSETS / f"models/block/{name}.json", iron_pot_model(liquid, grill == "true"))
-            for facing, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
-                v = {"model": f"nookworks:block/{name}"}
-                if y:
-                    v["y"] = y
-                parts.append({"when": {"facing": facing, "liquid": liquid, "on_grill": grill}, "apply": v})
-    write_json(ASSETS / "blockstates/iron_pot.json", {"multipart": parts})
-    write_json(ASSETS / "items/iron_pot.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/iron_pot"}})
+    # trial (the cooking review, 2026-11-14): the Iron Pot's models, blockstate and item are gen_dishes_cooking.py's now -
+    # the pot made hollow, its water and oil drawn by its renderer at the height of how much there is
     print("wrote the grill, the iron pot and their food")
 
 

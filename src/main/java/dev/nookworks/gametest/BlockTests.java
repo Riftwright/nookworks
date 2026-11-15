@@ -108,6 +108,8 @@ final class BlockTests {
         test("breaking_a_coated_block_clears_the_coating", BlockTests::breakingClearsCoating);
         test("hub_stone_carries_redstone_both_ways", BlockTests::hubStoneCarries);
         test("hub_stone_set_down_powered_lights_a_lamp_past_a_stone", BlockTests::hubStoneSetDownPowered);
+        test("hub_stone_light_runs_from_its_source", BlockTests::hubStoneLightRuns);
+        test("elevator_sounds_of_steel", BlockTests::elevatorSoundsOfSteel);
         test("nourished_soil_takes_saplings_and_grows_crops", BlockTests::fertileSoilGrows);
         test("nourished_soil_wears_out", BlockTests::fertileSoilWearsOut);
         test("nourished_soil_is_ruined_by_trampling", BlockTests::fertileSoilIsRuinedByTrampling);
@@ -430,6 +432,68 @@ final class BlockTests {
                 helper.succeed();
             });
         });
+    }
+
+    /**
+     * A powered line of Hub Stones shows a pulse of light running along it, away from its source (the user,
+     * 2026-11-14), with nothing told to the block: its power falls by one a stone, and the blockstate gives each power
+     * the copy of the animated face begun that many frames later (tools/textures/gen_hub_stone.py). So three things
+     * must hold - each power's model is the copy for its distance from the source, each copy's frames are the first
+     * one's begun later by its number, and along a line the powers do fall by one.
+     */
+    static void hubStoneLightRuns(GameTestHelper helper) {
+        var variants = JsonParser.parseString(readAsset(helper, "/assets/nookworks/blockstates/hub_stone.json"))
+                .getAsJsonObject().getAsJsonObject("variants");
+        check(helper, "nookworks:block/hub_stone_off".equals(variants.getAsJsonObject("power=0").get("model").getAsString()),
+                "at rest it is the unlit stone");
+        for (int power = 1; power <= 15; power++) {
+            String model = variants.getAsJsonObject("power=" + power).get("model").getAsString();
+            check(helper, model.equals("nookworks:block/hub_stone_flow_" + (15 - power) % 8),
+                    "power " + power + " shows the copy for its distance from the source, not " + model);
+        }
+        var first = hubStoneFrames(helper, 0);
+        check(helper, first.size() == 8, "eight frames, as there are eight copies");
+        for (int copy = 1; copy < 8; copy++) {
+            var frames = hubStoneFrames(helper, copy);
+            for (int i = 0; i < 8; i++) {
+                check(helper, frames.get(i).getAsInt() == first.get(Math.floorMod(i - copy, 8)).getAsInt(),
+                        "copy " + copy + " is the first one begun " + copy + " frames later");
+            }
+        }
+        // the light at rest, for the client setting that stills it: no blockstate names it, so no audit follows it
+        var still = JsonParser.parseString(readAsset(helper, "/assets/nookworks/models/block/hub_stone_on.json")).getAsJsonObject();
+        check(helper, "nookworks:block/hub_stone_shape_lit".equals(still.get("parent").getAsString())
+                && "nookworks:block/hub_stone_on".equals(still.getAsJsonObject("textures").get("face").getAsString())
+                && NookworksGameTests.class.getResource("/assets/nookworks/textures/block/hub_stone_on.png") != null,
+                "the still model is the lit shape with the lit, still face");
+        helper.setBlock(new BlockPos(1, 1, 3), Blocks.REDSTONE_BLOCK);
+        for (int x = 2; x <= 5; x++) {
+            helper.setBlock(new BlockPos(x, 1, 3), ModBlocks.HUB_STONE.get());
+        }
+        helper.runAfterDelay(2, () -> {
+            for (int x = 2; x <= 5; x++) {
+                check(helper, helper.getBlockState(new BlockPos(x, 1, 3)).getValue(HubStoneBlock.POWER) == 17 - x,
+                        "each stone along the line is one weaker than the last, so one frame behind it (x=" + x + ")");
+            }
+            helper.succeed();
+        });
+    }
+
+    private static com.google.gson.JsonArray hubStoneFrames(GameTestHelper helper, int copy) {
+        return JsonParser.parseString(readAsset(helper, "/assets/nookworks/textures/block/hub_stone_flow_" + copy + ".png.mcmeta"))
+                .getAsJsonObject().getAsJsonObject("animation").getAsJsonArray("frames");
+    }
+
+    /**
+     * The Elevator is drawn and made of steel and brass: set down, broken and trodden on it sounds of metal (the sound
+     * audit, 2026-11-14: it kept stone's sound from when it was drawn as smooth stone). Its strength stays stone's.
+     */
+    static void elevatorSoundsOfSteel(GameTestHelper helper) {
+        var state = ModBlocks.ELEVATOR.get().defaultBlockState();
+        check(helper, state.getSoundType() == net.minecraft.world.level.block.SoundType.METAL, "the Elevator sounds of metal");
+        check(helper, state.getBlock().defaultDestroyTime() == net.minecraft.world.level.block.Blocks.STONE.defaultDestroyTime(),
+                "and is as hard as it was");
+        helper.succeed();
     }
 
     // ---- Fertile Soil ----

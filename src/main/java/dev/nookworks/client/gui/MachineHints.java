@@ -16,6 +16,7 @@ import dev.nookworks.oil.OilFluids;
 import dev.nookworks.machine.Electrolysis;
 import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineMenu;
+import dev.nookworks.machine.StoneMakerBlockEntity;
 import dev.nookworks.mercury.MercuryRecipes;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.mobcapture.MobBottleItem;
@@ -67,6 +68,8 @@ public final class MachineHints {
             case ELECTROLYTIC_CELL -> slot == 0 ? turn(taken(keys(Electrolysis.DATA_MAP), s -> Electrolysis.of(s) != null)) : ItemStack.EMPTY;
             case GENERATOR -> slot == 0 ? turn(FUELS) : ItemStack.EMPTY;
             case PLANTER -> slot == 0 ? turn(PLANTED) : ItemStack.EMPTY;
+            case STONE_MAKER -> slot == StoneMakerBlockEntity.COOLER ? turn(List.of(Items.WATER_BUCKET, Items.BLUE_ICE))
+                    : slot == StoneMakerBlockEntity.LAVA ? new ItemStack(Items.LAVA_BUCKET) : ItemStack.EMPTY;
             case STIRRING_TANK -> slot == StirringTankBlockEntity.CATALYST ? new ItemStack(ModItems.CAUSTIC_SODA.get())
                     : slot == 0 ? turn(charges()) : ItemStack.EMPTY;
             case RETORT -> slot == 0 ? turn(keys(MercuryRecipes.RETORTING)) : slot == 1 || slot == 2 ? reagent(menu, slot - 1)

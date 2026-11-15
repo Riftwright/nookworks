@@ -38,6 +38,7 @@ public final class HintTooltips {
             new Hint(ModItems.HUB_STONE, "hub_stone"),
             new Hint(ModItems.DICE, "dice"),
             new Hint(ModItems.MACHINE_BELL, "machine_bell"),
+            new Hint(dev.nookworks.registry.ModCooking.KITCHEN_TAP_ITEM, "kitchen_tap"),
             new Hint(dev.nookworks.registry.ModRope.WIND_CHIME, "wind_chime"),
             new Hint(ModItems.WRENCH, "wrench"),
             new Hint(ModItems.NOOK_DOWSING_ROD, "nook_dowsing_rod"),

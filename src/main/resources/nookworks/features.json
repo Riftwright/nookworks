@@ -19,16 +19,18 @@
     "nookworks:velarium_storage_upgrade": ["velarium"]
   },
   "kitchen": [
-    "nookworks:rice_polisher", "nookworks:hand_quern", "nookworks:noodle_maker", "nookworks:grill", "nookworks:iron_pot",
+    "nookworks:rice_polisher", "nookworks:hand_quern", "nookworks:noodle_maker", "nookworks:grill", "nookworks:iron_pot", "nookworks:frying_pan",
     "nookworks:nukadoko", "nookworks:wooden_tray", "nookworks:range_hood",
     "nookworks:chimney", "nookworks:stone_brick_chimney", "nookworks:nether_brick_chimney", "nookworks:cobblestone_chimney", "nookworks:brick_flue", "nookworks:stone_brick_flue", "nookworks:nether_brick_flue", "nookworks:cobblestone_flue", "nookworks:rice_bale", "nookworks:brown_rice", "nookworks:white_rice", "nookworks:rice_bran",
-    "nookworks:corn_kernels", "nookworks:corn", "nookworks:onion", "nookworks:flour", "nookworks:breadcrumbs", "nookworks:breaded_pork", "nookworks:bread_dough",
+    "nookworks:corn_kernels", "nookworks:corn", "nookworks:onion", "nookworks:flour", "nookworks:breadcrumbs", "nookworks:breaded_pork", "nookworks:coated_chicken", "nookworks:coated_fish", "nookworks:donut_dough", "nookworks:beaten_eggs", "nookworks:bread_dough",
     "nookworks:risen_dough", "nookworks:udon_dough", "nookworks:raw_udon", "nookworks:pancake_batter", "nookworks:cooked_rice",
     "nookworks:salt_onigiri", "nookworks:salmon_onigiri", "nookworks:vegetable_soup", "nookworks:fried_rice",
     "nookworks:stir_fried_vegetables", "nookworks:french_fries", "nookworks:karaage", "nookworks:fried_fish", "nookworks:tonkatsu",
     "nookworks:udon", "nookworks:cream_stew", "nookworks:corn_potage", "nookworks:grilled_corn", "nookworks:donut",
     "nookworks:pancake", "nookworks:carrot_nukazuke", "nookworks:beetroot_nukazuke", "nookworks:fried_egg",
-    "nookworks:boiled_egg", "nookworks:tamagoyaki"
+    "nookworks:boiled_egg", "nookworks:tamagoyaki", "nookworks:plated_fried_rice", "nookworks:plated_stir_fried_vegetables",
+    "nookworks:electric_stove",
+    "nookworks:kitchen_tap"
   ],
   "storage": [
     "nookworks:iron_storage_barrel", "nookworks:gold_storage_barrel", "nookworks:diamond_storage_barrel",

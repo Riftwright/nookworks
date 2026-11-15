@@ -299,7 +299,7 @@ public final class TagPickerView {
         int row = this.rowAt(event.x(), event.y());
         if (row >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             this.press(row == 0 ? this.picker.modButton() : this.picker.tickButton(row - 1));
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.2F, 0.4F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.2F, 0.25F));
             return true;
         }
         this.pressTaken = this.screen.getChildAt(event.x(), event.y()).isPresent();

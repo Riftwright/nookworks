@@ -1279,7 +1279,10 @@ final class EarlyReviewTests {
         helper.succeed();
     }
 
-    /** Potatoes and salt in hot oil fry to French fries, and the oil mostly stays; rice and an egg in oil make fried rice. */
+    /**
+     * Potatoes and salt in hot oil fry to French fries, and the oil mostly stays; rice and an egg in the Frying Pan's oil
+     * make fried rice (the pot's no more: the cooking review, 2026-11-14).
+     */
     static void ironPotFriesInOil(GameTestHelper helper) {
         BlockPos pos = new BlockPos(1, 2, 1);
         helper.setBlock(pos.below(), Blocks.MAGMA_BLOCK);
@@ -1307,9 +1310,11 @@ final class EarlyReviewTests {
             check(helper, pot.amount() == 950 && pot.count() == 0 && pot.container() == null, "a little oil is used, the rest stays");
             check(helper, pot.takeDish().getCount() == 2 && pot.dish().isEmpty(), "taken out all at once");
             var fried = PotRecipe.find(access, List.of(new ItemStack(ModCooking.COOKED_RICE.get()),
-                    new ItemStack(Items.EGG)), PotRecipe.Liquid.OIL, 950);
+                    new ItemStack(Items.EGG)), PotRecipe.Liquid.OIL, 250, true);
             check(helper, fried != null && fried.value().result().item().value() == ModCooking.FRIED_RICE.get() && fried.value().container().isPresent(),
-                    "rice and an egg in oil make fried rice, in a bowl");
+                    "rice and an egg in the pan's oil make fried rice, in a bowl");
+            check(helper, PotRecipe.find(access, List.of(new ItemStack(ModCooking.COOKED_RICE.get()), new ItemStack(Items.EGG)),
+                    PotRecipe.Liquid.OIL, 950) == null, "and not in the pot's");
             check(helper, new ItemStack(ModCooking.COOKED_RICE.get()).getCraftingRemainder() != null,
                     "and the rice comes in a bowl, which the pot keeps for it");
         });

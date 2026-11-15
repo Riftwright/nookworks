@@ -157,6 +157,7 @@ public record TravelLog(Set<ResourceKey<Level>> visited, Map<ResourceKey<Level>,
     static void onLogIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             visit(player, player.level().dimension());
+            DaemonDoors.tell(player); // where this dimension's door stands, for their client's placing
         }
     }
 
@@ -164,6 +165,7 @@ public record TravelLog(Set<ResourceKey<Level>> visited, Map<ResourceKey<Level>,
     static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             visit(player, event.getTo());
+            DaemonDoors.tell(player); // where this dimension's door stands, for their client's placing
         }
     }
 
@@ -171,6 +173,7 @@ public record TravelLog(Set<ResourceKey<Level>> visited, Map<ResourceKey<Level>,
     static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             visit(player, player.level().dimension());
+            DaemonDoors.tell(player); // where this dimension's door stands, for their client's placing
         }
     }
 

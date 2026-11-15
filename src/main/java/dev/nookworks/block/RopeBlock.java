@@ -172,7 +172,7 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             }
             BlockState placed = this.inWater(this.defaultBlockState(), level, target); // hangs from more rope: flush
             level.setBlock(target, placed, Block.UPDATE_ALL);
-            level.playSound(null, target, placed.getSoundType(level, target, player).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.9F);
+            level.playSound(null, heardAt(player, target), placed.getSoundType(level, target, player).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.9F);
             level.gameEvent(player, GameEvent.BLOCK_PLACE, target);
             stack.consume(1, player);
         }
@@ -201,7 +201,7 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             if (load != null) {
                 TiedLoads.moveWithRope(load, 1);
             }
-            level.playSound(null, bottom, state.getSoundType(level, bottom, player).getBreakSound(), SoundSource.BLOCKS, 1.0F, 1.1F);
+            level.playSound(null, heardAt(player, bottom), state.getSoundType(level, bottom, player).getBreakSound(), SoundSource.BLOCKS, 1.0F, 1.1F);
             level.gameEvent(player, GameEvent.BLOCK_DESTROY, bottom);
             if (!player.getAbilities().instabuild) {
                 ItemStack rope = new ItemStack(this.asItem());
@@ -228,5 +228,13 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
             cursor.move(Direction.DOWN);
         }
         return cursor.immutable();
+    }
+
+    /**
+     * Where the rope's far end is heard: there - or, out of earshot of the one working it (a sound carries 16 blocks,
+     * a rope hangs much further), where they stand: let down a shaft or drawn up a cliff, it was silent to them.
+     */
+    private static BlockPos heardAt(Player player, BlockPos end) {
+        return end.closerToCenterThan(player.position(), 12.0) ? end : player.blockPosition();
     }
 }

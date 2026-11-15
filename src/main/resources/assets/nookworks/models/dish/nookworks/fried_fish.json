@@ -1,0 +1,363 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "crumb": "nookworks:block/dish_katsu_crumb",
+    "lemon": "nookworks:block/dish_lemon",
+    "lemon_cut": "nookworks:block/dish_lemon_cut",
+    "particle": "nookworks:block/dish_katsu_crumb"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        9,
+        1.25,
+        6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        0,
+        5
+      ],
+      "to": [
+        13,
+        1.25,
+        6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        1.25,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        0,
+        6
+      ],
+      "to": [
+        13,
+        1.25,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        7
+      ],
+      "to": [
+        13,
+        1.25,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        8
+      ],
+      "to": [
+        10,
+        1.25,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        0,
+        8
+      ],
+      "to": [
+        13,
+        1.25,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        1.25,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        0,
+        9
+      ],
+      "to": [
+        13,
+        1.25,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        1.25,
+        6
+      ],
+      "to": [
+        9,
+        1.75,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#crumb"
+        },
+        "south": {
+          "texture": "#crumb"
+        },
+        "east": {
+          "texture": "#crumb"
+        },
+        "west": {
+          "texture": "#crumb"
+        },
+        "up": {
+          "texture": "#crumb"
+        },
+        "down": {
+          "texture": "#crumb"
+        }
+      }
+    },
+    {
+      "from": [
+        9.5,
+        0,
+        10.5
+      ],
+      "to": [
+        12,
+        1.25,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lemon"
+        },
+        "south": {
+          "texture": "#lemon"
+        },
+        "east": {
+          "texture": "#lemon"
+        },
+        "west": {
+          "texture": "#lemon"
+        },
+        "up": {
+          "texture": "#lemon_cut"
+        },
+        "down": {
+          "texture": "#lemon"
+        }
+      }
+    }
+  ]
+}

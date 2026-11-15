@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "c": "nookworks:block/dish/piece_breaded",
+    "particle": "nookworks:block/dish/piece_breaded"
+  },
+  "elements": [
+    {
+      "from": [
+        5.5,
+        0,
+        6.5
+      ],
+      "to": [
+        10.5,
+        1.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    }
+  ]
+}

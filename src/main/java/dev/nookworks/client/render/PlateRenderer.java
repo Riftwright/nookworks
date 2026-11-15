@@ -24,18 +24,19 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 
 /**
- * Draws what is on a Plate: udon, tonkatsu, karaage and donuts as the dishes themselves ({@link DishModels}), any
- * other food flat on it as on a tray - turned to face whoever set the plate down.
+ * Draws what is on a Plate: the food itself where it has a model ({@link DishModels}) - one of it, or the few a plate
+ * holds of that food, laid side by side ({@link TableLots}) - and any other food flat on it, as its item's picture;
+ * turned to face whoever set the plate down.
  */
 public class PlateRenderer implements BlockEntityRenderer<PlateBlockEntity, PlateRenderer.State> {
-    /** The plate's top, where the food sits. */
+    /** The plate's top, where the food sits, and the room on it, in pixels. */
     private static final float TOP = 1.0F / 16;
+    private static final float ROOM = 10.6F;
+    private static final float SCALE = 0.85F;
 
     public static final class State extends BlockEntityRenderState {
         Direction facing = Direction.SOUTH;
-        @Nullable StandaloneModelKey<BlockStateModelPart> dish;
-        final ItemStackRenderState item = new ItemStackRenderState();
-        boolean empty = true;
+        TableLots.@Nullable Lot lot;
     }
 
     private final ItemModelResolver itemModels;
@@ -56,33 +57,28 @@ public class PlateRenderer implements BlockEntityRenderer<PlateBlockEntity, Plat
         var block = plate.getBlockState();
         state.facing = block.hasProperty(PlateBlock.FACING) ? block.getValue(PlateBlock.FACING) : Direction.SOUTH;
         ItemStack food = plate.food();
-        state.empty = food.isEmpty();
-        state.dish = DishModels.of(food);
-        if (!state.empty && state.dish == null) {
-            this.itemModels.updateForTopItem(state.item, food, ItemDisplayContext.FIXED, plate.getLevel(), null, (int) plate.getBlockPos().asLong());
+        state.lot = food.isEmpty() ? null : TableLots.lot(food, 0, this.itemModels, plate.getLevel(), (int) plate.getBlockPos().asLong());
+        if (state.lot != null) {
+            state.lot.plated = false; // this plate is its plate
         }
+    }
+
+    /** Draws {@code lot} as it lies on a plate, the pose at the middle of the plate's top, its front to the south. */
+    static void draw(TableLots.Lot lot, int light, PoseStack pose, SubmitNodeCollector collector) {
+        // food drawn as its item was a little larger on a plate than the 0.55 of a block it is on a tray: kept
+        TableLots.draw(lot, lot.kind == TableLots.Kind.ITEM ? 1.0F : SCALE, ROOM, ROOM, 0, true, light, pose, collector);
     }
 
     @Override
     public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (state.empty) {
+        if (state.lot == null) {
             return;
         }
         pose.pushPose();
         pose.translate(0.5F, TOP, 0.5F);
         pose.rotate(Axis.YP.rotationDegrees(-state.facing.toYRot()));
-        if (state.dish != null) {
-            DishModels.draw(state.dish, 0.85F, state.lightCoords, pose, collector);
-        } else if (state.item.usesBlockLight()) {
-            pose.translate(0, 0.25F * 0.5F, 0);
-            pose.scale(0.5F, 0.5F, 0.5F);
-            state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-        } else {
-            pose.translate(0, 0.02F, 0);
-            pose.rotate(Axis.XP.rotationDegrees(-90));
-            pose.scale(0.55F, 0.55F, 0.55F);
-            state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-        }
+        // food drawn as its item was a little larger on a plate than the 0.55 of a block it is on a tray: kept
+        draw(state.lot, state.lightCoords, pose, collector);
         pose.popPose();
     }
 }

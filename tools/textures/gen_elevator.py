@@ -7,11 +7,15 @@
 - elevator_bottom : the frame round a plain dark plate
 
 (It used to be smooth stone with black arrows laid over it: a white slab among black machines.)
-It also writes the elevator's model, a cube with a texture a face.
+It also writes the elevator's model: the machines' own shape (gen_machine_models.cabinet) - posts and rims proud, the
+sides set back 1 px with the guide rails standing proud of them, the tread 1 px down inside the rim and the arrow panel
+1 px down inside the tread. Not a pixel moves for it: every part wears the face it stands on, where a cube would put
+it. (The user, 2026-11-14, shown it beside the machines, where a plain cube looked flat: "エレベーターは立体化でよいです。")
 Drawn flat, then shaded with texkit.shade as metal. Original work, deterministic.
 Run from the repo root:  python tools/textures/gen_elevator.py
 """
 import json
+import sys
 from pathlib import Path
 
 from PIL import Image
@@ -19,6 +23,9 @@ from PIL import Image
 import texkit
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools"))
+import gen_machine_models as machines  # noqa: E402  (the cabinet the machines stand in)
+
 ASSETS = ROOT / "src/main/resources/assets/nookworks"
 OUT = ASSETS / "textures/block"
 
@@ -112,16 +119,41 @@ def bottom():
     return img
 
 
+def model():
+    """The Elevator in relief. Its recesses stop inside the rim, so the block is whole at its edges and still hides
+    what stands against it; a player stands on the rim's level, a pixel over the tread, as on a machine's lid."""
+    side_texture = "nookworks:block/elevator_side"
+    textures = {s: side_texture for s in machines.SIDES}
+    textures.update({"up": "nookworks:block/elevator_top", "down": "nookworks:block/elevator_bottom"})
+    elements = machines.cabinet(inset=1, top=16, frame=2, recess_top=True)
+    # the body: its sides the panels set back, its top the floor of the arrow panel, 2 px down
+    elements[0] = machines.box([1, 1, 1], [15, 14, 15],
+                               {f: machines.face("#" + f) for f in machines.SIDES + ("up", "down")}, name="panels")
+    # the tread, 1 px down inside the rim, round the arrow panel (4..12). The panel's walls wear its own edge pixels,
+    # turned down into it a texel to a pixel: the far and left edges top() draws in shadow, the near and right ones lit
+    # (a column lies along a west or east wall turned a quarter, as the cabinet's rims are)
+    for frm, to, wall, uv, turn in (([1, 14, 1], [15, 15, 4], "south", [1, 4, 15, 5], None),
+                                    ([1, 14, 12], [15, 15, 15], "north", [1, 11, 15, 12], None),
+                                    ([1, 14, 4], [4, 15, 12], "east", [4, 4, 5, 12], 90),
+                                    ([12, 14, 4], [15, 15, 12], "west", [11, 4, 12, 12], 270)):
+        elements.append(machines.box(frm, to, {"up": machines.face("#up"),
+                                               wall: machines.face("#up", uv=uv, rotation=turn)}, name="tread"))
+    # the guide rails (columns 3-4 and 11-12 of side()), proud of the panel and flush with the frame; their flanks the
+    # rail's own shadowed edge
+    for a in (3, 11):
+        for face, frm, to in (("south", [a, 2, 15], [a + 2, 14, 16]), ("north", [a, 2, 0], [a + 2, 14, 1]),
+                              ("west", [0, 2, a], [1, 14, a + 2]), ("east", [15, 2, a], [16, 14, a + 2])):
+            faces = {face: machines.face("#" + face, cull=face)}
+            for flank in (("west", "east") if face in ("north", "south") else ("north", "south")):
+                faces[flank] = machines.face("#" + face, uv=[4, 2, 5, 14])  # column 4, the rail's length
+            elements.append(machines.box(frm, to, faces, name="rail"))
+    return machines.model(textures, elements, particle=side_texture)
+
+
 def main():
     for i, (name, img) in enumerate((("elevator_top", top()), ("elevator_side", side()), ("elevator_bottom", bottom()))):
         texkit.shade(img, 520 + i, keep=KEEP, material="metal", **texkit.SMOOTH).save(OUT / f"{name}.png")
-    faces = {"north": "#side", "east": "#side", "south": "#side", "west": "#side", "up": "#top", "down": "#bottom"}
-    model = {"parent": "minecraft:block/block",
-             "textures": {"particle": "nookworks:block/elevator_side", "side": "nookworks:block/elevator_side",
-                          "top": "nookworks:block/elevator_top", "bottom": "nookworks:block/elevator_bottom"},
-             "elements": [{"from": [0, 0, 0], "to": [16, 16, 16],
-                           "faces": {s: {"texture": f, "cullface": s} for s, f in faces.items()}}]}
-    (ASSETS / "models/block/elevator.json").write_bytes((json.dumps(model, indent=2) + "\n").encode("utf8"))
+    (ASSETS / "models/block/elevator.json").write_bytes((json.dumps(model(), indent=2) + "\n").encode("utf8"))
     print("wrote the elevator")
 
 

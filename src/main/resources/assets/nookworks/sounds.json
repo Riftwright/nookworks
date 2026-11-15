@@ -367,15 +367,7 @@
     "sounds": [
       {
         "name": "nookworks:block/drive_wheel_turn_1",
-        "volume": 0.2
-      },
-      {
-        "name": "nookworks:block/drive_wheel_turn_2",
-        "volume": 0.2
-      },
-      {
-        "name": "nookworks:block/drive_wheel_turn_3",
-        "volume": 0.2
+        "volume": 0.12
       }
     ]
   },
@@ -693,6 +685,259 @@
       {
         "name": "nookworks:block/wind_chime_chime_6",
         "volume": 0.45
+      }
+    ]
+  },
+  "block.iron_pot.done": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.done",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_done_1",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_done_2",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_done_3",
+        "volume": 0.7
+      }
+    ]
+  },
+  "block.iron_pot.add": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.add",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_add_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_add_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_add_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.iron_pot.plop": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.plop",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_plop_1",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_plop_2",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_plop_3",
+        "volume": 0.7
+      }
+    ]
+  },
+  "block.iron_pot.sear": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.sear",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_sear_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/iron_pot_sear_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/iron_pot_sear_3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.iron_pot.serve": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.serve",
+    "sounds": [
+      {
+        "name": "minecraft:item.bottle.fill",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.plate.clink": {
+    "subtitle": "subtitles.nookworks.block.plate.clink",
+    "sounds": [
+      {
+        "name": "nookworks:block/plate_clink_1",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_2",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_3",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_4",
+        "volume": 0.55
+      }
+    ]
+  },
+  "block.tray.knock": {
+    "subtitle": "subtitles.nookworks.block.tray.knock",
+    "sounds": [
+      {
+        "name": "nookworks:block/tray_knock_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_3",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_4",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.tray.dough": {
+    "subtitle": "subtitles.nookworks.block.tray.dough",
+    "sounds": [
+      {
+        "name": "nookworks:block/tray_dough_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_dough_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_dough_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.grill.place": {
+    "subtitle": "subtitles.nookworks.block.grill.place",
+    "sounds": [
+      {
+        "name": "nookworks:block/grill_place_1",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/grill_place_2",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/grill_place_3",
+        "volume": 0.55
+      }
+    ]
+  },
+  "block.placed_bottles.clink": {
+    "subtitle": "subtitles.nookworks.block.placed_bottles.clink",
+    "sounds": [
+      {
+        "name": "nookworks:block/placed_bottles_clink_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_3",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_4",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.switch.click": {
+    "subtitle": "subtitles.nookworks.block.switch.click",
+    "sounds": [
+      {
+        "name": "nookworks:block/switch_click_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/switch_click_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/switch_click_3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "item.building_wand.mark": {
+    "subtitle": "subtitles.nookworks.item.building_wand.mark",
+    "sounds": [
+      {
+        "name": "nookworks:item/building_wand_mark_1",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:item/building_wand_mark_2",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:item/building_wand_mark_3",
+        "volume": 0.45
+      }
+    ]
+  },
+  "item.magnet.switch": {
+    "subtitle": "subtitles.nookworks.item.magnet.switch",
+    "sounds": [
+      {
+        "name": "nookworks:item/magnet_switch_1",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:item/magnet_switch_2",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:item/magnet_switch_3",
+        "volume": 0.4
+      }
+    ]
+  },
+  "block.kitchen_tap.turn": {
+    "subtitle": "subtitles.nookworks.block.kitchen_tap.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/kitchen_tap_turn_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/kitchen_tap_turn_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/kitchen_tap_turn_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.kitchen_tap.pour": {
+    "subtitle": "subtitles.nookworks.block.kitchen_tap.pour",
+    "sounds": [
+      {
+        "name": "nookworks:block/kitchen_tap_pour_1",
+        "volume": 0.22
       }
     ]
   }

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 797999
+          "weight": 757999
         },
         {
           "type": "minecraft:item",
@@ -43,6 +43,11 @@
           "type": "minecraft:item",
           "name": "minecraft:dragon_egg",
           "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:sulfur_dust",
+          "weight": 40000
         }
       ]
     }

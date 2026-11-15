@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 355
+          "weight": 350
         },
         {
           "type": "minecraft:item",
@@ -100,6 +100,11 @@
           "type": "minecraft:item",
           "name": "minecraft:rotten_flesh",
           "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:rail",
+          "weight": 5
         }
       ]
     }

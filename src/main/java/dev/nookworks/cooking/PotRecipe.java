@@ -55,7 +55,21 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * The server sends them to each player on joining and on a /reload, for JEI and for a client's own guesses.
  */
 public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int time, Optional<Holder<Item>> container,
-        Result result) implements Recipe<PotRecipe.Input> {
+        Result result, boolean pan, Optional<Integer> color) implements Recipe<PotRecipe.Input> {
+    /** A recipe of the pot itself, its water or oil left its own colour: as every recipe was before the Frying Pan. */
+    public PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int time, Optional<Holder<Item>> container, Result result) {
+        this(ingredients, liquid, amount, time, container, result, false, Optional.empty());
+    }
+
+    /** A colour as "#rrggbb". */
+    private static final Codec<Integer> HEX = Codec.STRING.comapFlatMap(s -> {
+        try {
+            return com.mojang.serialization.DataResult.success(Integer.parseInt(s.startsWith("#") ? s.substring(1) : s, 16) & 0xFFFFFF);
+        } catch (NumberFormatException e) {
+            return com.mojang.serialization.DataResult.error(() -> "Not a colour (#rrggbb): " + s);
+        }
+    }, c -> String.format("#%06x", c));
+
     /** What the pot holds: its ingredients, and how much of which liquid. */
     public record Input(List<ItemStack> contents, @Nullable Liquid liquid, int held) implements RecipeInput {
         @Override
@@ -124,7 +138,11 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
             ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("amount", 0).forGetter(PotRecipe::amount),
             ExtraCodecs.POSITIVE_INT.optionalFieldOf("time", 200).forGetter(PotRecipe::time),
             BuiltInRegistries.ITEM.holderByNameCodec().optionalFieldOf("container").forGetter(PotRecipe::container),
-            Result.CODEC.fieldOf("result").forGetter(PotRecipe::result)).apply(i, PotRecipe::new));
+            Result.CODEC.fieldOf("result").forGetter(PotRecipe::result),
+            // trial (cooking review, 2026-11-14): "pan" for what the Frying Pan fries in a little oil, not the pot;
+            // "color" for what the water turns as it cooks (a stew's white, a soup's amber), drawn by the pot
+            Codec.BOOL.optionalFieldOf("pan", false).forGetter(PotRecipe::pan),
+            HEX.optionalFieldOf("color").forGetter(PotRecipe::color)).apply(i, PotRecipe::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, PotRecipe> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(MAP_CODEC.codec());
 
     public static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Nookworks.MODID);
@@ -193,6 +211,19 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
      * nothing, but the pot will not guess what it is for).
      */
     public int batches(List<ItemStack> contents, @Nullable Liquid liquid, int held) {
+        return this.batches(contents, liquid, held, true);
+    }
+
+    /**
+     * How many batches of this recipe its own things in {@code contents} make in {@code held} mB of {@code liquid},
+     * whatever else lies in the vessel beside them: what cooks when the vessel holds the makings of more than one dish
+     * ({@link #findTurn}).
+     */
+    public int batchesAmong(List<ItemStack> contents, @Nullable Liquid liquid, int held) {
+        return this.batches(contents, liquid, held, false);
+    }
+
+    private int batches(List<ItemStack> contents, @Nullable Liquid liquid, int held, boolean alone) {
         if (liquid != this.liquid) {
             return 0;
         }
@@ -203,7 +234,10 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
             }
             int part = this.partFor(stack);
             if (part < 0) {
-                return 0;
+                if (alone) {
+                    return 0;
+                }
+                continue;
             }
             have[part] += stack.getCount();
         }
@@ -251,9 +285,61 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
 
     /** The first recipe the contents cook as, with at least one batch; null if none. */
     public static @Nullable RecipeHolder<PotRecipe> find(Level level, List<ItemStack> contents, @Nullable Liquid liquid, int held) {
+        return find(level, contents, liquid, held, false);
+    }
+
+    /** The same among the recipes of one vessel: the Frying Pan's ({@code pan}) or the pot's. */
+    public static @Nullable RecipeHolder<PotRecipe> find(Level level, List<ItemStack> contents, @Nullable Liquid liquid, int held, boolean pan) {
         for (RecipeHolder<PotRecipe> holder : all(level)) {
-            if (holder.value().batches(contents, liquid, held) > 0) {
+            if (holder.value().pan() == pan && holder.value().batches(contents, liquid, held) > 0) {
                 return holder;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * What the vessel cooks now. The recipe every thing in it belongs to, as ever ({@link #find}); or, when it holds the
+     * makings of more than one dish, one of them at a time (the user, 2026-11-14, of coated pork, coated fish and
+     * doughnut dough in one pot of oil that cooked nothing and said so: 「鍋に違う種類を一緒に入れるなってことだよね？（別に
+     * 一緒に入れてもよい気もするが…）」 - and of the two ways out, B, frying them in turn). The turn is the first dish
+     * the vessel has all of, going by the order its things lie in (the order they went in); of two dishes that begin with
+     * the same thing, the one of more kinds (a bowl of rice and an egg make fried rice before the egg fries alone), then
+     * by name. The rest lie there until the dish is taken out, and then the next one cooks.
+     */
+    public static @Nullable RecipeHolder<PotRecipe> findTurn(Level level, List<ItemStack> contents, @Nullable Liquid liquid, int held, boolean pan) {
+        RecipeHolder<PotRecipe> whole = find(level, contents, liquid, held, pan);
+        if (whole != null) {
+            return whole;
+        }
+        for (ItemStack first : contents) {
+            if (first.isEmpty()) {
+                continue;
+            }
+            RecipeHolder<PotRecipe> turn = null;
+            for (RecipeHolder<PotRecipe> holder : all(level)) {
+                PotRecipe recipe = holder.value();
+                if (recipe.pan() != pan || recipe.partFor(first) < 0 || recipe.batchesAmong(contents, liquid, held) <= 0) {
+                    continue;
+                }
+                int kinds = recipe.ingredients().size();
+                int best = turn == null ? -1 : turn.value().ingredients().size();
+                if (kinds > best || kinds == best && holder.id().identifier().compareTo(turn.id().identifier()) < 0) {
+                    turn = holder;
+                }
+            }
+            if (turn != null) {
+                return turn;
+            }
+        }
+        return null;
+    }
+
+    /** The first recipe of the vessel that makes {@code dish}, or null: what a dish waiting in it was cooked as. */
+    public static @Nullable PotRecipe making(Level level, ItemStack dish, boolean pan) {
+        for (RecipeHolder<PotRecipe> holder : all(level)) {
+            if (holder.value().pan() == pan && dish.is(holder.value().result().item())) {
+                return holder.value();
             }
         }
         return null;
@@ -271,6 +357,11 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
 
     /** Whether any recipe takes this item: only those go in. */
     public static boolean isIngredient(Level level, ItemStack stack) {
-        return all(level).stream().anyMatch(holder -> holder.value().partFor(stack) >= 0);
+        return isIngredient(level, stack, false);
+    }
+
+    /** Whether any recipe of the vessel takes this item. */
+    public static boolean isIngredient(Level level, ItemStack stack, boolean pan) {
+        return all(level).stream().anyMatch(holder -> holder.value().pan() == pan && holder.value().partFor(stack) >= 0);
     }
 }

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 240
+          "weight": 200
         },
         {
           "type": "minecraft:item",
@@ -69,6 +69,36 @@
           "type": "minecraft:item",
           "name": "nookworks:brown_rice",
           "weight": 42
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:string",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:fishing_rod",
+          "weight": 2,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.2,
+                "max": 0.6
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lily_pad",
+          "weight": 13
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:mangrove_propagule",
+          "weight": 17
         }
       ]
     }

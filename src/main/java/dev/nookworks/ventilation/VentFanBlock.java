@@ -1,5 +1,6 @@
 package dev.nookworks.ventilation;
 
+import dev.nookworks.machine.WorkSounds;
 import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import dev.nookworks.registry.ModSounds;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -70,7 +70,7 @@ public class VentFanBlock extends BaseEntityBlock {
             BlockState next = state.cycle(SWITCHED);
             next = next.setValue(ON, next.getValue(SWITCHED) || next.getValue(POWERED) || next.getValue(DRIVEN));
             level.setBlock(pos, next, Block.UPDATE_ALL);
-            level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.4F, next.getValue(SWITCHED) ? 0.7F : 0.6F);
+            level.playSound(null, pos, ModSounds.SWITCH_CLICK.get(), SoundSource.BLOCKS, 0.4F, next.getValue(SWITCHED) ? 1.08F : 0.92F);
         }
         return InteractionResult.SUCCESS;
     }
@@ -79,8 +79,11 @@ public class VentFanBlock extends BaseEntityBlock {
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         boolean powered = level.hasNeighborSignal(pos);
         if (powered != state.getValue(POWERED)) {
-            level.setBlock(pos, state.setValue(POWERED, powered).setValue(ON, powered || state.getValue(SWITCHED) || state.getValue(DRIVEN)),
-                    Block.UPDATE_ALL);
+            boolean on = powered || state.getValue(SWITCHED) || state.getValue(DRIVEN);
+            level.setBlock(pos, state.setValue(POWERED, powered).setValue(ON, on), Block.UPDATE_ALL);
+            if (on != state.getValue(ON)) { // its switch thrown by the signal is heard as by the hand, a little softer
+                level.playSound(null, pos, ModSounds.SWITCH_CLICK.get(), SoundSource.BLOCKS, 0.3F, on ? 1.08F : 0.92F);
+            }
         }
     }
 
@@ -111,8 +114,13 @@ public class VentFanBlock extends BaseEntityBlock {
     /** A soft hum while it runs; driven by a Barter Terminal, the Nether's crimson motes blown out of its guard. */
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (state.getValue(ON) && random.nextInt(24) == 0) {
-            level.playLocalSound(pos, ModSounds.VENTILATION_FAN_RUN.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
+        // as often as it was (one look in 24), but by the player's settings for machines' work sounds and within their
+        // few a second, as a machine's (it played of its own: turned off there, the fans hummed on)
+        if (state.getValue(ON) && random.nextFloat() < WorkSounds.chance(1.0F / 24.0F)) {
+            float volume = WorkSounds.volume();
+            if (volume > 0.0F && WorkSounds.mayStart(level.getGameTime())) {
+                level.playLocalSound(pos, ModSounds.VENTILATION_FAN_RUN.get(), SoundSource.BLOCKS, volume, 1.0F, false);
+            }
         }
         if (state.getValue(DRIVEN) && random.nextInt(2) == 0) {
             Direction out = state.getValue(FACING);

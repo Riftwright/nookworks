@@ -45,6 +45,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  */
 public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
     public static final int BUTTON_REDSTONE = 0;
+    /** The machine's own choice in the Settings tab ({@link MachineInfo#nextOption}). */
+    public static final int BUTTON_OPTION = 1;
 
     private static final int ENERGY = 0;
     private static final int ENERGY_CAPACITY = 1;
@@ -85,7 +87,7 @@ public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
      * presses. The switch names every layout, so a new one cannot be left out.
      */
     private static Container clientSlots(MachineLayout layout, Level level) {
-        return new SimpleContainer(layout.slotCount()) {
+        return new SimpleContainer(layout.slotCount() + layout.extraSlots()) {
             @Override
             public boolean canPlaceItem(int slot, ItemStack stack) {
                 return switch (layout) {
@@ -106,7 +108,10 @@ public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
                     case DISTILLER -> DistillerBlockEntity.takes(slot, stack);
                     case RECYCLER -> RecyclerBlockEntity.takes(slot, stack);
                     case PLANTER -> PlanterBlockEntity.plantFor(stack) != null;
-                    case STONE_MAKER, LASER -> false;
+                    case STONE_MAKER -> slot == StoneMakerBlockEntity.COOLER ? StoneMakerBlockEntity.cools(stack)
+                            : slot == StoneMakerBlockEntity.LAVA ? stack.is(net.minecraft.world.item.Items.LAVA_BUCKET)
+                            : slot == StoneMakerBlockEntity.SOUL_SOIL && stack.is(net.minecraft.world.item.Items.SOUL_SOIL);
+                    case LASER -> false;
                 };
             }
         };
@@ -135,6 +140,11 @@ public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
                 public boolean mayPlace(ItemStack stack) {
                     return !spot.output() && this.container.canPlaceItem(this.getContainerSlot(), stack);
                 }
+
+                @Override
+                public int getMaxStackSize() {
+                    return Math.min(super.getMaxStackSize(), layout.slotLimit(this.getContainerSlot()));
+                }
             });
         }
         this.addStandardInventorySlots(inventory, 8, MachineLayout.INVENTORY_Y);
@@ -144,6 +154,23 @@ public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
         this.tabs.enable(MachineTab.SETTINGS);
         if (MachineLiquids.any(layout)) {
             LiquidTab.add(this.tabs, new MachineLiquids(this), this::addSlot, this::addDataSlot);
+        }
+        if (layout == MachineLayout.STONE_MAKER) {
+            // the soul soil basalt forms over, kept in the Extra Slots tab as a catalyst is (the user, 2026-11-14); an
+            // add-on's slot (a speed gear) comes after it there
+            int[] at = this.tabs.nextAddonSpot();
+            this.addSlot(this.tabs.add(new dev.nookworks.menu.tab.TabSlot(this.tabs, MachineTab.ADDON, container,
+                    StoneMakerBlockEntity.SOUL_SOIL, at[0], at[1]) {
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return stack.is(net.minecraft.world.item.Items.SOUL_SOIL);
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
+                }
+            }));
         }
     }
 
@@ -255,6 +282,10 @@ public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
         }
         if (id == BUTTON_REDSTONE && this.machine instanceof MachineInfo info) {
             info.setRedstoneMode(info.redstoneMode().next());
+            return true;
+        }
+        if (id == BUTTON_OPTION && this.machine instanceof MachineInfo info) {
+            info.nextOption();
             return true;
         }
         return false;

@@ -16,6 +16,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.HangingEntity;
@@ -43,6 +45,9 @@ public class PosterEntity extends HangingEntity {
 
     private static final EntityDataAccessor<String> DATA_VARIANT =
             SynchedEntityData.defineId(PosterEntity.class, EntityDataSerializers.STRING);
+    /** The frame round it ({@link PictureFrames}); empty, none. */
+    private static final EntityDataAccessor<ItemStack> DATA_FRAME =
+            SynchedEntityData.defineId(PosterEntity.class, EntityDataSerializers.ITEM_STACK);
     /** How a structure setting it down has turned it, for the mirror it tells next. */
     private Rotation turned = Rotation.NONE;
     /**
@@ -65,6 +70,7 @@ public class PosterEntity extends HangingEntity {
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         super.defineSynchedData(entityData);
         entityData.define(DATA_VARIANT, "");
+        entityData.define(DATA_FRAME, ItemStack.EMPTY);
     }
 
     @Override
@@ -86,6 +92,25 @@ public class PosterEntity extends HangingEntity {
 
     public @Nullable PosterVariant variant() {
         return Posters.get(this.level(), this.variantId());
+    }
+
+    /** The frame round it; empty for none. */
+    public ItemStack frame() {
+        return this.entityData.get(DATA_FRAME);
+    }
+
+    public void setFrame(ItemStack frame) {
+        this.entityData.set(DATA_FRAME, frame.copy());
+    }
+
+    /**
+     * An item frame used on it frames it, one frame whatever its size ({@link PictureFrames#use}); sneaking with an empty
+     * hand takes the frame off again, back to the hand.
+     */
+    @Override
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+        InteractionResult framed = PictureFrames.use(this, player, hand, this.frame(), this::setFrame);
+        return framed != null ? framed : super.interact(player, hand, location);
     }
 
     @Override
@@ -110,8 +135,13 @@ public class PosterEntity extends HangingEntity {
         if (level.getGameRules().get(GameRules.ENTITY_DROPS)) {
             this.playSound(SoundEvents.ITEM_FRAME_BREAK, 1.0F, 1.2F);
             Identifier variant = this.variantId();
-            if (variant != null && !(causedBy instanceof Player player && player.hasInfiniteMaterials())) {
-                this.spawnAtLocation(level, Posters.item(variant));
+            if (!(causedBy instanceof Player player && player.hasInfiniteMaterials())) {
+                if (variant != null) {
+                    this.spawnAtLocation(level, Posters.item(variant));
+                }
+                if (!this.frame().isEmpty()) {
+                    this.spawnAtLocation(level, this.frame().copy());
+                }
             }
         }
     }
@@ -126,6 +156,9 @@ public class PosterEntity extends HangingEntity {
         output.store("facing", Direction.LEGACY_ID_CODEC_2D, this.getDirection());
         super.addAdditionalSaveData(output);
         output.putString("variant", this.entityData.get(DATA_VARIANT));
+        if (!this.frame().isEmpty()) {
+            output.store("frame", ItemStack.CODEC, this.frame());
+        }
     }
 
     @Override
@@ -133,6 +166,7 @@ public class PosterEntity extends HangingEntity {
         Direction direction = input.read("facing", Direction.LEGACY_ID_CODEC_2D).orElse(Direction.SOUTH);
         super.readAdditionalSaveData(input);
         this.entityData.set(DATA_VARIANT, input.getStringOr("variant", ""));
+        this.entityData.set(DATA_FRAME, input.read("frame", ItemStack.CODEC).orElse(ItemStack.EMPTY));
         this.setDirection(direction);
     }
 

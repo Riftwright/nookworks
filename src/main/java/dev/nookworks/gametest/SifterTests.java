@@ -51,6 +51,18 @@ final class SifterTests {
         test("sifter_brass_mesh_keeps_the_small_things", SifterTests::sifterBrassMeshKeepsTheSmallThings);
         test("dirt_sifts_into_pitcher_pods", SifterTests::dirtSiftsIntoPitcherPods);
         test("sifter_takes_the_ticks_the_setting_says", 200, SifterTests::sifterTakesTheTicksTheSettingSays);
+        test("sifter_takes_podzol_and_soul_soil", SifterTests::podzolAndSoulSoil);
+        test("sifter_gives_more_kinds_at_the_old_odds", SifterTests::moreKindsAtTheOldOdds);
+    }
+
+    /** The chance a sift of {@code input} gives {@code item}, as the Sifter's page has it. */
+    static double chance(String input, boolean fine, net.minecraft.world.item.Item item) {
+        return LootSummaries.sifted(Identifier.parse(input), fine).stream().filter(d -> d.stack().is(item))
+                .mapToDouble(LootSummaries.Drop::chance).sum();
+    }
+
+    static boolean near(double chance, double expected) {
+        return Math.abs(chance - expected) < 1e-9;
     }
 
     // ---- Sifter ----
@@ -123,7 +135,8 @@ final class SifterTests {
     /**
      * End Stone crushed is End Gravel, and End Gravel sifted gives the End's things (the user, 2026-10-10): four rolls in
      * five nothing, chorus, ender pearls, obsidian, chorus flowers, now and then a shulker shell, and once in a million a
-     * dragon egg - which JEI's page writes as one in a million, not as 0.0%.
+     * dragon egg - which JEI's page writes as one in a million, not as 0.0%. Sulfur dust too, from 2026-11-15
+     * (「エンドの砂利から、硫黄の粉とか？」): one roll in 25, taken from the nothing, and twice that through the mesh.
      */
     static void endGravelSifts(GameTestHelper helper) {
         var crushed = CrushingRecipe.of(new ItemStack(Items.END_STONE));
@@ -135,9 +148,13 @@ final class SifterTests {
                 && Math.abs(chance.apply(Items.OBSIDIAN) - 0.027) < 1e-9 && Math.abs(chance.apply(Items.CHORUS_FLOWER) - 0.02) < 1e-9
                 && Math.abs(chance.apply(Items.SHULKER_SHELL) - 0.003) < 1e-9, "the End's things at their chances: " + drops);
         check(helper, Math.abs(chance.apply(Items.DRAGON_EGG) - 1e-6) < 1e-12, "a dragon egg once in a million: " + chance.apply(Items.DRAGON_EGG));
+        check(helper, near(chance.apply(ModItems.SULFUR_DUST.get()), 0.04)
+                && near(chance("nookworks:end_gravel", true, ModItems.SULFUR_DUST.get()), 0.08)
+                && near(chance("nookworks:end_gravel", true, Items.CHORUS_FRUIT), 0.09), "sulfur dust one roll in 25, twice "
+                + "that through the mesh, which keeps the rest as they were: " + chance.apply(ModItems.SULFUR_DUST.get()));
         double something = drops.stream().mapToDouble(LootSummaries.Drop::chance).sum();
-        check(helper, Math.abs(something - 0.202001) < 1e-9, "four rolls in five give nothing (less a End Seed's one in five "
-                + "hundred and the egg's one in a million): " + (1 - something));
+        check(helper, Math.abs(something - 0.242001) < 1e-9, "three rolls in four give nothing (an End Seed's one in five "
+                + "hundred and the egg's one in a million aside): " + (1 - something));
         check(helper, LootSummaries.chanceText(1e-6).equals("1/1,000,000") && LootSummaries.chanceText(0.09).equals("9.0%")
                 && LootSummaries.chanceText(1.0 / 990).equals("0.1%"), "JEI writes it as one in so many: " + LootSummaries.chanceText(1e-6));
         helper.succeed();
@@ -219,8 +236,8 @@ final class SifterTests {
                 diamonds += s.is(Items.DIAMOND) ? s.getCount() : 0;
             }
         }
-        check(helper, flint > 470 && flint < 730, "flint should be ~30% (600/2000), got " + flint);
-        check(helper, nothing > 570 && nothing < 840, "nothing should be ~35% (704/2000), got " + nothing);
+        check(helper, flint > 430 && flint < 680, "flint should be ~28% (556/2000), got " + flint);
+        check(helper, nothing > 450 && nothing < 700, "nothing should be ~29% (574/2000), got " + nothing);
         check(helper, diamonds <= 12, "diamonds should be ~0.1% (2/2000), got " + diamonds);
         helper.succeed();
     }
@@ -357,6 +374,83 @@ final class SifterTests {
             check(helper, SifterBlockEntity.sift(level, helper.absolutePos(SIFTER), new ItemStack(Items.DIRT), i % 2 == 0).stream()
                     .noneMatch(stack -> stack.is(Items.TORCHFLOWER_SEEDS)), "but never torchflower seeds: those are the sniffer's");
         }
+        helper.succeed();
+    }
+
+    /**
+     * Podzol and soul soil are sifted (the user, 2026-11-15): they are grains, as moss, nylium and sculk are not. Podzol
+     * gives the forest floor's things - torn moss as a carpet, bamboo now and then - and has nothing small for the mesh;
+     * soul soil gives bones, a skeleton skull once in a thousand, more gold and quartz through the mesh, and no nether
+     * wart (that grows on soul sand).
+     */
+    static void podzolAndSoulSoil(GameTestHelper helper) {
+        helper.setBlock(SIFTER, ModBlocks.SIFTER.get());
+        SifterBlockEntity sifter = helper.getBlockEntity(SIFTER, SifterBlockEntity.class);
+        for (var soil : List.of(Items.PODZOL, Items.SOUL_SOIL)) {
+            check(helper, sifter.canPlaceItem(SifterBlockEntity.INPUT, new ItemStack(soil)), soil + " can be sifted");
+        }
+        for (var mat : List.of(Items.MOSS_BLOCK, Items.PALE_MOSS_BLOCK, Items.CRIMSON_NYLIUM, Items.WARPED_NYLIUM, Items.SCULK)) {
+            check(helper, !sifter.canPlaceItem(SifterBlockEntity.INPUT, new ItemStack(mat)), mat + " is no grains to sift");
+        }
+        check(helper, near(chance("minecraft:podzol", false, Items.MOSS_CARPET), 0.04)
+                && near(chance("minecraft:podzol", false, Items.BAMBOO), 0.02)
+                && near(chance("minecraft:podzol", false, Items.SPRUCE_SAPLING), 0.06)
+                && near(chance("minecraft:podzol", false, Items.SWEET_BERRIES), 0.05), "podzol gives the forest floor's things");
+        check(helper, LootSummaries.bundled(LootSummaries.siftingTable(Identifier.parse("minecraft:podzol"), true)).isEmpty(),
+                "nothing in podzol is small: no table of its own through the mesh");
+        check(helper, near(chance("minecraft:soul_soil", false, Items.BONE), 0.33)
+                && near(chance("minecraft:soul_soil", false, Items.SKELETON_SKULL), 0.001)
+                && near(chance("minecraft:soul_soil", false, Items.NETHER_WART), 0), "soul soil gives bones and, rarely, a skull");
+        check(helper, near(chance("minecraft:soul_soil", true, Items.GOLD_NUGGET), 0.12)
+                && near(chance("minecraft:soul_soil", true, Items.QUARTZ), 0.125)
+                && near(chance("minecraft:soul_soil", true, Items.BONE), 0.33), "the mesh keeps its gold and quartz, its bones as before");
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        for (var soil : List.of(Items.PODZOL, Items.SOUL_SOIL)) {
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(soil, 4));
+            helper.useBlock(SIFTER, player);
+            check(helper, player.getMainHandItem().getCount() == 3, "a click sifts one " + soil + " by hand");
+        }
+        helper.succeed();
+    }
+
+    /**
+     * More kinds of things out of the old tables (the user, 2026-11-15), each taken from the roll of nothing, so every old
+     * thing keeps its chance. No bone meal out of anything (「粉から粉が出てくるのは変」); the sea's treasures from sand,
+     * rarely, and none from red sand; a wooden hoe out of dirt is worn.
+     */
+    static void moreKindsAtTheOldOdds(GameTestHelper helper) {
+        check(helper, near(chance("minecraft:dirt", false, Items.WHEAT_SEEDS), 0.09)
+                && near(chance("minecraft:gravel", false, Items.FLINT), 300 / 1080.0)
+                && near(chance("minecraft:sand", false, Items.GOLD_NUGGET), 100 / 970.0)
+                && near(chance("minecraft:mud", false, Items.CLAY_BALL), 360 / 838.0), "the old things keep their chances");
+        check(helper, near(chance("minecraft:dirt", false, Items.BONE), 0.04) && near(chance("minecraft:dirt", false, Items.FEATHER), 0.01)
+                && near(chance("minecraft:dirt", false, Items.WOODEN_HOE), 0.004), "dirt: more bones, a feather, an old hoe");
+        check(helper, near(chance("minecraft:rooted_dirt", false, Items.GLOW_BERRIES), 0.015), "rooted dirt: glow berries");
+        check(helper, chance("minecraft:mud", false, Items.LILY_PAD) > 0.01 && chance("minecraft:mud", false, Items.MANGROVE_PROPAGULE) > 0.015
+                && chance("minecraft:mud", false, Items.STRING) > 0.005 && chance("minecraft:mud", false, Items.FISHING_ROD) > 0,
+                "mud: the swamp's lily pad and propagule, string, an old rod");
+        check(helper, chance("minecraft:gravel", false, Items.ARROW) > 0 && chance("minecraft:red_sand", false, Items.RAIL) > 0,
+                "gravel an arrow, red sand a rail");
+        for (var treasure : List.of(Items.PRISMARINE_SHARD, Items.PRISMARINE_CRYSTALS, Items.NAUTILUS_SHELL, Items.TURTLE_SCUTE)) {
+            double sand = chance("minecraft:sand", false, treasure);
+            check(helper, sand > 0 && sand < 0.006, "sand gives " + treasure + " rarely: " + sand);
+            check(helper, chance("minecraft:red_sand", false, treasure) == 0 && chance("minecraft:red_sand", true, treasure) == 0,
+                    "red sand has none of the sea's things: " + treasure);
+        }
+        check(helper, chance("minecraft:sand", false, Items.HEART_OF_THE_SEA) == 0, "no heart of the sea");
+        for (var holder : BuiltInRegistries.ITEM.getTagOrEmpty(SifterBlockEntity.SIFTABLE)) {
+            String id = holder.unwrapKey().orElseThrow().identifier().toString();
+            for (boolean fine : new boolean[] {false, true}) {
+                check(helper, chance(id, fine, Items.BONE_MEAL) == 0, id + " gives no bone meal: no powder out of powder");
+            }
+        }
+        ItemStack hoe = ItemStack.EMPTY;
+        for (int i = 0; i < 20_000 && hoe.isEmpty(); i++) {
+            hoe = SifterBlockEntity.sift(helper.getLevel(), helper.absolutePos(SIFTER), new ItemStack(Items.DIRT)).stream()
+                    .filter(stack -> stack.is(Items.WOODEN_HOE)).findFirst().orElse(ItemStack.EMPTY);
+        }
+        check(helper, !hoe.isEmpty() && hoe.isDamaged() && hoe.getDamageValue() < hoe.getMaxDamage(),
+                "a hoe out of dirt is worn, not broken: " + hoe + " " + hoe.getDamageValue() + "/" + hoe.getMaxDamage());
         helper.succeed();
     }
 

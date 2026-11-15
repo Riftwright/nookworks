@@ -45,7 +45,8 @@ final class TablewareTests {
         BlockPos at = table.above();
         helper.setBlock(table, Blocks.OAK_PLANKS);
         helper.setBlock(at, ModKitchen.PLATE.get());
-        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        java.util.List<net.minecraft.network.chat.Component> said = new java.util.ArrayList<>();
+        ServerPlayer player = MockPlayers.hearing(helper, GameType.SURVIVAL, said); // a full plate says so (2026-11-14)
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND));
         helper.getBlockState(at).useItemOn(player.getMainHandItem(), helper.getLevel(), player, InteractionHand.MAIN_HAND, hitTop(helper, at));
         PlateBlockEntity plate = (PlateBlockEntity) helper.getBlockEntity(at, PlateBlockEntity.class);
@@ -55,7 +56,7 @@ final class TablewareTests {
         check(helper, plate.food().is(ModCooking.TONKATSU.get()) && plate.food().getCount() == 1, "one tonkatsu is served: " + plate.food());
         check(helper, player.getMainHandItem().getCount() == 2, "and leaves the hand");
         helper.getBlockState(at).useItemOn(player.getMainHandItem(), helper.getLevel(), player, InteractionHand.MAIN_HAND, hitTop(helper, at));
-        check(helper, player.getMainHandItem().getCount() == 2, "a plate takes one dish only");
+        check(helper, player.getMainHandItem().getCount() == 2 && said.size() == 1, "a plate takes one cutlet only, and says so: " + said);
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         helper.getBlockState(at).useWithoutItem(helper.getLevel(), player, hitTop(helper, at));
         check(helper, plate.isEmpty() && player.getInventory().countItem(ModCooking.TONKATSU.get()) == 1, "an empty hand takes it back");
@@ -81,13 +82,17 @@ final class TablewareTests {
         helper.succeed();
     }
 
+    /**
+     * The four dishes that were models first are in the jar with their pictures - filed with every other dish's under
+     * models/dish/ since the cooking review (2026-11-14; AssetAudit walks them all).
+     */
     private static void dishModels(GameTestHelper helper) {
         for (String dish : new String[] {"udon", "tonkatsu", "karaage", "donut"}) {
-            String path = "/assets/nookworks/models/block/dish_" + dish + ".json";
+            String path = "/assets/nookworks/models/dish/nookworks/" + dish + ".json";
             try (var in = TablewareTests.class.getResourceAsStream(path)) {
                 check(helper, in != null, "the model " + path + " is in the jar");
                 String json = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                for (var m : java.util.regex.Pattern.compile("nookworks:block/([a-z_]+)").matcher(json).results().toList()) {
+                for (var m : java.util.regex.Pattern.compile("nookworks:block/([a-z_/]+)").matcher(json).results().toList()) {
                     String texture = "/assets/nookworks/textures/block/" + m.group(1) + ".png";
                     check(helper, TablewareTests.class.getResource(texture) != null, dish + ": its texture " + texture + " is there");
                 }

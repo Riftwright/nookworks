@@ -142,6 +142,7 @@
     "nookworks:golden_hammer",
     "nookworks:wrench",
     "nookworks:iron_pot",
+    "nookworks:frying_pan",
     "nookworks:bookend",
     "nookworks:hook",
     "nookworks:sconce",
@@ -182,6 +183,8 @@
     "nookworks:retort",
     "nookworks:distiller",
     "nookworks:condenser",
-    "nookworks:barter_terminal"
+    "nookworks:barter_terminal",
+    "nookworks:electric_stove",
+    "nookworks:planter"
   ]
 }

@@ -89,6 +89,40 @@ public final class ModSounds {
     public static final Supplier<SoundEvent> SEAT_SIT = event("block.seat.sit");
     public static final Supplier<SoundEvent> WIND_CHIME_CHIME = event("block.wind_chime.chime");
 
+    // The kitchen's handling, a switch, the wand and the Magnet (the user, 2026-11-14, of the sound audit: a borrowed
+    // vanilla sound reads as corner-cutting even where it is natural - 「新しく作ったほうがいいと思う」). Each plays a
+    // vanilla stand-in until the user has heard the one made for it (tools/sounds/gen_sounds.py, HELD_BACK).
+    /** A dish done in an Iron Pot or a Frying Pan. */
+    public static final Supplier<SoundEvent> IRON_POT_DONE = event("block.iron_pot.done");
+    /** An ingredient set into a pot or pan with nothing in it to splash or spit, or taken out again. */
+    public static final Supplier<SoundEvent> IRON_POT_ADD = event("block.iron_pot.add");
+    /** An ingredient dropped into a pot's water. */
+    public static final Supplier<SoundEvent> IRON_POT_PLOP = event("block.iron_pot.plop");
+    /** Food meeting hot oil, or a hot Grill. */
+    public static final Supplier<SoundEvent> IRON_POT_SEAR = event("block.iron_pot.sear");
+    /** A dish ladled out of a pot or pan into a bowl. */
+    public static final Supplier<SoundEvent> IRON_POT_SERVE = event("block.iron_pot.serve");
+    /** A Plate set down, or food set on one or taken off it. */
+    public static final Supplier<SoundEvent> PLATE_CLINK = event("block.plate.clink");
+    /** Wooden tableware - a Wooden Tray, a bowl - set down, taken up, or food set on it. */
+    public static final Supplier<SoundEvent> TRAY_KNOCK = event("block.tray.knock");
+    /** Dough set on a Wooden Tray. */
+    public static final Supplier<SoundEvent> TRAY_DOUGH = event("block.tray.dough");
+    /** Food set on a cold Grill, or taken off one. */
+    public static final Supplier<SoundEvent> GRILL_PLACE = event("block.grill.place");
+    /** A bottle set down on a block, or taken up. */
+    public static final Supplier<SoundEvent> PLACED_BOTTLES_CLINK = event("block.placed_bottles.clink");
+    /** An electric switch thrown: the Electric Stove's ring coming on or going off, a Ventilation Fan switched. */
+    public static final Supplier<SoundEvent> SWITCH_CLICK = event("block.switch.click");
+    /** A Building Wand marking a corner or changing its mode: heard by the one holding it alone. */
+    public static final Supplier<SoundEvent> BUILDING_WAND_MARK = event("item.building_wand.mark");
+    /** A Magnet switched on or off. */
+    public static final Supplier<SoundEvent> MAGNET_SWITCH = event("item.magnet.switch");
+    /** A Kitchen Tap's lever turned, on or off (a little higher on). */
+    public static final Supplier<SoundEvent> KITCHEN_TAP_TURN = event("block.kitchen_tap.turn");
+    /** A Kitchen Tap's stream while it pours: one file made to loop, held on by client/TapStream. */
+    public static final Supplier<SoundEvent> KITCHEN_TAP_POUR = event("block.kitchen_tap.pour");
+
     private ModSounds() {}
 
     private static Supplier<SoundEvent> event(String name) {

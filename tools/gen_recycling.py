@@ -277,10 +277,10 @@ GOLD = {"powered_rail": 1, "light_weighted_pressure_plate": 2, "golden_horse_arm
 # Chainmail and the horse and nautilus armour have no recipe: they count as the plate armour nearest them.
 # Nookworks' own metal things, by their recipes: (metal, gold or not).
 OURS = {"iron_hammer": (5, False), "copper_hammer": (5, False), "golden_hammer": (5, True), "wrench": (4, False),
-        "iron_pot": (3, False),
+        "iron_pot": (3, False), "frying_pan": (4, False),
         # the rest of Nookworks' metal things (the user, 2026-10-20: 歯車とかブックエンドとか): the iron, copper or gold in
         # their recipes, followed down through our own parts (a Machine Chassis's iron block, a gear's nuggets). Out:
-        # what is mostly wood (wall shelves, the presses worked by hand, planters), what holds a liquid or experience
+        # what is mostly wood (wall shelves, the presses worked by hand), what holds a liquid or experience
         # (bottles, buckets, tanks), soap, and what has brass, Velarium, mercury or scrap in it
         "bookend": (0.17, False), "hook": (0.11, False), "sconce": (0.17, False), "thin_chain": (0.17, False),
         "drive_wheel": (0.72, False), "grill": (1.35, False), "copper_pipe": (0.5, False), "energy_cable": (0.25, False),
@@ -291,9 +291,11 @@ OURS = {"iron_hammer": (5, False), "copper_hammer": (5, False), "golden_hammer":
         "horizontal_item_warp_sender": (6.5, False), "horizontal_item_warp_receiver": (1.5, False),
         "spawner_link_sender": (1.75, False), "spawner_link_receiver": (1, False), "absorption_pad": (9, False),
         "machine_chassis": (13, False), "generator": (19, False), "crusher": (19, False), "electric_furnace": (19, False),
-        "stone_maker": (19, False), "sifter": (12.38, False), "compressor": (20, False), "baler": (7.75, False),
+        "stone_maker": (21, False), "sifter": (12.38, False), "compressor": (20, False), "baler": (7.75, False),
         "recycler": (46.75, False), "motor": (20, False), "water_pump": (10, False), "printing_press": (18, False),
-        "retort": (14, False), "distiller": (6, False), "condenser": (8, False), "barter_terminal": (13, False)}
+        "retort": (14, False), "distiller": (6, False), "condenser": (8, False), "barter_terminal": (13, False),
+        # a Machine Chassis with three copper and three iron ingots; with six iron ingots (a machine since 2026-11-14)
+        "electric_stove": (19, False), "planter": (19, False)}
 
 
 def recycling():

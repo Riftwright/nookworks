@@ -37,7 +37,9 @@ import net.minecraft.world.item.ItemStack;
  * in the row, keeps out. Under it all, the Keep Out row: red-framed ghost slots behind a no-entry sign, for what the
  * sorter never takes in.
  */
-public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
+public class SorterScreen extends AbstractContainerScreen<SorterMenu> implements dev.nookworks.client.gui.tab.TabbedScreen {
+    /** The tabs on its right edge, as a machine's: Settings, the redstone mode (the user, 2026-11-14). */
+    private dev.nookworks.client.gui.tab.ScreenTabs tabs;
     private static final String[] FLAG_KEYS = {"blacklist", "tags", "components"};
 
     private final SteelButton[] flagButtons = new SteelButton[SorterSettings.COUNT];
@@ -102,9 +104,29 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         });
         swap.setTooltip(Tooltip.create(Component.translatable("gui.nookworks.sorter.swap")));
         this.sortingWidgets.add(swap);
-        if (!this.menu.tier().configurable) {
-            return;
+        if (this.menu.tier().configurable) {
+            this.addSwitches();
         }
+        // the tabs on the right edge, as a machine's: its redstone mode in Settings, the mode named beside it
+        this.tabs = new dev.nookworks.client.gui.tab.ScreenTabs(this, this.menu.tabs());
+        this.tabs.addSetting(this.addRenderableWidget(new RedstoneButton(0, 0, this.menu::redstoneMode,
+                () -> this.press(SorterMenu.BUTTON_REDSTONE))), () -> Component.translatable(this.menu.redstoneMode().translationKey()));
+        this.leftPos -= this.tabs.fit(this.children()); // an open tab kept inside a small window
+    }
+
+    @Override
+    public dev.nookworks.client.gui.tab.ScreenTabs tabs() {
+        return this.tabs;
+    }
+
+    /** A click on a tab is no click outside the screen: it throws nothing. */
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top) {
+        return super.hasClickedOutside(mouseX, mouseY, left, top) && !this.tabs.inside(mouseX, mouseY);
+    }
+
+    /** A Precision Sorter's switches along the bottom, and its tag picker. */
+    private void addSwitches() {
         // the three switches along the bottom: the Keep Out row's turning round is its sign's, not a button here (r19)
         for (int i = 0; i < FLAG_KEYS.length; i++) {
             int flag = i;
@@ -165,6 +187,9 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.tabs.mouseClicked(event)) {
+            return true;
+        }
         if (this.picker != null && this.picker.mouseClicked(event)) {
             return true;
         }
@@ -172,7 +197,7 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && !this.menu.picking() && this.menu.getCarried().isEmpty()
                 && this.isHovering(7, SorterMenu.denyY(this.menu.tier()) + 1, 16, 16, event.x(), event.y())) {
             this.press(SorterMenu.BUTTON_FLAG + SorterSettings.KEEP_OUT_OTHERS);
-            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.25F));
             return true;
         }
         // a press one of its buttons takes is that button's: its release is no click on the slot it comes up over (the
@@ -208,7 +233,9 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        this.leftPos -= this.tabs.fit(this.children()); // first: all that follows is drawn from the left edge
         super.extractBackground(graphics, mouseX, mouseY, a);
+        this.tabs.extractBackground(graphics, mouseX, mouseY); // under the panel, which covers their inner edge
         MachineStyle.panel(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
         int bottom = SorterMenu.denyY(this.menu.tier()) + 22;
         MachineStyle.bay(graphics, this.leftPos + 5, this.topPos + 16, this.imageWidth - 10, bottom - 16);
@@ -274,6 +301,13 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> {
     /** The empty gear slot's hint, what the gear fitted does, and in the picker, the items of each tag's or the mod's line. */
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        if (this.menu.getCarried().isEmpty()) {
+            List<Component> tabbed = this.tabs.tooltip(mouseX, mouseY);
+            if (!tabbed.isEmpty()) {
+                graphics.setTooltipForNextFrame(MachineStyle.wrap(this.font, tabbed), mouseX, mouseY);
+                return;
+            }
+        }
         if (this.picker != null && this.picker.extractTooltip(graphics, mouseX, mouseY)) {
             return; // its lines, its buttons, its empty sample slot
         }

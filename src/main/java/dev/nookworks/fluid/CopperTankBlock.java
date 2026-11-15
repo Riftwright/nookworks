@@ -159,11 +159,20 @@ public class CopperTankBlock extends BaseEntityBlock {
         var held = ItemAccess.forPlayerInteraction(player, hand).getCapability(Capabilities.Fluid.ITEM);
         if (held != null) {
             boolean empty = true;
+            Fluid other = null;
             for (int i = 0; i < held.size(); i++) {
                 empty &= held.getAmountAsLong(i) == 0;
+                Fluid fluid = held.getResource(i).getFluid();
+                if (held.getAmountAsLong(i) > 0 && !CopperTankBlockEntity.holds(fluid)) {
+                    other = fluid;
+                }
             }
-            // an empty container: the tank has too little for it (a bucket takes a whole bucket); a full one: it will not go in
-            player.sendOverlayMessage(Component.translatable(empty ? "message.nookworks.copper_tank.too_little" : "message.nookworks.copper_tank.will_not_take"));
+            // an empty container: the tank has too little for it (a bucket takes a whole bucket); a liquid no Copper Tank
+            // holds (lava): says so by name - it said "something else is in it, or it is full" of an empty tank (the
+            // user, 2026-11-14); else it holds another liquid or is full
+            player.sendOverlayMessage(empty ? Component.translatable("message.nookworks.copper_tank.too_little")
+                    : other != null ? Component.translatable("message.nookworks.copper_tank.cannot_hold", other.getFluidType().getDescription())
+                    : Component.translatable("message.nookworks.copper_tank.will_not_take"));
             return Clicks.REFUSED; // it moved nothing: the bucket is not poured out in front of the tank either
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;

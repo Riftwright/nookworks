@@ -11,12 +11,13 @@
   "category": "misc",
   "pattern": [
     "BAB",
-    "BEB",
+    "ZEZ",
     "BDB"
   ],
   "key": {
     "B": "minecraft:polished_blackstone",
     "A": "minecraft:amethyst_shard",
+    "Z": "#c:ingots/brass",
     "E": "minecraft:ender_pearl",
     "D": "minecraft:dropper"
   },

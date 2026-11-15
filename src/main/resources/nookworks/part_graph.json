@@ -17,6 +17,8 @@
   "nookworks:bamboo_support",
   "nookworks:bamboo_wall_shelf",
   "nookworks:barter_terminal",
+  "nookworks:basalt_gravel",
+  "nookworks:beaten_eggs",
   "nookworks:beetroot_nukazuke",
   "nookworks:biodiesel_bottle",
   "nookworks:biodiesel_bucket",
@@ -29,7 +31,9 @@
   "nookworks:blue_corrugated_sheet",
   "nookworks:boiled_egg",
   "nookworks:bookend",
+  "nookworks:brass_glow_item_frame",
   "nookworks:brass_ingot",
+  "nookworks:brass_item_frame",
   "nookworks:brass_mesh",
   "nookworks:brass_workbench",
   "nookworks:bread_dough",
@@ -49,6 +53,8 @@
   "nookworks:cherry_support",
   "nookworks:cherry_wall_shelf",
   "nookworks:chimney",
+  "nookworks:coated_chicken",
+  "nookworks:coated_fish",
   "nookworks:cobblestone_chimney",
   "nookworks:cobblestone_flue",
   "nookworks:compressor",
@@ -78,6 +84,8 @@
   "nookworks:dark_oak_bench",
   "nookworks:dark_oak_chair",
   "nookworks:dark_oak_desk",
+  "nookworks:dark_oak_glow_item_frame",
+  "nookworks:dark_oak_item_frame",
   "nookworks:dark_oak_stool",
   "nookworks:dark_oak_support",
   "nookworks:dark_oak_wall_shelf",
@@ -116,10 +124,12 @@
   "nookworks:distillation_column",
   "nookworks:distiller",
   "nookworks:donut",
+  "nookworks:donut_dough",
   "nookworks:dried_fish",
   "nookworks:drive_wheel",
   "nookworks:duct",
   "nookworks:electric_furnace",
+  "nookworks:electric_stove",
   "nookworks:electrolytic_cell",
   "nookworks:elevator",
   "nookworks:end_gravel",
@@ -138,6 +148,7 @@
   "nookworks:fried_egg",
   "nookworks:fried_fish",
   "nookworks:fried_rice",
+  "nookworks:frying_pan",
   "nookworks:generator",
   "nookworks:glazed_flower_pot",
   "nookworks:gold_amalgam",
@@ -173,6 +184,7 @@
   "nookworks:jungle_support",
   "nookworks:jungle_wall_shelf",
   "nookworks:karaage",
+  "nookworks:kitchen_tap",
   "nookworks:label",
   "nookworks:laser",
   "nookworks:liquid_experience_bottle",
@@ -234,6 +246,8 @@
   "nookworks:pebbles",
   "nookworks:planter",
   "nookworks:plate",
+  "nookworks:plated_fried_rice",
+  "nookworks:plated_stir_fried_vegetables",
   "nookworks:poplar_bench",
   "nookworks:poplar_chair",
   "nookworks:poplar_desk",
@@ -783,6 +797,17 @@
    "if": []
   },
   {
+   "how": "crushing minecraft:basalt",
+   "out": [
+    "nookworks:basalt_gravel"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
    "how": "crushing minecraft:bookshelf",
    "out": [
     "nookworks:wood_chips"
@@ -984,6 +1009,17 @@
    "how": "crushing minecraft:smithing_table",
    "out": [
     "nookworks:wood_chips"
+   ],
+   "in": [],
+   "at": [
+    "nookworks:crusher"
+   ],
+   "if": []
+  },
+  {
+   "how": "crushing minecraft:smooth_basalt",
+   "out": [
+    "nookworks:basalt_gravel"
    ],
    "in": [],
    "at": [
@@ -1194,6 +1230,19 @@
    "in": [
     [
      "nookworks:dawnwood_leaves"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "drop nookworks:frying_pan",
+   "out": [
+    "nookworks:grill"
+   ],
+   "in": [
+    [
+     "nookworks:frying_pan"
     ]
    ],
    "at": [],
@@ -1502,6 +1551,38 @@
     ],
     [
      "nookworks:vegetable_oil_bucket"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: served on a plate",
+   "out": [
+    "nookworks:plated_fried_rice"
+   ],
+   "in": [
+    [
+     "nookworks:fried_rice"
+    ],
+    [
+     "nookworks:plate"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "java: served on a plate",
+   "out": [
+    "nookworks:plated_stir_fried_vegetables"
+   ],
+   "in": [
+    [
+     "nookworks:stir_fried_vegetables"
+    ],
+    [
+     "nookworks:plate"
     ]
    ],
    "at": [],
@@ -1943,6 +2024,15 @@
    "if": []
   },
   {
+   "how": "recipe nookworks:beaten_eggs",
+   "out": [
+    "nookworks:beaten_eggs"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
    "how": "recipe nookworks:biodiesel_bottle",
    "out": [
     "nookworks:biodiesel_bottle"
@@ -2048,6 +2138,32 @@
     "nookworks:bookend"
    ],
    "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brass_glow_item_frame",
+   "out": [
+    "nookworks:brass_glow_item_frame"
+   ],
+   "in": [
+    [
+     "nookworks:brass_item_frame"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:brass_item_frame",
+   "out": [
+    "nookworks:brass_item_frame"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -2240,6 +2356,32 @@
     "nookworks:chimney"
    ],
    "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:coated_chicken",
+   "out": [
+    "nookworks:coated_chicken"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:coated_fish",
+   "out": [
+    "nookworks:coated_fish"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -2470,6 +2612,28 @@
    "how": "recipe nookworks:dark_oak_desk",
    "out": [
     "nookworks:dark_oak_desk"
+   ],
+   "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_glow_item_frame",
+   "out": [
+    "nookworks:dark_oak_glow_item_frame"
+   ],
+   "in": [
+    [
+     "nookworks:dark_oak_item_frame"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:dark_oak_item_frame",
+   "out": [
+    "nookworks:dark_oak_item_frame"
    ],
    "in": [],
    "at": [],
@@ -2905,6 +3069,19 @@
    "if": []
   },
   {
+   "how": "recipe nookworks:donut_dough",
+   "out": [
+    "nookworks:donut_dough"
+   ],
+   "in": [
+    [
+     "nookworks:flour"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
    "how": "recipe nookworks:drive_wheel",
    "out": [
     "nookworks:drive_wheel"
@@ -2930,6 +3107,19 @@
    "how": "recipe nookworks:electric_furnace",
    "out": [
     "nookworks:electric_furnace"
+   ],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:electric_stove",
+   "out": [
+    "nookworks:electric_stove"
    ],
    "in": [
     [
@@ -3036,7 +3226,7 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:fried_egg_from_campfire_cooking",
+   "how": "recipe nookworks:fried_egg_from_smoking",
    "out": [
     "nookworks:fried_egg"
    ],
@@ -3045,9 +3235,9 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:fried_egg_from_smoking",
+   "how": "recipe nookworks:frying_pan",
    "out": [
-    "nookworks:fried_egg"
+    "nookworks:frying_pan"
    ],
    "in": [],
    "at": [],
@@ -3375,7 +3565,11 @@
    "out": [
     "nookworks:item_warp_receiver"
    ],
-   "in": [],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -3384,7 +3578,11 @@
    "out": [
     "nookworks:item_warp_sender"
    ],
-   "in": [],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -3439,6 +3637,22 @@
     "nookworks:jungle_wall_shelf"
    ],
    "in": [],
+   "at": [],
+   "if": []
+  },
+  {
+   "how": "recipe nookworks:kitchen_tap",
+   "out": [
+    "nookworks:kitchen_tap"
+   ],
+   "in": [
+    [
+     "nookworks:brass_ingot"
+    ],
+    [
+     "nookworks:copper_pipe"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -3947,19 +4161,6 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:pancake_from_campfire_cooking",
-   "out": [
-    "nookworks:pancake"
-   ],
-   "in": [
-    [
-     "nookworks:pancake_batter"
-    ]
-   ],
-   "at": [],
-   "if": []
-  },
-  {
    "how": "recipe nookworks:pancake_from_smoking",
    "out": [
     "nookworks:pancake"
@@ -4008,7 +4209,11 @@
    "out": [
     "nookworks:planter"
    ],
-   "in": [],
+   "in": [
+    [
+     "nookworks:machine_chassis"
+    ]
+   ],
    "at": [],
    "if": []
   },
@@ -4178,7 +4383,7 @@
    ],
    "in": [
     [
-     "nookworks:flour"
+     "nookworks:donut_dough"
     ],
     [
      "nookworks:vegetable_oil_bucket"
@@ -4208,9 +4413,9 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:pot/fried_fish",
+   "how": "recipe nookworks:pot/fried_egg",
    "out": [
-    "nookworks:fried_fish"
+    "nookworks:fried_egg"
    ],
    "in": [
     [
@@ -4223,13 +4428,13 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:pot/fried_fish_in_flour",
+   "how": "recipe nookworks:pot/fried_fish",
    "out": [
     "nookworks:fried_fish"
    ],
    "in": [
     [
-     "nookworks:flour"
+     "nookworks:coated_fish"
     ],
     [
      "nookworks:vegetable_oil_bucket"
@@ -4265,6 +4470,9 @@
    ],
    "in": [
     [
+     "nookworks:coated_chicken"
+    ],
+    [
      "nookworks:vegetable_oil_bucket"
     ]
    ],
@@ -4274,13 +4482,13 @@
    "if": []
   },
   {
-   "how": "recipe nookworks:pot/karaage_in_flour",
+   "how": "recipe nookworks:pot/pancake",
    "out": [
-    "nookworks:karaage"
+    "nookworks:pancake"
    ],
    "in": [
     [
-     "nookworks:flour"
+     "nookworks:pancake_batter"
     ],
     [
      "nookworks:vegetable_oil_bucket"
@@ -4333,6 +4541,9 @@
     "nookworks:tamagoyaki"
    ],
    "in": [
+    [
+     "nookworks:beaten_eggs"
+    ],
     [
      "nookworks:vegetable_oil_bucket"
     ]
@@ -7010,6 +7221,21 @@
    "if": []
   },
   {
+   "how": "recycling nookworks:electric_stove",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:electric_stove"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
    "how": "recycling nookworks:energy_cable",
    "out": [
     "nookworks:scrap"
@@ -7017,6 +7243,21 @@
    "in": [
     [
      "nookworks:energy_cable"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:frying_pan",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:frying_pan"
     ]
    ],
    "at": [
@@ -7272,6 +7513,21 @@
    "in": [
     [
      "nookworks:motor"
+    ]
+   ],
+   "at": [
+    "nookworks:recycler"
+   ],
+   "if": []
+  },
+  {
+   "how": "recycling nookworks:planter",
+   "out": [
+    "nookworks:scrap"
+   ],
+   "in": [
+    [
+     "nookworks:planter"
     ]
    ],
    "at": [
@@ -7612,6 +7868,21 @@
    "if": []
   },
   {
+   "how": "sifting nookworks:basalt_gravel",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [
+    [
+     "nookworks:basalt_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter"
+   ],
+   "if": []
+  },
+  {
    "how": "sifting nookworks:crude_salt",
    "out": [
     "nookworks:salt"
@@ -7644,7 +7915,8 @@
   {
    "how": "sifting nookworks:end_gravel",
    "out": [
-    "nookworks:end_seed"
+    "nookworks:end_seed",
+    "nookworks:sulfur_dust"
    ],
    "in": [
     [
@@ -7729,6 +8001,22 @@
    "if": []
   },
   {
+   "how": "sifting_fine nookworks:basalt_gravel",
+   "out": [
+    "nookworks:sulfur_dust"
+   ],
+   "in": [
+    [
+     "nookworks:basalt_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
    "how": "sifting_fine nookworks:deepslate_gravel",
    "out": [
     "nookworks:raw_zinc"
@@ -7736,6 +8024,23 @@
    "in": [
     [
      "nookworks:deepslate_gravel"
+    ]
+   ],
+   "at": [
+    "nookworks:sifter",
+    "nookworks:brass_mesh"
+   ],
+   "if": []
+  },
+  {
+   "how": "sifting_fine nookworks:end_gravel",
+   "out": [
+    "nookworks:end_seed",
+    "nookworks:sulfur_dust"
+   ],
+   "in": [
+    [
+     "nookworks:end_gravel"
     ]
    ],
    "at": [
@@ -7802,11 +8107,14 @@
   "velarium": [],
   "machine_chassis": [
    "nookworks:barter_terminal",
+   "nookworks:basalt_gravel",
    "nookworks:beetroot_nukazuke",
    "nookworks:biodiesel_bottle",
    "nookworks:biodiesel_bucket",
    "nookworks:blue_corrugated_sheet",
+   "nookworks:brass_glow_item_frame",
    "nookworks:brass_ingot",
+   "nookworks:brass_item_frame",
    "nookworks:brass_mesh",
    "nookworks:brass_workbench",
    "nookworks:bread_dough",
@@ -7823,6 +8131,7 @@
    "nookworks:diesel_generator",
    "nookworks:distillation_column",
    "nookworks:electric_furnace",
+   "nookworks:electric_stove",
    "nookworks:electrolytic_cell",
    "nookworks:elevator",
    "nookworks:end_gravel",
@@ -7834,8 +8143,13 @@
    "nookworks:generator",
    "nookworks:gold_amalgam",
    "nookworks:green_corrugated_sheet",
+   "nookworks:horizontal_item_warp_receiver",
+   "nookworks:horizontal_item_warp_sender",
    "nookworks:if_mirror",
    "nookworks:iron_amalgam",
+   "nookworks:item_warp_receiver",
+   "nookworks:item_warp_sender",
+   "nookworks:kitchen_tap",
    "nookworks:label",
    "nookworks:laser",
    "nookworks:mercury_bucket",
@@ -7849,6 +8163,8 @@
    "nookworks:oxidized_corrugated_sheet",
    "nookworks:oxidized_scrap_bale",
    "nookworks:patched_sheet_metal",
+   "nookworks:planter",
+   "nookworks:plated_stir_fried_vegetables",
    "nookworks:poster",
    "nookworks:printing_press",
    "nookworks:raw_udon",
@@ -7913,7 +8229,9 @@
    "nookworks:beetroot_nukazuke",
    "nookworks:biodiesel_bottle",
    "nookworks:biodiesel_bucket",
+   "nookworks:brass_glow_item_frame",
    "nookworks:brass_ingot",
+   "nookworks:brass_item_frame",
    "nookworks:brass_workbench",
    "nookworks:bread_dough",
    "nookworks:camera",
@@ -7932,12 +8250,18 @@
    "nookworks:fine_paper",
    "nookworks:french_fries",
    "nookworks:gold_amalgam",
+   "nookworks:horizontal_item_warp_receiver",
+   "nookworks:horizontal_item_warp_sender",
    "nookworks:iron_amalgam",
+   "nookworks:item_warp_receiver",
+   "nookworks:item_warp_sender",
+   "nookworks:kitchen_tap",
    "nookworks:label",
    "nookworks:methanol",
    "nookworks:methanol_bucket",
    "nookworks:mixed_amalgam",
    "nookworks:nukadoko",
+   "nookworks:plated_stir_fried_vegetables",
    "nookworks:poster",
    "nookworks:printing_press",
    "nookworks:range_hood",
@@ -7981,6 +8305,7 @@
    "nookworks:zinc_ingot"
   ],
   "crusher": [
+   "nookworks:basalt_gravel",
    "nookworks:blue_corrugated_sheet",
    "nookworks:corrugated_sheet",
    "nookworks:deepslate_gravel",
@@ -8019,7 +8344,9 @@
    "nookworks:beetroot_nukazuke",
    "nookworks:biodiesel_bottle",
    "nookworks:biodiesel_bucket",
+   "nookworks:brass_glow_item_frame",
    "nookworks:brass_ingot",
+   "nookworks:brass_item_frame",
    "nookworks:brass_mesh",
    "nookworks:brass_workbench",
    "nookworks:bread_dough",
@@ -8036,14 +8363,20 @@
    "nookworks:fine_paper",
    "nookworks:french_fries",
    "nookworks:gold_amalgam",
+   "nookworks:horizontal_item_warp_receiver",
+   "nookworks:horizontal_item_warp_sender",
    "nookworks:if_mirror",
    "nookworks:iron_amalgam",
+   "nookworks:item_warp_receiver",
+   "nookworks:item_warp_sender",
+   "nookworks:kitchen_tap",
    "nookworks:label",
    "nookworks:mercury_bucket",
    "nookworks:methanol",
    "nookworks:methanol_bucket",
    "nookworks:mixed_amalgam",
    "nookworks:nukadoko",
+   "nookworks:plated_stir_fried_vegetables",
    "nookworks:poster",
    "nookworks:printing_press",
    "nookworks:raw_udon",
@@ -8143,6 +8476,8 @@
    "nookworks:karaage",
    "nookworks:oil_cake",
    "nookworks:oil_can",
+   "nookworks:plated_fried_rice",
+   "nookworks:plated_stir_fried_vegetables",
    "nookworks:soap",
    "nookworks:stir_fried_vegetables",
    "nookworks:tamagoyaki",

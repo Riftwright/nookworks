@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 632
+          "weight": 603
         },
         {
           "type": "minecraft:item",
@@ -71,7 +71,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:bone",
-          "weight": 25
+          "weight": 40
         },
         {
           "type": "minecraft:item",
@@ -148,6 +148,26 @@
           "type": "minecraft:item",
           "name": "nookworks:rare_seed",
           "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:feather",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:wooden_hoe",
+          "weight": 4,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.2,
+                "max": 0.6
+              }
+            }
+          ]
         }
       ]
     }

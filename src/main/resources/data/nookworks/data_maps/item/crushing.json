@@ -125,10 +125,10 @@
       "result": "minecraft:gravel"
     },
     "minecraft:basalt": {
-      "result": "minecraft:gravel"
+      "result": "nookworks:basalt_gravel"
     },
     "minecraft:smooth_basalt": {
-      "result": "minecraft:gravel"
+      "result": "nookworks:basalt_gravel"
     },
     "minecraft:coal_block": {
       "result": "minecraft:coal",

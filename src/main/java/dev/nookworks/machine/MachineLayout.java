@@ -22,7 +22,9 @@ public enum MachineLayout {
     // The Generator's screen: the flame, the slot a bucket or bottle of biodiesel is poured from, the tank it fills.
     DIESEL_GENERATOR(Gauge.FLAME, 80, 26, -1, -1, List.of(in(80, 48)), List.of(tank(135, Flow.IN))),
     CRUSHER(Gauge.ARROW, 72, 36, 108, 56, List.of(in(48, 36), out(104, 36)), List.of()),
-    STONE_MAKER(Gauge.ARROW, 60, 36, 92, 56, List.of(out(88, 36)), List.of()),
+    // What it makes in the middle, the water bucket or blue ice on its left and the lava bucket on its right, an arrow
+    // from each to the middle (the user's drawing, 2026-11-14); slot 0 stays the output, as 1.6 saved it.
+    STONE_MAKER(Gauge.ARROW, 52, 36, 84, 56, List.of(out(80, 36), in(32, 36), in(128, 36)), List.of()),
     LASER(Gauge.BEAM, 30, 42, -1, -1, List.of(), List.of()),
     PLANTER(Gauge.NONE, 0, 0, -1, -1, grid(62, 20, 3, 3, false), List.of()),
     // Input, the nine results, then the mesh fitted under the input (slot 10: SifterBlockEntity.MESH).
@@ -145,6 +147,31 @@ public enum MachineLayout {
     /** Whether this is the screen of a machine that makes power rather than uses it. */
     public boolean generates() {
         return this == GENERATOR || this == DIESEL_GENERATOR;
+    }
+
+    /**
+     * Two arrows meeting at the output, the second the first mirrored about the screen's middle: what comes from the
+     * left and from the right meets there (the Stone Maker's lava and water).
+     */
+    public boolean meets() {
+        return this == STONE_MAKER;
+    }
+
+    /**
+     * Slots of the machine's own in its Extra Slots tab, after the ones its bay shows (the Stone Maker's soul soil): the
+     * client's stand-in container has room for them (MachineMenu).
+     */
+    public int extraSlots() {
+        return this == STONE_MAKER ? 1 : 0;
+    }
+
+    /**
+     * The most the machine's {@code slot} holds, however it comes - a shift-click, another mod's pipe, an Item Warp: the
+     * Stone Maker keeps one water bucket or blue ice, one lava bucket and one soul soil, as a hopper's one at a time leaves
+     * there (64 blue ice went in at a shift-click, and sat there unused: 1.7 review). A container's own most otherwise.
+     */
+    public int slotLimit(int slot) {
+        return this == STONE_MAKER && slot != StoneMakerBlockEntity.OUTPUT ? 1 : net.minecraft.world.item.Item.ABSOLUTE_MAX_STACK_SIZE;
     }
 
     public static MachineLayout byId(int id) {

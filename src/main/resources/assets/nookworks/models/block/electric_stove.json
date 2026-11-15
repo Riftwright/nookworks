@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top": "nookworks:block/electric_stove_top",
+    "bottom": "nookworks:block/machine_bottom",
+    "side": "nookworks:block/electric_stove_side",
+    "front": "nookworks:block/electric_stove_front"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_item_frame"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:item_frame",
+    "#c:ingots/brass"
+  ],
+  "result": {
+    "id": "nookworks:brass_item_frame"
+  }
+}

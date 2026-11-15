@@ -23,7 +23,7 @@ SMALL = {
     "nookworks:raw_zinc": 3.0,
     "minecraft:iron_nugget": 2.0, "minecraft:gold_nugget": 2.0, "minecraft:copper_nugget": 2.0,
     "minecraft:lapis_lazuli": 2.5, "minecraft:amethyst_shard": 2.5, "minecraft:emerald": 2.5,
-    "minecraft:diamond": 2.5, "minecraft:quartz": 2.5, "minecraft:glowstone_dust": 2.0,
+    "minecraft:diamond": 2.5, "minecraft:quartz": 2.5, "minecraft:glowstone_dust": 2.0, "nookworks:sulfur_dust": 2.0,
     "nookworks:rare_seed": 2.0, "minecraft:pitcher_pod": 2.0, "nookworks:brown_rice": 1.5,
     "minecraft:wheat_seeds": 1.5, "minecraft:beetroot_seeds": 1.5, "minecraft:pumpkin_seeds": 1.5, "minecraft:melon_seeds": 1.5,
     "nookworks:corn_kernels": 1.5, "nookworks:sunflower_seeds": 1.5,

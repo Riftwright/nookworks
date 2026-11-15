@@ -65,7 +65,7 @@ public class NookworksJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(new CrushingCategory(gui), new RecyclingCategory(gui), new ElectrolysisCategory(gui), new SiftingCategory(gui), new SpawnEggBrewingCategory(gui),
                 new MercuryCategories.RetortCategory(gui), new MercuryCategories.AmalgamCategory(gui), new MercuryCategories.DistilCategory(gui),
                 new MercuryCategories.MudCategory(gui),
-                new KitchenCategories.PotCategory(gui), new KitchenCategories.PressingCategory(gui), new KitchenCategories.PicklingCategory(gui),
+                new KitchenCategories.PotCategory(gui), new KitchenCategories.PotCategory(gui, true), new KitchenCategories.PressingCategory(gui), new KitchenCategories.PicklingCategory(gui),
                 new KitchenCategories.PolishingCategory(gui), new PrintingCategory(gui),
                 new KitchenCategories.HandWorkCategory(gui, KitchenCategories.MILLING, "block.nookworks.hand_quern",
                         ModKitchen.HAND_QUERN_ITEM.get()),
@@ -102,7 +102,8 @@ public class NookworksJeiPlugin implements IModPlugin {
         registration.addRecipes(MercuryCategories.AMALGAMATION, at(ModItems.STIRRING_TANK.get(), MercuryCategories.amalgamRecipes()));
         registration.addRecipes(MercuryCategories.DISTILLATION, at(ModItems.DISTILLER.get(), MercuryCategories.distilRecipes()));
         registration.addRecipes(MercuryCategories.MUD, at(ModItems.STIRRING_TANK.get(), MercuryCategories.mudRecipes()));
-        registration.addRecipes(KitchenCategories.POT, at(ModCooking.IRON_POT_ITEM.get(), KitchenCategories.potRecipes()));
+        registration.addRecipes(KitchenCategories.POT, at(ModCooking.IRON_POT_ITEM.get(), KitchenCategories.potRecipes(false)));
+        registration.addRecipes(KitchenCategories.PAN, at(ModCooking.FRYING_PAN_ITEM.get(), KitchenCategories.potRecipes(true)));
         registration.addRecipes(KitchenCategories.PRESSING, at(ModOil.OIL_PRESS_ITEM.get(), KitchenCategories.pressingRecipes()));
         registration.addRecipes(KitchenCategories.PICKLING, at(ModCooking.NUKADOKO_ITEM.get(), KitchenCategories.picklingRecipes()));
         registration.addRecipes(KitchenCategories.POLISHING, at(ModCrops.RICE_POLISHER_ITEM.get(), KitchenCategories.polishingRecipes()));
@@ -155,6 +156,7 @@ public class NookworksJeiPlugin implements IModPlugin {
         station(registration, MercuryCategories.DISTILLATION, ModItems.DISTILLER.get());
         station(registration, MercuryCategories.MUD, ModItems.STIRRING_TANK.get());
         station(registration, KitchenCategories.POT, ModCooking.IRON_POT_ITEM.get());
+        station(registration, KitchenCategories.PAN, ModCooking.FRYING_PAN_ITEM.get());
         station(registration, KitchenCategories.PRESSING, ModOil.OIL_PRESS_ITEM.get(),
                 ModOil.MOTOR_ITEM.get());
         station(registration, KitchenCategories.PICKLING, ModCooking.NUKADOKO_ITEM.get());

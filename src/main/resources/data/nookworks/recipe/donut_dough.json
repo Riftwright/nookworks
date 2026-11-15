@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:donut_dough"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#c:flours/wheat",
+    "#c:flours/wheat",
+    "minecraft:sugar",
+    "#c:eggs"
+  ],
+  "result": {
+    "id": "nookworks:donut_dough",
+    "count": 4
+  }
+}

@@ -8,6 +8,15 @@
         "class": "dev/nookworks/client/SquintPose",
         "field": "SHADING"
       }
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "NOOKWORKS_CARRYING_TRAY",
+      "constructor": "(ZZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "dev/nookworks/client/TrayCarry",
+        "field": "CARRYING"
+      }
     }
   ]
 }

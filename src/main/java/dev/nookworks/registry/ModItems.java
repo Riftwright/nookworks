@@ -219,6 +219,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> DEEPSLATE_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.DEEPSLATE_GRAVEL);
     public static final DeferredItem<BlockItem> NETHER_GRIT = ITEMS.registerSimpleBlockItem(ModBlocks.NETHER_GRIT);
     public static final DeferredItem<BlockItem> END_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.END_GRAVEL);
+    public static final DeferredItem<BlockItem> BASALT_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.BASALT_GRAVEL);
     public static final DeferredItem<BlockItem> STONY_DIRT = ITEMS.registerSimpleBlockItem(ModBlocks.STONY_DIRT);
     public static final DeferredItem<BlockItem> PEBBLES = ITEMS.registerSimpleBlockItem(ModBlocks.PEBBLES);
     public static final DeferredItem<BlockItem> WATER_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_PUMP);
@@ -254,6 +255,15 @@ public final class ModItems {
     public static final DeferredItem<PosterItem> POSTER = ITEMS.registerItem("poster",
             PosterItem::new, p -> p.stacksTo(16));
     public static final DeferredItem<LabelItem> LABEL = ITEMS.registerItem("label", LabelItem::new);
+    /** Item frames of dark oak and of brass; either also frames a poster: see {@link dev.nookworks.poster.PictureFrames}. */
+    public static final DeferredItem<dev.nookworks.poster.NookItemFrameItem> DARK_OAK_ITEM_FRAME = ITEMS.registerItem("dark_oak_item_frame",
+            p -> new dev.nookworks.poster.NookItemFrameItem(ModEntities.DARK_OAK_ITEM_FRAME, p));
+    public static final DeferredItem<dev.nookworks.poster.NookItemFrameItem> DARK_OAK_GLOW_ITEM_FRAME = ITEMS.registerItem(
+            "dark_oak_glow_item_frame", p -> new dev.nookworks.poster.NookItemFrameItem(ModEntities.DARK_OAK_GLOW_ITEM_FRAME, p));
+    public static final DeferredItem<dev.nookworks.poster.NookItemFrameItem> BRASS_ITEM_FRAME = ITEMS.registerItem("brass_item_frame",
+            p -> new dev.nookworks.poster.NookItemFrameItem(ModEntities.BRASS_ITEM_FRAME, p));
+    public static final DeferredItem<dev.nookworks.poster.NookItemFrameItem> BRASS_GLOW_ITEM_FRAME = ITEMS.registerItem(
+            "brass_glow_item_frame", p -> new dev.nookworks.poster.NookItemFrameItem(ModEntities.BRASS_GLOW_ITEM_FRAME, p));
 
     // ---- Velarium gear (crafted from ingots like iron gear, no smithing template) ----
     public static final DeferredItem<Item> VELARIUM_SWORD = ITEMS.registerItem("velarium_sword", Item::new,

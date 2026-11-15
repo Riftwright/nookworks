@@ -4,49 +4,49 @@
       "model": "nookworks:block/hub_stone_off"
     },
     "power=1": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_6"
     },
     "power=2": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_5"
     },
     "power=3": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_4"
     },
     "power=4": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_3"
     },
     "power=5": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_2"
     },
     "power=6": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_1"
     },
     "power=7": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_0"
     },
     "power=8": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_7"
     },
     "power=9": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_6"
     },
     "power=10": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_5"
     },
     "power=11": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_4"
     },
     "power=12": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_3"
     },
     "power=13": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_2"
     },
     "power=14": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_1"
     },
     "power=15": {
-      "model": "nookworks:block/hub_stone_on"
+      "model": "nookworks:block/hub_stone_flow_0"
     }
   }
 }

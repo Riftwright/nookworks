@@ -5,7 +5,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import dev.nookworks.cooking.GrillBlock;
+import dev.nookworks.cooking.IronPotBlock;
 import dev.nookworks.feature.UnlitCampfires;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,6 +29,19 @@ abstract class CampfireBlockMixin {
         BlockState state = cir.getReturnValue();
         if (state != null && context.getPlayer() != null && UnlitCampfires.active() && state.getValue(CampfireBlock.LIT)) {
             cir.setReturnValue(state.setValue(CampfireBlock.LIT, false));
+        }
+    }
+
+    /**
+     * Trial (the cooking review, 2026-11-14): a campfire under a Grill astride it, or under a pot or pan on that grate,
+     * sends up no smoke of its own - the column came up through the pot and hid what was in it. The pot's steam and
+     * the grill's own smoke still show.
+     */
+    @Inject(method = "makeParticles", at = @At("HEAD"), cancellable = true)
+    private static void nookworks$noSmokeUnderCookware(Level level, BlockPos pos, boolean isSignalFire, boolean smoking, CallbackInfo ci) {
+        BlockState above = level.getBlockState(pos.above());
+        if (GrillBlock.overFire(above) || above.getBlock() instanceof IronPotBlock && above.getValue(IronPotBlock.ON_GRILL)) {
+            ci.cancel();
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.nookworks.item;
 
+import dev.nookworks.registry.ModSounds;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TriState;
 import net.minecraft.world.InteractionHand;
@@ -75,8 +75,10 @@ public class MagnetItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         boolean on = !isActive(stack);
         stack.set(ModDataComponents.MAGNET_ACTIVE.get(), on);
-        level.playSound(null, player.blockPosition(), on ? SoundEvents.BEACON_ACTIVATE : SoundEvents.BEACON_DEACTIVATE,
-                SoundSource.PLAYERS, 0.4F, on ? 1.6F : 1.2F);
+        // its own short switch, up for on and down for off, and a moment before the next (it was a beacon's three
+        // seconds, with nothing to stop a held click stacking them)
+        level.playSound(null, player.blockPosition(), ModSounds.MAGNET_SWITCH.get(), SoundSource.PLAYERS, 0.5F, on ? 1.15F : 0.85F);
+        player.getCooldowns().addCooldown(stack, 8);
         if (!level.isClientSide()) {
             player.sendOverlayMessage(Component.translatable(on ? "message.nookworks.magnet.on" : "message.nookworks.magnet.off"));
         }

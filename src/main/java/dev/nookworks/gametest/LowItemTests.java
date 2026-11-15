@@ -270,21 +270,22 @@ final class LowItemTests {
 
     /**
      * 25: a heated pot's recipe is kept as found while nothing it rests on changes, and found again as soon as it does:
-     * sugar alone in oil cooks nothing, and three eggs added make it tamagoyaki.
+     * salt alone in oil cooks nothing, and two potatoes added make it French fries (it was sugar and eggs to tamagoyaki,
+     * the Frying Pan's since the cooking review, 2026-11-14).
      */
     private static void potFindsAgain(GameTestHelper helper) {
         BlockPos pos = new BlockPos(1, 2, 1);
         helper.setBlock(pos.below(), Blocks.MAGMA_BLOCK);
         helper.setBlock(pos, ModCooking.IRON_POT.get());
         IronPotBlockEntity pot = helper.getBlockEntity(pos, IronPotBlockEntity.class);
-        check(helper, pot.addLiquid(PotRecipe.Liquid.OIL, 1_000) && pot.addIngredient(new ItemStack(Items.SUGAR)), "oil and sugar go in");
+        check(helper, pot.addLiquid(PotRecipe.Liquid.OIL, 1_000) && pot.addIngredient(new ItemStack(ModItems.SALT.get())), "oil and salt go in");
         helper.runAfterDelay(5, () -> {
-            check(helper, !helper.getBlockState(pos).getValue(IronPotBlock.COOKING), "sugar alone in oil cooks nothing");
-            for (int i = 0; i < 3; i++) {
-                check(helper, pot.addIngredient(new ItemStack(Items.EGG)), "an egg goes in");
+            check(helper, !helper.getBlockState(pos).getValue(IronPotBlock.COOKING), "salt alone in oil cooks nothing");
+            for (int i = 0; i < 2; i++) {
+                check(helper, pot.addIngredient(new ItemStack(Items.POTATO)), "a potato goes in");
             }
             helper.succeedWhen(() -> check(helper, helper.getBlockState(pos).getValue(IronPotBlock.COOKING),
-                    "with three eggs, the recipe is found again and it cooks"));
+                    "with two potatoes, the recipe is found again and it cooks"));
         });
     }
 

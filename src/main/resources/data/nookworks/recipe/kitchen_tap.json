@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:kitchen_tap",
+        "nookworks:brass_ingot"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "nookworks:brass_ingot",
+    "P": "nookworks:copper_pipe"
+  },
+  "pattern": [
+    "BB",
+    "P "
+  ],
+  "result": {
+    "id": "nookworks:kitchen_tap",
+    "count": 1
+  }
+}

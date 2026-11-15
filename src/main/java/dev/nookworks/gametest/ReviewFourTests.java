@@ -338,7 +338,8 @@ final class ReviewFourTests {
         return entity instanceof MachineBlockEntity machine ? machine.energy()
                 : entity instanceof LaserBlockEntity laser ? laser.energy()
                 : entity instanceof PlanterBlockEntity planter ? planter.energy()
-                : entity instanceof SpawnerLinkReceiverBlockEntity receiver ? receiver.energy() : null;
+                : entity instanceof SpawnerLinkReceiverBlockEntity receiver ? receiver.energy()
+                : entity instanceof dev.nookworks.cooking.ElectricStoveBlockEntity stove ? stove.energy() : null;
     }
 
     /** Every block of ours that keeps a liquid in its item: a tank, or a machine with a tank. */
@@ -423,7 +424,7 @@ final class ReviewFourTests {
     /** Every block of ours that stores FE: each keeps it in its item when broken. */
     static final List<String> POWERED = List.of("repair_box", "water_pump", "crusher", "electric_furnace", "electrolytic_cell",
             "generator", "laser", "motor", "planter", "stone_maker", "distiller", "retort", "stirring_tank", "printing_press",
-            "spawner_link_receiver");
+            "spawner_link_receiver", "electric_stove");
 
     /**
      * Every powered block keeps the power it held in the item it leaves when broken, as its liquids are kept, and set
@@ -776,8 +777,9 @@ final class ReviewFourTests {
     }
 
     /**
-     * Sneaking with an empty hand takes everything off a Tray, a shield in the other hand or not. (Vanilla skips a
-     * block's use for a sneaking player holding anything in either hand, and with a shield nothing came off.)
+     * Sneaking with an empty hand reaches a Tray, a shield in the other hand or not. (Vanilla skips a block's use for a
+     * sneaking player holding anything in either hand, and with a shield nothing came off.) It took everything off
+     * then; since 2026-11-14 it lifts the tray with what is on it, into the hand that holds no shield.
      */
     private static void sneakTakesWithAShield(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
@@ -793,7 +795,10 @@ final class ReviewFourTests {
         var hit = new BlockHitResult(helper.absoluteVec(Vec3.atCenterOf(pos)), Direction.UP,
                 helper.absolutePos(pos), false);
         player.gameMode.useItemOn(player, level, player.getMainHandItem(), InteractionHand.MAIN_HAND, hit);
-        check(helper, tray.isEmpty() && player.getInventory().countItem(Items.BREAD) == 2, "both loaves come off into the hand that holds no shield");
+        var kept = player.getMainHandItem().get(net.minecraft.core.component.DataComponents.CONTAINER);
+        check(helper, helper.getBlockState(pos).isAir() && player.getMainHandItem().is(ModKitchen.WOODEN_TRAY_ITEM.get()) && kept != null
+                && kept.nonEmptyItemCopyStream().filter(stack -> stack.is(Items.BREAD)).count() == 2,
+                "the tray comes up with both loaves into the hand that holds no shield: " + player.getMainHandItem());
         helper.succeed();
     }
 

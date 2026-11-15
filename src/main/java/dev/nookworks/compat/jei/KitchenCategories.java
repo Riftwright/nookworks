@@ -60,6 +60,8 @@ public final class KitchenCategories {
     public record Rising(ItemStack input, ItemStack result, int ticks) {}
 
     public static final IRecipeType<PotRecipe> POT = IRecipeType.create(Nookworks.id("iron_pot"), PotRecipe.class);
+    /** The Frying Pan's recipes ({@code "pan": true}): its own page, as it cooks only those. */
+    public static final IRecipeType<PotRecipe> PAN = IRecipeType.create(Nookworks.id("frying_pan"), PotRecipe.class);
     public static final IRecipeType<Pressing> PRESSING = IRecipeType.create(Nookworks.id("pressing"), Pressing.class);
     public static final IRecipeType<Pickling> PICKLING = IRecipeType.create(Nookworks.id("pickling"), Pickling.class);
     public static final IRecipeType<Polishing> POLISHING = IRecipeType.create(Nookworks.id("polishing"), Polishing.class);
@@ -85,9 +87,10 @@ public final class KitchenCategories {
 
     // ---- lists ----
 
-    public static List<PotRecipe> potRecipes() {
+    /** The Iron Pot's recipes ({@code pan} false) or the Frying Pan's. */
+    public static List<PotRecipe> potRecipes(boolean pan) {
         var level = Minecraft.getInstance().level;
-        return level == null ? List.of() : PotRecipe.all(level).stream().map(RecipeHolder::value).toList();
+        return level == null ? List.of() : PotRecipe.all(level).stream().map(RecipeHolder::value).filter(r -> r.pan() == pan).toList();
     }
 
     public static List<Pressing> pressingRecipes() {
@@ -227,6 +230,12 @@ public final class KitchenCategories {
     public static class PotCategory extends AbstractRecipeCategory<PotRecipe> {
         public PotCategory(IGuiHelper gui) {
             super(POT, Component.translatable("block.nookworks.iron_pot"), gui.createDrawableItemLike(ModCooking.IRON_POT_ITEM.get()), 132, 58);
+        }
+
+        /** The same page for the Frying Pan's recipes. */
+        public PotCategory(IGuiHelper gui, boolean pan) {
+            super(pan ? PAN : POT, Component.translatable(pan ? "block.nookworks.frying_pan" : "block.nookworks.iron_pot"),
+                    gui.createDrawableItemLike(pan ? ModCooking.FRYING_PAN_ITEM.get() : ModCooking.IRON_POT_ITEM.get()), 132, 58);
         }
 
         @Override

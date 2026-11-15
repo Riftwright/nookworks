@@ -11,6 +11,7 @@ import com.mojang.math.Axis;
 import dev.nookworks.cooking.GrillBlock;
 import dev.nookworks.cooking.GrillBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -21,11 +22,17 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 
-/** Draws what lies on a Grill, flat on the grate, one piece in each quarter, as a campfire draws its food. */
+/**
+ * Draws what lies on a Grill, one piece in each quarter of the grate: food that has a dish model ({@link DishModels}:
+ * a steak, a fish, an ear of corn) as that model, smaller (trial of the cooking review, 2026-11-14), anything else
+ * flat on the grate as a campfire draws its food.
+ */
 public class GrillRenderer implements BlockEntityRenderer<GrillBlockEntity, GrillRenderer.State> {
     public static final class State extends BlockEntityRenderState {
         final List<ItemStackRenderState> items = new ArrayList<>();
+        final List<@Nullable StandaloneModelKey<BlockStateModelPart>> dishes = new ArrayList<>();
         /** The top of the grate: low over a fire, at the top of the block standing on its own. */
         float grate = 1.2F / 16;
     }
@@ -46,12 +53,14 @@ public class GrillRenderer implements BlockEntityRenderer<GrillBlockEntity, Gril
             ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(grill, state, partialTicks, camera, breakProgress);
         state.items.clear();
+        state.dishes.clear();
         state.grate = GrillBlock.overFire(grill.getBlockState()) ? 1.2F / 16 : 16.2F / 16;
         int seed = (int) grill.getBlockPos().asLong();
         for (int slot = 0; slot < GrillBlockEntity.SLOTS; slot++) {
             ItemStackRenderState item = new ItemStackRenderState();
             this.itemModels.updateForTopItem(item, grill.items().get(slot), ItemDisplayContext.FIXED, grill.getLevel(), null, seed + slot);
             state.items.add(item);
+            state.dishes.add(DishModels.of(grill.items().get(slot)));
         }
     }
 
@@ -64,6 +73,13 @@ public class GrillRenderer implements BlockEntityRenderer<GrillBlockEntity, Gril
             }
             pose.pushPose();
             pose.translate(slot % 2 == 0 ? 0.28F : 0.72F, state.grate, slot < 2 ? 0.28F : 0.72F);
+            var dish = state.dishes.get(slot);
+            if (dish != null) {
+                pose.rotate(Axis.YP.rotationDegrees(slot * 90.0F + 20.0F));
+                DishModels.draw(dish, 0.62F, state.lightCoords, pose, collector);
+                pose.popPose();
+                continue;
+            }
             pose.rotate(Axis.YP.rotationDegrees(slot * 90.0F + 20.0F));
             pose.rotate(Axis.XP.rotationDegrees(90.0F));
             pose.scale(0.36F, 0.36F, 0.36F);

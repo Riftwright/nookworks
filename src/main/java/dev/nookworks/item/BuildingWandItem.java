@@ -1,5 +1,6 @@
 package dev.nookworks.item;
 
+import dev.nookworks.registry.ModSounds;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Set;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.compat.FeatureGate;
@@ -20,7 +23,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -170,7 +172,7 @@ public class BuildingWandItem extends Item {
             }
             wand.set(ModDataComponents.WAND_BOX.get(), new WandBox(GlobalPos.of(level.dimension(), at), Optional.empty(), template));
             WandWork.say(player, "first_corner");
-            level.playSound(null, at, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.4F, 1.4F);
+            mark(player, 1.0F);
             return;
         }
         if (box.second().isEmpty()) {
@@ -182,7 +184,7 @@ public class BuildingWandItem extends Item {
             wand.set(ModDataComponents.WAND_BOX.get(), box.withSecond(at));
             int[] size = WandBox.size(first, at);
             WandWork.say(player, "second_corner", size[0], size[1], size[2], WandBox.cells(first, at, mode).size());
-            level.playSound(null, at, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.4F, 1.6F);
+            mark(player, 1.15F);
             return;
         }
         fill(level, player, wand, mode, box);
@@ -262,7 +264,19 @@ public class BuildingWandItem extends Item {
         wand.set(ModDataComponents.WAND_MODE.get(), mode);
         wand.remove(ModDataComponents.WAND_BOX.get());
         player.sendOverlayMessage(Component.translatable("message.nookworks.wand.mode", mode.title()));
-        player.level().playSound(null, player.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.3F, 1.8F);
+        mark(player, 1.3F);
+    }
+
+    /**
+     * The wand's own tick, to the one holding it and to no one else: a corner marked or a mode chosen is theirs, not the
+     * room's. (It was vanilla's menu click sent through the level - a stereo file, so every player within 16 blocks
+     * heard a click with no place to it.)
+     */
+    private static void mark(Player player, float pitch) {
+        if (player instanceof ServerPlayer server) {
+            server.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(ModSounds.BUILDING_WAND_MARK.get()),
+                    SoundSource.PLAYERS, server.getX(), server.getY(), server.getZ(), 0.5F, pitch, server.level().getRandom().nextLong()));
+        }
     }
 
     @Override

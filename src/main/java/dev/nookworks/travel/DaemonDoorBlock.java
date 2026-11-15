@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -70,6 +71,8 @@ public class DaemonDoorBlock extends DoorBlock implements EntityBlock {
      * finds it, to shut it again.
      */
     private static final Map<Direction, VoxelShape> LEAF = Shapes.rotateHorizontal(Block.box(0, 0, -2, 16, 16, 0));
+    /** The rail's foot over the open doorway, along the upper half's top, three pixels out from the wall. */
+    private static final Map<Direction, VoxelShape> RAIL = Shapes.rotateHorizontal(Block.box(0, 15, -3, 16, 16, 0));
     /** The doorway one steps into to go through: the middle of the block, not its edges (walking past is not going in). */
     private static final VoxelShape DOORWAY = Block.box(3, 0, 3, 13, 16, 13);
 
@@ -77,9 +80,27 @@ public class DaemonDoorBlock extends DoorBlock implements EntityBlock {
         super(TYPE, properties);
     }
 
+    /**
+     * Shut, the leaf; open, only the rail's foot over the doorway (the upper half's): the leaf is over the wall beside it
+     * then, and a click there shuts it ({@link DaemonLeaf}). An open doorway that took every click hid what stood in it -
+     * a zombie in the doorway could not be hit, nor anything seen through it used (2026-11-13 review).
+     */
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return LEAF.get(front(state));
+        if (!state.getValue(OPEN)) {
+            return LEAF.get(front(state));
+        }
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? RAIL.get(front(state)) : Shapes.empty();
+    }
+
+    /**
+     * Shut, a wall to a mob's path, as an iron door is: no mob opens it - it is in no door tag villagers open, and a zombie
+     * may not break it - and taken for a wooden door, villagers and piglins walked into it and stood pushing (2026-11-13
+     * review). Open, a doorway as any door's.
+     */
+    @Override
+    public @Nullable PathType getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob) {
+        return state.getValue(OPEN) ? super.getBlockPathType(state, level, pos, mob) : PathType.DOOR_IRON_CLOSED;
     }
 
     @Override
@@ -128,11 +149,16 @@ public class DaemonDoorBlock extends DoorBlock implements EntityBlock {
     }
 
     /**
-     * As a door is placed, but not where its dimension has a door already: it says where that one is. The client, which
-     * cannot know, has set it down and used it up already: its inventory is sent again, or the door left its hand.
+     * As a door is placed, but not where its dimension has a door already: it says where that one is. The client, told
+     * where its dimension's door stands ({@link DaemonDoors#heardOtherThan}), does not set it down either: it set it down
+     * and took it away again a moment later, then the message came (the user, 2026-11-13). Should it not have heard,
+     * its inventory is sent again, or the door left its hand.
      */
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+        if (context.getLevel().isClientSide() && DaemonDoors.heardOtherThan(context.getLevel(), context.getClickedPos()) != null) {
+            return null;
+        }
         if (context.getLevel() instanceof ServerLevel level) {
             BlockPos there = DaemonDoors.get(level.getServer()).otherThan(level, context.getClickedPos());
             if (there != null) {
@@ -249,15 +275,17 @@ public class DaemonDoorBlock extends DoorBlock implements EntityBlock {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS, 0.5F,
                     random.nextFloat() * 0.4F + 0.8F, false);
         }
-        // as a nether portal's: each starts a little off the doorway and is drawn back to where it was spawned
+        // as a nether portal's: each starts a little off the gate, on either side of it, and is drawn back to the gate -
+        // its plane, a pixel back from the wall's face (they were spawned at the doorway's back, behind the gate from the
+        // front and spraying into the room behind)
         Direction front = front(state);
         Direction across = front.getClockWise();
-        double plane = 0.5 - 1.5 / 16;
+        double plane = 0.5 - 1.0 / 16;
         for (int i = 0; i < 4; i++) {
             double side = (random.nextDouble() - 0.5) * 0.7;
-            double x = pos.getX() + 0.5 - front.getStepX() * plane + across.getStepX() * side;
+            double x = pos.getX() + 0.5 + front.getStepX() * plane + across.getStepX() * side;
             double y = pos.getY() + random.nextDouble();
-            double z = pos.getZ() + 0.5 - front.getStepZ() * plane + across.getStepZ() * side;
+            double z = pos.getZ() + 0.5 + front.getStepZ() * plane + across.getStepZ() * side;
             double out = random.nextFloat() * (random.nextBoolean() ? 1 : -1);
             level.addParticle(ParticleTypes.PORTAL, x, y, z, front.getStepX() * out, (random.nextFloat() - 0.5) * 0.5, front.getStepZ() * out);
         }

@@ -3,28 +3,22 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:donut"
+        "nookworks:donut",
+        "nookworks:donut_dough"
       ]
     }
   ],
   "type": "nookworks:pot",
   "ingredients": [
     {
-      "ingredient": "#c:flours/wheat",
-      "count": 2
-    },
-    {
-      "ingredient": "minecraft:sugar"
-    },
-    {
-      "ingredient": "#c:eggs"
+      "ingredient": "nookworks:donut_dough"
     }
   ],
   "liquid": "oil",
-  "amount": 100,
+  "amount": 25,
   "time": 200,
   "result": {
     "id": "nookworks:donut",
-    "count": 4
+    "count": 1
   }
 }

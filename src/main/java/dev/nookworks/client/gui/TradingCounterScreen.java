@@ -244,13 +244,13 @@ public class TradingCounterScreen extends AbstractContainerScreen<TradingCounter
         }
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.onPause(event.x(), event.y())) {
             this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, TradingCounterMenu.BUTTON_PAUSE_WHEN_DEAR);
-            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.25F));
             return true;
         }
         int row = this.rowAt(event.x(), event.y());
         if (row >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.menu.getCarried().isEmpty()) {
             this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, row);
-            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.4F));
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.25F));
             return true;
         }
         return super.mouseClicked(event, doubleClick);

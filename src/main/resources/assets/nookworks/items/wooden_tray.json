@@ -1,6 +1,27 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "nookworks:block/wooden_tray"
+    "type": "minecraft:condition",
+    "property": "minecraft:has_component",
+    "component": "minecraft:container",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "nookworks:block/wooden_tray"
+    },
+    "on_true": {
+      "type": "minecraft:composite",
+      "models": [
+        {
+          "type": "minecraft:model",
+          "model": "nookworks:item/wooden_tray_carried"
+        },
+        {
+          "type": "minecraft:special",
+          "base": "nookworks:item/wooden_tray_carried",
+          "model": {
+            "type": "nookworks:tray_contents"
+          }
+        }
+      ]
+    }
   }
 }

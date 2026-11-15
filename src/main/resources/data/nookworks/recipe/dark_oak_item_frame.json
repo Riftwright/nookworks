@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:item_frame",
+    "minecraft:dark_oak_planks"
+  ],
+  "result": {
+    "id": "nookworks:dark_oak_item_frame"
+  }
+}

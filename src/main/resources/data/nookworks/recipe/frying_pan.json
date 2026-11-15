@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:frying_pan"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "#c:rods/wooden"
+  },
+  "pattern": [
+    "II ",
+    "II ",
+    "  S"
+  ],
+  "result": {
+    "id": "nookworks:frying_pan",
+    "count": 1
+  }
+}

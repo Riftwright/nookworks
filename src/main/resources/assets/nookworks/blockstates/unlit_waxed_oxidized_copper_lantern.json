@@ -21,7 +21,7 @@
         "hanging": "false"
       },
       "apply": {
-        "model": "nookworks:block/lantern_soot"
+        "model": "nookworks:block/lantern_soot_copper"
       }
     },
     {
@@ -29,7 +29,7 @@
         "hanging": "true"
       },
       "apply": {
-        "model": "nookworks:block/lantern_soot_hanging"
+        "model": "nookworks:block/lantern_soot_copper_hanging"
       }
     }
   ]

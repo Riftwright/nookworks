@@ -533,6 +533,29 @@ public final class MachineStyle {
         }
     }
 
+    /** {@link #arrow} the other way: from the right to the left, its head at {@code x}. */
+    public static void arrowLeft(GuiGraphicsExtractor g, int x, int y, float done) {
+        int filled = Math.round(ARROW_W * Math.max(0.0F, Math.min(1.0F, done)));
+        int head = ARROW_W - 7;
+        for (int i = 0; i < ARROW_W; i++) {
+            int top;
+            int bottom;
+            if (i < head) {
+                top = y + 6;
+                bottom = y + 10;
+            } else {
+                int t = i - head;
+                top = y + 1 + t;
+                bottom = y + 15 - t;
+            }
+            int column = x + ARROW_W - 1 - i;
+            g.fill(column, top, column + 1, bottom, i < filled ? BRASS : WELL);
+            if (i < filled) {
+                g.fill(column, top, column + 1, top + 1, BRASS_LIT);
+            }
+        }
+    }
+
     private static final String[] FLAME = {
             "......#.......",
             ".....##.......",

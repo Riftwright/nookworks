@@ -57,8 +57,26 @@ public final class ModKitchen {
     public static final DeferredItem<BlockItem> WOODEN_TRAY_ITEM = ModItems.ITEMS.registerSimpleBlockItem(WOODEN_TRAY);
     /** A white glazed plate for the table: one dish served on it (the user, 2026-10-31). */
     public static final DeferredBlock<PlateBlock> PLATE = ModBlocks.BLOCKS.registerBlock("plate", PlateBlock::new,
-            p -> p.mapColor(MapColor.QUARTZ).strength(0.3F).sound(SoundType.DECORATED_POT).noOcclusion().pushReaction(PushReaction.POPPED));
+            // its shape is what is on it, as tall as it stands: worked out each time, not kept with the state
+            p -> p.mapColor(MapColor.QUARTZ).strength(0.3F).sound(SoundType.DECORATED_POT).noOcclusion().dynamicShape()
+                    .pushReaction(PushReaction.POPPED));
     public static final DeferredItem<BlockItem> PLATE_ITEM = ModItems.ITEMS.registerSimpleBlockItem(PLATE);
+    /** Dishes in bowls set straight down on a table, one or two (dev.nookworks.cooking.PlacedBowlsBlock); no item of its own. */
+    public static final DeferredBlock<dev.nookworks.cooking.PlacedBowlsBlock> PLACED_BOWLS = ModBlocks.BLOCKS.registerBlock("placed_bowls",
+            dev.nookworks.cooking.PlacedBowlsBlock::new, p -> p.mapColor(MapColor.NONE).strength(0.2F).sound(SoundType.WOOD)
+                    .noOcclusion().forceSolidOff().noLootTable().pushReaction(PushReaction.POPPED));
+    /**
+     * Fried rice and stir-fried vegetables served on a plate (dev.nookworks.cooking.Plating): as filling as in a bowl,
+     * and the Plate is left when they are eaten.
+     */
+    public static final DeferredItem<Item> PLATED_FRIED_RICE = plated("plated_fried_rice", 9, 0.8F);
+    public static final DeferredItem<Item> PLATED_STIR_FRIED_VEGETABLES = plated("plated_stir_fried_vegetables", 8, 0.8F);
+
+    private static DeferredItem<Item> plated(String name, int nutrition, float saturation) {
+        return ModItems.ITEMS.registerItem(name, dev.nookworks.cooking.PlatedDishItem::new, p -> p.stacksTo(16)
+                .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation).build())
+                .usingConvertsTo(PLATE_ITEM.get()));
+    }
     public static final DeferredItem<Item> BREAD_DOUGH = ModItems.ITEMS.registerSimpleItem("bread_dough");
     public static final DeferredItem<Item> RISEN_DOUGH = ModItems.ITEMS.registerSimpleItem("risen_dough");
     public static final DeferredItem<Item> UDON_DOUGH = ModItems.ITEMS.registerSimpleItem("udon_dough");

@@ -132,13 +132,14 @@ final class CookingTests {
     }
 
     /**
-     * A Bowl of Rice goes into the pot in its bowl and, taken back out, is still in it: no bowl comes from nowhere. Fried
-     * into fried rice, its bowl is freed and the fried rice is served back into it by hand.
+     * A Bowl of Rice goes into the Frying Pan in its bowl and, taken back out, is still in it: no bowl comes from nowhere.
+     * Fried into fried rice, its bowl is freed and the fried rice is served back into it by hand. (The pan's since the
+     * cooking review, 2026-11-14; the pot it shares its block entity with counted the same way.)
      */
     private static void potCountsItsBowls(GameTestHelper helper) {
         BlockPos pos = new BlockPos(1, 2, 1);
         helper.setBlock(pos.below(), Blocks.MAGMA_BLOCK);
-        helper.setBlock(pos, ModCooking.IRON_POT.get());
+        helper.setBlock(pos, ModCooking.FRYING_PAN.get());
         ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
         IntSupplier bowls = () -> player.getInventory().countItem(Items.BOWL);
         BlockState pot = helper.getBlockState(pos);

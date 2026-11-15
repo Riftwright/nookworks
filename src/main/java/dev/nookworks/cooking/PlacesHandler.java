@@ -26,6 +26,21 @@ public final class PlacesHandler<S> extends SnapshotJournal<S> implements Resour
         /** Whether a thing like {@code resource} goes in at all. */
         boolean takes(ItemResource resource);
 
+        /** Whether one goes into the empty {@code place}, as the rest of the block stands: wherever it goes at all, unless the block says otherwise. */
+        default boolean takesAt(int place, ItemResource resource) {
+            return this.takes(resource);
+        }
+
+        /** How many of {@code resource} one place holds: one, unless the block lays small things together (a tray's cookies). */
+        default int most(int place, ItemResource resource) {
+            return 1;
+        }
+
+        /** How many more of {@code resource} lie with what is in {@code place} already; none where a place holds one thing. */
+        default int more(int place, ItemResource resource) {
+            return 0;
+        }
+
         /** Puts {@code one} (a single thing) into the empty {@code place}, starting whatever it does there. */
         void put(int place, ItemStack one);
 
@@ -66,7 +81,7 @@ public final class PlacesHandler<S> extends SnapshotJournal<S> implements Resour
 
     @Override
     public long getCapacityAsLong(int index, ItemResource resource) {
-        return 1;
+        return this.places.most(index, resource);
     }
 
     @Override
@@ -76,12 +91,29 @@ public final class PlacesHandler<S> extends SnapshotJournal<S> implements Resour
 
     @Override
     public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
-        if (amount <= 0 || resource.isEmpty() || !this.places.at(index).isEmpty() || !this.places.takes(resource)) {
+        if (amount <= 0 || resource.isEmpty() || !this.places.takes(resource)) {
+            return 0;
+        }
+        ItemStack held = this.places.at(index);
+        if (held.isEmpty()) {
+            if (!this.places.takesAt(index, resource)) {
+                return 0;
+            }
+            this.updateSnapshots(transaction);
+            this.places.put(index, resource.toStack(1));
+            int with = Math.min(amount - 1, this.places.more(index, resource));
+            if (with > 0) {
+                this.places.at(index).grow(with);
+            }
+            return 1 + Math.max(with, 0);
+        }
+        int more = resource.matches(held) ? Math.min(amount, this.places.more(index, resource)) : 0;
+        if (more <= 0) {
             return 0;
         }
         this.updateSnapshots(transaction);
-        this.places.put(index, resource.toStack(1));
-        return 1;
+        held.grow(more);
+        return more;
     }
 
     @Override

@@ -1,140 +1,111 @@
-"""Textures for the Planter: a wooden seed box with a drill chute in front.
+"""Textures for the Planter: one of the machines, a seed drill in a steel cabinet.
 
-It is the one farm machine, so it is made of the farm's materials rather than the workshop's steel: oak boards
-held by iron corner straps, a top of tilled soil sown in rows, and on the front the hopper window where the seeds
-show and the brass chute they drop through into the field.
+It was a wooden seed box, the farm's own materials (it is the one farm machine). But it runs on power, opens the
+machines' screen and carries their lamp, and beside the Crusher and the Stone Maker the box looked like something else
+(the user, 2026-11-14: 他の機械と揃えて、シャーシとか使って、見た目も機械っぽく作っていい気がする). So it is drawn in
+the family tools/textures/gen_machine_faces.py draws: the near-black frame with pale studs, a dark steel panel, brass
+where there is a fitting - and what it is for shows in the brass: seed.
 
-- planter_side.png    the sides and back
-- planter_top.png     soil in furrows, sprouting
-- planter_front.png   seed window and chute (the face the field is in front of)
-- planter_bottom.png  plain boards
+- planter_front.png   a seed window in a brass frame, the seed heaped against the glass, and under it the brass drill
+                      tube the seed drops through (the face the field is in front of); the status lamp where
+                      gen_machine_faces.LAMPS has it
+- planter_side.png    the sides and back: louvres, and a brass hatch low down
+- planter_top.png     the hopper's mouth: a brass rim round a dark funnel heaped with seed - where seed goes in
+- planter_bottom.png  the machines' own underside
 
-Every face is 16x16 and fully opaque: the block is a plain cube.
+Every face is 16x16 and fully opaque: the block is a plain cube. Drawn flat, then finished with texkit.shade as the
+other machines' faces are; the seed's three colours are kept as drawn.
 
 Run from the repo root:  python tools/textures/gen_planter.py
 """
-import random
-from pathlib import Path
+import gen_machine_faces as m
+import texkit
 
-from PIL import Image
-
-from gen_machine_faces import LAMPS, lamp
-
-ROOT = Path(__file__).resolve().parents[2]
-BLOCK = ROOT / "src/main/resources/assets/nookworks/textures/block"
-
-OAK_LIT = (196, 160, 102)
-OAK = (168, 134, 82)
-OAK_DARK = (132, 102, 58)
-OAK_SEAM = (92, 68, 38)
-IRON_LIT = (190, 190, 186)
-IRON = (128, 128, 126)
-IRON_DARK = (70, 70, 70)
-SOIL_LIT = (116, 84, 56)
-SOIL = (88, 62, 40)
-SOIL_DARK = (60, 42, 28)
-LEAF_LIT = (140, 206, 86)
-LEAF = (92, 160, 58)
-BRASS_LIT = (236, 204, 120)
-BRASS = (196, 152, 70)
-BRASS_DARK = (122, 88, 38)
-GLASS = (46, 52, 50)
-SEED = (214, 190, 110)
-SEED_DARK = (150, 124, 60)
-DEEP = (24, 18, 12)
+SEED = ((136, 120, 62), (168, 150, 84), (198, 180, 110))
+# the seed in the hopper's mouth, from above: t the shade, u the body, v the light
+HEAP = ["uvvuvu",
+        "vuvvut",
+        "uvuutu",
+        "vuutut",
+        "utuutt",
+        "tuttut"]
+TONE = {"t": SEED[0], "u": SEED[1], "v": SEED[2]}
 
 
-def px(img, x, y, c):
-    img.putpixel((x, y), c + (255,))
-
-
-def boards(seed):
-    """Three horizontal oak boards with grain, seams between them."""
-    rng = random.Random(seed)
-    img = Image.new("RGBA", (16, 16))
-    for y in range(16):
-        row = y % 5
-        for x in range(16):
-            if row == 4 or y == 15:
-                c = OAK_SEAM
-            elif row == 0:
-                c = OAK_LIT
-            else:
-                c = rng.choice((OAK, OAK, OAK, OAK_DARK))
-            px(img, x, y, c)
+def front():
+    img = m.blank()
+    m.cabinet_elev(img, 0, 15)
+    # the seed window: brass round dark glass, the seed heaped against it
+    m.rect(img, 3, 3, 12, 8, m.BRASS_LO)
+    m.hline(img, 3, 12, 3, m.BRASS_HI)
+    m.vline(img, 3, 3, 8, m.BRASS)
+    m.hline(img, 4, 12, 8, m.BRASS_DK)
+    m.vline(img, 12, 4, 8, m.BRASS_DK)
+    for y in range(4, 8):
+        for x in range(4, 12):
+            m.put(img, x, y, m.GLASS_DK)
+    for x, top in zip(range(4, 12), (7, 6, 6, 5, 6, 6, 7, 7)):
+        for y in range(top, 8):
+            m.put(img, x, y, SEED[2] if y == top else SEED[1] if (x + y) % 2 else SEED[0])
+    m.put(img, 5, 4, m.GLASS_HI)
+    m.put(img, 6, 4, m.GLASS)
+    # the drill tube: a collar, the pipe, its open mouth over the field
+    m.hline(img, 5, 10, 10, m.BRASS_HI)
+    m.put(img, 10, 10, m.BRASS_LO)
+    for y in (11, 12):
+        m.put(img, 6, y, m.BRASS)
+        m.put(img, 7, y, m.BRASS_HI)
+        m.put(img, 8, y, m.BRASS)
+        m.put(img, 9, y, m.BRASS_DK)
+    m.hline(img, 5, 10, 13, m.BRASS_LO)
+    m.put(img, 5, 13, m.BRASS)
+    m.hline(img, 6, 9, 13, m.BAR_SH)
     return img
 
 
-def straps(img):
-    """Iron straps down both edges, a nail through each board."""
-    for y in range(16):
-        px(img, 0, y, IRON_DARK)
-        px(img, 1, y, IRON_LIT)
-        px(img, 2, y, IRON)
-        px(img, 13, y, IRON_LIT)
-        px(img, 14, y, IRON)
-        px(img, 15, y, IRON_DARK)
-    for y in (2, 7, 12):
-        px(img, 1, y, IRON_DARK)
-        px(img, 14, y, IRON_DARK)
-
-
 def side():
-    img = boards(31)
-    straps(img)
+    img = m.blank()
+    m.cabinet_elev(img, 0, 15)
+    for y in (4, 7):  # louvres
+        m.hline(img, 4, 11, y, m.BAR_SH)
+        m.hline(img, 4, 11, y + 1, m.DARK_HI)
+    m.rect(img, 5, 10, 10, 13, m.BRASS_LO)  # the hatch the seed is looked at through
+    m.hline(img, 5, 10, 10, m.BRASS_HI)
+    m.vline(img, 5, 10, 13, m.BRASS)
+    m.hline(img, 6, 10, 13, m.BRASS_DK)
+    m.put(img, 9, 12, m.BOLT)
     return img
 
 
 def top():
-    """Tilled soil in three furrows, a seedling up in each, inside a wooden rim."""
-    rng = random.Random(37)
-    img = Image.new("RGBA", (16, 16))
-    for y in range(16):
-        for x in range(16):
-            if x in (0, 15) or y in (0, 15):
-                c = OAK_SEAM
-            elif x in (1, 14) or y in (1, 14):
-                c = OAK_LIT if x == 1 or y == 1 else OAK_DARK
-            else:
-                ridge = (y - 2) % 4
-                c = SOIL_LIT if ridge == 0 else SOIL_DARK if ridge == 3 else rng.choice((SOIL, SOIL, SOIL_DARK))
-            px(img, x, y, c)
-    for i, y in enumerate((3, 7, 11)):
-        for x in (4 + i % 2 * 2, 9 + i % 2 * 2):
-            px(img, x, y, LEAF_LIT)
-            px(img, x - 1, y, LEAF)
-            px(img, x, y + 1, LEAF)
+    img = m.blank()
+    m.plan_cabinet(img)
+    m.rect(img, 3, 3, 12, 12, m.BRASS_LO)  # the hopper's rim
+    m.hline(img, 3, 12, 3, m.BRASS_HI)
+    m.vline(img, 3, 3, 12, m.BRASS_HI)
+    m.hline(img, 4, 12, 12, m.BRASS_DK)
+    m.vline(img, 12, 4, 12, m.BRASS_DK)
+    m.rect(img, 4, 4, 11, 11, m.BAR_SH)   # its walls: the far ones in shadow, the near ones catching the light
+    m.hline(img, 5, 11, 11, m.DARK_HI)
+    m.vline(img, 11, 5, 11, m.DARK_HI)
+    for j, row in enumerate(HEAP):
+        for i, ch in enumerate(row):
+            m.put(img, 5 + i, 5 + j, TONE[ch])
     return img
 
 
-def front():
-    img = boards(41)
-    straps(img)
-    # The seed window: a pane in an iron frame with the seeds heaped behind it.
-    for y in range(2, 8):
-        for x in range(4, 12):
-            edge = x in (4, 11) or y in (2, 7)
-            px(img, x, y, IRON if edge else GLASS)
-    for x in range(5, 11):
-        for y in range(5, 7):
-            px(img, x, y, SEED if (x + y) % 3 else SEED_DARK)
-    px(img, 5, 4, SEED)
-    px(img, 9, 4, SEED_DARK)
-    px(img, 5, 3, (120, 130, 126))  # a glint on the glass
-    # The chute the seeds drop out of, down to the field.
-    for y in range(9, 14):
-        w = 2 if y < 12 else 3
-        for x in range(8 - w, 8 + w):
-            c = BRASS_LIT if x == 8 - w else BRASS_DARK if x == 8 + w - 1 else BRASS
-            px(img, x, y, c)
-    px(img, 7, 13, DEEP)
-    px(img, 8, 13, DEEP)
-    lamp(img, *LAMPS["planter_front"])  # its status lamp, lit while it plants
-    return img
+def main():
+    faces = {"front": front(), "side": side(), "top": top(), "bottom": m.machine_bottom()}
+    keep = m.FRAME_KEEP + SEED
+    for i, (name, img) in enumerate(faces.items()):
+        stuff = m.material()
+        stuff.update({c: "plain" for c in SEED})
+        done = texkit.shade(img, 700 + i, keep=keep, material=stuff, **texkit.SMOOTH)
+        if name == "front":
+            m.lamp(done, *m.LAMPS["planter_front"])  # its status lamp, lit while it plants: after the finish, so it stays exact
+        done.save(m.BLOCK / f"planter_{name}.png")
+    print("wrote the planter's four faces")
 
 
 if __name__ == "__main__":
-    faces = {"planter_side": side(), "planter_top": top(), "planter_front": front(), "planter_bottom": boards(43)}
-    for name, image in faces.items():
-        image.save(BLOCK / f"{name}.png")
-        print("wrote", BLOCK / f"{name}.png")
+    main()

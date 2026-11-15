@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0", "1_6_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0", "1_6_0", "1_7_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -168,7 +168,30 @@ final class SaveCompat {
             // each fixture with a scene waits LATER ticks for its second look
             NookworksGameTests.test("save_compat_old_worlds_keep_every_block", WAIT_TICKS + 100 + (LATER + 10) * FIXTURES.size(),
                     SaveCompat::oldWorldsKeepEveryBlock);
+            NookworksGameTests.test("save_compat_lets_an_add_on_give_a_block_of_ours_its_block_entity", SaveCompat::addOnEntity);
         }
+    }
+
+    /**
+     * {@link #same}: a place that kept no block entity, given an add-on's (nookTechnology's Baler) as it loads, holds what
+     * it kept; given one of ours or vanilla's, or one that kept ours and has an add-on's now, it does not.
+     */
+    private static void addOnEntity(GameTestHelper helper) {
+        JsonObject kept = new JsonObject();
+        kept.addProperty("state", Nookworks.MODID + ":baler[facing=north]");
+        java.util.function.Function<String, JsonObject> with = entity -> {
+            JsonObject now = kept.deepCopy();
+            now.addProperty("entity", entity);
+            return now;
+        };
+        check(helper, same(kept, with.apply("nooktech:baler")), "an add-on's block entity on it: the same place");
+        check(helper, !same(kept, with.apply(Nookworks.MODID + ":baler")), "one of ours: changed");
+        check(helper, !same(kept, with.apply("minecraft:chest")), "one of vanilla's: changed");
+        JsonObject turned = with.apply("nooktech:baler");
+        turned.addProperty("state", Nookworks.MODID + ":baler[facing=south]");
+        check(helper, !same(kept, turned), "turned: changed, whatever its block entity");
+        check(helper, !same(with.apply(Nookworks.MODID + ":dice"), with.apply("nooktech:baler")), "ours kept, an add-on's now: changed");
+        helper.succeed();
     }
 
     // ---- the test ----
@@ -217,7 +240,7 @@ final class SaveCompat {
         for (Map.Entry<String, JsonElement> entry : places.entrySet()) {
             JsonObject now = place(level, at(entry.getKey()));
             JsonObject was = intended(name, entry.getValue().getAsJsonObject());
-            if (!now.equals(was)) {
+            if (!same(was, now)) {
                 problems.add(name + " at " + entry.getKey() + ": was " + entry.getValue() + ", now " + now);
             }
             checked[0]++;
@@ -327,6 +350,31 @@ final class SaveCompat {
         return out;
     }
 
+    /**
+     * Whether a place holds what the fixture kept. A block that kept no block entity and has one of another mod's now
+     * (neither ours nor vanilla's) is compared by its state alone: an add-on that makes a block of ours a machine of its
+     * own gives it the add-on's block entity as its chunk loads, and keeps it (nookTechnology's Baler, 2026-11-14).
+     */
+    static boolean same(JsonObject was, JsonObject now) {
+        if (!was.has("entity") && now.has("entity")) {
+            String namespace = Identifier.parse(now.get("entity").getAsString()).getNamespace();
+            if (!namespace.equals(Nookworks.MODID) && !namespace.equals(Identifier.DEFAULT_NAMESPACE)) {
+                JsonObject block = new JsonObject();
+                block.add("state", now.get("state"));
+                return block.equals(was);
+            }
+        }
+        return now.equals(was);
+    }
+
+    /** Whether fixture {@code name} ("1_6_0", "1_0_0_mc26_2") was captured before version {@code major}.{@code minor}. */
+    static boolean before(String name, int major, int minor) {
+        String[] parts = name.split("_");
+        int ma = Integer.parseInt(parts[0]);
+        int mi = Integer.parseInt(parts[1]);
+        return ma < major || ma == major && mi < minor;
+    }
+
     static JsonObject intended(String name, JsonObject was) {
         JsonObject now = was.deepCopy();
         String state = now.get("state").getAsString();
@@ -420,6 +468,21 @@ final class SaveCompat {
                 }
             }
             now.add("items", kept);
+        }
+        if (block.equals(Nookworks.MODID + ":stone_maker") && before(name, 1, 7)) {
+            // 1.7: the Stone Maker makes stone of a lava bucket and a water bucket (or blue ice) kept in its slots (the
+            // user, 2026-11-14); one from before made cobblestone of nothing, those two buckets in its recipe, and is
+            // given them in its slots as it loads (StoneMakerBlockEntity), so it goes on as it did
+            TreeMap<String, Long> items = new TreeMap<>();
+            if (now.has("items")) {
+                for (JsonElement item : now.getAsJsonArray("items")) {
+                    String line = item.getAsString();
+                    items.merge(line.substring(0, line.lastIndexOf(' ')), Long.parseLong(line.substring(line.lastIndexOf(' ') + 1)), Long::sum);
+                }
+            }
+            items.merge("minecraft:lava_bucket", 1L, Long::sum);
+            items.merge("minecraft:water_bucket", 1L, Long::sum);
+            now.add("items", counts(items));
         }
         if (state.equals(Nookworks.MODID + ":filament_bulb")) {
             // 1.0.1: a Filament Bulb switches off and on by hand and by redstone (rope/FilamentBulbBlock, LIT and
@@ -552,9 +615,14 @@ final class SaveCompat {
 
     // ---- what an entity is ----
 
-    /** The entities of ours in a fixture's place of {@code size}, each as {@link #entity} tells it. */
+    /**
+     * The entities of ours in a fixture's place of {@code size}, each as {@link #entity} tells it - and, from 1.7, a
+     * vanilla painting that carries a frame of ours (its attachment is ours to keep loading: 1.7 review).
+     */
     private static List<JsonObject> entities(ServerLevel level, Vec3i size) {
-        return level.getEntitiesOfClass(Entity.class, box(size), e -> !e.isRemoved() && ours(e.getType())).stream()
+        return level.getEntitiesOfClass(Entity.class, box(size), e -> !e.isRemoved() && (ours(e.getType())
+                || e instanceof net.minecraft.world.entity.decoration.painting.Painting painting
+                        && !dev.nookworks.poster.PaintingFrames.frame(painting).isEmpty())).stream()
                 .map(SaveCompat::entity).toList();
     }
 
@@ -598,6 +666,21 @@ final class SaveCompat {
             out.addProperty("facing", poster.getDirection().getSerializedName());
             out.addProperty("design", String.valueOf(poster.variantId()));
             out.addProperty("box", box(poster.getBoundingBox()));
+            if (!poster.frame().isEmpty()) { // from 1.7: the frame round it
+                out.addProperty("frame", item(entity, poster.frame()));
+            }
+        }
+        if (entity instanceof net.minecraft.world.entity.decoration.painting.Painting painting) {
+            out.addProperty("post", rel(painting.getPos()));
+            out.addProperty("facing", painting.getDirection().getSerializedName());
+            out.addProperty("design", painting.getVariant().unwrapKey().map(key -> key.identifier().toString()).orElse("?"));
+            out.addProperty("frame", item(entity, dev.nookworks.poster.PaintingFrames.frame(painting)));
+        }
+        if (entity instanceof dev.nookworks.poster.NookItemFrame frame) {
+            out.addProperty("post", rel(frame.getPos()));
+            out.addProperty("facing", frame.getDirection().getSerializedName());
+            out.addProperty("holds", item(entity, frame.getItem()));
+            out.addProperty("turned", frame.getRotation());
         }
         if (entity instanceof LabelEntity label) {
             out.addProperty("post", rel(label.getPos()));
@@ -767,7 +850,7 @@ final class SaveCompat {
             throw new IllegalStateException("cannot write the fixture to " + dir, e);
         }
         clearAll(level, AT, size);
-        check(helper, entities.size() == 21, "the scene holds 21 entities of ours (four knots, seven hung things, three posters, three labels, a seat, two boats, a tied load): " + entities);
+        check(helper, entities.size() == 26, "the scene holds 26 entities of ours (four knots, seven hung things, three posters, three labels, a seat, two boats, a tied load, four item frames, a framed painting): " + entities);
         Nookworks.LOGGER.info("save compat fixture {}: {} blocks, {} places, {} entities, written to {}", name, blocks.size(),
                 places.size(), entities.size(), dir);
         helper.succeed();
@@ -838,8 +921,35 @@ final class SaveCompat {
         PosterEntity square = new PosterEntity(level, s.offset(17, 1, 6), Direction.NORTH, PhotoPrints.id(42, new Photo.Size(2, 2)));
         PosterEntity wide = new PosterEntity(level, s.offset(14, 2, 6), Direction.NORTH, PhotoPrints.id(43, new Photo.Size(2, 1)));
         check(helper, square.survives() && wide.survives(), "the printed photos go on the wall");
+        square.setFrame(new ItemStack(ModItems.BRASS_GLOW_ITEM_FRAME.get())); // from 1.7: framed
         level.addFreshEntity(square);
         level.addFreshEntity(wide);
+        // from 1.7, the item frames of ours on a wall of their own, facing west: dark oak and brass, plain and glowing,
+        // three holding something (one of them turned) and one empty
+        for (BlockPos stone : BlockPos.betweenClosed(s.offset(26, 1, 4), s.offset(26, 2, 5))) {
+            level.setBlockAndUpdate(stone, Blocks.STONE.defaultBlockState());
+        }
+        var frameTypes = List.of(ModEntities.DARK_OAK_ITEM_FRAME.get(), ModEntities.DARK_OAK_GLOW_ITEM_FRAME.get(),
+                ModEntities.BRASS_ITEM_FRAME.get(), ModEntities.BRASS_GLOW_ITEM_FRAME.get());
+        var frameAt = List.of(s.offset(25, 1, 4), s.offset(25, 2, 4), s.offset(25, 1, 5), s.offset(25, 2, 5));
+        var framed = List.of(new ItemStack(Items.COMPASS), new ItemStack(Items.CLOCK), new ItemStack(Items.DIAMOND), ItemStack.EMPTY);
+        for (int i = 0; i < frameTypes.size(); i++) {
+            var frame = new dev.nookworks.poster.NookItemFrame(frameTypes.get(i), level, frameAt.get(i), Direction.WEST);
+            check(helper, frame.survives(), "the item frame goes on the wall: " + frameTypes.get(i));
+            frame.setItem(framed.get(i), false);
+            if (i == 2) {
+                frame.setRotation(3);
+            }
+            level.addFreshEntity(frame);
+        }
+        // from 1.7, a vanilla painting framed - its frame kept in our attachment on vanilla's entity - beside them
+        level.setBlockAndUpdate(s.offset(26, 1, 6), Blocks.STONE.defaultBlockState());
+        var kebab = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.PAINTING_VARIANT)
+                .getOrThrow(net.minecraft.world.entity.decoration.painting.PaintingVariants.KEBAB);
+        var painting = new net.minecraft.world.entity.decoration.painting.Painting(level, s.offset(25, 1, 6), Direction.WEST, kebab);
+        check(helper, painting.survives(), "the painting goes on the wall");
+        dev.nookworks.poster.PaintingFrames.setFrame(painting, new ItemStack(ModItems.DARK_OAK_ITEM_FRAME.get()));
+        level.addFreshEntity(painting);
 
         // a filled crate with a picture label on its front and a letter label on its side, and a chest with a label of a
         // patterned banner on its front (which stands a pixel back from the edge of its square) - each off the middle

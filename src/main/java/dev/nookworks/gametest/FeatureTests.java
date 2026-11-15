@@ -419,8 +419,10 @@ final class FeatureTests {
     }
 
     /**
-     * The Crusher grinds wheat to flour and crumbles bread; in the pot's oil, flour doubles the karaage and fried fish,
-     * and a porkchop in flour, egg and breadcrumbs makes tonkatsu. Chicken alone still fries, one to one.
+     * The Crusher grinds wheat to flour and crumbles bread. What is fried is got ready at the crafting table first (the
+     * cooking review, 2026-11-14, as tonkatsu was since 2026-10-12): a chicken and flour coat into two Coated Chicken, a
+     * cod and flour into two Coated Fish, two flour, sugar and an egg knead into four Doughnut Dough; in the pot's oil each
+     * fries into one karaage, fried fish or doughnut. The raw things and the flour no longer go into the oil themselves.
      */
     private static void flourCoatsWhatIsFried(GameTestHelper helper) {
         var wheat = CrushingRecipe.of(new ItemStack(Items.WHEAT));
@@ -430,16 +432,30 @@ final class FeatureTests {
                 "a loaf crumbles to two breadcrumbs");
         var registries = helper.getLevel();
         var oil = PotRecipe.Liquid.OIL;
-        var plain = PotRecipe.find(registries, List.of(new ItemStack(Items.CHICKEN)), oil, 1_000);
-        check(helper, plain != null && plain.value().result().stack(1).is(ModCooking.KARAAGE.get())
-                && plain.value().result().count() == 1, "chicken alone: one karaage");
-        var coated = PotRecipe.find(registries, List.of(new ItemStack(Items.CHICKEN),
-                new ItemStack(ModCooking.FLOUR.get())), oil, 1_000);
-        check(helper, coated != null && coated.value().result().count() == 2, "in flour: two");
-        var fish = PotRecipe.find(registries, List.of(new ItemStack(Items.COD),
-                new ItemStack(ModCooking.FLOUR.get())), oil, 1_000);
-        check(helper, fish != null && fish.value().result().stack(1).is(ModCooking.FRIED_FISH.get())
-                && fish.value().result().count() == 2, "cod in flour: two fried fish");
+        var table = helper.getLevel();
+        java.util.function.BiFunction<Integer, List<ItemStack>, ItemStack> craft = (width, items) -> {
+            var grid = net.minecraft.world.item.crafting.CraftingInput.of(width, items.size() / width, items);
+            return table.getServer().getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, grid, table)
+                    .map(recipe -> recipe.value().assemble(grid)).orElse(ItemStack.EMPTY);
+        };
+        ItemStack flour = new ItemStack(ModCooking.FLOUR.get());
+        ItemStack chicken = craft.apply(2, List.of(new ItemStack(Items.CHICKEN), flour.copy()));
+        check(helper, chicken.is(ModCooking.COATED_CHICKEN.get()) && chicken.getCount() == 2, "a chicken and flour: two Coated Chicken, " + chicken);
+        ItemStack cod = craft.apply(2, List.of(new ItemStack(Items.COD), flour.copy()));
+        check(helper, cod.is(ModCooking.COATED_FISH.get()) && cod.getCount() == 2, "a cod and flour: two Coated Fish, " + cod);
+        ItemStack dough = craft.apply(2, List.of(flour.copy(), flour.copy(), new ItemStack(Items.SUGAR), new ItemStack(Items.EGG)));
+        check(helper, dough.is(ModCooking.DONUT_DOUGH.get()) && dough.getCount() == 4, "two flour, sugar and an egg: four Doughnut Dough, " + dough);
+        for (var fry : List.of(java.util.Map.entry(ModCooking.COATED_CHICKEN.get(), ModCooking.KARAAGE.get()),
+                java.util.Map.entry(ModCooking.COATED_FISH.get(), ModCooking.FRIED_FISH.get()),
+                java.util.Map.entry(ModCooking.DONUT_DOUGH.get(), dev.nookworks.registry.ModKitchen.DONUT.get()))) {
+            var found = PotRecipe.find(registries, List.of(new ItemStack(fry.getKey())), oil, 1_000);
+            check(helper, found != null && found.value().result().stack(1).is(fry.getValue()) && found.value().result().count() == 1
+                    && !found.value().pan(), fry.getKey() + " fries in the pot's oil, one for one");
+        }
+        check(helper, PotRecipe.find(registries, List.of(new ItemStack(Items.CHICKEN)), oil, 1_000) == null
+                && PotRecipe.find(registries, List.of(new ItemStack(Items.CHICKEN), flour.copy()), oil, 1_000) == null
+                && PotRecipe.find(registries, List.of(new ItemStack(Items.COD), flour.copy()), oil, 1_000) == null,
+                "a raw chicken or cod, in flour or not, no longer goes into the oil itself");
         // tonkatsu is coated at the bench and only fried in the pot (the user, 2026-10-12)
         var level = helper.getLevel();
         var coating = net.minecraft.world.item.crafting.CraftingInput.of(2, 2, List.of(new ItemStack(Items.PORKCHOP),

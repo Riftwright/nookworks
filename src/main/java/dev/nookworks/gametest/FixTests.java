@@ -14,7 +14,6 @@ import dev.nookworks.block.NestedTimerBlock;
 import dev.nookworks.block.PlanterBlock;
 import dev.nookworks.block.RopeBlock;
 import dev.nookworks.block.entity.NestedTimerBlockEntity;
-import dev.nookworks.cooking.IronPotBlockEntity;
 import dev.nookworks.crop.RicePolisherBlockEntity;
 import dev.nookworks.experience.ExperienceTankBlockEntity;
 import dev.nookworks.experience.Move;
@@ -34,7 +33,6 @@ import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.mobcapture.MobBottleItem;
 import dev.nookworks.oil.OilFluids;
 import dev.nookworks.registry.ModBlocks;
-import dev.nookworks.registry.ModCooking;
 import dev.nookworks.registry.ModCrops;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModOil;
@@ -159,29 +157,30 @@ final class FixTests {
     }
 
     /**
-     * Two pipes to a pot hand on every last millibucket of water, so the line is empty after and takes oil - no drop
-     * stays behind in the pipe before the pot to keep other fluids out for good.
+     * Two pipes to a tank hand on every last millibucket of water, so the line is empty after and takes oil - no drop
+     * stays behind in the pipe before the tank to keep other fluids out for good. (It was a pot; since the Kitchen Tap,
+     * 2026-11-15, no pipe joins a pot.)
      */
     private static void pipeHandsOnItsLastDrop(GameTestHelper helper) {
         BlockPos first = new BlockPos(1, 2, 1);
         BlockPos second = first.east();
-        BlockPos potPos = second.east();
+        BlockPos tankPos = second.east();
         for (BlockPos pipe : List.of(first, second)) {
             helper.setBlock(pipe, ModBlocks.COPPER_PIPE.get().getStateForPlacement(new BlockPlaceContext(
                     helper.getLevel(), null, InteractionHand.MAIN_HAND, new ItemStack(ModItems.COPPER_PIPE.get()), hit(helper, pipe, Direction.UP))));
         }
-        helper.setBlock(potPos, ModCooking.IRON_POT.get());
+        helper.setBlock(tankPos, ModBlocks.COPPER_TANK.get());
         helper.setBlock(first, helper.getBlockState(first).updateShape(helper.getLevel(), helper.getLevel(), helper.absolutePos(first),
                 Direction.EAST, helper.absolutePos(second), helper.getBlockState(second), helper.getLevel().getRandom()));
         var upstream = helper.getBlockEntity(first, CopperPipeBlockEntity.class);
         var downstream = helper.getBlockEntity(second, CopperPipeBlockEntity.class);
-        var pot = helper.getBlockEntity(potPos, IronPotBlockEntity.class);
+        var tank = helper.getBlockEntity(tankPos, dev.nookworks.fluid.CopperTankBlockEntity.class);
         int poured = Move.insert(upstream.handlerFor(null),
                 FluidResource.of(Fluids.WATER), 999);
         check(helper, poured == 999, "an odd amount of water goes in");
         helper.succeedWhen(() -> {
             check(helper, upstream.stored() == 0 && downstream.stored() == 0, "both pipes emptied: " + upstream.stored() + " / " + downstream.stored());
-            check(helper, pot.amount() == 999, "all of it in the pot");
+            check(helper, tank.amount() == 999, "all of it in the tank");
             int oil = Move.insert(upstream.handlerFor(null), FluidResource.of(OilFluids.SOURCE.get()), 100);
             check(helper, oil == 100, "and the empty line takes oil now");
         });

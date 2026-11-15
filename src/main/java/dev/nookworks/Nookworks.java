@@ -89,6 +89,7 @@ public class Nookworks {
         Squinting.ATTACHMENT_TYPES.register(modEventBus);
         dev.nookworks.feature.JoinOverrides.ATTACHMENT_TYPES.register(modEventBus);
         dev.nookworks.feature.DrawRights.ATTACHMENT_TYPES.register(modEventBus);
+        dev.nookworks.poster.PaintingFrames.ATTACHMENT_TYPES.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
         PickOneFunction.FUNCTIONS.register(modEventBus);
         VillageMap.FUNCTIONS.register(modEventBus);

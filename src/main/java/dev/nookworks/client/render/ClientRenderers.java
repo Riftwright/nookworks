@@ -36,6 +36,12 @@ public final class ClientRenderers {
     @SubscribeEvent
     static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.POSTER.get(), PosterRenderer::new);
+        // vanilla's own, with a frame round a framed painting
+        event.registerEntityRenderer(net.minecraft.world.entity.EntityTypes.PAINTING, FramedPaintingRenderer::new);
+        event.registerEntityRenderer(ModEntities.DARK_OAK_ITEM_FRAME.get(), NookItemFrameRenderer::new);
+        event.registerEntityRenderer(ModEntities.DARK_OAK_GLOW_ITEM_FRAME.get(), NookItemFrameRenderer::new);
+        event.registerEntityRenderer(ModEntities.BRASS_ITEM_FRAME.get(), NookItemFrameRenderer::new);
+        event.registerEntityRenderer(ModEntities.BRASS_GLOW_ITEM_FRAME.get(), NookItemFrameRenderer::new);
         event.registerEntityRenderer(ModEntities.SEAT.get(), SeatRenderer::new);
         event.registerEntityRenderer(ModEntities.LABEL.get(), LabelRenderer::new);
         event.registerEntityRenderer(ModEntities.LODE_PEARL.get(), ThrownItemRenderer::new);
@@ -47,6 +53,7 @@ public final class ClientRenderers {
         event.registerBlockEntityRenderer(ModBlockEntities.DRIVE_WHEEL.get(), DriveWheelRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.GRILL.get(), GrillRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.IRON_POT.get(), IronPotRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.KITCHEN_TAP.get(), KitchenTapRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.NUKADOKO.get(), NukadokoRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.OIL_PRESS.get(), c -> new CrankRenderer<>(c, CrankRenderer.OIL_PRESS));
         event.registerBlockEntityRenderer(ModBlockEntities.RICE_POLISHER.get(), c -> new CrankRenderer<>(c, CrankRenderer.RICE_POLISHER));
@@ -56,6 +63,7 @@ public final class ClientRenderers {
         event.registerBlockEntityRenderer(ModBlockEntities.DICE.get(), DiceRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.WARP_ANCHOR.get(), WarpAnchorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PLATE.get(), PlateRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.PLACED_BOWLS.get(), PlacedBowlsRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PLACED_BOOKS.get(), PlacedBooksRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BOOKEND.get(), BookendRenderer::new);
         event.registerEntityRenderer(ModRope.ROPE_KNOT.get(), RopeKnotRenderer::new);
@@ -76,13 +84,15 @@ public final class ClientRenderers {
         MotorRenderer.registerModels(event);
         DriveWheelRenderer.registerModels(event);
         VentFanRenderer.registerModels(event);
-        TrayRenderer.registerModels(event);
+        TableLots.registerModels(event);
         DiceRenderer.registerModels(event);
         WarpAnchorRenderer.registerModels(event);
         DishModels.registerModels(event);
+        IronPotRenderer.registerModels(event);
         PlacedBooksRenderer.registerModels(event);
         HungItemRenderer.registerModels(event);
         PipePullRenderer.registerModels(event);
+        NookItemFrameRenderer.registerModels(event);
     }
 
     private ClientRenderers() {}

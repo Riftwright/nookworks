@@ -1,12 +1,6 @@
 {
-  "parent": "minecraft:block/cube",
+  "parent": "nookworks:block/hub_stone_shape",
   "textures": {
-    "particle": "nookworks:block/hub_stone_off",
-    "down": "nookworks:block/hub_stone_plate",
-    "up": "nookworks:block/hub_stone_plate",
-    "north": "nookworks:block/hub_stone_off",
-    "south": "nookworks:block/hub_stone_off",
-    "west": "nookworks:block/hub_stone_off",
-    "east": "nookworks:block/hub_stone_off"
+    "face": "nookworks:block/hub_stone_off"
   }
 }

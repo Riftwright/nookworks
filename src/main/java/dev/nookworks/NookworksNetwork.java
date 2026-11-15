@@ -153,6 +153,22 @@ public final class NookworksNetwork {
         }
     }
 
+    /**
+     * The Dock-a-Daemon Door standing in the dimension the player is in ({@link dev.nookworks.travel.DaemonDoors#heard}),
+     * none if none: so their client knows a second will be refused and does not set one down to see it vanish.
+     */
+    public record DaemonDoorHere(ResourceKey<Level> dimension, Optional<BlockPos> door) implements CustomPacketPayload {
+        public static final Type<DaemonDoorHere> TYPE = new Type<>(Nookworks.id("daemon_door_here"));
+        public static final StreamCodec<ByteBuf, DaemonDoorHere> STREAM_CODEC = StreamCodec.composite(
+                ResourceKey.streamCodec(Registries.DIMENSION), DaemonDoorHere::dimension,
+                ByteBufCodecs.optional(BlockPos.STREAM_CODEC), DaemonDoorHere::door, DaemonDoorHere::new);
+
+        @Override
+        public Type<DaemonDoorHere> type() {
+            return TYPE;
+        }
+    }
+
     /** Lodestones' names ({@link LodestoneNames}): every one, replacing what the client had, or a few changed (none: gone). */
     public record LodestoneNamesPayload(Map<GlobalPos, Optional<Component>> names, boolean all) implements CustomPacketPayload {
         public static final Type<LodestoneNamesPayload> TYPE = new Type<>(Nookworks.id("lodestone_names"));
@@ -407,8 +423,9 @@ public final class NookworksNetwork {
         // "2" since 1.4: PotContents carries a note, so a 1.3 client on a 1.4 server (or the reverse) is turned away at
         // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check). "3" since
         // 1.5: the machine screens' tabs add slots to their menus, and the gauge click's payload is gone. "4" since 1.6:
-        // the Spawner Controller's menu sends a fifteenth value (its mob sounds), which a 1.5 client's menu has no room for
-        var registrar = event.registrar("4");
+        // the Spawner Controller's menu sends a fifteenth value (its mob sounds), which a 1.5 client's menu has no room for.
+        // "5" since 1.7: the Dock-a-Daemon Door's place is sent (DaemonDoorHere)
+        var registrar = event.registrar("5");
         registrar.playToServer(StepWandMode.TYPE, StepWandMode.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && BuildingWandItem.hasModes(player.getMainHandItem())
                     && payload.steps() != 0) {
@@ -450,6 +467,8 @@ public final class NookworksNetwork {
             ModCreativeTabs.partsKnown();
         });
         registrar.playToClient(DaemonTrip.TYPE, DaemonTrip.STREAM_CODEC, (payload, context) -> DaemonTravel.tripping(payload.gate()));
+        registrar.playToClient(DaemonDoorHere.TYPE, DaemonDoorHere.STREAM_CODEC,
+                (payload, context) -> dev.nookworks.travel.DaemonDoors.heard(payload.dimension(), payload.door().orElse(null)));
         registrar.playToClient(LodestoneNamesPayload.TYPE, LodestoneNamesPayload.STREAM_CODEC,
                 (payload, context) -> LodestoneNames.received(payload.names(), payload.all()));
         registrar.playToClient(OpenLodestoneName.TYPE, OpenLodestoneName.STREAM_CODEC, (payload, context) -> LodestoneNames.openEditor(payload.pos()));

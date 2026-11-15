@@ -46,6 +46,7 @@ final class LineTests {
         NookworksGameTests.test("valve_turns_with_a_signal", LineTests::valveTurnsWithASignal);
         NookworksGameTests.test("copper_tank_takes_buckets_and_bottles", LineTests::copperTankTakesBucketsAndBottles);
         NookworksGameTests.test("copper_tank_keeps_its_contents_when_broken", LineTests::copperTankKeepsItsContents);
+        NookworksGameTests.test("copper_tank_says_which_liquid_it_does_not_hold", LineTests::copperTankSaysWhy);
     }
 
     private static BlockState fitting(Block block, Direction.Axis axis) {
@@ -168,6 +169,35 @@ final class LineTests {
         tank.fluidHandler().set(0, FluidResource.of(OilFluids.BIODIESEL.get()), CopperTankBlockEntity.CAPACITY / 2);
         check(helper, helper.getBlockState(pos).getValue(LineContent.PROPERTY) == LineContent.BIODIESEL, "the glass shows biodiesel");
         check(helper, helper.getBlockState(pos).getValue(SightGlass.LEVEL) == 3, "half full");
+        helper.succeed();
+    }
+
+    private static boolean says(java.util.List<net.minecraft.network.chat.Component> said, String key) {
+        return !said.isEmpty() && said.getLast().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents words
+                && words.getKey().equals(key);
+    }
+
+    /**
+     * Lava at an empty Copper Tank: it said "something else is in it, or it is full" (the user, 2026-11-14, with a picture
+     * of the empty tank). It names the liquid no Copper Tank holds now; oil at a tank of water is still "something
+     * else is in it"; an empty bucket at an empty tank, too little. Nothing moves either way.
+     */
+    private static void copperTankSaysWhy(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 2, 2);
+        helper.setBlock(pos, ModBlocks.COPPER_TANK.get());
+        var tank = helper.getBlockEntity(pos, CopperTankBlockEntity.class);
+        java.util.List<net.minecraft.network.chat.Component> said = new java.util.ArrayList<>();
+        var player = MockPlayers.hearing(helper, GameType.SURVIVAL, said);
+        use(helper, player, pos, new ItemStack(Items.LAVA_BUCKET));
+        check(helper, says(said, "message.nookworks.copper_tank.cannot_hold") && said.getLast().getString().contains(
+                net.minecraft.network.chat.Component.translatable("block.minecraft.lava").getString()), "lava, by name: " + said);
+        check(helper, tank.amount() == 0 && player.getMainHandItem().is(Items.LAVA_BUCKET), "and the lava stays in its bucket");
+        use(helper, player, pos, new ItemStack(Items.BUCKET));
+        check(helper, says(said, "message.nookworks.copper_tank.too_little"), "an empty bucket at an empty tank: too little: " + said);
+        tank.fluidHandler().set(0, FluidResource.of(Fluids.WATER), 2_000);
+        use(helper, player, pos, new ItemStack(ModOil.VEGETABLE_OIL_BUCKET.get()));
+        check(helper, says(said, "message.nookworks.copper_tank.will_not_take"), "oil at water: something else is in it: " + said);
+        helper.getLevel().getServer().getPlayerList().remove(player);
         helper.succeed();
     }
 

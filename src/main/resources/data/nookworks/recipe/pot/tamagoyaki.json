@@ -3,18 +3,15 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:tamagoyaki"
+        "nookworks:tamagoyaki",
+        "nookworks:beaten_eggs"
       ]
     }
   ],
   "type": "nookworks:pot",
   "ingredients": [
     {
-      "ingredient": "#c:eggs",
-      "count": 3
-    },
-    {
-      "ingredient": "minecraft:sugar"
+      "ingredient": "nookworks:beaten_eggs"
     }
   ],
   "liquid": "oil",
@@ -23,5 +20,6 @@
   "result": {
     "id": "nookworks:tamagoyaki",
     "count": 3
-  }
+  },
+  "pan": true
 }

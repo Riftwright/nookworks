@@ -5,6 +5,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.nookworks.Nookworks;
 import dev.nookworks.NookworksNetwork;
 import dev.nookworks.feature.Squinting;
+import java.util.ArrayList;
+import java.util.List;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -48,6 +51,13 @@ public final class Squint {
     private static float risenBefore;
     /** What the server was last told. */
     private static boolean told;
+    /** Another mod's zoom key on Squint's key, as last looked for ({@link Squinting#zoomClash}): Squint stands aside. */
+    private static @Nullable String clash;
+    /** The clash last written to the log, so it is said once and again only when it changes. */
+    private static @Nullable String logged;
+    /** How often (ticks) the keys are looked at again: a key rebound in Controls counts within a second. */
+    private static final int CLASH_EVERY = 20;
+    private static int clashIn;
 
     private Squint() {}
 
@@ -58,12 +68,34 @@ public final class Squint {
     /** Whether the player in this game squints now. */
     public static boolean squinting() {
         Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.gui.screen() == null && KEY.isDown() && !mc.player.isScoping();
+        return mc.player != null && mc.gui.screen() == null && KEY.isDown() && !mc.player.isScoping() && clash == null;
+    }
+
+    /** Looks again for another mod's zoom on Squint's key, and says in the log when Squint stands aside. */
+    private static void lookForClash(Minecraft mc) {
+        // the same key and the same modifier (Shift, Ctrl, Alt), as NeoForge counts a clash
+        String ours = KEY.saveString() + ":" + KEY.getKeyModifier();
+        List<String[]> others = new ArrayList<>();
+        for (KeyMapping key : mc.options.keyMappings) {
+            if (key != KEY) {
+                others.add(new String[] {key.getName(), key.saveString() + ":" + key.getKeyModifier()});
+            }
+        }
+        clash = KEY.isUnbound() ? null : Squinting.zoomClash(ours, others);
+        if (clash != null && !clash.equals(logged)) {
+            Nookworks.LOGGER.info("Squint stands aside: {} is on the same key ({}). Bind one of them to another key to use both.",
+                    clash, KEY.saveString());
+        }
+        logged = clash;
     }
 
     @SubscribeEvent
     static void onTick(ClientTickEvent.Post event) {
         LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null && --clashIn <= 0) {
+            clashIn = CLASH_EVERY;
+            lookForClash(Minecraft.getInstance());
+        }
         boolean on = squinting();
         risenBefore = risen;
         risen = Mth.approach(risen, on ? 1.0F : 0.0F, 1.0F / RISE_TICKS);

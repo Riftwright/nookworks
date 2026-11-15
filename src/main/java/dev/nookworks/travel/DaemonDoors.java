@@ -19,6 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -129,6 +130,34 @@ public final class DaemonDoors extends SavedData {
         }
         this.furnished.remove(dimension);
         this.setDirty();
+    }
+
+    /** On the client: the door in the dimension its player is in, as the server last said (none: none, or not said). */
+    private static volatile @Nullable ResourceKey<Level> heardIn;
+    private static volatile @Nullable BlockPos heardDoor;
+
+    /** On the client: the server says the door in {@code dimension} stands at {@code door} (null: none). */
+    public static void heard(ResourceKey<Level> dimension, @Nullable BlockPos door) {
+        heardIn = dimension;
+        heardDoor = door;
+    }
+
+    /**
+     * On the client: the door already standing in {@code level}'s dimension other than at {@code pos}, as the server last
+     * said - what will refuse one set down at {@code pos}. Null when none, or nothing said.
+     */
+    public static @Nullable BlockPos heardOtherThan(Level level, BlockPos pos) {
+        BlockPos door = heardDoor;
+        return door != null && level.dimension().equals(heardIn) && !door.equals(pos) ? door : null;
+    }
+
+    /** Tells {@code player}'s client where the door in their dimension stands ({@link #heardOtherThan}). */
+    public static void tell(ServerPlayer player) {
+        if (player.connection.hasChannel(dev.nookworks.NookworksNetwork.DaemonDoorHere.TYPE)) {
+            ResourceKey<Level> dimension = player.level().dimension();
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, new dev.nookworks.NookworksNetwork.DaemonDoorHere(dimension,
+                    Optional.ofNullable(get(player.level().getServer()).doorIn(dimension))));
+        }
     }
 
     /** Every door, for tests and for refreshing how loaded doors are drawn when the home door changes. */

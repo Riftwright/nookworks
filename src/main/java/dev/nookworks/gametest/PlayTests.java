@@ -343,11 +343,12 @@ final class PlayTests {
     /**
      * Sifted dirt gives seeds, sticks, flint, clay, bones, the odd potato (green, now and then), carrot or bit of rotten
      * flesh, fallen leaves, now and then a spider eye and a little rice, corn kernels or an onion, with the rare Rare
-     * Seed and pitcher pod - no boots, bowls or string - and about two blocks in three fall through as nothing.
+     * Seed and pitcher pod - no boots, bowls or string - and about three blocks in five fall through as nothing. From
+     * 2026-11-15 a feather and, rarely, a worn wooden hoe too (the user: 「土から木のクワとか」).
      */
     private static void siftedDirtGivesFewKindsOfThing(GameTestHelper helper) {
         var allowed = Set.of(Items.WHEAT_SEEDS, Items.BEETROOT_SEEDS, Items.PUMPKIN_SEEDS, Items.MELON_SEEDS, Items.STICK,
-                Items.FLINT, Items.CLAY_BALL, Items.BONE, Items.PITCHER_POD, ModCrops.BROWN_RICE.get(),
+                Items.FLINT, Items.CLAY_BALL, Items.BONE, Items.FEATHER, Items.WOODEN_HOE, Items.PITCHER_POD, ModCrops.BROWN_RICE.get(),
                 Items.POTATO, Items.POISONOUS_POTATO, Items.CARROT, Items.ROTTEN_FLESH, Items.LEAF_LITTER, Items.SPIDER_EYE,
                 ModWoods.RARE_SEED.get(), ModKitchen.CORN_KERNELS.get(),
                 ModKitchen.ONION.get(), ModOil.SUNFLOWER_SEEDS.get());
@@ -370,7 +371,7 @@ final class PlayTests {
         }
         check(helper, odd.isEmpty(), "dirt sifted into " + odd);
         check(helper, sticks > 150, "sticks turn up often (" + sticks + " in 4000)");
-        check(helper, empty > 2350 && empty < 2800, "about two blocks in three give nothing, " + empty + " of 4000 did");
+        check(helper, empty > 2220 && empty < 2600, "about three blocks in five give nothing (60.3 %), " + empty + " of 4000 did");
         helper.succeed();
     }
 

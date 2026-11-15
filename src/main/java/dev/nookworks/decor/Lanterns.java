@@ -41,8 +41,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  * Lanterns put out and lit again (the user, 2026-10-12: a lantern gone out, for builds, and for the If's ruins; the
  * copper ones too). Sneak and right-click a lantern, a soul lantern or any of the eight copper lanterns with an empty
  * hand and it goes out - standing or hanging, in water or not - into its unlit one, which gives no light; flint and
- * steel or a fire charge lights it again. The unlit one is vanilla's own lantern with sooty glass over its flame
- * (blockstates/unlit_*lantern.json), so the two match; a copper one keeps its weathering and its wax either way.
+ * steel or a fire charge lights it again. The unlit one is vanilla's own lantern with cold, clouded glass over its
+ * flame (blockstates/unlit_*lantern.json), so the two match - but for the unlit Lantern, which stands in the Soul
+ * Lantern's dark frame (the user, 2026-11-14: its own orange one read as lit); a copper one keeps its weathering and
+ * its wax either way.
  */
 @EventBusSubscriber(modid = Nookworks.MODID)
 public final class Lanterns {

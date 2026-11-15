@@ -66,6 +66,7 @@ public final class ModCapabilities {
 
         // Energy
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.GENERATOR.get(), (be, side) -> be.energy());
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.ELECTRIC_STOVE.get(), (be, side) -> be.energy());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.DIESEL_GENERATOR.get(), (be, side) -> be.energy());
         // drawn on without end, by our cables and any other mod's, while no signal stops it
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.CREATIVE_GENERATOR.get(), (be, side) -> be.energy());
@@ -89,6 +90,10 @@ public final class ModCapabilities {
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.VALVE.get(), (be, side) -> be.handlerFor(side));
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.COPPER_TANK.get(), (be, side) -> be.handlerFor(side));
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.IRON_POT.get(), (be, side) -> be.liquidHandler());
+        // a Kitchen Tap takes a pipe at its back alone, where its plate is (the user, 2026-11-15: the pipe's face and the
+        // tap's did not meet)
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.KITCHEN_TAP.get(), (be, side) ->
+                side == be.getBlockState().getValue(dev.nookworks.cooking.KitchenTapBlock.FACING).getOpposite() ? be.handler() : null);
         // The kitchen: a hopper above feeds it, and one underneath takes out what is done (heat comes up through it).
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.IRON_POT.get(), (be, side) -> be.itemHandler());
         event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.GRILL.get(), (be, side) -> be.itemHandler());
@@ -208,16 +213,40 @@ public final class ModCapabilities {
 
         @Override
         public long getCapacityAsLong(int index, ItemResource resource) {
-            return this.all.getCapacityAsLong(index, resource);
+            return Math.min(this.all.getCapacityAsLong(index, resource), limit(index));
         }
 
+        /** The most the machine's slot holds ({@link dev.nookworks.machine.MachineLayout#slotLimit}). */
+        private int limit(int index) {
+            return this.container instanceof dev.nookworks.machine.MachineInfo info ? info.layout().slotLimit(index)
+                    : net.minecraft.world.item.Item.ABSOLUTE_MAX_STACK_SIZE;
+        }
+
+        /**
+         * Whether {@code insert} would take it now: the slot's own rule, and some face it is on letting it in. A Sorter
+         * feeding a machine asks this before it draws an item in; asked only the slot's rule, it drew in a reagent an
+         * empty Retort takes through no face, held it for good and sorted nothing more (1.6 review).
+         */
         @Override
         public boolean isValid(int index, ItemResource resource) {
-            return this.all.isValid(index, resource);
+            if (!this.all.isValid(index, resource)) {
+                return false;
+            }
+            var stack = resource.toStack();
+            for (Direction face : Direction.values()) {
+                if (place(this.container.getSlotsForFace(face), index) >= 0 && this.container.canPlaceItemThroughFace(index, stack, face)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
         public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            amount = (int) Math.min(amount, Math.max(0, limit(index) - this.all.getAmountAsLong(index)));
+            if (amount <= 0) {
+                return 0;
+            }
             for (Direction face : Direction.values()) {
                 int at = place(this.container.getSlotsForFace(face), index);
                 if (at >= 0 && this.container.canPlaceItemThroughFace(index, resource.toStack(), face)) {

@@ -17,7 +17,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:iron_nugget",
-          "weight": 175,
+          "weight": 173,
           "modifier": {
             "type": "minecraft:set_count",
             "count": {
@@ -30,7 +30,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:copper_nugget",
-          "weight": 117,
+          "weight": 115,
           "modifier": {
             "type": "minecraft:set_count",
             "count": {
@@ -43,7 +43,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:gold_nugget",
-          "weight": 87,
+          "weight": 86,
           "modifier": {
             "type": "minecraft:set_count",
             "count": {
@@ -140,6 +140,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:bowl",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:arrow",
           "weight": 5
         }
       ]

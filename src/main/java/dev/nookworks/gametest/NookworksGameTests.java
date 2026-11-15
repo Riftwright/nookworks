@@ -89,9 +89,12 @@ public final class NookworksGameTests {
         TransportTests.register();
         SifterTests.register();
         MachineTests.register();
+        PlanterReachTests.register();
+        StoneMakerTests.register();
         RecyclingTests.register();
         TurnedPlanksTests.register();
         StorageTests.register();
+        SorterRedstoneTests.register();
         MobTests.register();
         MercuryTests.register();
         WadeTests.register();
@@ -132,6 +135,7 @@ public final class NookworksGameTests {
         SquintTests.register();
         RecipeChoiceTests.register();
         CameraTests.register();
+        FrameTests.register();
         BiodieselTests.register();
         EndSeedTests.register();
         WarpAnchorTests.register();
@@ -160,6 +164,10 @@ public final class NookworksGameTests {
         StructureCopyTests.register();
         TurnedShapeTests.register();
         EggsAndCampfiresTests.register();
+        FryingPanTests.register();
+        CookingTurnsTests.register();
+        TableSettingTests.register();
+        KitchenTapTests.register();
         LowItemTests.register();
         BenchTests.register();
         FurnitureApartTests.register();
@@ -228,14 +236,19 @@ public final class NookworksGameTests {
         needs(() -> Features.enabled("storage"), "storage_upgrades_turn_a_barrel_up_a_tier_where_it_stands",
                 "velarium_barrel_holds_a_warehouse_of_warehouses");
         needs(() -> Features.enabled("sorting"), "sorter_gears_fit_and_old_sorters_keep_their_speed");
+        needs(() -> Features.enabled("sorting"), SorterRedstoneTests.NEED_SORTERS);
         needs(() -> Features.enabled("mob_bottle"), "advancements_are_earned_as_a_player_would");
         needs(() -> Features.enabled("liquid_experience"), "experience_bottles_fill_and_enchant",
                 "retort_leaves_hoppered_bottles_in_the_hopper", "machine_screen_keeps_outputs_output_only");
         needs(() -> Features.enabled("liquid_experience"), R9PipeTests.NEED_LIQUID_EXPERIENCE);
         needs(() -> Features.enabled("liquid_experience"), BiodieselTests.NEED_LIQUID_EXPERIENCE);
         needs(() -> Features.enabled("kitchen"), R11DriveTests.NEED_KITCHEN);
-        needs(() -> Features.enabled("kitchen"), "an_egg_fries_in_a_furnace_smoker_or_campfire",
-                "the_iron_pot_boils_eggs_and_rolls_tamagoyaki", "egg_dishes_fill_as_the_table_says");
+        needs(() -> Features.enabled("kitchen"), FryingPanTests.NEED_KITCHEN);
+        needs(() -> Features.enabled("kitchen"), CookingTurnsTests.NEED_KITCHEN);
+        needs(() -> Features.enabled("kitchen"), TableSettingTests.NEED_KITCHEN);
+        needs(() -> Features.enabled("kitchen"), KitchenTapTests.NEED_KITCHEN);
+        needs(() -> Features.enabled("kitchen"), "an_egg_fries_in_a_furnace_smoker_or_the_frying_pan",
+                "the_iron_pot_boils_eggs_and_the_pan_rolls_tamagoyaki", "egg_dishes_fill_as_the_table_says");
         needs(() -> Features.enabled("dark_matter"), "cooked_food_chars_into_dark_matter");
         needs(() -> Features.enabled("recycling"), RecyclingTests.NEED_RECYCLING);
         // the Crusher grinds wheat and bread into the kitchen's flour and breadcrumbs only with the kitchen on

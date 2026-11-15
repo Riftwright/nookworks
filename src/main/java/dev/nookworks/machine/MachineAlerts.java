@@ -61,11 +61,20 @@ public final class MachineAlerts {
     private MachineAlerts() {}
 
     /**
+     * A block that is no machine with a screen, yet stops for a reason to see to as one does: the Electric Stove out of
+     * power under a pot (the sound audit, 2026-11-14: its ring went dark in silence, and a Machine Bell beside it
+     * never rang). It says what it is doing in a machine's words, and calls {@link #track} from its onLoad.
+     */
+    public interface Alerting {
+        MachineStatus alertStatus();
+    }
+
+    /**
      * Whether {@code entity} is a machine whose stop is heard and rung for: a {@link MachineInfo}, or any block entity
      * built on {@link MachineBlockEntity}. The Machine Bell gives such a block no signal.
      */
     public static boolean isMachine(@Nullable BlockEntity entity) {
-        return entity instanceof MachineInfo || entity instanceof MachineBlockEntity;
+        return entity instanceof MachineInfo || entity instanceof MachineBlockEntity || entity instanceof Alerting;
     }
 
     /**
@@ -75,6 +84,9 @@ public final class MachineAlerts {
     public static @Nullable MachineStatus statusOf(@Nullable BlockEntity entity) {
         if (entity instanceof MachineInfo info) {
             return info.guiStatus();
+        }
+        if (entity instanceof Alerting alerting) {
+            return alerting.alertStatus();
         }
         return entity instanceof MachineBlockEntity machine ? machine.guiStatus() : null;
     }

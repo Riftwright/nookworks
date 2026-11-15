@@ -14,7 +14,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Prediction;
@@ -132,7 +131,8 @@ public class GrillBlock extends BaseEntityBlock {
         if (stack.isEmpty() || !(level.getBlockEntity(pos) instanceof GrillBlockEntity grill)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
-        if (stack.is(ModCooking.IRON_POT_ITEM.get()) && state.getValue(OVER_FIRE)) {
+        if (stack.getItem() instanceof net.minecraft.world.item.BlockItem vessel && vessel.getBlock() instanceof IronPotBlock
+                && state.getValue(OVER_FIRE)) {
             return this.setPotDown(stack, level, pos, player, grill);
         }
         // Anything a campfire does not cook is used as it would be on any block (a block placed on the table, a bucket
@@ -145,7 +145,10 @@ public class GrillBlock extends BaseEntityBlock {
                 player.sendOverlayMessage(Component.translatable("nookworks.grill.full").withStyle(ChatFormatting.RED));
                 return Clicks.REFUSED;
             }
-            level.playSound(null, pos, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 0.6F, 1.2F);
+            // on a hot grill it spits; on a cold one it is only set down (it crackled as a campfire for seconds, hot
+            // or cold, and four pieces set quickly were four fires)
+            level.playSound(null, pos, hot(level, pos) ? ModSounds.IRON_POT_SEAR.get() : ModSounds.GRILL_PLACE.get(),
+                    SoundSource.BLOCKS, 0.5F, 0.95F + level.getRandom().nextFloat() * 0.1F);
         }
         return InteractionResult.SUCCESS;
     }
@@ -162,7 +165,8 @@ public class GrillBlock extends BaseEntityBlock {
             return Clicks.REFUSED;
         }
         if (!level.isClientSide()) {
-            BlockState pot = ModCooking.IRON_POT.get().onGrill(player.getDirection().getOpposite());
+            BlockState pot = ((IronPotBlock) ((net.minecraft.world.item.BlockItem) stack.getItem()).getBlock())
+                    .onGrill(player.getDirection().getOpposite());
             level.setBlock(pos, pot, Block.UPDATE_ALL);
             // the setter's, as one set down by hand is (no place event comes of this setBlock): an unowned pot drew from
             // anyone's pipe line, a claim's included (r21, 2026-11-06)
@@ -194,7 +198,7 @@ public class GrillBlock extends BaseEntityBlock {
                 }
             }
             if (any) {
-                level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5F, 1.2F);
+                level.playSound(null, pos, ModSounds.GRILL_PLACE.get(), SoundSource.BLOCKS, 0.4F, 1.3F);
             }
         }
         return InteractionResult.SUCCESS;

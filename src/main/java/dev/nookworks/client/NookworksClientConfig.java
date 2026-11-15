@@ -62,6 +62,14 @@ public final class NookworksClientConfig {
                     "The pack's shadows, sky and water do not show in the mirror either way.")
             .translation(Nookworks.MODID + ".configuration.mirror.packLight").define("mirrorPackLight", true);
 
+    // the Hub Stone's running light (the user, 2026-11-14, shown it: これ重いかな…アニメーションの有無はmodの設定で
+    // 変えられるといいかもね). It is light - eight small pictures, however many stones - but motion is not for everyone.
+    public static final ModConfigSpec.BooleanValue HUB_STONE_FLOW = BUILDER
+            .comment("A powered line of Hub Stones shows a pulse of light running along it, away from what powers it.",
+                    "Off: a powered Hub Stone glows steadily. Changing this reads the game's resources again, as changing a",
+                    "resource pack does.")
+            .translation(Nookworks.MODID + ".configuration.hubStone.flow").define("hubStoneFlow", true);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static String sound(String path) {

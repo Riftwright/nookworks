@@ -86,6 +86,23 @@ public abstract class MachineBlock extends BaseEntityBlock {
         }
     }
 
+    /**
+     * A working machine's sound in step with what it shows - a press's stroke, a knife going in - and so at that moment,
+     * not now and then: as loud as the player's setting for machines' work sounds asks (0 is off), with no limit on how
+     * many start, its own motion being one. Client side; for an add-on's machines too (the sound audit, 2026-11-14:
+     * nookTechnology's strokes, played of their own, went on at full with that setting at nothing).
+     */
+    public static void soundInStep(Level level, BlockPos pos, SoundEvent sound) {
+        if (!level.isClientSide()) {
+            return;
+        }
+        float volume = WorkSounds.volume();
+        if (volume > 0.0F) {
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, sound, SoundSource.BLOCKS, volume,
+                    0.95F + level.getRandom().nextFloat() * 0.1F, false);
+        }
+    }
+
     /** The ticker of a machine with a status lamp: the machine's own tick, then the lamp set from how it went. */
     protected static <E extends MachineBlockEntity> BlockEntityTicker<E> withLamp(
             BlockEntityTicker<E> tick) {

@@ -46,7 +46,7 @@ LAMPS = {
     "stone_maker_side": (11, 2),
     "water_pump_side": (11, 7),
     "printing_press_side": (11, 6),
-    "planter_front": (9, 2),         # in the iron frame of the seed window (tools/textures/gen_planter.py)
+    "planter_front": (9, 2),         # over the seed window's brass frame (tools/textures/gen_planter.py)
     "barter_terminal_front": (11, 12),  # beside its keys, under the screen
     "diesel_generator_front": (11, 13),  # under the radiator, beside the maker's plate
     "compressor_side": (11, 7),      # beside the press bay

@@ -10,6 +10,7 @@ import dev.nookworks.ifworld.IfWorld;
 import dev.nookworks.registry.ModTravel;
 import dev.nookworks.travel.DaemonDestinations;
 import dev.nookworks.travel.DaemonDoorBlock;
+import dev.nookworks.travel.DaemonLeaf;
 import dev.nookworks.travel.DaemonDoors;
 import dev.nookworks.travel.DaemonPanelBlock;
 import dev.nookworks.travel.DaemonPanelMenu;
@@ -65,6 +66,8 @@ final class TravelTests {
         test("daemon_door_slides_away_from_its_panel", TravelTests::slidesAwayFromItsPanel);
         test("daemon_door_return_door_keeps_off_land_its_traveller_may_not_build_on", 400, TravelTests::keepsOffClaims);
         test("daemon_door_sends_nobody_to_a_door_it_may_not_wall_in", 200, TravelTests::noTripToAnUnframedDoor);
+        test("daemon_door_shuts_from_its_leaf_slid_over_the_wall", TravelTests::shutsFromItsLeaf);
+        test("daemon_door_sends_no_dead_player", TravelTests::sendsNoDeadPlayer);
     }
 
     private static void forgetAllDoors(ServerLevel level) {
@@ -123,6 +126,62 @@ final class TravelTests {
         Direction facing = level.getBlockState(lower).getValue(DoorBlock.FACING);
         Direction towards = fromFront ? facing : facing.getOpposite(); // the front is the side opposite its facing
         player.setKnownMovement(new Vec3(towards.getStepX() * 0.2, 0, towards.getStepZ() * 0.2));
+    }
+
+    /**
+     * Slid open, its leaf lies over the wall beside the doorway (the user, 2026-11-13: that is where a hand reaches to shut
+     * it): a click on the wall's face there shuts it, as the click a player makes does; the wall on the other side, the
+     * wall's back and a shut door's wall are no leaf's.
+     */
+    private static void shutsFromItsLeaf(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        forgetAllDoors(level);
+        ServerPlayer player = player(helper);
+        placeDoor(helper, player, new BlockPos(2, 1, 2));
+        BlockPos home = helper.absolutePos(new BlockPos(2, 2, 2));
+        BlockState shut = level.getBlockState(home);
+        ((DoorBlock) shut.getBlock()).setOpen(null, level, shut, home, true);
+        BlockState open = level.getBlockState(home);
+        Direction front = DaemonDoorBlock.front(open);
+        check(helper, open.getShape(level, home).isEmpty(), "open, nothing of it in the doorway to take a click (or a blow at what stands there)");
+        var rail = level.getBlockState(home.above()).getShape(level, home.above()).bounds();
+        check(helper, rail.minY >= 15 / 16.0 - 1e-6, "but the rail's foot along the upper half's top: " + rail);
+        check(helper, open.getBlockPathType(level, home, null) != net.minecraft.world.level.pathfinder.PathType.DOOR_IRON_CLOSED,
+                "open, a doorway to a mob's path");
+        BlockPos under = home.relative(DaemonDoorBlock.slideSide(open)).above(); // the wall beside the upper half
+        check(helper, home.equals(DaemonLeaf.over(level, under, front)), "the leaf lies over the wall on the side it slid to");
+        check(helper, DaemonLeaf.over(level, home.relative(DaemonDoorBlock.slideSide(open).getOpposite()), front) == null,
+                "not over the wall on the other side");
+        check(helper, DaemonLeaf.over(level, under, front.getOpposite()) == null, "nor over the wall's back");
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        var hit = new BlockHitResult(Vec3.atCenterOf(under).relative(front, 0.5), front, under, false);
+        var click = new net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, under, hit);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(click);
+        check(helper, click.isCanceled() && !level.getBlockState(home).getValue(DoorBlock.OPEN), "a click there shuts it");
+        check(helper, DaemonLeaf.over(level, under, front) == null, "shut, no leaf is over the wall");
+        check(helper, level.getBlockState(home).getBlockPathType(level, home, null) == net.minecraft.world.level.pathfinder.PathType.DOOR_IRON_CLOSED,
+                "shut, a wall to a mob's path, as an iron door is: no mob opens it");
+        forgetAllDoors(level);
+        helper.succeed();
+    }
+
+    /** A player killed the tick they step into the open door is not sent through (their body took the death screen along). */
+    private static void sendsNoDeadPlayer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        forgetAllDoors(level);
+        ServerPlayer player = player(helper);
+        placeDoor(helper, player, new BlockPos(1, 1, 1));
+        BlockPos home = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockState shut = level.getBlockState(home);
+        ((DoorBlock) shut.getBlock()).setOpen(null, level, shut, home, true);
+        player.setData(TravelLog.TYPE, TravelLog.of(player).withVisit(Level.NETHER).withDestination(Optional.of(Level.NETHER)));
+        player.setHealth(0);
+        DaemonTravel.through(player, home);
+        check(helper, player.level() == level, "dead, not sent on: " + player.level().dimension());
+        check(helper, DaemonDoors.get(level.getServer()).doorIn(Level.NETHER) == null, "and nothing set down there");
+        forgetAllDoors(level);
+        player.connection.disconnect(Component.empty());
+        helper.succeed();
     }
 
     /** The first door set down is the home door; a second in the same dimension is refused; one taken away is forgotten. */
@@ -215,8 +274,10 @@ final class TravelTests {
     }
 
     /**
-     * Through the open home door to the Nether, where a return door is set down and the player stands in front of it;
-     * through that back home; and, with the home door gone, through it to the respawn point.
+     * Through the open home door to the Nether, where a return door is set down and the player stands in front of it -
+     * where a portal from the home door would come out, though the player was last in the Nether far off (so that a
+     * nether portal beside each door joins the other's; the user, 2026-11-13); through that back home; and, with the home
+     * door gone, through it to the respawn point.
      */
     private static void thereAndBack(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
@@ -226,7 +287,9 @@ final class TravelTests {
         BlockPos home = helper.absolutePos(new BlockPos(1, 2, 1));
         BlockState shut = level.getBlockState(home);
         ((DoorBlock) shut.getBlock()).setOpen(null, level, shut, home, true);
-        player.setData(TravelLog.TYPE, TravelLog.of(player).withVisit(Level.NETHER).withDestination(Optional.of(Level.NETHER)));
+        BlockPos farOff = new BlockPos(home.getX() / 8 + 400, 70, home.getZ() / 8 - 400);
+        player.setData(TravelLog.TYPE, TravelLog.of(player).withVisit(Level.NETHER).withDestination(Optional.of(Level.NETHER))
+                .withLastPos(Level.NETHER, farOff));
         DaemonTravel.through(player, home);
         ServerLevel nether = level.getServer().getLevel(Level.NETHER);
         BlockPos there = DaemonDoors.get(level.getServer()).doorIn(Level.NETHER);
@@ -684,7 +747,8 @@ final class TravelTests {
         ((DoorBlock) shut.getBlock()).setOpen(null, level, shut, home, true);
         BlockState open = level.getBlockState(home);
         check(helper, open.getCollisionShape(level, home).isEmpty(), "open, the doorway is clear");
-        check(helper, !open.getShape(level, home).isEmpty(), "and a click on it still finds it, to shut it");
+        check(helper, !level.getBlockState(home.above()).getShape(level, home.above()).isEmpty(),
+                "and a click on its rail still finds it (its leaf, slid over the wall, is DaemonLeaf's)");
         Direction side = DaemonDoorBlock.slideSide(open);
         BlockPos wall = home.relative(side).above(); // a frame block beside the upper half
         ItemStack panel = new ItemStack(ModTravel.DAEMON_PANEL_ITEM.get());

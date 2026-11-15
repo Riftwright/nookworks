@@ -408,9 +408,14 @@ final class R21FixTests {
 
     /** An Iron Pot clicked onto a grill over a lit campfire, by {@code player}. */
     private static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill) {
+        return heatedPot(helper, player, grill, ModCooking.IRON_POT_ITEM.get());
+    }
+
+    /** {@code vessel} (the Iron Pot or the Frying Pan) set on a Grill over a lit campfire by a click, as a player does. */
+    private static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill, net.minecraft.world.item.Item vessel) {
         helper.setBlock(grill.below(), Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
         helper.setBlock(grill, ModCooking.GRILL.get().defaultBlockState().setValue(GrillBlock.OVER_FIRE, true));
-        click(helper, player, new ItemStack(ModCooking.IRON_POT_ITEM.get()), grill, Direction.UP);
+        click(helper, player, new ItemStack(vessel), grill, Direction.UP);
         return helper.getBlockEntity(grill, IronPotBlockEntity.class);
     }
 
@@ -418,7 +423,11 @@ final class R21FixTests {
         return line != null && line.getContents() instanceof TranslatableContents words && words.getKey().equals(key);
     }
 
-    /** Udon a bottle of water short says how much water it needs; with an egg in too, that nothing cooks from these. */
+    /**
+     * Udon a bottle of water short says how much water it needs. With an egg in too it said that nothing cooks from
+     * these; since a mixed pot cooks in turn (the user, 2026-11-14) the egg boils in its turn and the pot has nothing to
+     * say. Raw udon without its kelp is what nothing cooks from yet.
+     */
     private static void potSaysWhy(GameTestHelper helper) {
         ServerPlayer player = clicker(helper);
         IronPotBlockEntity pot = heatedPot(helper, player, new BlockPos(2, 3, 2));
@@ -435,7 +444,10 @@ final class R21FixTests {
         check(helper, lines.contains(why.getString()), "the readout (Jade's) says it too: " + lines);
         check(helper, pot.shown() != null && pot.shown().note().isPresent(), "and so does an empty hand's click");
         pot.addIngredient(new ItemStack(Items.EGG));
-        check(helper, says(pot.stuck(), "nookworks.iron_pot.no_recipe"), "an egg in with the udon: nothing cooks from these: " + pot.stuck());
+        check(helper, pot.stuck() == null, "an egg in with the udon boils in its turn: " + pot.stuck());
+        pot.takeIngredient(); // the egg
+        pot.takeIngredient(); // the kelp
+        check(helper, says(pot.stuck(), "nookworks.iron_pot.no_recipe"), "raw udon without its kelp: nothing cooks from these: " + pot.stuck());
         done(helper, player);
     }
 
@@ -630,15 +642,20 @@ final class R21FixTests {
     }
 
     /**
-     * Eggs in oil, on the way to tamagoyaki, are not told they need water; a chicken in water, on the way to cream stew,
-     * is not told it needs oil; white rice in oil is told it cooks in water.
+     * Rice in the Frying Pan's oil, on the way to fried rice, is not told it needs water; a chicken in water, on the way
+     * to cream stew, is not told it needs oil; white rice in oil is told it cooks in water, and so is an egg in the pot's
+     * oil (it boils there; the pan fries it).
      */
     private static void potNamesTheLiquid(GameTestHelper helper) {
         ServerPlayer player = clicker(helper);
-        IronPotBlockEntity eggs = heatedPot(helper, player, new BlockPos(1, 3, 1));
-        eggs.addLiquid(PotRecipe.Liquid.OIL, OilFluids.BOTTLE);
-        eggs.addIngredient(new ItemStack(Items.EGG));
-        check(helper, says(eggs.stuck(), "nookworks.iron_pot.no_recipe"), "an egg in oil may become tamagoyaki: " + eggs.stuck());
+        IronPotBlockEntity fried = heatedPot(helper, player, new BlockPos(1, 3, 1), ModCooking.FRYING_PAN_ITEM.get());
+        fried.addLiquid(PotRecipe.Liquid.OIL, OilFluids.BOTTLE);
+        fried.addIngredient(new ItemStack(ModCooking.COOKED_RICE.get()));
+        check(helper, says(fried.stuck(), "nookworks.iron_pot.no_recipe"), "rice in the pan's oil may become fried rice: " + fried.stuck());
+        IronPotBlockEntity egg = heatedPot(helper, player, new BlockPos(1, 3, 3));
+        egg.addLiquid(PotRecipe.Liquid.OIL, OilFluids.BOTTLE);
+        egg.addIngredient(new ItemStack(Items.EGG));
+        check(helper, says(egg.stuck(), "nookworks.iron_pot.cooks_in_water"), "an egg in the pot's oil cooks in water: " + egg.stuck());
         IronPotBlockEntity stew = heatedPot(helper, player, new BlockPos(3, 3, 1));
         stew.addLiquid(PotRecipe.Liquid.WATER, IronPotBlockEntity.CAPACITY);
         stew.addIngredient(new ItemStack(Items.CHICKEN));

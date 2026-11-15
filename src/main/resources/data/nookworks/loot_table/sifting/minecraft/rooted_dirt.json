@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 566
+          "weight": 551
         },
         {
           "type": "minecraft:item",
@@ -153,6 +153,11 @@
           "type": "minecraft:item",
           "name": "nookworks:rare_seed",
           "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:glow_berries",
+          "weight": 15
         }
       ]
     }

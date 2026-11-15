@@ -1,0 +1,15 @@
+{
+  "values": [
+    "nookworks:cooked_rice",
+    "nookworks:fried_rice",
+    "nookworks:stir_fried_vegetables",
+    "nookworks:vegetable_soup",
+    "nookworks:cream_stew",
+    "nookworks:corn_potage",
+    "nookworks:udon",
+    "minecraft:mushroom_stew",
+    "minecraft:beetroot_soup",
+    "minecraft:rabbit_stew",
+    "minecraft:suspicious_stew"
+  ]
+}

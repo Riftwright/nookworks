@@ -1,0 +1,106 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "corn": "nookworks:block/dish/corn_grilled",
+    "stick": "minecraft:block/stripped_bamboo_block",
+    "particle": "nookworks:block/dish/corn_grilled"
+  },
+  "elements": [
+    {
+      "from": [
+        3.5,
+        0,
+        6.5
+      ],
+      "to": [
+        10.5,
+        2,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#corn"
+        },
+        "south": {
+          "texture": "#corn"
+        },
+        "east": {
+          "texture": "#corn"
+        },
+        "west": {
+          "texture": "#corn"
+        },
+        "up": {
+          "texture": "#corn"
+        },
+        "down": {
+          "texture": "#corn"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        2,
+        7
+      ],
+      "to": [
+        10,
+        2.75,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#corn"
+        },
+        "south": {
+          "texture": "#corn"
+        },
+        "east": {
+          "texture": "#corn"
+        },
+        "west": {
+          "texture": "#corn"
+        },
+        "up": {
+          "texture": "#corn"
+        },
+        "down": {
+          "texture": "#corn"
+        }
+      }
+    },
+    {
+      "from": [
+        10.5,
+        0.75,
+        7.5
+      ],
+      "to": [
+        13,
+        1.5,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stick"
+        },
+        "south": {
+          "texture": "#stick"
+        },
+        "east": {
+          "texture": "#stick"
+        },
+        "west": {
+          "texture": "#stick"
+        },
+        "up": {
+          "texture": "#stick"
+        },
+        "down": {
+          "texture": "#stick"
+        }
+      }
+    }
+  ]
+}

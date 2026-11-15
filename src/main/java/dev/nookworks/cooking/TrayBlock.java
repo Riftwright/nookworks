@@ -1,15 +1,17 @@
 package dev.nookworks.cooking;
 
+import dev.nookworks.registry.ModSounds;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
+import dev.nookworks.feature.Permission;
 import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModKitchen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.util.RandomSource;
@@ -40,10 +42,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Wooden Tray: a board with a low rim, set down on a table or counter. It takes four things to eat
+ * Wooden Tray: a board with a low rim, set down on a table or counter. It takes up to four lots of things to eat
  * ({@link TrayBlockEntity}): Bread Dough rises on it - dough is not set down on the bare table any more - and loaves,
  * a bowl of rice or a cutlet sit on it to be served. The food in hand goes on; an empty hand takes the last off, and
- * sneaking everything. It goes with the table under it, and what was on it with it.
+ * sneaking lifts the tray with everything on it, to carry. It goes with the table under it, and what was on it with it.
  */
 public class TrayBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -99,38 +101,59 @@ public class TrayBlock extends BaseEntityBlock {
         if (!TrayBlockEntity.fits(stack) || !(level.getBlockEntity(pos) instanceof TrayBlockEntity tray)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
-        if (tray.isFull()) { // the client has what is on it too, so both sides agree
+        if (!tray.takes(stack)) { // the client has what is on it too, so both sides agree
             if (!level.isClientSide()) {
-                player.sendOverlayMessage(Component.translatable("message.nookworks.tray.full").withStyle(ChatFormatting.RED));
+                player.sendOverlayMessage(Component.translatable(tray.wantsPlate(stack) ? "message.nookworks.tray.wants_plate"
+                        : "message.nookworks.tray.full").withStyle(ChatFormatting.RED));
             }
             return Clicks.REFUSED;
         }
         if (!level.isClientSide()) {
             boolean dough = stack.is(ModKitchen.BREAD_DOUGH.get());
             tray.place(level, player, stack);
-            level.playSound(null, pos, dough ? SoundEvents.SLIME_BLOCK_PLACE : SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.5F, dough ? 1.4F : 1.6F);
+            level.playSound(null, pos, dough ? ModSounds.TRAY_DOUGH.get() : ModSounds.TRAY_KNOCK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }
 
     /**
-     * An empty hand takes the last thing off; sneaking, everything. Into the inventory, not the empty hand that took it:
-     * there the next click put it back on the tray, and a tray of risen dough came off one, went back, came off again
-     * (the user, 2026-10-12: "ふつうに一個ずつ手元に拾って欲しい").
+     * An empty hand takes the last thing off. Into the inventory, not the empty hand that took it: there the next click
+     * put it back on the tray, and a tray of risen dough came off one, went back, came off again (the user, 2026-10-12:
+     * "ふつうに一個ずつ手元に拾って欲しい").
+     * <p>
+     * Sneaking, the hand lifts the tray itself with all that is on it ({@link TrayBlockEntity#lift}; the user,
+     * 2026-11-14) - into the hand this time: it is carried there, and set down again as a tray is. It used to take
+     * everything off into the inventory, which the tray carried there does as well, and keeps the meal laid.
+     * Lifting takes a block away: not in adventure mode, nor on land that is not theirs to break.
      */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!player.getMainHandItem().isEmpty() || !(level.getBlockEntity(pos) instanceof TrayBlockEntity tray) || tray.isEmpty()) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide()) {
-            for (ItemStack off = tray.take(); !off.isEmpty(); off = player.isSecondaryUseActive() ? tray.take() : ItemStack.EMPTY) {
-                if (!player.getInventory().add(off)) {
-                    player.drop(off, false, Prediction.PREDICTED);
+        if (player.isSecondaryUseActive()) {
+            if (!player.mayBuild()) {
+                return InteractionResult.PASS;
+            }
+            if (level instanceof ServerLevel server) {
+                if (!Permission.mayBreak(server, pos, player)) {
+                    return Clicks.REFUSED;
                 }
+                ItemStack lifted = tray.lift();
+                level.removeBlock(pos, false);
+                player.setItemInHand(InteractionHand.MAIN_HAND, lifted);
+                // lifted, not broken: the tray's own knock, lower (it was a wooden block breaking, and said so in subtitles)
+                level.playSound(null, pos, ModSounds.TRAY_KNOCK.get(), SoundSource.BLOCKS, 0.45F, 0.9F);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (!level.isClientSide()) {
+            ItemStack off = tray.take();
+            if (!player.getInventory().add(off)) {
+                player.drop(off, false, Prediction.PREDICTED);
             }
             keepHandEmpty(player.getInventory());
-            level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.5F, 1.3F);
+            level.playSound(null, pos, ModSounds.TRAY_KNOCK.get(), SoundSource.BLOCKS, 0.3F, 1.2F);
         }
         return InteractionResult.SUCCESS;
     }

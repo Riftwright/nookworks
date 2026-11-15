@@ -62,6 +62,7 @@ public class NookworksClient {
         RecipeChoiceClient.init(); // the server's word on what a crafting grid could make reaches it
         modEventBus.addListener(Squint::registerKeys);
         modEventBus.addListener(Squint::registerRenderState);
+        modEventBus.addListener(dev.nookworks.client.TrayCarry::registerRenderState);
         // the Camera: its viewfinder, the photos the server sends, and a photo poster's item showing its picture
         modEventBus.addListener(CameraView::registerLayer);
         PhotoTextures.init();
@@ -78,6 +79,12 @@ public class NookworksClient {
         // the Repair Box's item, with the handle its lid has in the world (vanilla's chest item model has none)
         modEventBus.addListener((RegisterSpecialModelRendererEvent event) -> event.register(
                 RepairBoxItemRenderer.TYPE, RepairBoxItemRenderer.Unbaked.MAP_CODEC));
+        // a Plate lifted with its food shows the food on its item
+        modEventBus.addListener((RegisterSpecialModelRendererEvent event) -> event.register(
+                dev.nookworks.client.render.PlateItemRenderer.TYPE, dev.nookworks.client.render.PlateItemRenderer.Unbaked.MAP_CODEC));
+        // a Wooden Tray lifted with its food shows the food on its item
+        modEventBus.addListener((RegisterSpecialModelRendererEvent event) -> event.register(
+                dev.nookworks.client.render.TrayItemRenderer.TYPE, dev.nookworks.client.render.TrayItemRenderer.Unbaked.MAP_CODEC));
         container.registerConfig(ModConfig.Type.CLIENT, NookworksClientConfig.SPEC);
         // the loot tables a server sent are its own: the next one, or a world of one's own, sends its
         NeoForge.EVENT_BUS.addListener(

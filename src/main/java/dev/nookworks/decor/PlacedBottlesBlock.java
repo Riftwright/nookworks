@@ -1,5 +1,6 @@
 package dev.nookworks.decor;
 
+import dev.nookworks.registry.ModSounds;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
@@ -11,7 +12,6 @@ import dev.nookworks.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.util.RandomSource;
@@ -112,7 +112,8 @@ public class PlacedBottlesBlock extends BaseEntityBlock {
                 player.drop(taken, false, Prediction.PREDICTED);
             }
             TrayBlock.keepHandEmpty(player.getInventory());
-            level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.6F, 1.4F);
+            // taken up, not poured out (it was the sound of a bottle emptied)
+            level.playSound(null, pos, ModSounds.PLACED_BOTTLES_CLINK.get(), SoundSource.BLOCKS, 0.4F, 1.2F);
             refresh(level, pos, bottles);
         }
         return InteractionResult.SUCCESS;
@@ -175,7 +176,7 @@ public class PlacedBottlesBlock extends BaseEntityBlock {
         }
         held.consume(1, player);
         refresh(level, at, bottles);
-        level.playSound(null, at, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 0.6F, 1.5F);
+        level.playSound(null, at, ModSounds.PLACED_BOTTLES_CLINK.get(), SoundSource.BLOCKS, 0.6F, 1.0F);
         return true;
     }
 

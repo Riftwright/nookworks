@@ -3,18 +3,19 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:karaage"
+        "nookworks:karaage",
+        "nookworks:coated_chicken"
       ]
     }
   ],
   "type": "nookworks:pot",
   "ingredients": [
     {
-      "ingredient": "minecraft:chicken"
+      "ingredient": "nookworks:coated_chicken"
     }
   ],
   "liquid": "oil",
-  "amount": 50,
+  "amount": 25,
   "time": 200,
   "result": {
     "id": "nookworks:karaage",

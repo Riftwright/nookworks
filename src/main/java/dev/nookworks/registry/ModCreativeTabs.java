@@ -45,6 +45,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.DEEPSLATE_GRAVEL.get());
                         output.accept(ModItems.NETHER_GRIT.get());
                         output.accept(ModItems.END_GRAVEL.get());
+                        output.accept(ModItems.BASALT_GRAVEL.get());
                         output.accept(ModItems.STONY_DIRT.get());
                         output.accept(ModItems.PEBBLES.get());
                         // furniture, light, pots, the odd thing for the table
@@ -106,9 +107,12 @@ public final class ModCreativeTabs {
                         output.accept(ModOil.OIL_PRESS_ITEM.get());
                         output.accept(ModCooking.GRILL_ITEM.get());
                         output.accept(ModCooking.IRON_POT_ITEM.get());
+                        output.accept(ModCooking.FRYING_PAN_ITEM.get());
                         output.accept(ModCooking.NUKADOKO_ITEM.get());
                         output.accept(ModKitchen.WOODEN_TRAY_ITEM.get());
                         output.accept(ModKitchen.PLATE_ITEM.get());
+                        output.accept(ModCooking.ELECTRIC_STOVE_ITEM.get());
+                        output.accept(ModCooking.KITCHEN_TAP_ITEM.get());
                         output.accept(ModItems.WINE_GLASS.get());
                         output.accept(ModItems.MUG.get());
                         output.accept(ModVentilation.RANGE_HOOD_ITEM.get());
@@ -128,6 +132,10 @@ public final class ModCreativeTabs {
                         output.accept(ModCooking.FLOUR.get());
                         output.accept(ModCooking.BREADCRUMBS.get());
                         output.accept(ModCooking.BREADED_PORK.get());
+                        output.accept(ModCooking.COATED_CHICKEN.get());
+                        output.accept(ModCooking.COATED_FISH.get());
+                        output.accept(ModCooking.DONUT_DOUGH.get());
+                        output.accept(ModCooking.BEATEN_EGGS.get());
                         output.accept(ModKitchen.BREAD_DOUGH.get());
                         output.accept(ModKitchen.RISEN_DOUGH.get());
                         output.accept(ModKitchen.UDON_DOUGH.get());
@@ -139,6 +147,8 @@ public final class ModCreativeTabs {
                         output.accept(ModCooking.VEGETABLE_SOUP.get());
                         output.accept(ModCooking.FRIED_RICE.get());
                         output.accept(ModCooking.STIR_FRIED_VEGETABLES.get());
+                        output.accept(ModKitchen.PLATED_FRIED_RICE.get());
+                        output.accept(ModKitchen.PLATED_STIR_FRIED_VEGETABLES.get());
                         output.accept(ModCooking.FRENCH_FRIES.get());
                         output.accept(ModCooking.KARAAGE.get());
                         output.accept(ModCooking.FRIED_FISH.get());
@@ -310,6 +320,10 @@ public final class ModCreativeTabs {
                     })
                     .displayItems(Features.shown((parameters, output) -> {
                         output.accept(LabelItem.sample());
+                        output.accept(ModItems.DARK_OAK_ITEM_FRAME.get());
+                        output.accept(ModItems.DARK_OAK_GLOW_ITEM_FRAME.get());
+                        output.accept(ModItems.BRASS_ITEM_FRAME.get());
+                        output.accept(ModItems.BRASS_GLOW_ITEM_FRAME.get());
                         PosterItem.allDesigns(parameters.holders()).forEach(output::accept);
                     }))
                     .build());

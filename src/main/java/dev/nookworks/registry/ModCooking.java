@@ -36,6 +36,25 @@ public final class ModCooking {
             IronPotBlock::new, p -> p.mapColor(MapColor.COLOR_BLACK).strength(2.0F).sound(SoundType.LANTERN).noOcclusion()
                     .forceSolidOn());
     public static final DeferredItem<BlockItem> IRON_POT_ITEM = ModItems.ITEMS.registerSimpleBlockItem(IRON_POT);
+    /**
+     * Trial (cooking review, 2026-11-14): a Frying Pan, for what is fried or stir-fried in a little oil - fried eggs,
+     * tamagoyaki, pancakes, fried rice, stir-fried vegetables. The pot keeps boiling and deep-frying.
+     */
+    public static final DeferredBlock<dev.nookworks.cooking.FryingPanBlock> FRYING_PAN = ModBlocks.BLOCKS.registerBlock("frying_pan",
+            dev.nookworks.cooking.FryingPanBlock::new, p -> p.mapColor(MapColor.COLOR_BLACK).strength(1.5F).sound(SoundType.LANTERN)
+                    .noOcclusion().forceSolidOn());
+    public static final DeferredItem<BlockItem> FRYING_PAN_ITEM = ModItems.ITEMS.registerSimpleBlockItem(FRYING_PAN);
+    /** Trial (2026-11-14): a kitchen range with no fire in it - a pot or pan on it cooks while it has power. */
+    public static final DeferredBlock<dev.nookworks.cooking.ElectricStoveBlock> ELECTRIC_STOVE = ModBlocks.BLOCKS.registerBlock("electric_stove",
+            dev.nookworks.cooking.ElectricStoveBlock::new, p -> p.mapColor(MapColor.METAL).strength(3.0F).sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> state.getValue(dev.nookworks.cooking.ElectricStoveBlock.LIT) ? dev.nookworks.cooking.ElectricStoveBlock.LIGHT_LEVEL : 0));
+    public static final DeferredItem<BlockItem> ELECTRIC_STOVE_ITEM = ModItems.ITEMS.registerSimpleBlockItem(ELECTRIC_STOVE);
+    /** A brass tap on a wall or a Copper Pipe, pouring what the pipe brings into the pot under it (the user, 2026-11-15). */
+    public static final DeferredBlock<dev.nookworks.cooking.KitchenTapBlock> KITCHEN_TAP = ModBlocks.BLOCKS.registerBlock("kitchen_tap",
+            dev.nookworks.cooking.KitchenTapBlock::new, p -> p.mapColor(MapColor.GOLD).strength(1.5F).sound(SoundType.COPPER)
+                    .noOcclusion().forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.POPPED));
+    public static final DeferredItem<BlockItem> KITCHEN_TAP_ITEM = ModItems.ITEMS.registerSimpleBlockItem(KITCHEN_TAP);
     public static final DeferredBlock<NukadokoBlock> NUKADOKO = ModBlocks.BLOCKS.registerBlock("nukadoko",
             NukadokoBlock::new, p -> p.mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD).noOcclusion());
     public static final DeferredItem<BlockItem> NUKADOKO_ITEM = ModItems.ITEMS.registerSimpleBlockItem(NUKADOKO);
@@ -62,6 +81,15 @@ public final class ModCooking {
     public static final DeferredItem<Item> BREADCRUMBS = ModItems.ITEMS.registerSimpleItem("breadcrumbs");
     /** A porkchop cut in two and coated, flour, egg and crumbs, at the crafting table: the Iron Pot's oil fries it. */
     public static final DeferredItem<Item> BREADED_PORK = ModItems.ITEMS.registerSimpleItem("breaded_pork");
+    // Trial (cooking review, 2026-11-14): what is fried is got ready at the crafting table first, as Breaded Pork is.
+    /** A raw chicken cut up and dusted in flour, two to a bird: the pot's oil fries each into Karaage. */
+    public static final DeferredItem<Item> COATED_CHICKEN = ModItems.ITEMS.registerSimpleItem("coated_chicken");
+    /** A raw cod filleted and floured, two to a fish: fried into Fried Fish. */
+    public static final DeferredItem<Item> COATED_FISH = ModItems.ITEMS.registerSimpleItem("coated_fish");
+    /** Flour, sugar and an egg kneaded and cut into rings, four to a batch: fried into Doughnuts. */
+    public static final DeferredItem<Item> DONUT_DOUGH = ModItems.ITEMS.registerSimpleItem("donut_dough");
+    /** Three eggs beaten with sugar: poured into the Frying Pan, a rolled omelette of three slices. */
+    public static final DeferredItem<Item> BEATEN_EGGS = ModItems.ITEMS.registerSimpleItem("beaten_eggs");
     public static final DeferredItem<Item> CARROT_NUKAZUKE = food("carrot_nukazuke", 4, 1.0F);
     public static final DeferredItem<Item> BEETROOT_NUKAZUKE = food("beetroot_nukazuke", 3, 1.0F);
     // The egg dishes (the user, 2026-10-16: 卵料理が欲しくない？卵焼いたら目玉焼きとか): a step up the table each, from

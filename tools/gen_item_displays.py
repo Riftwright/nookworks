@@ -77,6 +77,12 @@ TUNED = {
     "item/warp_anchor": {**held([0, 45, 0], [0, 3, 0], 0.5),
                          "gui": {"rotation": [40, 225, 0], "translation": [0, 0, 0], "scale": [0.9, 0.9, 0.9]},
                          "fixed": {"rotation": [-25, 0, 0], "translation": [0, 0, 0], "scale": [0.85, 0.85, 0.85]}},
+    # a Wooden Tray lifted with its food (items/wooden_tray.json shows this model for one): carried level before the
+    # body, the dishes in sight - in first person in the middle of the view over the hotbar, not out at the side as a
+    # block is; in third person level at the waist, where the hand's own turn stood it on edge (set in the agent
+    # client, 2026-11-14)
+    # carried in both hands, held out before the body (dev.nookworks.client.TrayCarry): flat on them, in the middle
+    "item/wooden_tray_carried": {**held([12, 0, 0], [-9, 8, -1], 0.5), **third([45, 0, 0], [-6, 4, 5], 0.6)},
     # the Grill in a frame: its grate turned out, not seen edge-on
     "block/grill_standing": {"fixed": {"rotation": [-60, 0, 0], "translation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]}},
 }

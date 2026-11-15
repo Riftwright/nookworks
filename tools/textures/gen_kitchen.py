@@ -957,7 +957,17 @@ def main():
     write_json(ASSETS / "models/block/wooden_tray.json", tray_model())
     write_json(ASSETS / "blockstates/wooden_tray.json", {"variants": {
         f"facing={facing}": {"model": "nookworks:block/wooden_tray", **({"y": y} if y else {})} for facing, y in FACINGS}})
-    write_json(ASSETS / "items/wooden_tray.json", {"model": {"type": "minecraft:model", "model": "nookworks:block/wooden_tray"}})
+    # A tray lifted with its food (it has a container) is drawn by the carried model - its own views in the hand, set in
+    # tools/gen_item_displays.py - with what is on it laid over (client/render/TrayItemRenderer). The plain tray comes
+    # first: gen_item_displays.py gives the first model an item shows its low-block transforms.
+    carried = "nookworks:item/wooden_tray_carried"
+    write_json(ASSETS / "models/item/wooden_tray_carried.json", {"parent": "nookworks:block/wooden_tray"})
+    write_json(ASSETS / "items/wooden_tray.json", {"model": {
+        "type": "minecraft:condition", "property": "minecraft:has_component", "component": "minecraft:container",
+        "on_false": {"type": "minecraft:model", "model": "nookworks:block/wooden_tray"},
+        "on_true": {"type": "minecraft:composite", "models": [
+            {"type": "minecraft:model", "model": carried},
+            {"type": "minecraft:special", "base": carried, "model": {"type": "nookworks:tray_contents"}}]}}})
     for name, model, parts in (("hand_quern", quern_model, ("base", "crank", "crank_driven", "axle_up", "axle_down")),
                                ("noodle_maker", noodle_maker_model, ("base", "crank", "axle"))):
         write_json(ASSETS / f"models/block/{name}.json", model())

@@ -68,6 +68,18 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         this.tabs.addSetting(this.addRenderableWidget(new RedstoneButton(0, 0, this.menu::redstoneMode,
                 () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, MachineMenu.BUTTON_REDSTONE))),
                 () -> Component.translatable(this.menu.redstoneMode().translationKey()));
+        if (this.layout() == MachineLayout.STONE_MAKER) {
+            // cobblestone or stone, shown as the block it makes (the user, 2026-11-14). With blue ice in it is basalt that is
+            // made, so basalt is shown and the choice waits for water (the user, the same day: 「玄武岩作ってるのに、
+            // 「作るもの：丸石」って表示されてるの、なんか変な感じするな」, and of the ways offered, the one showing what it makes)
+            this.tabs.addSetting(this.addRenderableWidget(new ItemChoiceButton(0, 0, Component.translatable("gui.nookworks.stone_maker.makes.title"),
+                    this::stoneMakerChoice, () -> java.util.List.of(
+                            Component.translatable(this.stoneMakerIced() ? "gui.nookworks.stone_maker.makes.water" : "gui.nookworks.stone_maker.makes.click"),
+                            Component.translatable("gui.nookworks.stone_maker.makes.basalt")),
+                    () -> this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, MachineMenu.BUTTON_OPTION),
+                    () -> !this.stoneMakerIced())),
+                    () -> Component.translatable("gui.nookworks.stone_maker.makes", this.stoneMakerChoice().getHoverName()));
+        }
         this.tabs.liquidChoices(new ScreenTabs.LiquidChoices() {
             @Override
             public void icon(GuiGraphicsExtractor g, int tank, int x, int y) {
@@ -153,7 +165,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         int beamEnd = this.beamEnd(layout);
         switch (layout.gauge()) {
             // still while a Distiller works its tank's wood vinegar, a liquid into liquids (its extra says so)
-            case ARROW -> MachineStyle.arrow(g, gx, gy, layout == MachineLayout.DISTILLER && this.menu.extra() == 1 ? 0.0F : done);
+            case ARROW -> {
+                MachineStyle.arrow(g, gx, gy, layout == MachineLayout.DISTILLER && this.menu.extra() == 1 ? 0.0F : done);
+                if (layout.meets()) {
+                    MachineStyle.arrowLeft(g, x + MachineLayout.WIDTH - layout.gaugeX() - MachineStyle.ARROW_W, gy, done);
+                }
+            }
             case FLAME -> MachineStyle.flame(g, gx, gy, done);
             case BEAM -> MachineStyle.beam(g, gx, gy, beamEnd - layout.gaugeX(), done, this.menu.status() == MachineStatus.RUNNING);
             case NONE -> {}
@@ -191,6 +208,10 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
     protected void extractSlot(GuiGraphicsExtractor g, Slot slot, int mouseX, int mouseY) {
         if (slot instanceof TabSlot && !slot.hasItem()) {
             ItemStack hint = this.tabs.hint(slot);
+            if (hint.isEmpty() && this.layout() == MachineLayout.STONE_MAKER && slot.getContainerSlot() == dev.nookworks.machine.StoneMakerBlockEntity.SOUL_SOIL
+                    && slot.container != this.minecraft.player.getInventory()) {
+                hint = new ItemStack(net.minecraft.world.item.Items.SOUL_SOIL); // the Stone Maker's own slot in its Extra Slots tab
+            }
             if (!hint.isEmpty()) {
                 MachineStyle.ghost(g, hint, slot.x, slot.y);
                 return;
@@ -405,9 +426,28 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         return this.tabs.mouseClicked(event) || super.mouseClicked(event, doubleClick);
     }
 
+    /** The Stone Maker's choice, as the block: stone or cobblestone. */
+    private ItemStack stoneMakerChoice() {
+        return new ItemStack(this.stoneMakerIced() ? net.minecraft.world.item.Items.BASALT
+                : this.menu.extra() == 1 ? net.minecraft.world.item.Items.STONE : net.minecraft.world.item.Items.COBBLESTONE);
+    }
+
+    /** Whether the Stone Maker's left slot holds blue ice: what it makes is basalt then, whatever the choice. */
+    private boolean stoneMakerIced() {
+        net.minecraft.world.inventory.Slot first = this.menu.getSlot(0);
+        for (net.minecraft.world.inventory.Slot slot : this.menu.slots) {
+            if (slot.container == first.container && slot.getContainerSlot() == dev.nookworks.machine.StoneMakerBlockEntity.COOLER) {
+                return slot.getItem().is(net.minecraft.world.item.Items.BLUE_ICE);
+            }
+        }
+        return false;
+    }
+
     private boolean overGauge(MachineLayout layout, int mouseX, int mouseY) {
         return switch (layout.gauge()) {
-            case ARROW -> this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY);
+            case ARROW -> this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY)
+                    || layout.meets() && this.isHovering(MachineLayout.WIDTH - layout.gaugeX() - MachineStyle.ARROW_W, layout.gaugeY(),
+                            MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY);
             case FLAME -> this.isHovering(layout.gaugeX(), layout.gaugeY(), 16, 16, mouseX, mouseY);
             case BEAM -> this.isHovering(layout.gaugeX(), layout.gaugeY() - 6, this.beamEnd(layout) - layout.gaugeX(), 14, mouseX, mouseY);
             case NONE -> false;

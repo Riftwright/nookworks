@@ -1,7 +1,9 @@
 package dev.nookworks.mercury;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import dev.nookworks.fluid.Bottles;
@@ -17,7 +19,12 @@ import dev.nookworks.registry.ModBlockEntities;
 import dev.nookworks.registry.ModBlocks;
 import dev.nookworks.registry.ModItems;
 import dev.nookworks.registry.ModOil;
+import com.mojang.serialization.Codec;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -67,8 +74,23 @@ import org.jspecify.annotations.Nullable;
  * Distiller itself sends out neither. A run of the tank's wood vinegar takes {@link #WOOD_VINEGAR_RUN} mB and gives 250 of
  * methanol and the rest as water (「1：1変換されるのもちょっと不自然…残りはどこに行った？」), the Retort's log making as
  * much more wood vinegar, so a log's methanol is what it was. The water goes out of the Distiller's own sides and
- * bottom - never by a side its wood vinegar comes in by, so not back up the Retort's line (「蒸留器からレトルト炉へ水を送ろう
- * として、機械が止まることはありませんか？」) - and with nowhere to go it is let off as steam: the still never stops for it.
+ * bottom - never back up the line its wood vinegar comes in by (「蒸留器からレトルト炉へ水を送ろうとして、機械が止まることは
+ * ありませんか？」) - and with nowhere to go it is let off as steam: the still never stops for it.
+ * <p>
+ * Which sides are the wood vinegar's (the user, 2026-11-13: kept for ten minutes, a side went back to taking water and the
+ * Retort's line had it back; 「配置を変えた時に…パイプを壊さずに使いまわそうとしたら」 - so by where the line goes, not for
+ * good): a side is shut to the water while its line - our pipes followed, else the block against it - still reaches a
+ * tank or machine a wood vinegar line reached when wood vinegar last came in (a tank between the Retort and the
+ * Distiller: filled with water while empty, it took no wood vinegar after, and the Retort stopped). Moved so it reaches
+ * none of those, the side takes water again; another mod's pipe against it is that side's line until another block takes
+ * its place. A Sealed Retort on a line of its own has the water (the user, 2026-11-14: 「木酢液に全く関係ない別のレトルト炉に
+ * 別のパイプで蒸留器から直接水を送るのは、できた方がいい」; the one that feeds the still need not: 「出来なくてよい」), but
+ * only once the still knows where its wood vinegar comes from - by a line, or poured in by hand: till then that Retort may
+ * be its own, its line not yet known (a still from before 1.7, or one whose line was moved) - and only while that Retort
+ * makes no wood vinegar (no log in it, none in its tank) and has half its water tank free: water standing in its pipes
+ * would bar its wood vinegar's way, and one not boiling it off (unpowered, at a charge) would fill and leave it standing.
+ * A shut side gives no water to what draws from it either (another mod's pipe that pulls). ({@link #lookAtSides} says
+ * how it is looked at.)
  */
 public class DistillerBlockEntity extends MercuryMachineBlockEntity implements MachineInfo {
     public static final int FE_PER_TICK = 60;
@@ -83,8 +105,15 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
     public static final int WOOD_VINEGAR_RUN = 1_000;
     /** The water a run leaves, on its way out by pipe: past this it is let off as steam. */
     public static final int WATER_TANK = 1_000;
-    /** How long a side its wood vinegar came in by is kept from its water, in seconds of the world's time. */
-    private static final int INLET_KEPT = 600;
+    /** How many tanks and machines a side's wood vinegar line is remembered by, at most. */
+    private static final int FEEDS_KEPT = 32;
+    /**
+     * How many looks in a row (seconds) a side's line may miss what it fed from before that is forgotten: a pipe of the
+     * line broken and set again (a Sight Glass for a pipe) is not a line moved.
+     */
+    private static final int MISSES_KEPT = 30;
+    /** The blocks each side's wood vinegar line reached when wood vinegar last came in by it (saved). */
+    private static final Codec<Map<Direction, List<BlockPos>>> FEEDS_CODEC = Codec.unboundedMap(Direction.CODEC, BlockPos.CODEC.listOf());
     /** How far along a pipe line from the Condenser it looks for the Distiller below. */
     private static final int LINE_LOOK = 512;
 
@@ -99,11 +128,54 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
             false, true, this::setChanged);
     /** What pipes and other mods see of the Distiller itself: its water to draw, its wood vinegar to fill. */
     private final ResourceHandler<FluidResource> fluids = new CombinedResourceHandler<>(this.water, this.woodVinegar);
-    /** The same, side by side, each noting wood vinegar put in through it: that side is where it comes in. */
+    /**
+     * The same, side by side, each noting wood vinegar put in through it (that side is where it comes in), and none of
+     * the water drawn through a side shut to it ({@link #waterShut}).
+     */
     private final java.util.List<ResourceHandler<FluidResource>> bySide = java.util.Arrays.stream(Direction.values())
-            .map(side -> Tanks.noting(this.fluids, transaction -> this.cameIn(side))).toList();
-    /** The world's second wood vinegar last came in by each side, or 0 (saved). */
-    private final int[] inletSeen = new int[6];
+            .map(side -> Tanks.noting(this.waterGuarded(side), transaction -> this.cameIn(side, transaction))).toList();
+    /** Wood vinegar has come in by each side since the last look: its line is noted then. */
+    private final boolean[] cameNow = new boolean[6];
+    /** {@link #cameNow} kept with the transaction that set it: a pipe asking what would go in leaves it as it was. */
+    private final SnapshotJournal<boolean[]> cameJournal = new SnapshotJournal<>() {
+        @Override
+        protected boolean[] createSnapshot() {
+            return DistillerBlockEntity.this.cameNow.clone();
+        }
+
+        @Override
+        protected void revertToSnapshot(boolean[] snapshot) {
+            System.arraycopy(snapshot, 0, DistillerBlockEntity.this.cameNow, 0, snapshot.length);
+        }
+    };
+    /** What each side's wood vinegar line reached when it last came in by it (saved). */
+    private final Map<Direction, List<BlockPos>> feeds = new EnumMap<>(Direction.class);
+    /** The block against each side at the last look, to see another take its place. */
+    private final @Nullable Block[] against = new Block[6];
+    /**
+     * The block against each side at the last look, air too: what draws the water by a side has it only if it stood there
+     * then (a pulling pipe set where one was broken, before the next look, drew it into a line not looked at).
+     */
+    private final @Nullable Block[] lookedAt = new Block[6];
+    /** Looks in a row each side's line, walked whole, reached none of what it fed from: forgotten at {@link #MISSES_KEPT}. */
+    private final int[] missed = new int[6];
+    /** Where the Distiller stood when its feeds were saved: carried off since, they are looked for both there and moved with it. */
+    private @Nullable BlockPos feedsSavedAt;
+    /**
+     * Wood vinegar has been put in by no side's line - poured from its charge slot, at its gauge or clicked in from a
+     * bucket - since a line was last noted: the still knows where its wood vinegar comes from, and a line to a Sealed
+     * Retort may have its water (saved).
+     */
+    private boolean pouredByHand;
+    /** The wood vinegar held at the end of the last tick, to see it rise by hand; -1 till a first tick (not saved). */
+    private int woodVinegarSeen = -1;
+    /** Which sides the water may not leave by, looked at once a second. */
+    private final boolean[] waterShut = {true, true, true, true, true, true};
+    /** Which open sides' lines had something to take the water, at the same look. */
+    private final boolean[] waterLine = new boolean[6];
+    private long shutAskedAt = Long.MIN_VALUE / 2;
+    /** The last look found nothing to give and walked no line: the first water to come is looked for at once. */
+    private boolean stale;
     /** Where the methanol goes out: the Condenser's sides and top, into pipes only. */
     private final LiquidOutlet outlet = new LiquidOutlet(true, true);
     /** Where the water goes out: the Distiller's sides and bottom, not up into the column. */
@@ -137,8 +209,29 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, DistillerBlockEntity distiller) {
         if (level instanceof ServerLevel server) {
+            distiller.noteHandPoured();
             distiller.tick(server, pos);
+            distiller.woodVinegarSeen = distiller.woodVinegarStored();
         }
+    }
+
+    /**
+     * Wood vinegar more than at the end of the last tick, no side marked as having had some come in by it: it came by hand
+     * (a bucket at its gauge or clicked on it) or by something with no side. With a side marked, a rise is taken for that
+     * line's - a pour by hand meanwhile is not missed for long, the side noted at the next look.
+     */
+    private void noteHandPoured() {
+        int held = this.woodVinegarStored();
+        if (this.pouredByHand || this.woodVinegarSeen < 0 || held <= this.woodVinegarSeen) {
+            return;
+        }
+        for (boolean came : this.cameNow) {
+            if (came) {
+                return;
+            }
+        }
+        this.pouredByHand = true;
+        this.setChanged();
     }
 
     private void tick(ServerLevel level, BlockPos pos) {
@@ -153,8 +246,9 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         if (formed && this.methanolStored() > 0) {
             this.pushMethanol(level, pos);
         }
+        this.lookAtSides(level, pos);
         if (this.waterStored() > 0) {
-            this.waterOutlet.push(level, pos, this, this.water, side -> side != Direction.UP && !this.cameInBy(level, side));
+            this.waterOutlet.push(level, pos, this, this.water, side -> !this.waterShut[side.ordinal()] && this.waterLine[side.ordinal()]);
         }
         this.pourIn();
         ItemStack charge = this.items.get(INPUT);
@@ -278,17 +372,209 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         }
     }
 
-    /** Wood vinegar put in through {@code side}: that side is where it comes in. */
-    private void cameIn(Direction side) {
-        if (this.level != null) {
-            this.inletSeen[side.ordinal()] = (int) (this.level.getGameTime() / 20) + 1;
+    /**
+     * Wood vinegar put in through {@code side}: its line is noted at the next look ({@link #lookAtSides}) - once the
+     * putting in is done: a pipe asking whether the Distiller would take some (every tick an empty Copper Pipe beside it
+     * asks so of everything it may carry, and takes it back) leaves no mark, or every pipe against it marked its side and
+     * no water ever left by pipe (2026-11-13 review; 1.6.0 had it so).
+     */
+    private void cameIn(Direction side, TransactionContext transaction) {
+        int i = side.ordinal();
+        if (!this.cameNow[i]) {
+            this.cameJournal.updateSnapshots(transaction);
+            this.cameNow[i] = true;
         }
     }
 
-    /** Whether its wood vinegar has come in by {@code side} in the last ten minutes. */
-    private boolean cameInBy(ServerLevel level, Direction side) {
-        int seen = this.inletSeen[side.ordinal()];
-        return seen > 0 && level.getGameTime() / 20 + 1 - seen < INLET_KEPT;
+    /**
+     * Once a second, while it has water to give or wood vinegar has come in (and staggered by where it stands): which
+     * sides the water may leave by. Each side's line is walked once - our pipes followed through shut valves, else the
+     * block against it; a line touching several sides, once for all. A side is shut while its line reaches something a
+     * wood vinegar line reached when wood vinegar last came in (any side's: a water line run round into the tank the wood
+     * vinegar comes from is that tank's line), or a Sealed Retort that may not have it ({@link #mayWater}); the top
+     * always, the column standing there (wood vinegar come in by it is not noted); one not walked whole
+     * (a chunk not loaded along it) kept shut. The water goes only where this same look found something to take it - so
+     * a line newly joined to a Retort or a feed is never poured into on the outlet's own word before this look saw where
+     * it leads (2026-11-13 review). What a side's line reached is noted at the first look after wood vinegar comes in by it,
+     * kept as offsets from the Distiller (a still carried off with its tank keeps it), and forgotten once its line,
+     * walked whole, reaches none of it, or another block than our pipe takes the place of the one against it.
+     */
+    private void lookAtSides(ServerLevel level, BlockPos pos) {
+        long now = level.getGameTime();
+        boolean came = false;
+        for (boolean c : this.cameNow) {
+            came |= c;
+        }
+        boolean wanted = came || this.waterStored() > 0;
+        boolean first = this.shutAskedAt == Long.MIN_VALUE / 2;
+        boolean due = now - this.shutAskedAt >= 20 || now < this.shutAskedAt;
+        if (!first && !due && !(this.stale && wanted)) {
+            return;
+        }
+        // staggered: stills loaded together do not all walk their lines in one tick
+        this.shutAskedAt = first ? now - Math.floorMod(pos.asLong(), 20) : now;
+        if (!wanted && !first) {
+            // nothing to give and nothing new: not walked, and nothing poured on an old look - the first water to come
+            // is looked for at once
+            this.stale = true;
+            java.util.Arrays.fill(this.waterLine, false);
+            return;
+        }
+        this.stale = false;
+        BlockPos was = this.feedsSavedAt;
+        if (was != null) {
+            // carried off since its feeds were saved: each looked for where it was and moved with the still
+            this.feedsSavedAt = null;
+            if (!was.equals(pos)) {
+                BlockPos step = pos.subtract(was);
+                this.feeds.replaceAll((side, at) -> java.util.stream.Stream.concat(at.stream(), at.stream().map(p -> p.offset(step)))
+                        .distinct().limit(FEEDS_KEPT * 2L).toList());
+            }
+        }
+        dev.nookworks.fluid.FluidPipeBlockEntity.Line[] lines = new dev.nookworks.fluid.FluidPipeBlockEntity.Line[6];
+        java.util.Map<BlockPos, dev.nookworks.fluid.FluidPipeBlockEntity.Line> walked = new java.util.HashMap<>();
+        for (Direction side : Direction.values()) {
+            int i = side.ordinal();
+            BlockPos next = pos.relative(side);
+            if (side == Direction.UP || !level.isLoaded(next)) {
+                this.lookedAt[i] = null;
+                continue;
+            }
+            Block block = level.getBlockState(next).getBlock();
+            this.lookedAt[i] = block;
+            if (level.getBlockEntity(next) instanceof dev.nookworks.fluid.FluidPipeBlockEntity pipe) {
+                lines[i] = walked.get(next);
+                if (lines[i] == null) {
+                    lines[i] = pipe.line(level, pos, LINE_LOOK);
+                    for (BlockPos p : lines[i].pipes()) {
+                        walked.put(p, lines[i]);
+                    }
+                }
+            } else {
+                if (this.against[i] != null && this.against[i] != block && !level.getBlockState(next).isAir()
+                        && this.feeds.remove(side) != null) {
+                    this.setChanged(); // another block against it (not our pipe; air is a gap, not a block): its line is new
+                }
+                boolean holds = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK, next, side.getOpposite()) != null;
+                lines[i] = new dev.nookworks.fluid.FluidPipeBlockEntity.Line(java.util.Set.of(),
+                        holds ? java.util.Map.of(next.immutable(), java.util.Set.of(side.getOpposite())) : java.util.Map.of(), true);
+            }
+            if (!level.getBlockState(next).isAir()) {
+                this.against[i] = block;
+            }
+        }
+        // the top's: the column's place, never a line to note (a tank set on a Distiller with no column poured down)
+        this.cameNow[Direction.UP.ordinal()] = false;
+        for (Direction side : Direction.values()) {
+            int i = side.ordinal();
+            if (this.cameNow[i] && lines[i] != null && lines[i].whole()) {
+                // what can give wood vinegar: not another Distiller on a shared manifold (its wood vinegar is never drawn;
+                // noted, a bank of stills shut each other's water lines and let all their water off as steam)
+                this.cameNow[i] = false; // (not walked whole, it is noted at a later look)
+                this.feeds.put(side, lines[i].ends().keySet().stream()
+                        .filter(end -> !(level.getBlockEntity(end) instanceof DistillerBlockEntity)).limit(FEEDS_KEPT).toList());
+                this.missed[i] = 0;
+                // known by its line now: that line moved and forgotten, it knows of nothing again till the next comes in,
+                // a bottle poured in long ago not making it sure of a Retort the moved line may lead to
+                this.pouredByHand = false;
+                this.setChanged();
+            }
+            List<BlockPos> fed = this.feeds.get(side);
+            if (fed != null && lines[i] != null && lines[i].whole()) {
+                if (fed.stream().anyMatch(lines[i].ends()::containsKey)) {
+                    this.missed[i] = 0;
+                } else if (++this.missed[i] >= MISSES_KEPT) {
+                    this.feeds.remove(side); // moved: its line has reached none of what it fed from for half a minute
+                    this.missed[i] = 0;
+                    this.setChanged();
+                }
+            }
+        }
+        java.util.Set<BlockPos> fedFrom = new java.util.HashSet<>();
+        this.feeds.values().forEach(fedFrom::addAll);
+        boolean unsure = this.feeds.isEmpty() && !this.pouredByHand;
+        FluidResource waterResource = FluidResource.of(net.minecraft.world.level.material.Fluids.WATER);
+        for (Direction side : Direction.values()) {
+            int i = side.ordinal();
+            var line = lines[i];
+            if (line == null || !line.whole()) {
+                this.waterShut[i] = true;
+                this.waterLine[i] = false;
+                continue;
+            }
+            // shut while it still knows the side as a wood vinegar line (missing what it fed from only a while: a pipe of it
+            // being changed), or its line reaches what any side's wood vinegar came from, or a Sealed Retort that may not
+            // have it; a Retort on a line of its own, at no wood vinegar, has it
+            this.waterShut[i] = this.feeds.containsKey(side) || line.ends().keySet().stream().anyMatch(end -> fedFrom.contains(end)
+                    || level.getBlockEntity(end) instanceof RetortBlockEntity retort && (unsure || !mayWater(retort)));
+            this.waterLine[i] = !this.waterShut[i] && line.ends().entrySet().stream().anyMatch(end -> end.getValue().stream().anyMatch(face -> {
+                var handler = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK, end.getKey(), face);
+                return handler != null && Tanks.wouldTake(handler, waterResource, WATER_TANK);
+            }));
+        }
+    }
+
+    /**
+     * Whether a Sealed Retort not known as where the wood vinegar comes from may have the water: making no liquid (no log
+     * in it, no wood vinegar in its tank - a Retort piped in to feed the still, its logs come after the water, had its
+     * pipes stand full of water and its wood vinegar nowhere to go), and with half its water tank free (one not boiling it
+     * off - unpowered, at a charge - would fill, the water left standing in its pipes; 2026-11-14 review).
+     */
+    private static boolean mayWater(RetortBlockEntity retort) {
+        return !retort.givesOffLiquid() && retort.waterStored() < RetortBlockEntity.WATER_TANK / 2;
+    }
+
+    /**
+     * Whether what draws from {@code side} may have the water: the side open at the last look, and the same block against
+     * it still (one set there since - a pipe that pulls, its line to a feed - waits for the next look).
+     */
+    private boolean givesWaterBy(Direction side) {
+        int i = side.ordinal();
+        Level level = this.level;
+        BlockPos next = this.worldPosition.relative(side);
+        return !this.waterShut[i] && level != null && this.lookedAt[i] != null && level.isLoaded(next)
+                && level.getBlockState(next).getBlock() == this.lookedAt[i];
+    }
+
+    /** {@link #fluids}, giving no water through {@code side} while that side is shut to it. */
+    private ResourceHandler<FluidResource> waterGuarded(Direction side) {
+        ResourceHandler<FluidResource> all = this.fluids;
+        return new ResourceHandler<>() {
+            @Override
+            public int size() {
+                return all.size();
+            }
+
+            @Override
+            public FluidResource getResource(int index) {
+                return all.getResource(index);
+            }
+
+            @Override
+            public long getAmountAsLong(int index) {
+                return all.getAmountAsLong(index);
+            }
+
+            @Override
+            public long getCapacityAsLong(int index, FluidResource resource) {
+                return all.getCapacityAsLong(index, resource);
+            }
+
+            @Override
+            public boolean isValid(int index, FluidResource resource) {
+                return all.isValid(index, resource);
+            }
+
+            @Override
+            public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
+                return all.insert(index, resource, amount, transaction);
+            }
+
+            @Override
+            public int extract(int index, FluidResource resource, int amount, TransactionContext transaction) {
+                return DistillerBlockEntity.this.givesWaterBy(side) ? all.extract(index, resource, amount, transaction) : 0;
+            }
+        };
     }
 
     /** The Condenser on top of a whole tower whose Distiller is at {@code base}. */
@@ -366,6 +652,7 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         }
         charge.shrink(1);
         Tanks.set(this.woodVinegar, OilFluids.WOOD_VINEGAR.get(), this.woodVinegarStored() + amount);
+        this.pouredByHand = true;
         this.setChanged();
     }
 
@@ -439,8 +726,10 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
     }
 
     /**
-     * "methanol" and "wood_vinegar" only since 1.5, "water" and "wood_vinegar_inlets" since the play-test after it: a
-     * Distiller saved before has none of them, and its tanks start empty, no side known for its wood vinegar.
+     * "methanol" and "wood_vinegar" only since 1.5, "water" since the play-test after it, "wood_vinegar_feeds" and
+     * "wood_vinegar_poured" since 1.7 (1.6's "wood_vinegar_inlets", times, is no longer read: a pipe's asking marked them
+     * too): a Distiller saved before has none of them, and its tanks start empty, no side known for its wood vinegar until
+     * some comes in - and till then no water to a Sealed Retort, which may be the one that feeds it.
      */
     @Override
     protected void saveAdditional(ValueOutput output) {
@@ -448,7 +737,13 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         this.methanol.serialize(output.child("methanol"));
         this.woodVinegar.serialize(output.child("wood_vinegar"));
         this.water.serialize(output.child("water"));
-        output.putIntArray("wood_vinegar_inlets", this.inletSeen);
+        if (!this.feeds.isEmpty()) {
+            output.store("wood_vinegar_feeds", FEEDS_CODEC, Map.copyOf(this.feeds));
+            output.store("wood_vinegar_feeds_at", BlockPos.CODEC, this.worldPosition);
+        }
+        if (this.pouredByHand) {
+            output.putBoolean("wood_vinegar_poured", true);
+        }
     }
 
     @Override
@@ -457,7 +752,11 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         input.child("methanol").ifPresent(this.methanol::deserialize);
         input.child("wood_vinegar").ifPresent(this.woodVinegar::deserialize);
         input.child("water").ifPresent(this.water::deserialize);
-        input.getIntArray("wood_vinegar_inlets").ifPresent(seen -> System.arraycopy(seen, 0, this.inletSeen, 0, Math.min(6, seen.length)));
+        this.feeds.clear();
+        input.read("wood_vinegar_feeds", FEEDS_CODEC).ifPresent(this.feeds::putAll);
+        this.feedsSavedAt = input.read("wood_vinegar_feeds_at", BlockPos.CODEC).orElse(null);
+        this.pouredByHand = input.getBooleanOr("wood_vinegar_poured", false);
+        this.woodVinegarSeen = -1; // read in afresh: no rise by hand to see till a tick has passed
     }
 
     @Override

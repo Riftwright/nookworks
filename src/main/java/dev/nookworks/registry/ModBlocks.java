@@ -120,8 +120,10 @@ public final class ModBlocks {
             p -> p.mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).strength(2.0F)
                     .sound(SoundType.WOOD).ignitedByLava());
 
+    // stone's strength and tool, as it had when it was drawn as smooth stone - but steel's sound, since it is drawn and
+    // made of steel and brass (the sound audit, 2026-11-14: set down, broken and trodden on it sounded of stone)
     public static final DeferredBlock<Block> ELEVATOR = BLOCKS.registerSimpleBlock("elevator",
-            p -> stoneProperties(p));
+            p -> stoneProperties(p).sound(SoundType.METAL));
 
     public static final DeferredBlock<ItemWarpSenderBlock> ITEM_WARP_SENDER = BLOCKS.registerBlock("item_warp_sender",
             ItemWarpSenderBlock::new, p -> stoneProperties(p));
@@ -221,7 +223,7 @@ public final class ModBlocks {
                     .noCollision().noOcclusion().pushReaction(net.minecraft.world.level.material.PushReaction.POPPED));
     /** The blackened steel frame every powered machine is built on. A crafting material, nothing more. */
     public static final DeferredBlock<Block> MACHINE_CHASSIS = BLOCKS.registerSimpleBlock("machine_chassis", p -> machineProperties(p, true));
-    /** A lantern put out (dev.nookworks.decor.Lanterns): vanilla's lantern, its flame behind sooty glass, and no light. */
+    /** A lantern put out (dev.nookworks.decor.Lanterns): vanilla's lantern, cold glass where its flame was, and no light. */
     public static final DeferredBlock<LanternBlock> UNLIT_LANTERN = BLOCKS.registerBlock("unlit_lantern",
             LanternBlock::new, ModBlocks::unlitLanternProperties);
     public static final DeferredBlock<LanternBlock> UNLIT_SOUL_LANTERN = BLOCKS.registerBlock(
@@ -300,6 +302,13 @@ public final class ModBlocks {
             "end_gravel", p -> new ColoredFallingBlock(new ColorRGBA(0xFFC9C98C), p),
             p -> p.mapColor(MapColor.SAND).strength(0.6F).sound(SoundType.GRAVEL));
     /**
+     * And of basalt (the user, 2026-11-14: 「玄武岩を粉砕すると、玄武岩の砂利的なものができて、それをふるうといろいろ出てくる」),
+     * the Stone Maker's with blue ice: sifted, iron sand, flint, and now and then sulfur, amethyst and cinnabar.
+     */
+    public static final DeferredBlock<ColoredFallingBlock> BASALT_GRAVEL = BLOCKS.registerBlock(
+            "basalt_gravel", p -> new ColoredFallingBlock(new ColorRGBA(0xFF34343A), p),
+            p -> p.mapColor(MapColor.COLOR_BLACK).strength(0.6F).sound(SoundType.GRAVEL));
+    /**
      * Ground halfway between dirt and cobblestone, for paths and yards: stones packed close in earth. As firm as it is
      * between the two, and dug with a shovel or broken with a pickaxe alike; it does not fall.
      */
@@ -356,9 +365,10 @@ public final class ModBlocks {
 
     public static final DeferredBlock<LaserBlock> LASER = BLOCKS.registerBlock("laser",
             LaserBlock::new, p -> metalProperties(p).noOcclusion());
+    // One of the machines since 2026-11-14 (it was a wooden seed box): their steel, their sound, and no explosion
+    // scatters the seed in it.
     public static final DeferredBlock<PlanterBlock> PLANTER = BLOCKS.registerBlock("planter",
-            PlanterBlock::new, p -> p.mapColor(MapColor.WOOD).strength(2.0F)
-                    .sound(SoundType.WOOD));
+            PlanterBlock::new, ModBlocks::keeperProperties);
 
     public static final DeferredBlock<MagnetChestBlock> MAGNET_CHEST = BLOCKS.registerBlock("magnet_chest",
             MagnetChestBlock::new, p -> metalProperties(p));
