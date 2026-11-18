@@ -1,0 +1,6 @@
+{
+  "parent": "nookworks:block/hub_stone_shape",
+  "textures": {
+    "face": "nookworks:block/hub_stone_off"
+  }
+}

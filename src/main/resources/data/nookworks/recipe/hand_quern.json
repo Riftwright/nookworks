@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:hand_quern"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "tag": "c:rods/wooden"
+    },
+    "T": {
+      "item": "minecraft:smooth_stone_slab"
+    }
+  },
+  "pattern": [
+    "S",
+    "T",
+    "T"
+  ],
+  "result": {
+    "id": "nookworks:hand_quern"
+  }
+}

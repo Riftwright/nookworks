@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "dev.nookworks.mixin.dev",
+  "plugin": "dev.nookworks.mixin.dev.DevMixins",
+  "compatibilityLevel": "JAVA_21",
+  "client": [],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:netherite_sorter_gear",
+        "nookworks:diamond_sorter_gear"
+      ]
+    }
+  ],
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "base": {
+    "item": "nookworks:diamond_sorter_gear"
+  },
+  "result": {
+    "id": "nookworks:netherite_sorter_gear"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

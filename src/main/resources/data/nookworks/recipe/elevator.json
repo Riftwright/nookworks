@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:elevator"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "tag": "c:ingots/brass"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "pattern": [
+    "IBI",
+    "IEI",
+    "IBI"
+  ],
+  "result": {
+    "id": "nookworks:elevator"
+  }
+}

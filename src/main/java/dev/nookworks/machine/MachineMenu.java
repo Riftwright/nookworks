@@ -1,0 +1,374 @@
+package dev.nookworks.machine;
+
+import org.jspecify.annotations.Nullable;
+
+import dev.nookworks.barter.BarterTerminalBlockEntity;
+import dev.nookworks.block.entity.SifterBlockEntity;
+import dev.nookworks.menu.ShiftClick;
+import dev.nookworks.menu.tab.LiquidTab;
+import dev.nookworks.menu.tab.MachineTab;
+import dev.nookworks.menu.tab.MenuTabs;
+import dev.nookworks.menu.tab.TabbedMenu;
+import dev.nookworks.mercury.DistillerBlockEntity;
+import dev.nookworks.mercury.RetortBlockEntity;
+import dev.nookworks.mercury.StirringTankBlockEntity;
+import dev.nookworks.recycling.Compressing;
+import dev.nookworks.recycling.CompressorBlockEntity;
+import dev.nookworks.recycling.RecyclerBlockEntity;
+import dev.nookworks.registry.ModItems;
+import dev.nookworks.registry.ModMenus;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import dev.nookworks.port.core.InventorySlots;
+
+/**
+ * The one menu every machine screen uses: the slots its {@link MachineLayout} lists, the player's inventory, the
+ * Liquid tab's two slots when the machine has tanks of liquid ({@link LiquidTab}, {@link MachineLiquids}), and the
+ * machine's numbers. Button {@link #BUTTON_REDSTONE} steps its redstone mode; ids 20-39 are the tabs'
+ * ({@link MenuTabs}), 100-119 nookTechnology's. Its screen's tabs: Settings always, Liquid with tanks, Add-on when an
+ * add-on puts something there.
+ * <p>
+ * Menu data travels as 16-bit shorts, and a machine's energy does not fit in one, so each number takes two data
+ * slots: the low half, then the high half.
+ */
+public class MachineMenu extends AbstractContainerMenu implements TabbedMenu {
+    public static final int BUTTON_REDSTONE = 0;
+    /** The machine's own choice in the Settings tab ({@link MachineInfo#nextOption}). */
+    public static final int BUTTON_OPTION = 1;
+
+    private static final int ENERGY = 0;
+    private static final int ENERGY_CAPACITY = 1;
+    private static final int ENERGY_RATE = 2;
+    private static final int PROGRESS = 3;
+    private static final int PROGRESS_MAX = 4;
+    private static final int EXTRA = 5;
+    /** Each tank's amount and capacity, two wide numbers per tank. */
+    private static final int TANKS = 6;
+    /** Five since 1.5: the Stirring Tank's methanol. */
+    public static final int MAX_TANKS = 5;
+    private static final int WIDE = TANKS + MAX_TANKS * 2;
+    private static final int STATUS = WIDE * 2;
+    private static final int REDSTONE = STATUS + 1;
+    /** What each tank holds ({@link GuiTank.Kind}), or -1 where there is none. */
+    private static final int KINDS = REDSTONE + 1;
+    public static final int DATA_COUNT = KINDS + MAX_TANKS;
+
+    private final MachineLayout layout;
+    private final Container container;
+    private final ContainerData data;
+    private final @Nullable BlockEntity machine;
+    private final MenuTabs tabs = new MenuTabs(MachineLayout.WIDTH);
+
+    /** Client side: the server says which layout. */
+    public static MachineMenu client(int containerId, Inventory inventory, FriendlyByteBuf buf) {
+        MachineLayout layout = MachineLayout.byId(buf.readVarInt());
+        return new MachineMenu(containerId, inventory, layout, clientSlots(layout, inventory.player.level()),
+                new SimpleContainerData(DATA_COUNT), null);
+    }
+
+    /**
+     * The client's stand-in for the machine's slots. It knows each machine's rules, so a shift-clicked item goes where
+     * the server will put it (the Sifter's mesh in the mesh slot, not the input), and what the machine does not take
+     * moves between the inventory and the hotbar at once, instead of showing a move that the next sync takes back (r21:
+     * a shift-click flashed into the wrong slot and snapped back). The rules are the machines' own; those that read the
+     * slots (the Retort, the Compressor) read the ones the server sent, and the Compressor goes by what the server said
+     * presses. The switch names every layout, so a new one cannot be left out.
+     */
+    private static Container clientSlots(MachineLayout layout, Level level) {
+        return new SimpleContainer(layout.slotCount() + layout.extraSlots()) {
+            @Override
+            public boolean canPlaceItem(int slot, ItemStack stack) {
+                return switch (layout) {
+                    case BARTER_TERMINAL -> slot == BarterTerminalBlockEntity.GOLD ? stack.isPiglinCurrency()
+                            : slot == BarterTerminalBlockEntity.BOTTLE && BarterTerminalBlockEntity.takesBottle(stack);
+                    case SIFTER -> slot == SifterBlockEntity.MESH
+                            ? stack.is(ModItems.BRASS_MESH.get())
+                            : slot == SifterBlockEntity.INPUT && stack.is(SifterBlockEntity.SIFTABLE);
+                    case DIESEL_GENERATOR -> DieselGeneratorBlockEntity.mbIn(stack) > 0;
+                    case GENERATOR -> slot != 0 || GeneratorBlockEntity.burns(stack);
+                    case CRUSHER -> slot != 0 || CrushingRecipe.of(stack) != null;
+                    case ELECTROLYTIC_CELL -> slot != 0 || Electrolysis.of(stack) != null;
+                    case ELECTRIC_FURNACE -> slot != ElectricFurnaceBlockEntity.INPUT
+                            || level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level).isPresent(); // PORT: no property sets
+                    case RETORT -> RetortBlockEntity.takes(this, slot, stack);
+                    case COMPRESSOR -> CompressorBlockEntity.takes(this, slot, stack, () -> Compressing.pressesHere(stack));
+                    case STIRRING_TANK -> StirringTankBlockEntity.takes(slot, stack);
+                    case DISTILLER -> DistillerBlockEntity.takes(slot, stack);
+                    case RECYCLER -> RecyclerBlockEntity.takes(slot, stack);
+                    case PLANTER -> PlanterBlockEntity.plantFor(stack) != null;
+                    case STONE_MAKER -> slot == StoneMakerBlockEntity.COOLER ? StoneMakerBlockEntity.cools(stack)
+                            : slot == StoneMakerBlockEntity.LAVA ? stack.is(net.minecraft.world.item.Items.LAVA_BUCKET)
+                            : slot == StoneMakerBlockEntity.SOUL_SOIL && stack.is(net.minecraft.world.item.Items.SOUL_SOIL);
+                    case LASER -> false;
+                };
+            }
+        };
+    }
+
+    /** Opens the machine's screen for {@code player}. */
+    public static <T extends BlockEntity & MachineInfo> void open(Player player, T machine) {
+        MachineLayout layout = machine.layout();
+        Component title = machine.getBlockState().getBlock().getName();
+        player.openMenu(new SimpleMenuProvider(
+                (id, inventory, p) -> new MachineMenu(id, inventory, layout, machine.slots(), data(machine), machine), title),
+                buf -> buf.writeVarInt(layout.ordinal()));
+    }
+
+    public MachineMenu(int containerId, Inventory inventory, MachineLayout layout, Container container, ContainerData data,
+            @Nullable BlockEntity machine) {
+        super(ModMenus.MACHINE.get(), containerId);
+        this.layout = layout;
+        this.container = container;
+        this.data = data;
+        this.machine = machine;
+        for (int i = 0; i < layout.slotCount(); i++) {
+            MachineLayout.Spot spot = layout.spots().get(i);
+            this.addSlot(new Slot(container, i, spot.x(), spot.y()) {
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return !spot.output() && this.container.canPlaceItem(this.getContainerSlot(), stack);
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return Math.min(super.getMaxStackSize(), layout.slotLimit(this.getContainerSlot()));
+                }
+            });
+        }
+        InventorySlots.addStandardInventorySlots(inventory, 8, MachineLayout.INVENTORY_Y, this::addSlot);
+        this.addDataSlots(data);
+        // the tabs on the screen's right edge (the user, 2026-11-08): Settings holds the redstone mode; the Liquid tab's
+        // two slots come after the player's inventory, so an add-on's slot after them finds the inventory where it was
+        this.tabs.enable(MachineTab.SETTINGS);
+        if (MachineLiquids.any(layout)) {
+            LiquidTab.add(this.tabs, new MachineLiquids(this), this::addSlot, this::addDataSlot);
+        }
+        if (layout == MachineLayout.STONE_MAKER) {
+            // the soul soil basalt forms over, kept in the Extra Slots tab as a catalyst is (the user, 2026-11-14); an
+            // add-on's slot (a speed gear) comes after it there
+            int[] at = this.tabs.nextAddonSpot();
+            this.addSlot(this.tabs.add(new dev.nookworks.menu.tab.TabSlot(this.tabs, MachineTab.ADDON, container,
+                    StoneMakerBlockEntity.SOUL_SOIL, at[0], at[1]) {
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return stack.is(net.minecraft.world.item.Items.SOUL_SOIL);
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
+                }
+            }));
+        }
+    }
+
+    @Override
+    public MenuTabs tabs() {
+        return this.tabs;
+    }
+
+    /** The machine's numbers, read live each time the menu syncs. */
+    public static ContainerData data(MachineInfo info) {
+        return new ContainerData() {
+            @Override
+            public int get(int index) {
+                if (index < STATUS) {
+                    int field = index / 2;
+                    int value = switch (field) {
+                        case ENERGY -> info.guiEnergy();
+                        case ENERGY_CAPACITY -> info.guiEnergyCapacity();
+                        case ENERGY_RATE -> info.guiEnergyRate();
+                        case PROGRESS -> info.guiProgress();
+                        case PROGRESS_MAX -> info.guiProgressMax();
+                        case EXTRA -> info.guiExtra();
+                        default -> {
+                            GuiTank tank = tank(info, (field - TANKS) / 2);
+                            yield tank == null ? 0 : (field - TANKS) % 2 == 0 ? tank.amount() : tank.capacity();
+                        }
+                    };
+                    return index % 2 == 0 ? value & 0xFFFF : value >>> 16;
+                }
+                if (index >= KINDS) {
+                    GuiTank tank = tank(info, index - KINDS);
+                    return tank == null ? -1 : tank.kind().ordinal();
+                }
+                return index == STATUS ? info.guiStatus().ordinal() : info.redstoneMode().ordinal();
+            }
+
+            @Override
+            public void set(int index, int value) {}
+
+            @Override
+            public int getCount() {
+                return DATA_COUNT;
+            }
+        };
+    }
+
+    private static @Nullable GuiTank tank(MachineInfo info, int i) {
+        var tanks = info.guiTanks();
+        return i < tanks.size() ? tanks.get(i) : null;
+    }
+
+    private int wide(int field) {
+        return (this.data.get(field * 2) & 0xFFFF) | (this.data.get(field * 2 + 1) & 0xFFFF) << 16;
+    }
+
+    public MachineLayout layout() {
+        return this.layout;
+    }
+
+    public int energy() {
+        return this.wide(ENERGY);
+    }
+
+    public int energyCapacity() {
+        return this.wide(ENERGY_CAPACITY);
+    }
+
+    public int energyRate() {
+        return this.wide(ENERGY_RATE);
+    }
+
+    public int progress() {
+        return this.wide(PROGRESS);
+    }
+
+    public int progressMax() {
+        return this.wide(PROGRESS_MAX);
+    }
+
+    /** The machine's own extra number ({@link MachineInfo#guiExtra()}). */
+    public int extra() {
+        return this.wide(EXTRA);
+    }
+
+    public int tankAmount(int i) {
+        return this.wide(TANKS + i * 2);
+    }
+
+    public int tankCapacity(int i) {
+        return this.wide(TANKS + i * 2 + 1);
+    }
+
+    public GuiTank.Kind tankKind(int i) {
+        return GuiTank.Kind.byId(this.data.get(KINDS + i));
+    }
+
+    public MachineStatus status() {
+        return MachineStatus.byId(this.data.get(STATUS));
+    }
+
+    public RedstoneMode redstoneMode() {
+        return RedstoneMode.byId(this.data.get(REDSTONE));
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (this.tabs.clickMenuButton(player, id)) {
+            return true;
+        }
+        if (id == BUTTON_REDSTONE && this.machine instanceof MachineInfo info) {
+            info.setRedstoneMode(info.redstoneMode().next());
+            return true;
+        }
+        if (id == BUTTON_OPTION && this.machine instanceof MachineInfo info) {
+            info.nextOption();
+            return true;
+        }
+        return false;
+    }
+
+    /** The screen closed: what is left in the Liquid tab goes back to the player. */
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.tabs.removed(player);
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int index) {
+        Slot slot = this.slots.get(index);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+        int machineSlots = this.layout.slotCount();
+        // the tabs first: out of a tab's slot, or into the open tab's (the Liquid tab's slots only while it is open)
+        ItemStack tabbed = this.tabs.quickMove(slot, machineSlots, this::moveItemStackTo);
+        if (tabbed != null) {
+            return tabbed;
+        }
+        ItemStack stack = slot.getItem();
+        ItemStack original = stack.copy();
+        if (index < machineSlots) {
+            boolean output = this.layout.spots().get(index).output();
+            if (!this.moveItemStackTo(stack, machineSlots, machineSlots + ShiftClick.INVENTORY_SLOTS, output)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (this.takes(stack) ? !this.moveIntoInputs(stack)
+                : !ShiftClick.acrossInventory(stack, index, machineSlots, this::moveItemStackTo)) {
+            return ItemStack.EMPTY;
+        }
+        if (stack.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        return original;
+    }
+
+    /**
+     * Whether some input of the machine takes {@code stack} as it stands now - room or not, as the furnace's input takes
+     * anything that smelts. What none takes moves between the inventory and the hotbar instead ({@link ShiftClick}).
+     */
+    private boolean takes(ItemStack stack) {
+        for (int i = 0; i < this.layout.slotCount(); i++) {
+            if (this.slots.get(i).mayPlace(stack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Shift-click into the machine. One slot at a time and only its inputs: moveItemStackTo tops up a matching
+     * stack without asking the slot, which would let a player stuff sulfur dust into the Retort's output.
+     */
+    private boolean moveIntoInputs(ItemStack stack) {
+        boolean moved = false;
+        int first = this.machine instanceof MachineInfo info ? info.shiftClickSlot(stack) : -1;
+        if (first >= 0 && first < this.layout.slotCount() && this.slots.get(first).mayPlace(stack)) {
+            moved = this.moveItemStackTo(stack, first, first + 1, false);
+        }
+        for (int i = 0; i < this.layout.slotCount() && !stack.isEmpty(); i++) {
+            if (!this.layout.spots().get(i).output() && this.slots.get(i).mayPlace(stack)) {
+                moved |= this.moveItemStackTo(stack, i, i + 1, false);
+            }
+        }
+        return moved;
+    }
+
+    /** The machine whose screen this is, or null on a client that was not sent it. */
+    public @Nullable BlockEntity machine() {
+        return this.machine;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return this.machine == null || Container.stillValidBlockEntity(this.machine, player);
+    }
+}

@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:electrolytic_cell",
+        "nookworks:machine_chassis"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:ingots/brass"
+    },
+    "G": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "M": {
+      "item": "nookworks:machine_chassis"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "BGB",
+    "CMC",
+    "BRB"
+  ],
+  "result": {
+    "id": "nookworks:electrolytic_cell"
+  }
+}

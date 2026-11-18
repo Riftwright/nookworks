@@ -1,0 +1,62 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brown_rice"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:white_rice"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:cooked_rice"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "rice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:cooked_rice"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:cooked_rice"
+    },
+    "title": {
+      "translate": "advancements.nookworks.cooked_rice.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.cooked_rice.description"
+    }
+  },
+  "requirements": [
+    [
+      "rice"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:white_rice"
+}

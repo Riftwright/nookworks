@@ -1,0 +1,45 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brown_rice",
+        "nookworks:rice_bale"
+      ]
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "nookworks:farmersdelight/brown_rice_from_rice_bale"
+      }
+    },
+    "has_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:rice_bale"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_0"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "nookworks:farmersdelight/brown_rice_from_rice_bale"
+    ]
+  }
+}

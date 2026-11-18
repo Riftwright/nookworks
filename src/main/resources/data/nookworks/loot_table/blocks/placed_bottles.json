@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/placed_bottles",
+  "pools": []
+}

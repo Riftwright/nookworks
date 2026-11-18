@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/electric_furnace",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:electric_furnace",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "nookworks:held_energy"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

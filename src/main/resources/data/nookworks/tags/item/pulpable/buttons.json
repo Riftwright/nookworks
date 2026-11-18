@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:wooden_buttons"
+  ],
+  "remove": [
+    "minecraft:crimson_button",
+    "minecraft:warped_button"
+  ]
+}

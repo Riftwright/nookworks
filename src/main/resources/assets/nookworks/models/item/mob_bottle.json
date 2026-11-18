@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nookworks:item/mob_bottle"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "nookworks:filled": 1
+      },
+      "model": "nookworks:item/mob_bottle_filled"
+    }
+  ]
+}

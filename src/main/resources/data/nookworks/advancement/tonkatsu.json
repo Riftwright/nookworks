@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:vegetable_oil_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:tonkatsu"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "tonkatsu": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:tonkatsu"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:tonkatsu"
+    },
+    "title": {
+      "translate": "advancements.nookworks.tonkatsu.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.tonkatsu.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "tonkatsu"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:oil_press"
+}

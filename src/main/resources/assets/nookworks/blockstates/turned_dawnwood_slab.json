@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nookworks:block/turned_dawnwood_slab"
+    },
+    "type=double": {
+      "model": "nookworks:block/turned_dawnwood_planks"
+    },
+    "type=top": {
+      "model": "nookworks:block/turned_dawnwood_slab_top"
+    }
+  }
+}

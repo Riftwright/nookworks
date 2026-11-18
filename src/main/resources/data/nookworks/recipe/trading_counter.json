@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:trading_counter"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:book"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "I": {
+      "tag": "c:ingots/brass"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "tag": "c:chests/wooden"
+    }
+  },
+  "pattern": [
+    "BSI",
+    "PCP",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:trading_counter"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:mercury_pipe",
+    "count": 6
+  }
+}

@@ -1,0 +1,483 @@
+{
+  "values": {
+    "minecraft:apple": {
+      "plate": 2,
+      "height": 4.5
+    },
+    "minecraft:golden_apple": {
+      "plate": 2,
+      "height": 4.5
+    },
+    "minecraft:enchanted_golden_apple": {
+      "plate": 2,
+      "height": 4.5
+    },
+    "minecraft:beetroot": {
+      "plate": 2,
+      "height": 4.5
+    },
+    "minecraft:chorus_fruit": {
+      "plate": 2,
+      "height": 3.7
+    },
+    "minecraft:potato": {
+      "plate": 3,
+      "height": 2.4
+    },
+    "minecraft:baked_potato": {
+      "plate": 2,
+      "height": 2.9
+    },
+    "minecraft:poisonous_potato": {
+      "plate": 2,
+      "height": 3.0
+    },
+    "minecraft:sweet_berries": {
+      "plate": 2,
+      "height": 1.5
+    },
+    "minecraft:glow_berries": {
+      "plate": 2,
+      "height": 1.5
+    },
+    "minecraft:carrot": {
+      "plate": 3,
+      "room": "half",
+      "tray": 3,
+      "height": 1.7
+    },
+    "minecraft:golden_carrot": {
+      "plate": 3,
+      "room": "half",
+      "tray": 3,
+      "height": 1.7
+    },
+    "minecraft:cod": {
+      "room": "half",
+      "height": 1.5
+    },
+    "minecraft:salmon": {
+      "room": "half",
+      "height": 1.5
+    },
+    "minecraft:cooked_cod": {
+      "room": "half",
+      "height": 1.5
+    },
+    "minecraft:cooked_salmon": {
+      "room": "half",
+      "height": 1.5
+    },
+    "minecraft:bread": {
+      "plate": 2,
+      "height": 2.6
+    },
+    "minecraft:cookie": {
+      "plate": 5,
+      "tray": 4,
+      "leaning": true,
+      "height": 1.7
+    },
+    "minecraft:cake": {
+      "room": "half",
+      "height": 5.1
+    },
+    "nookworks:beetroot_nukazuke": {
+      "plate": 2,
+      "tray": 2,
+      "height": 2.0
+    },
+    "nookworks:carrot_nukazuke": {
+      "plate": 3,
+      "tray": 2,
+      "height": 1.5
+    },
+    "nookworks:boiled_egg": {
+      "plate": 2,
+      "height": 1.1
+    },
+    "nookworks:onion": {
+      "plate": 2,
+      "height": 4.9
+    },
+    "nookworks:salt_onigiri": {
+      "plate": 3,
+      "height": 4.6
+    },
+    "nookworks:salmon_onigiri": {
+      "plate": 3,
+      "height": 4.6
+    },
+    "nookworks:tamagoyaki": {
+      "plate": 2,
+      "room": "half",
+      "tray": 2,
+      "height": 2.6
+    },
+    "nookworks:corn": {
+      "plate": 2,
+      "room": "half",
+      "tray": 2,
+      "height": 2.4
+    },
+    "nookworks:grilled_corn": {
+      "plate": 2,
+      "room": "half",
+      "tray": 2,
+      "height": 2.4
+    },
+    "nookworks:donut": {
+      "plate": 6,
+      "tray": 2,
+      "height": 2.2,
+      "piled": true
+    },
+    "nookworks:tonkatsu": {
+      "room": "half",
+      "height": 1.7
+    },
+    "nookworks:karaage": {
+      "room": "half",
+      "height": 4.1
+    },
+    "nookworks:fried_fish": {
+      "room": "half",
+      "height": 1.5
+    },
+    "nookworks:dried_fish": {
+      "room": "half",
+      "height": 0.7
+    },
+    "farmersdelight:onion": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 2,
+      "height": 4.9
+    },
+    "farmersdelight:tomato": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 2
+    },
+    "farmersdelight:honey_cookie": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 5,
+      "tray": 4
+    },
+    "farmersdelight:sweet_berry_cookie": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 5,
+      "tray": 4
+    },
+    "farmersdelight:dumplings": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 3,
+      "tray": 2
+    },
+    "farmersdelight:cabbage_rolls": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 2
+    },
+    "farmersdelight:salmon_roll": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 3
+    },
+    "farmersdelight:cod_roll": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 3
+    },
+    "farmersdelight:kelp_roll_slice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 3,
+      "tray": 3
+    },
+    "farmersdelight:barbecue_stick": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 2,
+      "room": "half",
+      "tray": 2
+    },
+    "farmersdelight:melon_popsicle": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plate": 2
+    },
+    "farmersdelight:baked_cod_stew": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:beef_stew": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:bone_broth": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:chicken_soup": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:cooked_rice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 4.7
+    },
+    "farmersdelight:fish_stew": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:fried_egg": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 1.1
+    },
+    "farmersdelight:fried_rice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 4.7
+    },
+    "farmersdelight:mushroom_rice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 4.7
+    },
+    "farmersdelight:noodle_soup": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 4.3
+    },
+    "farmersdelight:onion_soup": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:pumpkin_soup": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:tomato_sauce": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "farmersdelight:vegetable_soup": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "height": 3.9
+    },
+    "minecraft:beef": {
+      "height": 1.1
+    },
+    "minecraft:beetroot_soup": {
+      "height": 3.9
+    },
+    "minecraft:chicken": {
+      "height": 2.8
+    },
+    "minecraft:cooked_beef": {
+      "height": 1.1
+    },
+    "minecraft:cooked_chicken": {
+      "height": 2.8
+    },
+    "minecraft:cooked_mutton": {
+      "height": 1.1
+    },
+    "minecraft:cooked_porkchop": {
+      "height": 1.1
+    },
+    "minecraft:cooked_rabbit": {
+      "height": 2.2
+    },
+    "minecraft:dried_kelp": {
+      "height": 0.9
+    },
+    "minecraft:melon_slice": {
+      "height": 1.3
+    },
+    "minecraft:mushroom_stew": {
+      "height": 3.9
+    },
+    "minecraft:mutton": {
+      "height": 1.1
+    },
+    "minecraft:porkchop": {
+      "height": 1.1
+    },
+    "minecraft:pufferfish": {
+      "height": 3.4
+    },
+    "minecraft:pumpkin_pie": {
+      "height": 1.7
+    },
+    "minecraft:rabbit": {
+      "height": 2.2
+    },
+    "minecraft:rabbit_stew": {
+      "height": 3.9
+    },
+    "minecraft:rotten_flesh": {
+      "height": 0.9
+    },
+    "minecraft:spider_eye": {
+      "height": 2.6
+    },
+    "minecraft:suspicious_stew": {
+      "height": 3.9
+    },
+    "minecraft:tropical_fish": {
+      "height": 1.1
+    },
+    "nookworks:cooked_rice": {
+      "height": 4.7
+    },
+    "nookworks:corn_potage": {
+      "height": 3.9
+    },
+    "nookworks:cream_stew": {
+      "height": 3.9
+    },
+    "nookworks:french_fries": {
+      "height": 2.0
+    },
+    "nookworks:fried_egg": {
+      "height": 1.1
+    },
+    "nookworks:fried_rice": {
+      "height": 4.7
+    },
+    "nookworks:pancake": {
+      "height": 3.0
+    },
+    "nookworks:plated_fried_rice": {
+      "height": 2.5
+    },
+    "nookworks:plated_stir_fried_vegetables": {
+      "height": 1.8
+    },
+    "nookworks:stir_fried_vegetables": {
+      "height": 4.1
+    },
+    "nookworks:udon": {
+      "height": 4.3
+    },
+    "nookworks:vegetable_soup": {
+      "height": 3.9
+    }
+  }
+}

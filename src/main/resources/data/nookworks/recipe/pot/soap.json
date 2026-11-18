@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:soap",
+        "nookworks:caustic_soda"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "nookworks:caustic_soda"
+      }
+    }
+  ],
+  "liquid": "oil",
+  "amount": 250,
+  "time": 400,
+  "result": {
+    "id": "nookworks:soap",
+    "count": 2
+  }
+}

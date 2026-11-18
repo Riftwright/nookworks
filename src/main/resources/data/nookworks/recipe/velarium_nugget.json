@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_nugget",
+        "nookworks:velarium_ingot"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:velarium_ingot"
+    }
+  ],
+  "result": {
+    "id": "nookworks:velarium_nugget",
+    "count": 9
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:nukadoko",
+        "nookworks:rice_bran"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "nookworks:rice_bran"
+    },
+    "S": {
+      "tag": "c:dusts/salt"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "PWP",
+    "PPP"
+  ],
+  "result": {
+    "id": "nookworks:nukadoko",
+    "count": 1
+  }
+}

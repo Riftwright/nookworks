@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sight_glass"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:ingots/brass"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "P": {
+      "item": "nookworks:copper_pipe"
+    }
+  },
+  "pattern": [
+    " B ",
+    "GPG",
+    " B "
+  ],
+  "result": {
+    "id": "nookworks:sight_glass",
+    "count": 1
+  }
+}

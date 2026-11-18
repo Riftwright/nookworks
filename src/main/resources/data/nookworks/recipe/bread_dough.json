@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:bread_dough"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:flours/wheat"
+    },
+    {
+      "tag": "c:flours/wheat"
+    },
+    {
+      "tag": "c:flours/wheat"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "tag": "c:dusts/salt"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
+  ],
+  "result": {
+    "id": "nookworks:bread_dough",
+    "count": 3
+  }
+}

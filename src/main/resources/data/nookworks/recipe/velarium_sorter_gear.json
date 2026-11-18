@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_sorter_gear",
+        "nookworks:velarium_ingot",
+        "nookworks:netherite_sorter_gear"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "V": {
+      "item": "nookworks:velarium_ingot"
+    },
+    "H": {
+      "item": "nookworks:hub_stone"
+    },
+    "N": {
+      "item": "nookworks:netherite_sorter_gear"
+    }
+  },
+  "pattern": [
+    " V ",
+    "HNH",
+    " V "
+  ],
+  "result": {
+    "id": "nookworks:velarium_sorter_gear"
+  }
+}

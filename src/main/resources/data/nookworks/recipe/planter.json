@@ -1,0 +1,35 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:planter",
+        "nookworks:machine_chassis"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "X": {
+      "item": "nookworks:machine_chassis"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "IDI",
+    "IXI",
+    "IRI"
+  ],
+  "result": {
+    "id": "nookworks:planter"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "bench",
+  "key": {
+    "L": {
+      "item": "minecraft:bamboo_slab"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:bamboo_bench"
+  }
+}

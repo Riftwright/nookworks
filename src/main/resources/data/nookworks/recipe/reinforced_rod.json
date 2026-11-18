@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:reinforced_rod"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:breeze_rod"
+    },
+    {
+      "tag": "c:ingots/brass"
+    },
+    {
+      "tag": "c:ingots/brass"
+    }
+  ],
+  "result": {
+    "id": "nookworks:reinforced_rod"
+  }
+}

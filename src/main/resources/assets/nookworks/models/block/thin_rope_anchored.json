@@ -1,0 +1,197 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "nookworks:block/thin_rope",
+    "rope": "nookworks:block/thin_rope"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        0,
+        7.5
+      ],
+      "to": [
+        8.5,
+        16,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rope",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#rope",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#rope",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#rope",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#rope",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        15,
+        6
+      ],
+      "to": [
+        10,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        13.5,
+        7
+      ],
+      "to": [
+        9,
+        15,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "east": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "west": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "down": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            4
+          ]
+        }
+      }
+    }
+  ]
+}

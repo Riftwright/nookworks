@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nookworks:item/vegetable_oil_bottle_fill",
+    "layer1": "minecraft:item/glass_bottle"
+  }
+}

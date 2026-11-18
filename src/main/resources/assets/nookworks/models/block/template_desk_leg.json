@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/oak_planks",
+    "planks": "minecraft:block/oak_planks",
+    "post": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "name": "leg_nw",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        4,
+        13,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

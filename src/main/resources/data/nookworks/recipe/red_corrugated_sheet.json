@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:red_corrugated_sheet"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "painted_corrugated_sheet",
+  "key": {
+    "C": {
+      "tag": "nookworks:bare_corrugated_sheets"
+    },
+    "D": {
+      "tag": "c:dyes/red"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CDC",
+    "CCC"
+  ],
+  "result": {
+    "count": 8,
+    "id": "nookworks:red_corrugated_sheet"
+  }
+}

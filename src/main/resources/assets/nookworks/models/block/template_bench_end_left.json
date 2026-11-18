@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/oak_planks",
+    "planks": "minecraft:block/oak_planks",
+    "post": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "name": "left_leg_north",
+      "from": [
+        1,
+        0,
+        4
+      ],
+      "to": [
+        3,
+        5,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            11,
+            15,
+            16
+          ],
+          "texture": "#post"
+        },
+        "east": {
+          "uv": [
+            10,
+            11,
+            12,
+            16
+          ],
+          "texture": "#post"
+        },
+        "south": {
+          "uv": [
+            1,
+            11,
+            3,
+            16
+          ],
+          "texture": "#post"
+        },
+        "west": {
+          "uv": [
+            4,
+            11,
+            6,
+            16
+          ],
+          "texture": "#post"
+        },
+        "up": {
+          "uv": [
+            1,
+            4,
+            3,
+            6
+          ],
+          "texture": "#post"
+        },
+        "down": {
+          "uv": [
+            1,
+            10,
+            3,
+            12
+          ],
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "left_leg_south",
+      "from": [
+        1,
+        0,
+        10
+      ],
+      "to": [
+        3,
+        5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            11,
+            15,
+            16
+          ],
+          "texture": "#post"
+        },
+        "east": {
+          "uv": [
+            4,
+            11,
+            6,
+            16
+          ],
+          "texture": "#post"
+        },
+        "south": {
+          "uv": [
+            1,
+            11,
+            3,
+            16
+          ],
+          "texture": "#post"
+        },
+        "west": {
+          "uv": [
+            10,
+            11,
+            12,
+            16
+          ],
+          "texture": "#post"
+        },
+        "up": {
+          "uv": [
+            1,
+            10,
+            3,
+            12
+          ],
+          "texture": "#post"
+        },
+        "down": {
+          "uv": [
+            1,
+            4,
+            3,
+            6
+          ],
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "left_rung",
+      "from": [
+        1.5,
+        1.5,
+        6
+      ],
+      "to": [
+        2.5,
+        2.5,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.5,
+            13.5,
+            14.5,
+            14.5
+          ],
+          "texture": "#post"
+        },
+        "east": {
+          "uv": [
+            6,
+            13.5,
+            10,
+            14.5
+          ],
+          "texture": "#post"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            13.5,
+            2.5,
+            14.5
+          ],
+          "texture": "#post"
+        },
+        "west": {
+          "uv": [
+            6,
+            13.5,
+            10,
+            14.5
+          ],
+          "texture": "#post"
+        },
+        "up": {
+          "uv": [
+            1.5,
+            6,
+            2.5,
+            10
+          ],
+          "texture": "#post"
+        },
+        "down": {
+          "uv": [
+            1.5,
+            6,
+            2.5,
+            10
+          ],
+          "texture": "#post"
+        }
+      }
+    }
+  ]
+}

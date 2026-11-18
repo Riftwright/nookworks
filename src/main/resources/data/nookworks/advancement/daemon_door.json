@@ -1,0 +1,49 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:daemon_door"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "door": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "nookworks:daemon_door"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:daemon_door"
+    },
+    "title": {
+      "translate": "advancements.nookworks.daemon_door.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.daemon_door.description"
+    }
+  },
+  "requirements": [
+    [
+      "door"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:dawnwood"
+}

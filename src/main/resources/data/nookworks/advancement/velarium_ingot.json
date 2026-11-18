@@ -1,0 +1,86 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mercury_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:copper_amalgam",
+        "nookworks:gold_amalgam",
+        "nookworks:iron_amalgam",
+        "nookworks:mixed_amalgam"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:distiller"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_nugget"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_ingot"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:velarium_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:velarium_ingot"
+    },
+    "title": {
+      "translate": "advancements.nookworks.velarium_ingot.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.velarium_ingot.description"
+    }
+  },
+  "requirements": [
+    [
+      "ingot"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:velarium_nugget"
+}

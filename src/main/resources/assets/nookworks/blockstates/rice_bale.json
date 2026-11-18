@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "axis=z": {
+      "model": "nookworks:block/rice_bale"
+    },
+    "axis=x": {
+      "model": "nookworks:block/rice_bale",
+      "y": 90
+    },
+    "axis=y": {
+      "model": "nookworks:block/rice_bale",
+      "x": 90
+    }
+  }
+}

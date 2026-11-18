@@ -1,0 +1,9 @@
+{
+  "values": [
+    "nookworks:salt",
+    {
+      "id": "#c:salts",
+      "required": false
+    }
+  ]
+}

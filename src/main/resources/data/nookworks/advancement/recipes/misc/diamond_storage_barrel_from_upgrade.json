@@ -1,0 +1,53 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diamond_storage_barrel",
+        "nookworks:gold_storage_barrel",
+        "nookworks:diamond_storage_upgrade"
+      ]
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "nookworks:diamond_storage_barrel_from_upgrade"
+      }
+    },
+    "has_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:gold_storage_barrel"
+          }
+        ]
+      }
+    },
+    "has_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:diamond_storage_upgrade"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_0",
+      "has_1"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "nookworks:diamond_storage_barrel_from_upgrade"
+    ]
+  }
+}

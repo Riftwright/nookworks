@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_storage_upgrade"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "III",
+    "I I",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:iron_storage_upgrade"
+  }
+}

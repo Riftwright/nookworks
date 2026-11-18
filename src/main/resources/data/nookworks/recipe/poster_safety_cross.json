@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:poster",
+        "nookworks:fine_paper"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:fine_paper"
+    },
+    {
+      "tag": "c:dyes/cyan"
+    },
+    {
+      "tag": "c:dyes/magenta"
+    },
+    {
+      "tag": "c:dyes/yellow"
+    },
+    {
+      "tag": "c:dyes/black"
+    }
+  ],
+  "result": {
+    "id": "nookworks:poster",
+    "count": 1,
+    "components": {
+      "nookworks:poster": "nookworks:safety_cross"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "nookworks:block/hub_stone_shape_lit",
+  "textures": {
+    "face": "nookworks:block/hub_stone_flow_5"
+  }
+}

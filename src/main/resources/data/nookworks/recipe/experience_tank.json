@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:experience_tank"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "minecraft:experience_bottle"
+    }
+  },
+  "pattern": [
+    "IGI",
+    "GEG",
+    "IGI"
+  ],
+  "result": {
+    "id": "nookworks:experience_tank"
+  }
+}

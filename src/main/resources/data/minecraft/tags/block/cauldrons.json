@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "nookworks:vegetable_oil_cauldron",
+    "nookworks:methanol_cauldron",
+    "nookworks:wood_vinegar_cauldron",
+    "nookworks:biodiesel_cauldron",
+    "nookworks:liquid_experience_cauldron",
+    "nookworks:mercury_cauldron"
+  ]
+}

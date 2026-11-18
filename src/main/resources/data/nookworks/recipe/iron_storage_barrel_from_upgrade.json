@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_storage_barrel",
+        "nookworks:iron_storage_upgrade"
+      ]
+    }
+  ],
+  "type": "nookworks:crafting_transmute",
+  "category": "misc",
+  "group": "iron_storage_barrel",
+  "input": {
+    "item": "minecraft:barrel"
+  },
+  "material": {
+    "item": "nookworks:iron_storage_upgrade"
+  },
+  "result": {
+    "id": "nookworks:iron_storage_barrel"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:range_hood",
+        "nookworks:duct"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "D": {
+      "item": "nookworks:duct"
+    }
+  },
+  "pattern": [
+    " D ",
+    "C C",
+    "CCC"
+  ],
+  "result": {
+    "id": "nookworks:range_hood"
+  }
+}

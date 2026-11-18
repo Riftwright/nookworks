@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "tag": "c:rods/wooden"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    }
+  },
+  "pattern": [
+    "SRS",
+    " C ",
+    " S "
+  ],
+  "result": {
+    "id": "nookworks:nook_dowsing_rod"
+  }
+}

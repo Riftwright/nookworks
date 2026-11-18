@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "wall_shelf",
+  "ingredients": [
+    {
+      "item": "minecraft:mangrove_trapdoor"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:mangrove_wall_shelf"
+  }
+}

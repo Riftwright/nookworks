@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:duct"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "Z": {
+      "tag": "c:ingots/zinc"
+    }
+  },
+  "pattern": [
+    "III",
+    "Z Z",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:duct",
+    "count": 8
+  }
+}

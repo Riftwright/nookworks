@@ -1,0 +1,142 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "skin": "nookworks:block/dish/tamagoyaki_skin",
+    "cut": "nookworks:block/dish/tamagoyaki_cut",
+    "particle": "nookworks:block/dish/tamagoyaki_skin"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        7.5
+      ],
+      "to": [
+        6,
+        3,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#skin"
+        },
+        "west": {
+          "texture": "#skin"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        0,
+        7
+      ],
+      "to": [
+        9.5,
+        3,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#skin"
+        },
+        "west": {
+          "texture": "#skin"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        0,
+        7.5
+      ],
+      "to": [
+        13,
+        3,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#cut",
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#skin"
+        },
+        "west": {
+          "texture": "#skin"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    }
+  ]
+}

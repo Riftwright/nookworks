@@ -1,0 +1,137 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "nookworks:block/thin_rope",
+    "rope": "nookworks:block/thin_rope"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        16,
+        6
+      ],
+      "to": [
+        10,
+        17,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#rope",
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        14.5,
+        7
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "east": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "west": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            3.5
+          ]
+        },
+        "down": {
+          "texture": "#rope",
+          "uv": [
+            9,
+            2,
+            11,
+            4
+          ]
+        }
+      }
+    }
+  ]
+}

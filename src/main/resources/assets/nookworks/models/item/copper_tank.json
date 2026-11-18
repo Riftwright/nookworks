@@ -1,0 +1,12 @@
+{
+  "parent": "nookworks:block/copper_tank",
+  "loader": "neoforge:composite",
+  "children": {
+    "part0": {
+      "parent": "nookworks:block/copper_tank"
+    },
+    "part1": {
+      "parent": "nookworks:block/copper_tank_gauge_empty"
+    }
+  }
+}

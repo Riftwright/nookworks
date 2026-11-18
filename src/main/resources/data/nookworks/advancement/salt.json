@@ -1,0 +1,62 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crude_salt"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:salt"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "salt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:salt"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:salt"
+    },
+    "title": {
+      "translate": "advancements.nookworks.salt.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.salt.description"
+    }
+  },
+  "requirements": [
+    [
+      "salt"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:crude_salt"
+}

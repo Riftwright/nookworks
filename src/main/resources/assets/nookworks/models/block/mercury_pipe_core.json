@@ -1,0 +1,80 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/mercury_pipe",
+    "barrel": "nookworks:block/mercury_pipe",
+    "collar": "nookworks:block/mercury_pipe_collar",
+    "bore": "nookworks:block/mercury_pipe_end"
+  },
+  "elements": [
+    {
+      "name": "barrel",
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#barrel",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    }
+  ]
+}

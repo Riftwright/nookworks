@@ -1,0 +1,128 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "metal": "minecraft:block/anvil",
+    "particle": "minecraft:block/anvil"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        4
+      ],
+      "to": [
+        1,
+        10,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            3,
+            5,
+            13
+          ],
+          "texture": "#metal"
+        },
+        "south": {
+          "uv": [
+            4,
+            3,
+            5,
+            13
+          ],
+          "texture": "#metal"
+        },
+        "east": {
+          "uv": [
+            4,
+            3,
+            12,
+            13
+          ],
+          "texture": "#metal"
+        },
+        "west": {
+          "uv": [
+            4,
+            3,
+            12,
+            13
+          ],
+          "texture": "#metal"
+        },
+        "up": {
+          "uv": [
+            4,
+            3,
+            5,
+            11
+          ],
+          "texture": "#metal"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        4
+      ],
+      "to": [
+        8,
+        0.5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            3,
+            11,
+            3.5
+          ],
+          "texture": "#metal"
+        },
+        "south": {
+          "uv": [
+            4,
+            3,
+            11,
+            3.5
+          ],
+          "texture": "#metal"
+        },
+        "east": {
+          "uv": [
+            4,
+            3,
+            12,
+            3.5
+          ],
+          "texture": "#metal"
+        },
+        "up": {
+          "uv": [
+            4,
+            3,
+            11,
+            11
+          ],
+          "texture": "#metal"
+        },
+        "down": {
+          "uv": [
+            4,
+            3,
+            11,
+            11
+          ],
+          "texture": "#metal",
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

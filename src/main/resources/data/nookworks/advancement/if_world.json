@@ -1,0 +1,59 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mercury_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:if_mirror"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "if": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "nookworks:if"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:if_mirror"
+    },
+    "title": {
+      "translate": "advancements.nookworks.if_world.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.if_world.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "if"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:mercury"
+}

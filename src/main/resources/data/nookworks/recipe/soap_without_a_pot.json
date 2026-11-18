@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "nookworks:feature",
+        "feature": "kitchen"
+      }
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:soap",
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:caustic_soda"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:vegetable_oil_bottle"
+    },
+    {
+      "item": "nookworks:caustic_soda"
+    }
+  ],
+  "result": {
+    "id": "nookworks:soap",
+    "count": 2
+  }
+}

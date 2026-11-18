@@ -1,0 +1,24 @@
+{
+  "values": [
+    {
+      "id": "nookworks:sunflower_seeds",
+      "required": false
+    },
+    {
+      "id": "minecraft:pumpkin_seeds",
+      "required": false
+    },
+    {
+      "id": "minecraft:melon_seeds",
+      "required": false
+    },
+    {
+      "id": "nookworks:corn_kernels",
+      "required": false
+    },
+    {
+      "id": "nookworks:rice_bran",
+      "required": false
+    }
+  ]
+}

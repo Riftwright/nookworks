@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/horizontal_item_warp_sender"
+    },
+    "facing=east": {
+      "model": "nookworks:block/horizontal_item_warp_sender",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/horizontal_item_warp_sender",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/horizontal_item_warp_sender",
+      "y": 270
+    }
+  }
+}

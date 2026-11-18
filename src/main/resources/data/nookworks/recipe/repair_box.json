@@ -1,0 +1,35 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:repair_box",
+        "nookworks:experience_tank"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "minecraft:anvil"
+    },
+    "E": {
+      "item": "nookworks:experience_tank"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "IAI",
+    "RER",
+    "III"
+  ],
+  "result": {
+    "id": "nookworks:repair_box"
+  }
+}

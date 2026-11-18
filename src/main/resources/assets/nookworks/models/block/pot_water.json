@@ -1,0 +1,130 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "water": "minecraft:block/water_still",
+    "particle": "minecraft:block/water_still"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        3
+      ],
+      "to": [
+        11,
+        0,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water",
+          "uv": [
+            5,
+            3,
+            11,
+            4
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        0,
+        5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water",
+          "uv": [
+            4,
+            4,
+            12,
+            5
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        5
+      ],
+      "to": [
+        13,
+        0,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water",
+          "uv": [
+            3,
+            5,
+            13,
+            11
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        11
+      ],
+      "to": [
+        12,
+        0,
+        12
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water",
+          "uv": [
+            4,
+            11,
+            12,
+            12
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        0,
+        12
+      ],
+      "to": [
+        11,
+        0,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water",
+          "uv": [
+            5,
+            12,
+            11,
+            13
+          ],
+          "tintindex": 0
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:translucent"
+}

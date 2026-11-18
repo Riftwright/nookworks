@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_uv_locked_z",
+  "textures": {
+    "end": "nookworks:block/stripped_dawnwood_log_top",
+    "side": "nookworks:block/stripped_dawnwood_log"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "nookworks:block/stripped_dawnwood_log_x"
+    },
+    "axis=y": {
+      "model": "nookworks:block/stripped_dawnwood_log_y"
+    },
+    "axis=z": {
+      "model": "nookworks:block/stripped_dawnwood_log_z"
+    }
+  }
+}

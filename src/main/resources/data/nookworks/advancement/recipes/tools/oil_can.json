@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:oil_can",
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:sulfur_dust"
+      ]
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "nookworks:oil_can"
+      }
+    },
+    "has_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:vegetable_oil_bottle"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_0"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "nookworks:oil_can"
+    ]
+  }
+}

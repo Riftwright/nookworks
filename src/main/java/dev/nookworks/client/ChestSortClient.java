@@ -1,0 +1,190 @@
+package dev.nookworks.client;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import org.jspecify.annotations.Nullable;
+
+import dev.nookworks.Nookworks;
+import dev.nookworks.NookworksNetwork;
+import dev.nookworks.inventory.ChestSorting;
+import dev.nookworks.storage.SortOrder;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import dev.nookworks.port.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.client.gui.screens.inventory.ShulkerBoxScreen;
+import dev.nookworks.port.gui.InputWithModifiers;
+import dev.nookworks.port.gui.MouseButtonEvent;
+import dev.nookworks.port.gui.MouseButtonInfo;
+import dev.nookworks.port.gui.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import dev.nookworks.client.gui.SortDirectionButton;
+
+/**
+ * The Sort button on vanilla's chest and shulker box screens ({@link ChestSorting}), with the order button and the
+ * ascending/descending one ({@link SortDirectionButton}) beside it, where a Storage Barrel's screen has them: the top
+ * right of the panel. The order is this player's own, kept with the
+ * client settings, since a vanilla chest has nowhere to keep one. Not added when a mod that sorts inventories is
+ * installed, so a chest never has two Sort buttons, nor when it is switched off in the settings. A title too long for
+ * the room left beside the buttons is cut short with an ellipsis (mixin client/AbstractContainerScreenMixin), and its
+ * whole shown on hover, as a barrel's is.
+ */
+@EventBusSubscriber(modid = Nookworks.MODID, value = Dist.CLIENT)
+public final class ChestSortClient {
+    /** Mods with Sort buttons of their own on chests. */
+    private static final List<String> SORTING_MODS = List.of("inventoryprofilesnext", "inventorysorter", "quark", "invtweaks");
+    private static final @Nullable String OTHER_SORTER = SORTING_MODS.stream().filter(ModList.get()::isLoaded).findFirst().orElse(null);
+    private static final ResourceLocation ORDER_ICONS = Nookworks.id("textures/gui/sort_orders.png");
+    private static final int ORDER_W = 13;
+    /** Where the vanilla screens draw their title, from the panel's corner. */
+    private static final int TITLE_X = 8;
+    private static final int TITLE_Y = 6;
+    /** The screens given the buttons, and the room each leaves its title. */
+    private static final Map<AbstractContainerScreen<?>, Integer> TITLE_ROOM = new WeakHashMap<>();
+
+    static {
+        if (OTHER_SORTER != null) {
+            Nookworks.LOGGER.info("Nookworks' Sort button on chests stands down: {} sorts them.", OTHER_SORTER);
+        }
+    }
+
+    /** Whether the server lets its players sort (its synced setting chestSortAllowed); before it has said, as it would. */
+    private static boolean serverAllows() {
+        try {
+            return dev.nookworks.NookworksConfig.CHEST_SORT_ALLOWED.getAsBoolean();
+        } catch (IllegalStateException notLoaded) {
+            return true;
+        }
+    }
+
+    @SubscribeEvent
+    static void onInit(ScreenEvent.Init.Post event) {
+        if (OTHER_SORTER != null || !NookworksClientConfig.CHEST_SORT.getAsBoolean() || !serverAllows()
+                || !(event.getScreen() instanceof AbstractContainerScreen<?> screen)
+                || screen.getClass() != ContainerScreen.class && screen.getClass() != ShulkerBoxScreen.class
+                || !ChestSorting.sortable(screen.getMenu())) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        Component label = Component.translatable("gui.nookworks.storage.sort");
+        int w = mc.font.width(label) + 10;
+        int x = screen.getGuiLeft() + screen.getXSize() - 7 - w;
+        int y = screen.getGuiTop() + 3;
+        int containerId = screen.getMenu().containerId;
+        event.addListener(Button.builder(label, b -> PacketDistributor.sendToServer(
+                new NookworksNetwork.SortChest(containerId, order().ordinal(), reversed()))).bounds(x, y, w, 13).build());
+        int turnX = x - SortDirectionButton.WIDTH - 2;
+        event.addListener(new SortDirectionButton(turnX, y, ChestSortClient::order, ChestSortClient::reversed, ChestSortClient::turn));
+        event.addListener(new OrderButton(turnX - ORDER_W - 2, y));
+        TITLE_ROOM.put(screen, turnX - ORDER_W - 2 - screen.getGuiLeft() - TITLE_X - 3);
+    }
+
+    /** The room {@code screen}'s title has before the buttons, or 0 if it has none of ours. */
+    public static int titleRoom(AbstractContainerScreen<?> screen) {
+        return TITLE_ROOM.getOrDefault(screen, 0);
+    }
+
+    /** A title cut short: the whole of it over the cut one. */
+    @SubscribeEvent
+    static void onRender(ContainerScreenEvent.Render.Foreground event) { // (Post comes after the frame's tooltips are drawn)
+        // PORT: 1.21.1's foreground event is posted inside the panel's pose; the tooltip is kept and drawn at the end of
+        // the frame, outside it, so it is still given in the screen's coordinates
+        if (!(event.getContainerScreen() instanceof AbstractContainerScreen<?> screen) || titleRoom(screen) <= 0) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        int room = titleRoom(screen);
+        int x = screen.getGuiLeft() + TITLE_X;
+        int y = screen.getGuiTop() + TITLE_Y;
+        if (mc.font.width(screen.getTitle()) > room && event.getMouseX() >= x && event.getMouseX() < x + room
+                && event.getMouseY() >= y - 1 && event.getMouseY() < y + mc.font.lineHeight) {
+            GuiGraphicsExtractor.of(event.getGuiGraphics()).setTooltipForNextFrame(mc.font, screen.getTitle(), event.getMouseX(), event.getMouseY());
+        }
+    }
+
+    private static SortOrder order() {
+        SortOrder order = NookworksClientConfig.CHEST_SORT_ORDER.get();
+        return ChestSorting.ORDERS.contains(order) ? order : ChestSorting.ORDERS.getFirst();
+    }
+
+    /** Whether the chest's Sort turns its order round. */
+    private static boolean reversed() {
+        return NookworksClientConfig.CHEST_SORT_REVERSED.getAsBoolean();
+    }
+
+    /** Turns the order round, or back, and keeps it. */
+    private static void turn() {
+        NookworksClientConfig.CHEST_SORT_REVERSED.set(!reversed());
+        NookworksClientConfig.CHEST_SORT_REVERSED.save();
+    }
+
+    /** Steps the order by {@code by} among the chest's orders, and keeps it; the new one runs its own way. */
+    private static void step(int by) {
+        List<SortOrder> orders = ChestSorting.ORDERS;
+        int at = orders.indexOf(order());
+        NookworksClientConfig.CHEST_SORT_ORDER.set(orders.get(Math.floorMod(at + by, orders.size())));
+        NookworksClientConfig.CHEST_SORT_REVERSED.set(false);
+        NookworksClientConfig.CHEST_SORT_ORDER.save();
+    }
+
+    /** The order the chest's Sort sorts in, as the barrel's icon: a click for the next, a right-click for the one before. */
+    private static final class OrderButton extends dev.nookworks.port.gui.PortButton {
+        OrderButton(int x, int y) {
+            super(x, y, ORDER_W, 13, Component.empty());
+        }
+
+        @Override
+        public Component getMessage() {
+            return Component.translatable("gui.nookworks.storage.order", Component.translatable(order().translationKey(reversed())));
+        }
+
+        @Override
+        protected boolean isValidClickButton(MouseButtonInfo info) {
+            return info.button() == InputConstants.MOUSE_BUTTON_LEFT || info.button() == InputConstants.MOUSE_BUTTON_RIGHT;
+        }
+
+        @Override
+        public void onClick(MouseButtonEvent event, boolean doubleClick) {
+            step(event.button() == InputConstants.MOUSE_BUTTON_RIGHT ? -1 : 1);
+        }
+
+        @Override
+        public void onPress(InputWithModifiers input) {
+            step(1);
+        }
+
+        @Override
+        protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+            this.extractDefaultSprite(graphics);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, ORDER_ICONS, this.getX() + 3, this.getY() + 3, order().ordinal() * 8, 0, 8, 8, 32, 8);
+            if (this.isHovered()) {
+                Minecraft mc = Minecraft.getInstance();
+                graphics.setTooltipForNextFrame(mc.font, List.of(this.getMessage().getVisualOrderText(),
+                        Component.translatable("gui.nookworks.storage.order.hint").withStyle(ChatFormatting.GRAY).getVisualOrderText()),
+                        mouseX, mouseY);
+            }
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
+    }
+
+    private ChestSortClient() {}
+}

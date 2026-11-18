@@ -1,0 +1,35 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:magnet_chest",
+        "nookworks:magnet"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "nookworks:magnet"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "tag": "c:chests/wooden"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "pattern": [
+    " M ",
+    "ICI",
+    " H "
+  ],
+  "result": {
+    "id": "nookworks:magnet_chest"
+  }
+}

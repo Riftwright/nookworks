@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brown_rice",
+        "nookworks:rice_bale"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:rice_bale"
+    }
+  ],
+  "result": {
+    "id": "nookworks:brown_rice",
+    "count": 8
+  }
+}

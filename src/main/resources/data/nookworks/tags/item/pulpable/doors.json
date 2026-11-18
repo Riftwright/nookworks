@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:wooden_doors"
+  ],
+  "remove": [
+    "minecraft:crimson_door",
+    "minecraft:warped_door"
+  ]
+}

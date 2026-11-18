@@ -1,0 +1,70 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/oak_planks",
+    "planks": "minecraft:block/oak_planks",
+    "post": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "name": "rail_right",
+      "from": [
+        13,
+        3,
+        7.5
+      ],
+      "to": [
+        16,
+        4,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            3,
+            13
+          ],
+          "texture": "#post"
+        },
+        "south": {
+          "uv": [
+            13,
+            12,
+            16,
+            13
+          ],
+          "texture": "#post"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            12,
+            8.5,
+            13
+          ],
+          "texture": "#post"
+        },
+        "up": {
+          "uv": [
+            13,
+            7.5,
+            16,
+            8.5
+          ],
+          "texture": "#post"
+        },
+        "down": {
+          "uv": [
+            13,
+            7.5,
+            16,
+            8.5
+          ],
+          "texture": "#post"
+        }
+      }
+    }
+  ]
+}

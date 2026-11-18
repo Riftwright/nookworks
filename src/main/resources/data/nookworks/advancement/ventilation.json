@@ -1,0 +1,59 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:raw_zinc"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:range_hood",
+        "nookworks:ventilation_fan"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "air": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:range_hood",
+              "nookworks:ventilation_fan"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:ventilation_fan"
+    },
+    "title": {
+      "translate": "advancements.nookworks.ventilation.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.ventilation.description"
+    }
+  },
+  "requirements": [
+    [
+      "air"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:zinc"
+}

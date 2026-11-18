@@ -1,0 +1,48 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:raw_zinc"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "zinc": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:raw_zinc"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:raw_zinc"
+    },
+    "title": {
+      "translate": "advancements.nookworks.zinc.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.zinc.description"
+    }
+  },
+  "requirements": [
+    [
+      "zinc"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:sifter"
+}

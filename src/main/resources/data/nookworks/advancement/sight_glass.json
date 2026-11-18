@@ -1,0 +1,62 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sight_glass"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "glass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:sight_glass"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:sight_glass"
+    },
+    "title": {
+      "translate": "advancements.nookworks.sight_glass.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.sight_glass.description"
+    }
+  },
+  "requirements": [
+    [
+      "glass"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

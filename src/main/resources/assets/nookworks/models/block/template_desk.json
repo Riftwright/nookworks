@@ -1,0 +1,300 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/oak_planks",
+    "planks": "minecraft:block/oak_planks",
+    "post": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "name": "top",
+      "from": [
+        0,
+        13,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#planks"
+        },
+        "east": {
+          "texture": "#planks"
+        },
+        "south": {
+          "texture": "#planks"
+        },
+        "west": {
+          "texture": "#planks"
+        },
+        "up": {
+          "texture": "#planks",
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    },
+    {
+      "name": "leg_nw",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        4,
+        13,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "leg_ne",
+      "from": [
+        12,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        13,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "leg_sw",
+      "from": [
+        1,
+        0,
+        12
+      ],
+      "to": [
+        4,
+        13,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "leg_se",
+      "from": [
+        12,
+        0,
+        12
+      ],
+      "to": [
+        15,
+        13,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "apron_north",
+      "from": [
+        4,
+        11,
+        2
+      ],
+      "to": [
+        12,
+        13,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#planks"
+        },
+        "east": {
+          "texture": "#planks"
+        },
+        "south": {
+          "texture": "#planks"
+        },
+        "west": {
+          "texture": "#planks"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    },
+    {
+      "name": "apron_south",
+      "from": [
+        4,
+        11,
+        13
+      ],
+      "to": [
+        12,
+        13,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#planks"
+        },
+        "east": {
+          "texture": "#planks"
+        },
+        "south": {
+          "texture": "#planks"
+        },
+        "west": {
+          "texture": "#planks"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    },
+    {
+      "name": "apron_west",
+      "from": [
+        2,
+        11,
+        4
+      ],
+      "to": [
+        3,
+        13,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#planks"
+        },
+        "east": {
+          "texture": "#planks"
+        },
+        "south": {
+          "texture": "#planks"
+        },
+        "west": {
+          "texture": "#planks"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    },
+    {
+      "name": "apron_east",
+      "from": [
+        13,
+        11,
+        4
+      ],
+      "to": [
+        14,
+        13,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#planks"
+        },
+        "east": {
+          "texture": "#planks"
+        },
+        "south": {
+          "texture": "#planks"
+        },
+        "west": {
+          "texture": "#planks"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    }
+  ]
+}

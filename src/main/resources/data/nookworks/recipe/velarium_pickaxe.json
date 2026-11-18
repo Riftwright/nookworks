@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_pickaxe",
+        "nookworks:reinforced_rod"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "nookworks:reinforced_rod"
+    },
+    "X": {
+      "tag": "nookworks:velarium_tool_materials"
+    }
+  },
+  "pattern": [
+    "XXX",
+    " # ",
+    " # "
+  ],
+  "result": {
+    "id": "nookworks:velarium_pickaxe"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:recycler",
+        "nookworks:crusher",
+        "nookworks:compressor",
+        "nookworks:baler"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:crusher"
+    },
+    {
+      "item": "nookworks:compressor"
+    },
+    {
+      "item": "nookworks:baler"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:recycler"
+  }
+}

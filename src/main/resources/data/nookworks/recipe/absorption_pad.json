@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:absorption_pad",
+        "nookworks:magnet"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "minecraft:experience_bottle"
+    },
+    "M": {
+      "item": "nookworks:magnet"
+    }
+  },
+  "pattern": [
+    "IEI",
+    "IMI"
+  ],
+  "result": {
+    "id": "nookworks:absorption_pad"
+  }
+}

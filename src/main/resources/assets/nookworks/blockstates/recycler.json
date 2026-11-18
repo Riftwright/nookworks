@@ -1,0 +1,29 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "half": "lower"
+      },
+      "apply": {
+        "model": "nookworks:block/recycler"
+      }
+    },
+    {
+      "when": {
+        "half": "lower",
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/recycler_lamp"
+      }
+    },
+    {
+      "when": {
+        "half": "upper"
+      },
+      "apply": {
+        "model": "nookworks:block/recycler_upper"
+      }
+    }
+  ]
+}

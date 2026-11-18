@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "nookworks:block/spawn_egg_brewer"
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "skin": "nookworks:block/dish/pickle_carrot_skin",
+    "cut": "nookworks:block/dish/pickle_carrot_cut",
+    "particle": "nookworks:block/dish/pickle_carrot_skin"
+  },
+  "elements": [
+    {
+      "from": [
+        4.0,
+        0,
+        6.75
+      ],
+      "to": [
+        5.2,
+        1.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin"
+        },
+        "south": {
+          "texture": "#skin"
+        },
+        "east": {
+          "texture": "#cut"
+        },
+        "west": {
+          "texture": "#cut"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        5.7,
+        0,
+        7.25
+      ],
+      "to": [
+        6.9,
+        1.75,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin"
+        },
+        "south": {
+          "texture": "#skin"
+        },
+        "east": {
+          "texture": "#cut"
+        },
+        "west": {
+          "texture": "#cut"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        7.4,
+        0,
+        6.75
+      ],
+      "to": [
+        8.6,
+        1.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin"
+        },
+        "south": {
+          "texture": "#skin"
+        },
+        "east": {
+          "texture": "#cut"
+        },
+        "west": {
+          "texture": "#cut"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        9.1,
+        0,
+        7.25
+      ],
+      "to": [
+        10.3,
+        1.75,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin"
+        },
+        "south": {
+          "texture": "#skin"
+        },
+        "east": {
+          "texture": "#cut"
+        },
+        "west": {
+          "texture": "#cut"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    },
+    {
+      "from": [
+        10.8,
+        0,
+        6.75
+      ],
+      "to": [
+        12.0,
+        1.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin"
+        },
+        "south": {
+          "texture": "#skin"
+        },
+        "east": {
+          "texture": "#cut"
+        },
+        "west": {
+          "texture": "#cut"
+        },
+        "up": {
+          "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin"
+        }
+      }
+    }
+  ]
+}

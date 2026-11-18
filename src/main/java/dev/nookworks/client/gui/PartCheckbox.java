@@ -1,0 +1,80 @@
+package dev.nookworks.client.gui;
+
+import dev.nookworks.port.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractButton;
+import dev.nookworks.port.gui.InputWithModifiers;
+import dev.nookworks.port.gui.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import dev.nookworks.port.util.ARGB;
+
+/**
+ * A checkbox alone, drawn with vanilla's checkbox sprites, that can also be set from outside ({@link #set}) - the
+ * parts screen's All on and All off - which vanilla's Checkbox cannot. Its label is a widget of its own beside it.
+ */
+public final class PartCheckbox extends dev.nookworks.port.gui.PortButton {
+    public interface Changed {
+        void changed(boolean selected);
+    }
+
+    private static final ResourceLocation SELECTED_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("widget/checkbox_selected_highlighted");
+    private static final ResourceLocation SELECTED = ResourceLocation.withDefaultNamespace("widget/checkbox_selected");
+    private static final ResourceLocation HIGHLIGHTED = ResourceLocation.withDefaultNamespace("widget/checkbox_highlighted");
+    private static final ResourceLocation BOX = ResourceLocation.withDefaultNamespace("widget/checkbox");
+    /** Vanilla's checkbox: the font's line and 8 px. */
+    public static final int SIZE = 17;
+    private boolean selected;
+    /** Unticked, but some of what it stands for is on (a group partly on): a dash in the box. */
+    private boolean some;
+    private final Changed changed;
+
+    public PartCheckbox(Component name, boolean selected, Changed changed) {
+        super(0, 0, SIZE, SIZE, name);
+        this.selected = selected;
+        this.changed = changed;
+    }
+
+    public boolean selected() {
+        return this.selected;
+    }
+
+    /** Ticks or clears it without telling anyone: the screen set it so itself. */
+    public void set(boolean selected) {
+        this.selected = selected;
+    }
+
+    /** Shows a dash while unticked (some of a group on, not all: r20, an unticked box read as all off). */
+    public void setSome(boolean some) {
+        this.some = some;
+    }
+
+    @Override
+    public void onPress(InputWithModifiers input) {
+        this.selected = !this.selected;
+        this.changed.changed(this.selected);
+    }
+
+    @Override
+    public void updateWidgetNarration(NarrationElementOutput output) {
+        output.add(NarratedElementType.TITLE, this.createNarrationMessage());
+        if (this.active) {
+            output.add(NarratedElementType.USAGE, Component.translatable(this.isFocused()
+                    ? this.selected ? "narration.checkbox.usage.focused.uncheck" : "narration.checkbox.usage.focused.check"
+                    : this.selected ? "narration.checkbox.usage.hovered.uncheck" : "narration.checkbox.usage.hovered.check"));
+        }
+    }
+
+    @Override
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        boolean lit = this.isFocused() || this.isHovered();
+        ResourceLocation sprite = this.selected ? lit ? SELECTED_HIGHLIGHTED : SELECTED : lit ? HIGHLIGHTED : BOX;
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, this.getX(), this.getY(), SIZE, SIZE,
+                ARGB.white(this.active ? this.alpha : this.alpha * 0.5F));
+        if (!this.selected && this.some) {
+            int colour = ARGB.color(Math.round((this.active ? 1.0F : 0.5F) * 255), 0xE0E0E0);
+            graphics.fill(this.getX() + 4, this.getY() + 7, this.getX() + SIZE - 4, this.getY() + 10, colour);
+        }
+    }
+}

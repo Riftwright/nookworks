@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:rice_bale"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "R": {
+      "tag": "c:crops/rice"
+    },
+    "S": {
+      "item": "farmersdelight:straw"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "RSR",
+    "RRR"
+  ],
+  "result": {
+    "id": "nookworks:rice_bale"
+  }
+}

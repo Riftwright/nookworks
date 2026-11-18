@@ -1,0 +1,69 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wool_shears"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "shorn": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "item": {
+          "items": "nookworks:wool_shears"
+        },
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{Sheared:1b}"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wool_shears"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wool_shears.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wool_shears.description"
+    }
+  },
+  "requirements": [
+    [
+      "shorn"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

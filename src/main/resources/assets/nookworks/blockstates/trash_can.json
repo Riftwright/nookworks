@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "nookworks:block/trash_can"
+    },
+    "powered=true": {
+      "model": "nookworks:block/trash_can_on"
+    }
+  }
+}

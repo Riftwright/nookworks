@@ -1,0 +1,73 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crude_salt"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:salt"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:beetroot_nukazuke",
+        "nookworks:carrot_nukazuke"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "pickle": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:carrot_nukazuke",
+              "nookworks:beetroot_nukazuke"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:carrot_nukazuke"
+    },
+    "title": {
+      "translate": "advancements.nookworks.nukazuke.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.nukazuke.description"
+    }
+  },
+  "requirements": [
+    [
+      "pickle"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:salt"
+}

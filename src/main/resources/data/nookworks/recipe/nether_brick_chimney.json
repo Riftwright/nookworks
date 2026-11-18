@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:nether_brick_chimney"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": {
+      "item": "minecraft:nether_bricks"
+    }
+  },
+  "pattern": [
+    "B B",
+    "B B"
+  ],
+  "result": {
+    "id": "nookworks:nether_brick_chimney",
+    "count": 4
+  }
+}

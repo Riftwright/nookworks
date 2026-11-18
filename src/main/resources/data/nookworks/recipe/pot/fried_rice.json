@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:fried_rice",
+        "nookworks:cooked_rice"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "nookworks:cooked_rice"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:eggs"
+      }
+    }
+  ],
+  "liquid": "oil",
+  "amount": 25,
+  "time": 100,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:fried_rice",
+    "count": 1
+  },
+  "pan": true
+}

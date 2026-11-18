@@ -1,0 +1,83 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:caustic_soda"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wood_pulp"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:fine_paper"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:poster"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "poster": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:poster"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:poster"
+    },
+    "title": {
+      "translate": "advancements.nookworks.poster.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.poster.description"
+    }
+  },
+  "requirements": [
+    [
+      "poster"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:fine_paper"
+}

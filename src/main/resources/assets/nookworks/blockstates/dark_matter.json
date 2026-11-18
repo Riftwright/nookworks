@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "darkening=true": {
+      "model": "nookworks:block/dark_matter"
+    },
+    "darkening=false": {
+      "model": "nookworks:block/dark_matter_beaten"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:spawner_link_receiver"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "B": {
+      "item": "minecraft:polished_blackstone"
+    }
+  },
+  "pattern": [
+    "BEB",
+    "RIR",
+    "BBB"
+  ],
+  "result": {
+    "id": "nookworks:spawner_link_receiver"
+  }
+}

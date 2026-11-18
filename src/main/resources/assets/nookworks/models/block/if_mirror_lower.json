@@ -1,0 +1,214 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "frame": "nookworks:block/if_mirror_frame",
+    "particle": "nookworks:block/if_mirror_frame",
+    "glass": "nookworks:block/if_mirror_glass_bottom"
+  },
+  "elements": [
+    {
+      "name": "foot west",
+      "from": [
+        1,
+        0,
+        4
+      ],
+      "to": [
+        3,
+        1,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "name": "foot east",
+      "from": [
+        13,
+        0,
+        4
+      ],
+      "to": [
+        15,
+        1,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "name": "post west",
+      "from": [
+        1,
+        1,
+        7
+      ],
+      "to": [
+        3,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "name": "post east",
+      "from": [
+        13,
+        1,
+        7
+      ],
+      "to": [
+        15,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "name": "rail",
+      "from": [
+        3,
+        2,
+        7
+      ],
+      "to": [
+        13,
+        3,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "name": "glass",
+      "from": [
+        3,
+        3,
+        7.5
+      ],
+      "to": [
+        13,
+        16,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glass",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "east": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "down": {
+          "texture": "#frame"
+        }
+      }
+    }
+  ]
+}

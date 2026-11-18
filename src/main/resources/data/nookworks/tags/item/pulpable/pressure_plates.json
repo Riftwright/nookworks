@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:wooden_pressure_plates"
+  ],
+  "remove": [
+    "minecraft:crimson_pressure_plate",
+    "minecraft:warped_pressure_plate"
+  ]
+}

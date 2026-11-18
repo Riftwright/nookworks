@@ -1,0 +1,104 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/copper_pipe",
+    "barrel": "nookworks:block/copper_pipe",
+    "collar": "nookworks:block/copper_pipe_collar",
+    "bore": "nookworks:block/copper_pipe_end"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        3,
+        0
+      ],
+      "to": [
+        13,
+        13,
+        1
+      ],
+      "faces": {
+        "east": {
+          "texture": "#barrel"
+        },
+        "west": {
+          "texture": "#barrel"
+        },
+        "up": {
+          "texture": "#barrel"
+        },
+        "down": {
+          "texture": "#barrel"
+        },
+        "north": {
+          "texture": "#bore"
+        },
+        "south": {
+          "texture": "#collar"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        1
+      ],
+      "to": [
+        12,
+        12,
+        3
+      ],
+      "faces": {
+        "east": {
+          "texture": "#barrel"
+        },
+        "west": {
+          "texture": "#barrel"
+        },
+        "up": {
+          "texture": "#barrel"
+        },
+        "down": {
+          "texture": "#barrel"
+        },
+        "south": {
+          "texture": "#barrel"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        2,
+        3
+      ],
+      "to": [
+        11,
+        10,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#barrel"
+        },
+        "south": {
+          "texture": "#barrel"
+        },
+        "east": {
+          "texture": "#barrel"
+        },
+        "west": {
+          "texture": "#barrel"
+        },
+        "up": {
+          "texture": "#barrel"
+        },
+        "down": {
+          "texture": "#bore"
+        }
+      }
+    }
+  ]
+}

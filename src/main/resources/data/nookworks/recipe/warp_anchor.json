@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:warp_anchor",
+        "nookworks:dark_matter"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "D": {
+      "item": "nookworks:dark_matter"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "pattern": [
+    "AOA",
+    "ODO",
+    "AOA"
+  ],
+  "result": {
+    "id": "nookworks:warp_anchor"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "values": [
+    "nookworks:corn_kernels",
+    "nookworks:corn",
+    "nookworks:onion",
+    {
+      "id": "#c:crops/onion",
+      "required": false
+    }
+  ]
+}

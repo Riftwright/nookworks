@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:destination_panel"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "Z": {
+      "tag": "c:ingots/zinc"
+    },
+    "W": {
+      "item": "nookworks:dawnwood_planks"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    }
+  },
+  "pattern": [
+    "WGW",
+    "ZCZ"
+  ],
+  "result": {
+    "id": "nookworks:destination_panel"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:trading_counter"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "counter": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "nookworks:trading_counter"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:trading_counter"
+    },
+    "title": {
+      "translate": "advancements.nookworks.trading_counter.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.trading_counter.description"
+    }
+  },
+  "requirements": [
+    [
+      "counter"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

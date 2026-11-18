@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "nookworks:block/planter_side",
+    "north": "nookworks:block/planter_front",
+    "south": "nookworks:block/planter_side",
+    "east": "nookworks:block/planter_side",
+    "west": "nookworks:block/planter_side",
+    "up": "nookworks:block/planter_top",
+    "down": "nookworks:block/planter_bottom"
+  }
+}

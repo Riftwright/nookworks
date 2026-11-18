@@ -1,0 +1,53 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brown_rice"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "rice": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "#nookworks:rice_crops"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:brown_rice"
+    },
+    "title": {
+      "translate": "advancements.nookworks.rice.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.rice.description"
+    }
+  },
+  "requirements": [
+    [
+      "rice"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:sifter"
+}

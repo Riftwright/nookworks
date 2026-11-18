@@ -1,0 +1,29 @@
+{
+  "values": {
+    "nookworks:sunflower_seeds": {
+      "oil": 60,
+      "turns": 2,
+      "cake": 0.25
+    },
+    "minecraft:pumpkin_seeds": {
+      "oil": 50,
+      "turns": 2,
+      "cake": 0.25
+    },
+    "minecraft:melon_seeds": {
+      "oil": 25,
+      "turns": 2,
+      "cake": 0.25
+    },
+    "nookworks:corn_kernels": {
+      "oil": 25,
+      "turns": 2,
+      "cake": 0.25
+    },
+    "nookworks:rice_bran": {
+      "oil": 50,
+      "turns": 2,
+      "cake": 0.25
+    }
+  }
+}

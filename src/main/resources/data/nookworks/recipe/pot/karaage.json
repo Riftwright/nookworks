@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:karaage",
+        "nookworks:coated_chicken"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "nookworks:coated_chicken"
+      }
+    }
+  ],
+  "liquid": "oil",
+  "amount": 25,
+  "time": 200,
+  "result": {
+    "id": "nookworks:karaage",
+    "count": 1
+  }
+}

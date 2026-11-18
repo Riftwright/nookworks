@@ -1,0 +1,215 @@
+{
+  "replace": false,
+  "values": {
+    "nookworks:dawnwood_log": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_wood": {
+      "burn_time": 300
+    },
+    "nookworks:stripped_dawnwood_log": {
+      "burn_time": 300
+    },
+    "nookworks:stripped_dawnwood_wood": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_planks": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_stairs": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_fence": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_fence_gate": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_trapdoor": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_pressure_plate": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_slab": {
+      "burn_time": 150
+    },
+    "nookworks:dawnwood_door": {
+      "burn_time": 200
+    },
+    "nookworks:dawnwood_sign": {
+      "burn_time": 200
+    },
+    "nookworks:dawnwood_hanging_sign": {
+      "burn_time": 800
+    },
+    "nookworks:dawnwood_boat": {
+      "burn_time": 1200
+    },
+    "nookworks:dawnwood_chest_boat": {
+      "burn_time": 1200
+    },
+    "nookworks:dawnwood_button": {
+      "burn_time": 100
+    },
+    "nookworks:rare_seed": {
+      "burn_time": 100
+    },
+    "nookworks:vegetable_oil_bucket": {
+      "burn_time": 16000
+    },
+    "nookworks:biodiesel_bucket": {
+      "burn_time": 16000
+    },
+    "nookworks:oak_support": {
+      "burn_time": 300
+    },
+    "nookworks:oak_chair": {
+      "burn_time": 300
+    },
+    "nookworks:oak_stool": {
+      "burn_time": 300
+    },
+    "nookworks:oak_bench": {
+      "burn_time": 300
+    },
+    "nookworks:oak_desk": {
+      "burn_time": 300
+    },
+    "nookworks:spruce_support": {
+      "burn_time": 300
+    },
+    "nookworks:spruce_chair": {
+      "burn_time": 300
+    },
+    "nookworks:spruce_stool": {
+      "burn_time": 300
+    },
+    "nookworks:spruce_bench": {
+      "burn_time": 300
+    },
+    "nookworks:spruce_desk": {
+      "burn_time": 300
+    },
+    "nookworks:birch_support": {
+      "burn_time": 300
+    },
+    "nookworks:birch_chair": {
+      "burn_time": 300
+    },
+    "nookworks:birch_stool": {
+      "burn_time": 300
+    },
+    "nookworks:birch_bench": {
+      "burn_time": 300
+    },
+    "nookworks:birch_desk": {
+      "burn_time": 300
+    },
+    "nookworks:jungle_support": {
+      "burn_time": 300
+    },
+    "nookworks:jungle_chair": {
+      "burn_time": 300
+    },
+    "nookworks:jungle_stool": {
+      "burn_time": 300
+    },
+    "nookworks:jungle_bench": {
+      "burn_time": 300
+    },
+    "nookworks:jungle_desk": {
+      "burn_time": 300
+    },
+    "nookworks:acacia_support": {
+      "burn_time": 300
+    },
+    "nookworks:acacia_chair": {
+      "burn_time": 300
+    },
+    "nookworks:acacia_stool": {
+      "burn_time": 300
+    },
+    "nookworks:acacia_bench": {
+      "burn_time": 300
+    },
+    "nookworks:acacia_desk": {
+      "burn_time": 300
+    },
+    "nookworks:dark_oak_support": {
+      "burn_time": 300
+    },
+    "nookworks:dark_oak_chair": {
+      "burn_time": 300
+    },
+    "nookworks:dark_oak_stool": {
+      "burn_time": 300
+    },
+    "nookworks:dark_oak_bench": {
+      "burn_time": 300
+    },
+    "nookworks:dark_oak_desk": {
+      "burn_time": 300
+    },
+    "nookworks:mangrove_support": {
+      "burn_time": 300
+    },
+    "nookworks:mangrove_chair": {
+      "burn_time": 300
+    },
+    "nookworks:mangrove_stool": {
+      "burn_time": 300
+    },
+    "nookworks:mangrove_bench": {
+      "burn_time": 300
+    },
+    "nookworks:mangrove_desk": {
+      "burn_time": 300
+    },
+    "nookworks:cherry_support": {
+      "burn_time": 300
+    },
+    "nookworks:cherry_chair": {
+      "burn_time": 300
+    },
+    "nookworks:cherry_stool": {
+      "burn_time": 300
+    },
+    "nookworks:cherry_bench": {
+      "burn_time": 300
+    },
+    "nookworks:cherry_desk": {
+      "burn_time": 300
+    },
+    "nookworks:bamboo_support": {
+      "burn_time": 300
+    },
+    "nookworks:bamboo_chair": {
+      "burn_time": 300
+    },
+    "nookworks:bamboo_stool": {
+      "burn_time": 300
+    },
+    "nookworks:bamboo_bench": {
+      "burn_time": 300
+    },
+    "nookworks:bamboo_desk": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_support": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_chair": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_stool": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_bench": {
+      "burn_time": 300
+    },
+    "nookworks:dawnwood_desk": {
+      "burn_time": 300
+    }
+  }
+}

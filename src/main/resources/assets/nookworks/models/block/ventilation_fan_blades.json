@@ -1,0 +1,172 @@
+{
+  "textures": {
+    "particle": "nookworks:block/galvanized_steel",
+    "steel": "nookworks:block/galvanized_steel",
+    "guard": "nookworks:block/black_iron",
+    "blade": "minecraft:block/iron_block",
+    "motor": "nookworks:block/black_iron",
+    "louvre": "nookworks:block/galvanized_steel"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        7,
+        4.5
+      ],
+      "to": [
+        9,
+        9,
+        6.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#motor"
+        },
+        "south": {
+          "texture": "#motor"
+        },
+        "east": {
+          "texture": "#motor"
+        },
+        "west": {
+          "texture": "#motor"
+        },
+        "up": {
+          "texture": "#motor"
+        },
+        "down": {
+          "texture": "#motor"
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        9,
+        5
+      ],
+      "to": [
+        9.5,
+        13,
+        5.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#blade"
+        },
+        "south": {
+          "texture": "#blade"
+        },
+        "east": {
+          "texture": "#blade"
+        },
+        "west": {
+          "texture": "#blade"
+        },
+        "up": {
+          "texture": "#blade"
+        },
+        "down": {
+          "texture": "#blade"
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        3,
+        5
+      ],
+      "to": [
+        9.5,
+        7,
+        5.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#blade"
+        },
+        "south": {
+          "texture": "#blade"
+        },
+        "east": {
+          "texture": "#blade"
+        },
+        "west": {
+          "texture": "#blade"
+        },
+        "up": {
+          "texture": "#blade"
+        },
+        "down": {
+          "texture": "#blade"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        6.5,
+        5.2
+      ],
+      "to": [
+        13,
+        9.5,
+        5.7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#blade"
+        },
+        "south": {
+          "texture": "#blade"
+        },
+        "east": {
+          "texture": "#blade"
+        },
+        "west": {
+          "texture": "#blade"
+        },
+        "up": {
+          "texture": "#blade"
+        },
+        "down": {
+          "texture": "#blade"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        6.5,
+        5.2
+      ],
+      "to": [
+        7,
+        9.5,
+        5.7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#blade"
+        },
+        "south": {
+          "texture": "#blade"
+        },
+        "east": {
+          "texture": "#blade"
+        },
+        "west": {
+          "texture": "#blade"
+        },
+        "up": {
+          "texture": "#blade"
+        },
+        "down": {
+          "texture": "#blade"
+        }
+      }
+    }
+  ]
+}

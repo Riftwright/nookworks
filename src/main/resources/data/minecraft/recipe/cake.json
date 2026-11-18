@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:setting",
+      "setting": "flour_bakery",
+      "is": false
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:milk_bucket"
+    },
+    "B": {
+      "item": "minecraft:sugar"
+    },
+    "C": {
+      "item": "minecraft:wheat"
+    },
+    "E": {
+      "tag": "c:eggs"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "BEB",
+    "CCC"
+  ],
+  "result": {
+    "id": "minecraft:cake"
+  }
+}

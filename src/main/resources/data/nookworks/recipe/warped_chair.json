@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "chair",
+  "key": {
+    "P": {
+      "item": "minecraft:warped_planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "P  ",
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:warped_chair"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crude_salt"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:salt"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:risen_dough"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "risen": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:risen_dough"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:bread"
+    },
+    "title": {
+      "translate": "advancements.nookworks.bread.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.bread.description"
+    }
+  },
+  "requirements": [
+    [
+      "risen"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:salt"
+}

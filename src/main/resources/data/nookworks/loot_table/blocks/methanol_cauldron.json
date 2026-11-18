@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/methanol_cauldron",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cauldron"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

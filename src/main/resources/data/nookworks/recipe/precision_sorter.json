@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:precision_sorter",
+        "nookworks:item_sorter"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "H": {
+      "item": "nookworks:hub_stone"
+    },
+    "S": {
+      "item": "nookworks:item_sorter"
+    }
+  },
+  "pattern": [
+    " G ",
+    "HSH",
+    " G "
+  ],
+  "result": {
+    "id": "nookworks:precision_sorter"
+  }
+}

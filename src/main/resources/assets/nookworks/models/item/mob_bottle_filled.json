@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nookworks:item/mob_bottle_contents",
+    "layer1": "nookworks:item/mob_bottle_spots",
+    "layer2": "nookworks:item/mob_bottle_eyes",
+    "layer3": "nookworks:item/mob_bottle"
+  }
+}

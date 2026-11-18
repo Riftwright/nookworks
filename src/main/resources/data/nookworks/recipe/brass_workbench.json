@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_workbench"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "c:ingots/brass"
+    },
+    "T": {
+      "item": "minecraft:crafting_table"
+    },
+    "B": {
+      "item": "minecraft:dark_oak_slab"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MTM",
+    "B B"
+  ],
+  "result": {
+    "id": "nookworks:brass_workbench"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:lantern",
+    "minecraft:soul_lantern",
+    "nookworks:unlit_lantern",
+    "nookworks:unlit_soul_lantern",
+    "nookworks:wind_chime"
+  ]
+}

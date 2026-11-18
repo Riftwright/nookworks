@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "nookworks:block/sconce"
+    },
+    "lit=true": {
+      "model": "nookworks:block/sconce_lit"
+    }
+  }
+}

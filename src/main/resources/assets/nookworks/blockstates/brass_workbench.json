@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/brass_workbench"
+    },
+    "facing=east": {
+      "model": "nookworks:block/brass_workbench",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/brass_workbench",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/brass_workbench",
+      "y": 270
+    }
+  }
+}

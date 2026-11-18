@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/range_hood"
+    },
+    "facing=east": {
+      "model": "nookworks:block/range_hood",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/range_hood",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/range_hood",
+      "y": 270
+    }
+  }
+}

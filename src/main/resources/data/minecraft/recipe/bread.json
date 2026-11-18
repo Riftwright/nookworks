@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:setting",
+      "setting": "vanilla_bread",
+      "is": true
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:wheat"
+    }
+  },
+  "pattern": [
+    "###"
+  ],
+  "result": {
+    "id": "minecraft:bread"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "values": [
+    "nookworks:cooked_rice",
+    "nookworks:fried_rice",
+    "nookworks:stir_fried_vegetables",
+    "nookworks:vegetable_soup",
+    "nookworks:cream_stew",
+    "nookworks:corn_potage",
+    "nookworks:udon",
+    "minecraft:mushroom_stew",
+    "minecraft:beetroot_soup",
+    "minecraft:rabbit_stew",
+    "minecraft:suspicious_stew",
+    {
+      "id": "farmersdelight:cooked_rice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:fried_rice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:vegetable_soup",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:beef_stew",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:chicken_soup",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:fish_stew",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:pumpkin_soup",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:baked_cod_stew",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:noodle_soup",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:onion_soup",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:bone_broth",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:mushroom_rice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:ratatouille",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:tomato_sauce",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:mixed_salad",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:nether_salad",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:fruit_salad",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:bacon_and_eggs",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:pasta_with_meatballs",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:pasta_with_mutton_chop",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:vegetable_noodles",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:squid_ink_pasta",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:steak_and_potatoes",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:roasted_mutton_chops",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:grilled_salmon",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:roast_chicken",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:stuffed_pumpkin",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:honey_glazed_ham",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:shepherds_pie",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:dog_food",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:gleaming_salad",
+      "required": false
+    }
+  ]
+}

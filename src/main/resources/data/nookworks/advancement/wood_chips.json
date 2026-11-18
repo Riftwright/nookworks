@@ -1,0 +1,55 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crusher"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wood_chips"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "chips": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:wood_chips"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wood_chips"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wood_chips.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wood_chips.description"
+    }
+  },
+  "requirements": [
+    [
+      "chips"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:crusher"
+}

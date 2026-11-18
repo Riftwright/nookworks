@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=south,hinge=left": {
+      "model": "nookworks:block/bookend_left"
+    },
+    "facing=south,hinge=right": {
+      "model": "nookworks:block/bookend_right"
+    },
+    "facing=west,hinge=left": {
+      "model": "nookworks:block/bookend_left",
+      "y": 90
+    },
+    "facing=west,hinge=right": {
+      "model": "nookworks:block/bookend_right",
+      "y": 90
+    },
+    "facing=north,hinge=left": {
+      "model": "nookworks:block/bookend_left",
+      "y": 180
+    },
+    "facing=north,hinge=right": {
+      "model": "nookworks:block/bookend_right",
+      "y": 180
+    },
+    "facing=east,hinge=left": {
+      "model": "nookworks:block/bookend_left",
+      "y": 270
+    },
+    "facing=east,hinge=right": {
+      "model": "nookworks:block/bookend_right",
+      "y": 270
+    }
+  }
+}

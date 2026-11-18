@@ -1,0 +1,48 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:experience_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:repair_box"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "box": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:repair_box"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:repair_box"
+    },
+    "title": {
+      "translate": "advancements.nookworks.repair_box.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.repair_box.description"
+    }
+  },
+  "requirements": [
+    [
+      "box"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:experience"
+}

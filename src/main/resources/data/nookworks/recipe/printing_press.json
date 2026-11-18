@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:printing_press",
+        "nookworks:machine_chassis",
+        "nookworks:fine_paper"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IPI",
+    "RXR",
+    "IFI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "X": {
+      "item": "nookworks:machine_chassis"
+    },
+    "F": {
+      "item": "nookworks:fine_paper"
+    }
+  },
+  "result": {
+    "id": "nookworks:printing_press"
+  }
+}

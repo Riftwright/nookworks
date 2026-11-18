@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "desk",
+  "key": {
+    "P": {
+      "item": "nookworks:dawnwood_planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "S S",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:dawnwood_desk"
+  }
+}

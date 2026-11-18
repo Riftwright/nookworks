@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_ingot",
+        "nookworks:velarium_nugget"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "velarium_ingot",
+  "key": {
+    "N": {
+      "item": "nookworks:velarium_nugget"
+    }
+  },
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "result": {
+    "id": "nookworks:velarium_ingot"
+  }
+}

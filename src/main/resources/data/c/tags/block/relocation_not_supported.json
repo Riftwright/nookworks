@@ -1,0 +1,13 @@
+{
+  "values": [
+    "nookworks:drive_wheel",
+    "nookworks:item_warp_sender",
+    "nookworks:item_warp_receiver",
+    "nookworks:horizontal_item_warp_sender",
+    "nookworks:horizontal_item_warp_receiver",
+    "nookworks:spawner_link_sender",
+    "nookworks:spawner_link_receiver",
+    "nookworks:spawner_controller",
+    "nookworks:daemon_door"
+  ]
+}

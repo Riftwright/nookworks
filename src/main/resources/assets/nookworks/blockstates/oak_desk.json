@@ -1,0 +1,173 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/oak_desk_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_leg"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_east"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_west"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "north": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_leg",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_east",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_west",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_leg",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_east",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_west",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_leg",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_east",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/oak_desk_rail_west",
+        "y": 270,
+        "uvlock": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/trash_can_body_on",
+    "body": "nookworks:block/trash_can_body_on",
+    "lid": "nookworks:block/trash_can_lid_on",
+    "rim": "nookworks:block/trash_can_rim"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        13,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body",
+          "uv": [
+            2,
+            3,
+            14,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#body",
+          "uv": [
+            2,
+            3,
+            14,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#body",
+          "uv": [
+            2,
+            3,
+            14,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#body",
+          "uv": [
+            2,
+            3,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#rim",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        13,
+        1
+      ],
+      "to": [
+        15,
+        15,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rim",
+          "uv": [
+            1,
+            0,
+            15,
+            2
+          ]
+        },
+        "south": {
+          "texture": "#rim",
+          "uv": [
+            1,
+            0,
+            15,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#rim",
+          "uv": [
+            1,
+            0,
+            15,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#rim",
+          "uv": [
+            1,
+            0,
+            15,
+            2
+          ]
+        },
+        "up": {
+          "texture": "#lid",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#rim",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        15,
+        7
+      ],
+      "to": [
+        10,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
+        }
+      }
+    }
+  ]
+}

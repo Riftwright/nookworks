@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mob_bottle"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "bottled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:mob_bottle"
+    },
+    "title": {
+      "translate": "advancements.nookworks.mob_bottle.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.mob_bottle.description"
+    }
+  },
+  "requirements": [
+    [
+      "bottled"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:root"
+}

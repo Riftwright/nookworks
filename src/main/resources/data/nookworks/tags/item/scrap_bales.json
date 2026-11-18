@@ -1,0 +1,12 @@
+{
+  "values": [
+    "nookworks:scrap_bale",
+    "nookworks:exposed_scrap_bale",
+    "nookworks:weathered_scrap_bale",
+    "nookworks:oxidized_scrap_bale",
+    "nookworks:waxed_scrap_bale",
+    "nookworks:waxed_exposed_scrap_bale",
+    "nookworks:waxed_weathered_scrap_bale",
+    "nookworks:waxed_oxidized_scrap_bale"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "nookworks:block/experience_tank",
+  "loader": "neoforge:composite",
+  "children": {
+    "part0": {
+      "parent": "nookworks:block/experience_tank"
+    },
+    "part1": {
+      "parent": "nookworks:block/experience_tank_tap"
+    }
+  }
+}

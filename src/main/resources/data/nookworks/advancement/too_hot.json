@@ -1,0 +1,87 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:mercury_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:copper_amalgam",
+        "nookworks:gold_amalgam",
+        "nookworks:iron_amalgam",
+        "nookworks:mixed_amalgam"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:distiller"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_nugget"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:red_hot_velarium_ingot"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "burned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:red_hot_velarium_ingot"
+    },
+    "title": {
+      "translate": "advancements.nookworks.too_hot.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.too_hot.description"
+    },
+    "hidden": true
+  },
+  "requirements": [
+    [
+      "burned"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:velarium_ingot"
+}

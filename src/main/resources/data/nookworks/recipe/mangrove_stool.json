@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "stool",
+  "key": {
+    "P": {
+      "item": "minecraft:mangrove_planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:mangrove_stool"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_storage_upgrade",
+        "nookworks:velarium_block"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:velarium_block"
+    },
+    {
+      "item": "nookworks:velarium_block"
+    }
+  ],
+  "result": {
+    "id": "nookworks:velarium_storage_upgrade",
+    "count": 2
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/mercury_tank_gauge",
+    "gauge": "nookworks:block/mercury_tank_gauge"
+  },
+  "elements": [
+    {
+      "from": [
+        0.98,
+        5,
+        6
+      ],
+      "to": [
+        0.98,
+        6,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#gauge",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        }
+      },
+      "name": "sight glass"
+    },
+    {
+      "from": [
+        0.98,
+        6,
+        6
+      ],
+      "to": [
+        0.98,
+        11,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#gauge",
+          "uv": [
+            4,
+            0,
+            8,
+            5
+          ]
+        }
+      },
+      "name": "sight glass"
+    },
+    {
+      "from": [
+        15.02,
+        5,
+        6
+      ],
+      "to": [
+        15.02,
+        6,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#gauge",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        }
+      },
+      "name": "sight glass"
+    },
+    {
+      "from": [
+        15.02,
+        6,
+        6
+      ],
+      "to": [
+        15.02,
+        11,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#gauge",
+          "uv": [
+            4,
+            0,
+            8,
+            5
+          ]
+        }
+      },
+      "name": "sight glass"
+    }
+  ]
+}

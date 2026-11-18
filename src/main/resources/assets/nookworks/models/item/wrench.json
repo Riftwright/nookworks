@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "nookworks:item/wrench"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "nookworks:recover": 1
+      },
+      "model": "nookworks:item/wrench_recover"
+    }
+  ]
+}

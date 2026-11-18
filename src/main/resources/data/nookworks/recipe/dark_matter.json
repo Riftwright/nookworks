@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:dark_matter"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "item": "nookworks:charred_lump"
+    },
+    "A": {
+      "item": "minecraft:amethyst_block"
+    }
+  },
+  "pattern": [
+    " C ",
+    "CAC",
+    " C "
+  ],
+  "result": {
+    "id": "nookworks:dark_matter"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "parent": "nookworks:block/wooden_tray",
+  "overrides": [
+    {
+      "predicate": {
+        "nookworks:has_contents": 1
+      },
+      "model": "nookworks:item/wooden_tray_filled"
+    }
+  ]
+}

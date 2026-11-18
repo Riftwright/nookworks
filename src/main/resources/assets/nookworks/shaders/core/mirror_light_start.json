@@ -1,0 +1,9 @@
+{
+    "vertex": "nookworks:mirror_light",
+    "fragment": "nookworks:mirror_light_start",
+    "samplers": [
+        { "name": "Sampler0" }
+    ],
+    "uniforms": [
+    ]
+}

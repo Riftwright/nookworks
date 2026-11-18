@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/compressor"
+      }
+    },
+    {
+      "when": {
+        "running": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/compressor_lamp"
+      }
+    }
+  ]
+}

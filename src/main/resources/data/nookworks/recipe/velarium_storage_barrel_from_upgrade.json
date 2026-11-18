@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:velarium_storage_barrel",
+        "nookworks:netherite_storage_barrel",
+        "nookworks:velarium_storage_upgrade"
+      ]
+    }
+  ],
+  "type": "nookworks:crafting_transmute",
+  "category": "misc",
+  "group": "velarium_storage_barrel",
+  "input": {
+    "item": "nookworks:netherite_storage_barrel"
+  },
+  "material": {
+    "item": "nookworks:velarium_storage_upgrade"
+  },
+  "result": {
+    "id": "nookworks:velarium_storage_barrel"
+  }
+}

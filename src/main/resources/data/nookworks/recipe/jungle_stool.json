@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "stool",
+  "key": {
+    "P": {
+      "item": "minecraft:jungle_planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nookworks:jungle_stool"
+  }
+}

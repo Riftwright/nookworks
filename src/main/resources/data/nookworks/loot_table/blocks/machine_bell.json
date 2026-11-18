@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/machine_bell",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:machine_bell"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

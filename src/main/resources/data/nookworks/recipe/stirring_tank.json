@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:stirring_tank"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IRI",
+    "GUG",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "U": {
+      "item": "minecraft:bucket"
+    },
+    "B": {
+      "tag": "c:ingots/brass"
+    }
+  },
+  "result": {
+    "id": "nookworks:stirring_tank"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diamond_sorter_gear",
+        "nookworks:gold_sorter_gear"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "G": {
+      "item": "nookworks:gold_sorter_gear"
+    }
+  },
+  "pattern": [
+    " D ",
+    "DGD",
+    " D "
+  ],
+  "result": {
+    "id": "nookworks:diamond_sorter_gear"
+  }
+}

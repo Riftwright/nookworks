@@ -1,0 +1,86 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nookworks:block/placed_bottle_glass_0"
+      }
+    },
+    {
+      "when": {
+        "filled_0": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_liquid_0"
+      }
+    },
+    {
+      "when": {
+        "bottles": "2|3|4"
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_glass_1"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "bottles": "2|3|4"
+          },
+          {
+            "filled_1": "true"
+          }
+        ]
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_liquid_1"
+      }
+    },
+    {
+      "when": {
+        "bottles": "3|4"
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_glass_2"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "bottles": "3|4"
+          },
+          {
+            "filled_2": "true"
+          }
+        ]
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_liquid_2"
+      }
+    },
+    {
+      "when": {
+        "bottles": "4"
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_glass_3"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "bottles": "4"
+          },
+          {
+            "filled_3": "true"
+          }
+        ]
+      },
+      "apply": {
+        "model": "nookworks:block/placed_bottle_liquid_3"
+      }
+    }
+  ]
+}

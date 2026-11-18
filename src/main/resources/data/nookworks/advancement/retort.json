@@ -1,0 +1,48 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "retort": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:retort"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:retort"
+    },
+    "title": {
+      "translate": "advancements.nookworks.retort.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.retort.description"
+    }
+  },
+  "requirements": [
+    [
+      "retort"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:machine_chassis"
+}

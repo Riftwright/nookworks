@@ -1,0 +1,28 @@
+{
+  "values": {
+    "nookworks:scrap_bale": {
+      "waxed": "nookworks:waxed_scrap_bale"
+    },
+    "nookworks:exposed_scrap_bale": {
+      "waxed": "nookworks:waxed_exposed_scrap_bale"
+    },
+    "nookworks:weathered_scrap_bale": {
+      "waxed": "nookworks:waxed_weathered_scrap_bale"
+    },
+    "nookworks:oxidized_scrap_bale": {
+      "waxed": "nookworks:waxed_oxidized_scrap_bale"
+    },
+    "nookworks:corrugated_sheet": {
+      "waxed": "nookworks:waxed_corrugated_sheet"
+    },
+    "nookworks:exposed_corrugated_sheet": {
+      "waxed": "nookworks:waxed_exposed_corrugated_sheet"
+    },
+    "nookworks:weathered_corrugated_sheet": {
+      "waxed": "nookworks:waxed_weathered_corrugated_sheet"
+    },
+    "nookworks:oxidized_corrugated_sheet": {
+      "waxed": "nookworks:waxed_oxidized_corrugated_sheet"
+    }
+  }
+}

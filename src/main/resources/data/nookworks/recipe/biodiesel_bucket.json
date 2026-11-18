@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:biodiesel_bucket",
+        "nookworks:biodiesel_bottle"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bucket"
+    },
+    {
+      "item": "nookworks:biodiesel_bottle"
+    },
+    {
+      "item": "nookworks:biodiesel_bottle"
+    },
+    {
+      "item": "nookworks:biodiesel_bottle"
+    },
+    {
+      "item": "nookworks:biodiesel_bottle"
+    }
+  ],
+  "result": {
+    "id": "nookworks:biodiesel_bucket",
+    "count": 1
+  }
+}

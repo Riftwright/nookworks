@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:zinc_ingot",
+        "nookworks:raw_zinc"
+      ]
+    }
+  ],
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "experience": 0.7,
+  "cookingtime": 100,
+  "group": "zinc_ingot",
+  "ingredient": {
+    "item": "nookworks:raw_zinc"
+  },
+  "result": {
+    "id": "nookworks:zinc_ingot"
+  }
+}

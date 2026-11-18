@@ -1,0 +1,280 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "minecraft:block/anvil",
+    "metal": "minecraft:block/anvil",
+    "candle": "minecraft:block/candle"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        2,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ],
+          "texture": "#metal"
+        },
+        "east": {
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ],
+          "texture": "#metal"
+        },
+        "south": {
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ],
+          "texture": "#metal"
+        },
+        "west": {
+          "uv": [
+            5,
+            14,
+            11,
+            16
+          ],
+          "texture": "#metal"
+        },
+        "up": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#metal"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#metal",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        1,
+        7.5
+      ],
+      "to": [
+        13,
+        2,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#metal"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#metal"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#metal"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#metal"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#metal"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        2,
+        7
+      ],
+      "to": [
+        9,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            2,
+            14
+          ],
+          "texture": "#candle"
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            2,
+            14
+          ],
+          "texture": "#candle"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            2,
+            14
+          ],
+          "texture": "#candle"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            2,
+            14
+          ],
+          "texture": "#candle"
+        },
+        "up": {
+          "uv": [
+            0,
+            6,
+            2,
+            8
+          ],
+          "texture": "#candle"
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        8,
+        8
+      ],
+      "to": [
+        8.5,
+        9,
+        8
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            5,
+            1,
+            6
+          ],
+          "texture": "#candle"
+        },
+        "south": {
+          "uv": [
+            0,
+            5,
+            1,
+            6
+          ],
+          "texture": "#candle"
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        8,
+        8
+      ],
+      "to": [
+        8.5,
+        9,
+        8
+      ],
+      "rotation": {
+        "angle": -45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            5,
+            1,
+            6
+          ],
+          "texture": "#candle"
+        },
+        "south": {
+          "uv": [
+            0,
+            5,
+            1,
+            6
+          ],
+          "texture": "#candle"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "nookworks:standing_mirror",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ],
+          "name": "nookworks:standing_mirror"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "nookworks:blocks/standing_mirror"
+}

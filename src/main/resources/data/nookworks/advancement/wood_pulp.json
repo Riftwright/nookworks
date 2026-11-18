@@ -1,0 +1,69 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:caustic_soda"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:wood_pulp"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "pulp": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:wood_pulp"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wood_pulp"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wood_pulp.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wood_pulp.description"
+    }
+  },
+  "requirements": [
+    [
+      "pulp"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:caustic_soda"
+}

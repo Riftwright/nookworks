@@ -1,0 +1,87 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "top": "nookworks:block/electric_stove_top",
+    "bottom": "nookworks:block/machine_bottom",
+    "side": "nookworks:block/electric_stove_side",
+    "front": "nookworks:block/electric_stove_front",
+    "coil": "nookworks:block/electric_stove_coil"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#front",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16.02,
+        0
+      ],
+      "to": [
+        16,
+        16.02,
+        16
+      ],
+      "shade": false,
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#coil"
+        },
+        "down": {
+          "uv": [
+            0,
+            16,
+            16,
+            0
+          ],
+          "texture": "#coil"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 15
+      }
+    }
+  ]
+}

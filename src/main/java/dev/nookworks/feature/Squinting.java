@@ -1,0 +1,98 @@
+package dev.nookworks.feature;
+
+import java.util.Locale;
+import java.util.function.Supplier;
+import org.jspecify.annotations.Nullable;
+
+import dev.nookworks.Nookworks;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+/**
+ * Squinting into the distance (the user, 2026-10-10: OptiFine's zoom on C, a hand raised to the brow with what it holds
+ * still in it, and gentle enough to leave the spyglass its worth). The view and the hand in first person are the
+ * client's ({@code client.Squint}); here is what others see - a player squinting is marked by an attachment synced to
+ * them and to whoever can see them, so their arm is raised in third person - and the arithmetic the client uses, kept
+ * where a test can reach it.
+ */
+public final class Squinting {
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Nookworks.MODID);
+    /** Whether a player squints now: not saved, gone with death, synced to them and to whoever tracks them. */
+    public static final Supplier<AttachmentType<Boolean>> SQUINTING = ATTACHMENT_TYPES.register("squinting",
+            () -> AttachmentType.builder(() -> false).sync(ByteBufCodecs.BOOL).build());
+    /**
+     * Things that keep their holder from squinting while in either hand (the user, 2026-11-15, of another mod's gun:
+     * its own aim brings the view nearer and takes both hands, and with the squint on top of it the view and the hands
+     * went wrong). Empty as we ship it: a mod or a pack names its things here.
+     */
+    public static final TagKey<Item> NO_SQUINT = TagKey.create(Registries.ITEM, Nookworks.id("no_squint"));
+
+    private Squinting() {}
+
+    public static boolean of(Player player) {
+        return player.getData(SQUINTING);
+    }
+
+    /** A player's word that they squint, or stop (sent as their key goes down and up). */
+    public static void set(ServerPlayer player, boolean squinting) {
+        squinting &= !heldKeepsFrom(player.getMainHandItem(), player.getOffhandItem());
+        if (player.getData(SQUINTING) != squinting) {
+            player.setData(SQUINTING, squinting);
+        }
+    }
+
+    /** Whether what is held, in either hand, keeps its holder from squinting ({@link #NO_SQUINT}). */
+    public static boolean heldKeepsFrom(ItemStack mainHand, ItemStack offHand) {
+        return mainHand.is(NO_SQUINT) || offHand.is(NO_SQUINT);
+    }
+
+    /** Smoothly in and out: {@code t} from 0 to 1, slow at both ends. */
+    public static double ease(double t) {
+        t = Mth.clamp(t, 0.0, 1.0);
+        return t * t * (3.0 - 2.0 * t);
+    }
+
+    /** What the field of view is divided by at {@code zoom} times, {@code eased} of the way in. */
+    public static double fovDivisor(double zoom, double eased) {
+        return 1.0 + (zoom - 1.0) * eased;
+    }
+
+    /**
+     * The mouse-sensitivity setting that turns the view {@code scale} times as fast as {@code sensitivity} does: the game
+     * turns by the cube of (setting x 0.6 + 0.2), so the setting goes through the cube root. Below the slider's own range
+     * at times (a slow mouse, well zoomed), which the game takes as it is.
+     */
+    /**
+     * Another mod's zoom on the key Squint is on, if one is: its key's name, else null. Each other key is a {name, bound
+     * key} pair; a zoom key is one whose name says zoom (Zoomify's, Ok Zoomer's and the others all do). Two zooms on one
+     * key would bring the view nearer twice over, so Squint stands aside for it (the user, 2026-11-14) - and only while
+     * they share a key: bound apart, both work. Vanilla's own keys on C (the Save Toolbar Activator) are no zoom.
+     */
+    public static @Nullable String zoomClash(String ourKey, Iterable<String[]> others) {
+        if (ourKey.isEmpty() || ourKey.startsWith("key.keyboard.unknown")) {
+            return null;
+        }
+        for (String[] other : others) {
+            String name = other[0];
+            if (ourKey.equals(other[1]) && !name.startsWith("key." + Nookworks.MODID + ".")
+                    && name.toLowerCase(Locale.ROOT).contains("zoom")) {
+                return name;
+            }
+        }
+        return null;
+    }
+
+    public static double sensitivityFor(double sensitivity, double scale) {
+        return (Math.cbrt(scale) * (sensitivity * 0.6 + 0.2) - 0.2) / 0.6;
+    }
+}

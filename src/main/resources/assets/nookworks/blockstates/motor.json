@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=north,powered=false": {
+      "model": "nookworks:block/motor"
+    },
+    "facing=north,powered=true": {
+      "model": "nookworks:block/motor_on"
+    },
+    "facing=east,powered=false": {
+      "model": "nookworks:block/motor",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "nookworks:block/motor_on",
+      "y": 90
+    },
+    "facing=south,powered=false": {
+      "model": "nookworks:block/motor",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "nookworks:block/motor_on",
+      "y": 180
+    },
+    "facing=west,powered=false": {
+      "model": "nookworks:block/motor",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "nookworks:block/motor_on",
+      "y": 270
+    },
+    "facing=up,powered=false": {
+      "model": "nookworks:block/motor",
+      "x": 270
+    },
+    "facing=up,powered=true": {
+      "model": "nookworks:block/motor_on",
+      "x": 270
+    },
+    "facing=down,powered=false": {
+      "model": "nookworks:block/motor",
+      "x": 90
+    },
+    "facing=down,powered=true": {
+      "model": "nookworks:block/motor_on",
+      "x": 90
+    }
+  }
+}

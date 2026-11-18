@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:item_warp_receiver"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BAB",
+    "ZEZ",
+    "BDB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:polished_blackstone"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "Z": {
+      "tag": "c:ingots/brass"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "D": {
+      "item": "minecraft:dropper"
+    }
+  },
+  "result": {
+    "id": "nookworks:item_warp_receiver"
+  }
+}

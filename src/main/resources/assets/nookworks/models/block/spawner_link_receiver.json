@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "nookworks:block/spawner_link_receiver_front_off",
+    "down": "nookworks:block/spawner_link_receiver_bottom_off",
+    "up": "nookworks:block/spawner_link_receiver_top_off",
+    "north": "nookworks:block/spawner_link_receiver_side_off",
+    "south": "nookworks:block/spawner_link_receiver_front_off",
+    "west": "nookworks:block/spawner_link_receiver_side_off",
+    "east": "nookworks:block/spawner_link_receiver_side_off"
+  }
+}

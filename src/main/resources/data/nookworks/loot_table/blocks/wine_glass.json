@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "nookworks:wine_glass",
+                  "properties": {
+                    "count": "2"
+                  }
+                }
+              ],
+              "count": 2
+            },
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "nookworks:wine_glass",
+                  "properties": {
+                    "count": "3"
+                  }
+                }
+              ],
+              "count": 3
+            },
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "nookworks:wine_glass",
+                  "properties": {
+                    "count": "4"
+                  }
+                }
+              ],
+              "count": 4
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ],
+          "name": "nookworks:wine_glass"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "nookworks:blocks/wine_glass"
+}

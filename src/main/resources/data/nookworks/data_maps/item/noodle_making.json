@@ -1,0 +1,9 @@
+{
+  "values": {
+    "nookworks:udon_dough": {
+      "result": "nookworks:raw_udon",
+      "count": 2,
+      "turns": 4
+    }
+  }
+}

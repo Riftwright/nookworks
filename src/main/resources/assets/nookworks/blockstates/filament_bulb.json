@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=true": {
+      "model": "nookworks:block/filament_bulb"
+    },
+    "lit=false": {
+      "model": "nookworks:block/filament_bulb_off"
+    }
+  }
+}

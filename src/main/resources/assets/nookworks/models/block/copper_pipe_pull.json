@@ -1,0 +1,143 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "nookworks:block/mercury_pipe",
+    "steel": "nookworks:block/mercury_pipe",
+    "band": "nookworks:block/mercury_pipe_collar"
+  },
+  "elements": [
+    {
+      "name": "flange",
+      "from": [
+        2,
+        2,
+        0
+      ],
+      "to": [
+        14,
+        14,
+        2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#steel",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#steel",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#steel",
+          "uv": [
+            0,
+            2,
+            2,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#steel",
+          "uv": [
+            14,
+            2,
+            16,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#steel",
+          "uv": [
+            0,
+            2,
+            2,
+            14
+          ],
+          "rotation": 90
+        },
+        "down": {
+          "texture": "#steel",
+          "uv": [
+            14,
+            2,
+            16,
+            14
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        3,
+        3,
+        2
+      ],
+      "to": [
+        13,
+        13,
+        4
+      ],
+      "faces": {
+        "south": {
+          "texture": "#band",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#band",
+          "uv": [
+            3,
+            6,
+            13,
+            8
+          ],
+          "rotation": 90
+        },
+        "west": {
+          "texture": "#band",
+          "uv": [
+            3,
+            6,
+            13,
+            8
+          ],
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            3,
+            6,
+            13,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#band",
+          "uv": [
+            3,
+            6,
+            13,
+            8
+          ]
+        }
+      }
+    }
+  ]
+}

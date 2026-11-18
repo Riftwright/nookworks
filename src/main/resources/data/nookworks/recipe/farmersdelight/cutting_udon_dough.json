@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:udon_dough",
+        "nookworks:raw_udon"
+      ]
+    }
+  ],
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "nookworks:udon_dough"
+    }
+  ],
+  "result": [
+    {
+      "item": {
+        "count": 2,
+        "id": "nookworks:raw_udon"
+      }
+    }
+  ],
+  "tool": [
+    {
+      "type": "farmersdelight:item_ability",
+      "action": "knife_dig"
+    },
+    {
+      "tag": "c:tools/knife"
+    }
+  ]
+}

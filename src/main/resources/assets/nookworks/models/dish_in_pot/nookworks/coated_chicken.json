@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "c": "nookworks:block/dish/piece_coated_chicken",
+    "particle": "nookworks:block/dish/piece_coated_chicken"
+  },
+  "elements": [
+    {
+      "from": [
+        6.75,
+        0,
+        6.75
+      ],
+      "to": [
+        9.25,
+        2,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    }
+  ]
+}

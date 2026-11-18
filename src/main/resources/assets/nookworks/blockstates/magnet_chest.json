@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/magnet_chest"
+    },
+    "facing=east": {
+      "model": "nookworks:block/magnet_chest",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/magnet_chest",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/magnet_chest",
+      "y": 270
+    }
+  }
+}

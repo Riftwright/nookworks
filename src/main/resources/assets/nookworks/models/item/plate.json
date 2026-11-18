@@ -1,0 +1,11 @@
+{
+  "parent": "nookworks:block/plate",
+  "overrides": [
+    {
+      "predicate": {
+        "nookworks:has_contents": 1
+      },
+      "model": "nookworks:item/plate_filled"
+    }
+  ]
+}

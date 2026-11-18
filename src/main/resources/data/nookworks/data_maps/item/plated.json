@@ -1,0 +1,19 @@
+{
+  "values": {
+    "nookworks:fried_rice": {
+      "plated": "nookworks:plated_fried_rice"
+    },
+    "nookworks:stir_fried_vegetables": {
+      "plated": "nookworks:plated_stir_fried_vegetables"
+    },
+    "farmersdelight:fried_rice": {
+      "neoforge:conditions": [
+        {
+          "type": "neoforge:mod_loaded",
+          "modid": "farmersdelight"
+        }
+      ],
+      "plated": "nookworks:plated_fried_rice"
+    }
+  }
+}

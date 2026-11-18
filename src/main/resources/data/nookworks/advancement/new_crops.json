@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:sifter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:corn",
+        "nookworks:corn_kernels",
+        "nookworks:onion"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "crop": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#nookworks:new_crops"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:corn"
+    },
+    "title": {
+      "translate": "advancements.nookworks.new_crops.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.new_crops.description"
+    }
+  },
+  "requirements": [
+    [
+      "crop"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:sifter"
+}

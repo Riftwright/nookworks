@@ -1,0 +1,334 @@
+package dev.nookworks.compat.jei;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import dev.nookworks.Nookworks;
+import dev.nookworks.client.gui.MachineScreen;
+import dev.nookworks.client.gui.MachineStyle;
+import dev.nookworks.cooking.HandWork;
+import dev.nookworks.feature.Features;
+import dev.nookworks.label.LabelItem;
+import dev.nookworks.machine.CrushingRecipe;
+import dev.nookworks.machine.MachineLayout;
+import dev.nookworks.mobcapture.MobBottleItem;
+import dev.nookworks.registry.ModCooking;
+import dev.nookworks.registry.ModCrops;
+import dev.nookworks.registry.ModDataComponents;
+import dev.nookworks.registry.ModItems;
+import dev.nookworks.registry.ModRecycling;
+import dev.nookworks.registry.ModKitchen;
+import dev.nookworks.registry.ModOil;
+import dev.nookworks.registry.ModRope;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.handlers.IGuiClickableArea;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.IIngredientAliasRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.UidContext;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * JEI integration (optional: JEI is compile-only and only loads this class when it is installed).
+ * Shows what every machine and kitchen block makes - the Crusher, Sifter, Spawn Egg Brewer, the mercury steps, the
+ * Iron Pot, Oil Press, Nukadoko, Rice Polisher and Printing Press, and the Grill as a campfire - plus info pages for
+ * things that are not recipes. Posters, Labels and filled Mob Bottles are told apart by what they carry.
+ */
+@JeiPlugin
+public class NookworksJeiPlugin implements IModPlugin {
+    @Override
+    public ResourceLocation getPluginUid() {
+        return Nookworks.id("jei_plugin");
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        IGuiHelper gui = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new CrushingCategory(gui), new RecyclingCategory(gui), new ElectrolysisCategory(gui), new SiftingCategory(gui), new SpawnEggBrewingCategory(gui),
+                new MercuryCategories.RetortCategory(gui), new MercuryCategories.AmalgamCategory(gui), new MercuryCategories.DistilCategory(gui),
+                new MercuryCategories.MudCategory(gui),
+                new KitchenCategories.PotCategory(gui), new KitchenCategories.PotCategory(gui, true), new KitchenCategories.PressingCategory(gui), new KitchenCategories.PicklingCategory(gui),
+                new KitchenCategories.PolishingCategory(gui), new PrintingCategory(gui),
+                new KitchenCategories.HandWorkCategory(gui, KitchenCategories.MILLING, "block.nookworks.hand_quern",
+                        ModKitchen.HAND_QUERN_ITEM.get()),
+                new KitchenCategories.HandWorkCategory(gui, KitchenCategories.NOODLE_MAKING, "block.nookworks.noodle_maker",
+                        ModKitchen.NOODLE_MAKER_ITEM.get()),
+                new KitchenCategories.DryingCategory(gui), new KitchenCategories.RisingCategory(gui));
+    }
+
+    /** A poster by its design, a label by the item it shows, a filled bottle by the mob in it: each its own entry. */
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        registerFromDataComponentTypes(registration, ModItems.POSTER.get(), ModDataComponents.POSTER.get());
+        registerFromDataComponentTypes(registration, ModItems.LABEL.get(), ModDataComponents.LABEL.get());
+        // its mob, and the model an add-on gives its own bottle (nookTechnology's Reinforced Mob Bottle: its own entry in
+        // the list, with its own page; r21)
+        // PORT: 1.21.1 has no item_model component (DataComponents.ITEM_MODEL), so an add-on cannot give a bottle a
+        // model of its own that way: the bottles are told apart by their mob alone
+        registerFromDataComponentTypes(registration, ModItems.MOB_BOTTLE.get(), ModDataComponents.CAPTURED_ENTITY.get());
+    }
+
+    /**
+     * PORT: JEI 31's {@code ISubtypeRegistration.registerFromDataComponentTypes}, which JEI 19 lacks: a stack's subtype
+     * is the value of the one component, or the list of the values of several (absent ones as null), as JEI 31 makes it.
+     */
+    private static void registerFromDataComponentTypes(ISubtypeRegistration registration, Item item, DataComponentType<?>... types) {
+        registration.registerSubtypeInterpreter(item, new ISubtypeInterpreter<ItemStack>() {
+            @Override
+            public @Nullable Object getSubtypeData(ItemStack stack, UidContext context) {
+                if (types.length == 1) {
+                    return stack.get(types[0]);
+                }
+                List<Object> data = new ArrayList<>(types.length);
+                for (DataComponentType<?> type : types) {
+                    data.add(stack.get(type));
+                }
+                return data;
+            }
+
+            @Override
+            public String getLegacyStringSubtypeInfo(ItemStack stack, UidContext context) {
+                Object data = getSubtypeData(stack, context);
+                return data == null ? "" : data.toString();
+            }
+        });
+    }
+
+    /** Every item found by its English name too, while the game is in another language (EnglishSearch). */
+    @Override
+    public void registerIngredientAliases(IIngredientAliasRegistration registration) {
+        EnglishSearch.register(registration);
+    }
+
+    @Override
+    public void registerRecipes(IRecipeRegistration registration) {
+        registration.addRecipes(CrushingCategory.TYPE, at(ModItems.CRUSHER.get(), crushingRecipes()));
+        registration.addRecipes(RecyclingCategory.TYPE, RecyclingCategory.recipes());
+        registration.addRecipes(ElectrolysisCategory.TYPE, at(ModItems.ELECTROLYTIC_CELL.get(), ElectrolysisCategory.recipes()));
+        registration.addRecipes(SiftingCategory.TYPE, at(ModItems.SIFTER.get(), SiftingCategory.recipes()));
+        registration.addRecipes(SpawnEggBrewingCategory.TYPE, at(ModItems.SPAWN_EGG_BREWER.get(), brewingRecipes()));
+        registration.addRecipes(MercuryCategories.RETORTING, at(ModItems.RETORT.get(), MercuryCategories.retortRecipes()));
+        registration.addRecipes(MercuryCategories.AMALGAMATION, at(ModItems.STIRRING_TANK.get(), MercuryCategories.amalgamRecipes()));
+        registration.addRecipes(MercuryCategories.DISTILLATION, at(ModItems.DISTILLER.get(), MercuryCategories.distilRecipes()));
+        registration.addRecipes(MercuryCategories.MUD, at(ModItems.STIRRING_TANK.get(), MercuryCategories.mudRecipes()));
+        registration.addRecipes(KitchenCategories.POT, at(ModCooking.IRON_POT_ITEM.get(), KitchenCategories.potRecipes(false)));
+        registration.addRecipes(KitchenCategories.PAN, at(ModCooking.FRYING_PAN_ITEM.get(), KitchenCategories.potRecipes(true)));
+        registration.addRecipes(KitchenCategories.PRESSING, at(ModOil.OIL_PRESS_ITEM.get(), KitchenCategories.pressingRecipes()));
+        registration.addRecipes(KitchenCategories.PICKLING, at(ModCooking.NUKADOKO_ITEM.get(), KitchenCategories.picklingRecipes()));
+        registration.addRecipes(KitchenCategories.POLISHING, at(ModCrops.RICE_POLISHER_ITEM.get(), KitchenCategories.polishingRecipes()));
+        registration.addRecipes(KitchenCategories.MILLING, at(ModKitchen.HAND_QUERN_ITEM.get(), KitchenCategories.handRecipes(HandWork.MILLING)));
+        registration.addRecipes(KitchenCategories.NOODLE_MAKING,
+                at(ModKitchen.NOODLE_MAKER_ITEM.get(), KitchenCategories.handRecipes(HandWork.NOODLE_MAKING)));
+        registration.addRecipes(PrintingCategory.TYPE, at(ModItems.PRINTING_PRESS.get(), PrintingCategory.recipes()));
+        registration.addRecipes(KitchenCategories.DRYING, KitchenCategories.dryingRecipes());
+        registration.addRecipes(KitchenCategories.RISING, at(ModKitchen.WOODEN_TRAY_ITEM.get(), KitchenCategories.risingRecipes()));
+        InfoPages.each((item, page) -> {
+            if (!Features.enabled(item)) {
+                return;
+            }
+            Component text = fitted(page);
+            if (item == ModItems.LABEL.get()) {
+                // a label is listed by what it shows (the subtypes above): the page goes on the one listed, the
+                // creative tab's, since on a blank label - listed nowhere - nobody found it
+                registration.addItemStackInfo(LabelItem.sample(), text);
+            } else {
+                registration.addIngredientInfo(item, text);
+            }
+        });
+    }
+
+    /** The width of an information page's text: JEI's page, less its scroll bar. */
+    private static final int INFO_WIDTH = 170 - 16 - 2;
+
+    /** {@code page} as JEI can show it: Japanese and Chinese broken into lines here ({@link CjkLines}), anything else as it is. */
+    private static Component fitted(Component page) {
+        String text = page.getString();
+        if (!CjkLines.needed(text)) {
+            return page;
+        }
+        net.minecraft.client.gui.Font font = net.minecraft.client.Minecraft.getInstance().font;
+        return Component.literal(CjkLines.wrap(text, INFO_WIDTH, font::width));
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        station(registration, CrushingCategory.TYPE, ModItems.CRUSHER.get());
+        station(registration, RecyclingCategory.TYPE, ModRecycling.RECYCLER_ITEM.get());
+        station(registration, ElectrolysisCategory.TYPE, ModItems.ELECTROLYTIC_CELL.get());
+        station(registration, RecipeTypes.CRAFTING, ModItems.IRON_WORKBENCH.get(), ModItems.BRASS_WORKBENCH.get());
+        station(registration, RecipeTypes.SMELTING, ModItems.ELECTRIC_FURNACE.get());
+        station(registration, RecipeTypes.FUELING, ModItems.GENERATOR.get()); // it burns what a furnace burns
+        station(registration, SiftingCategory.TYPE, ModItems.SIFTER.get());
+        station(registration, SpawnEggBrewingCategory.TYPE, ModItems.SPAWN_EGG_BREWER.get());
+        station(registration, MercuryCategories.RETORTING, ModItems.RETORT.get());
+        station(registration, MercuryCategories.AMALGAMATION, ModItems.STIRRING_TANK.get());
+        station(registration, MercuryCategories.DISTILLATION, ModItems.DISTILLER.get());
+        station(registration, MercuryCategories.MUD, ModItems.STIRRING_TANK.get());
+        station(registration, KitchenCategories.POT, ModCooking.IRON_POT_ITEM.get());
+        station(registration, KitchenCategories.PAN, ModCooking.FRYING_PAN_ITEM.get());
+        station(registration, KitchenCategories.PRESSING, ModOil.OIL_PRESS_ITEM.get(),
+                ModOil.MOTOR_ITEM.get());
+        station(registration, KitchenCategories.PICKLING, ModCooking.NUKADOKO_ITEM.get());
+        station(registration, KitchenCategories.MILLING, ModKitchen.HAND_QUERN_ITEM.get(),
+                ModOil.MOTOR_ITEM.get());
+        station(registration, KitchenCategories.NOODLE_MAKING, ModKitchen.NOODLE_MAKER_ITEM.get(),
+                ModOil.MOTOR_ITEM.get());
+        station(registration, KitchenCategories.POLISHING, ModCrops.RICE_POLISHER_ITEM.get(),
+                ModOil.MOTOR_ITEM.get());
+        station(registration, PrintingCategory.TYPE, ModItems.PRINTING_PRESS.get());
+        station(registration, KitchenCategories.DRYING, ModItems.THIN_ROPE.get());
+        station(registration, KitchenCategories.DRYING, ModRope.THIN_CHAIN.get());
+        station(registration, KitchenCategories.RISING, ModKitchen.WOODEN_TRAY_ITEM.get());
+        // the Grill cooks what a campfire cooks, in the same time
+        station(registration, RecipeTypes.CAMPFIRE_COOKING, ModCooking.GRILL_ITEM.get());
+    }
+
+    /**
+     * A machine's arrow opens the recipe pages it is the station of, as a furnace's arrow opens smelting, and the
+     * Generator's flame what burns in it (r21, 2026-11-06: nookTechnology's machines did, ours did not).
+     */
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        // the machine tabs on a screen's right edge (1.5): JEI's item list keeps off them, on any screen that has them
+        // (ours, and an add-on's built on dev.nookworks.client.gui.tab)
+        registration.addGenericGuiContainerHandler(net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.class,
+                new IGuiContainerHandler<net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>>() {
+                    @Override
+                    public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(
+                            net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen) {
+                        return screen instanceof dev.nookworks.client.gui.tab.TabbedScreen tabbed && tabbed.tabs() != null
+                                ? tabbed.tabs().areas() : List.of();
+                    }
+                });
+        // an item dragged from the list onto a sorter's filter, Keep Out row or tag picker's sample (1.5)
+        registration.addGhostIngredientHandler(dev.nookworks.client.gui.SorterScreen.class, new SorterGhosts());
+        registration.addGuiContainerHandler(MachineScreen.class, new IGuiContainerHandler<>() {
+            @Override
+            public Collection<IGuiClickableArea> getGuiClickableAreas(MachineScreen screen, double mouseX, double mouseY) {
+                MachineLayout layout = screen.getMenu().layout();
+                List<RecipeType<?>> pages = gaugePages(layout);
+                if (pages.isEmpty()) {
+                    return List.of();
+                }
+                int w = layout.gauge() == MachineLayout.Gauge.FLAME ? 16 : MachineStyle.ARROW_W;
+                IGuiClickableArea area = IGuiClickableArea.createBasic(layout.gaugeX(), layout.gaugeY(), w, MachineStyle.ARROW_H,
+                        pages.toArray(RecipeType<?>[]::new));
+                // PORT: no "Show recipes" over the gauge's own tooltip (26.3 draws only the first tooltip of a frame: ours)
+                boolean quiet = screen.ownTooltipAt(screen.getGuiLeft() + (int) mouseX, screen.getGuiTop() + (int) mouseY);
+                return List.of(new IGuiClickableArea() {
+                    @Override
+                    public net.minecraft.client.renderer.Rect2i getArea() {
+                        return area.getArea();
+                    }
+
+                    @Override
+                    public boolean isTooltipEnabled() {
+                        return !quiet;
+                    }
+
+                    @Override
+                    public void onClick(mezz.jei.api.recipe.IFocusFactory focusFactory, mezz.jei.api.runtime.IRecipesGui recipesGui) {
+                        area.onClick(focusFactory, recipesGui);
+                    }
+                });
+            }
+        });
+    }
+
+    /** The pages a click on the gauge of a machine with {@code layout} opens; none while its part is switched off. */
+    private static List<RecipeType<?>> gaugePages(MachineLayout layout) {
+        record Pages(ItemLike machine, List<RecipeType<?>> types) {}
+        Pages pages = switch (layout) {
+            case CRUSHER -> new Pages(ModItems.CRUSHER.get(), List.of(CrushingCategory.TYPE));
+            case SIFTER -> new Pages(ModItems.SIFTER.get(), List.of(SiftingCategory.TYPE));
+            case RETORT -> new Pages(ModItems.RETORT.get(), List.of(MercuryCategories.RETORTING));
+            case STIRRING_TANK -> new Pages(ModItems.STIRRING_TANK.get(), List.of(MercuryCategories.AMALGAMATION, MercuryCategories.MUD));
+            case DISTILLER -> new Pages(ModItems.DISTILLER.get(), List.of(MercuryCategories.DISTILLATION));
+            case ELECTRIC_FURNACE -> new Pages(ModItems.ELECTRIC_FURNACE.get(), List.of(RecipeTypes.SMELTING));
+            case ELECTROLYTIC_CELL -> new Pages(ModItems.ELECTROLYTIC_CELL.get(), List.of(ElectrolysisCategory.TYPE));
+            case RECYCLER -> new Pages(ModRecycling.RECYCLER_ITEM.get(), List.of(RecyclingCategory.TYPE));
+            case GENERATOR -> new Pages(ModItems.GENERATOR.get(), List.of(RecipeTypes.FUELING));
+            default -> null;
+        };
+        return pages == null || !Features.enabled(pages.machine().asItem()) ? List.of() : pages.types();
+    }
+
+    /** A station of a part switched off is no station: no Grill or Iron Pot with the kitchen off. */
+    private static void station(IRecipeCatalystRegistration registration, RecipeType<?> type, ItemLike... stations) {
+        ItemLike[] on = Arrays.stream(stations).filter(station -> Features.enabled(station.asItem())).toArray(ItemLike[]::new);
+        if (on.length > 0) {
+            registration.addRecipeCatalysts(type, on); // JEI 31 calls it addCraftingStation
+        }
+    }
+
+    /**
+     * A machine's page's recipes, or none while the machine cannot be had: its part switched off, or nothing reaching it
+     * any more ({@link dev.nookworks.feature.Features}).
+     */
+    private static <T> List<T> at(ItemLike machine, List<T> recipes) {
+        return Features.enabled(machine.asItem()) ? recipes : List.of();
+    }
+
+    /**
+     * Not in the list: 0.2.0's tiered sorters, made no more (set down, they become Item Sorters with a gear), and the
+     * items of every part of the mod a pack has switched off.
+     */
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime runtime) {
+        List<ItemStack> hidden = new ArrayList<>(List.of(
+                new ItemStack(ModItems.GOLD_SORTER.get()), new ItemStack(ModItems.DIAMOND_SORTER.get()), new ItemStack(ModItems.NETHERITE_SORTER.get())));
+        Features.disabledItems().forEach(item -> hidden.add(new ItemStack(item)));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, hidden);
+    }
+
+    static List<CrushingCategory.Recipe> crushingRecipes() {
+        List<CrushingCategory.Recipe> list = new ArrayList<>();
+        BuiltInRegistries.ITEM.holders().forEach(holder -> {
+            // The Crusher's own lookup: a tag recipe nothing fills is not a recipe (without an industrial mod there
+            // is no iron dust), nor one that makes a part's item with the part off (flour, with the kitchen off) -
+            // JEI must not offer a grind that the Crusher would refuse.
+            CrushingRecipe recipe = CrushingRecipe.of(new ItemStack(holder));
+            if (recipe != null && Features.enabled(holder.value())) {
+                ItemStack out = recipe.output();
+                if (new ItemStack(holder).isDamageableItem()) { // new gear: the most it gives back (worn, less)
+                    out = out.copyWithCount(Math.max(1, (int) Math.ceil(out.getCount() * CrushingRecipe.GEAR_RECOVERY)));
+                }
+                list.add(new CrushingCategory.Recipe(new ItemStack(holder), out));
+            }
+        });
+        return list;
+    }
+
+    @SuppressWarnings("rawtypes")
+    static List<EntityType> brewingRecipes() {
+        List<EntityType> list = new ArrayList<>();
+        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
+            if (MobBottleItem.bottleable(type)) { // only what a bottle will take: the rule the bottle itself uses
+                list.add(type);
+            }
+        }
+        return list;
+    }
+}

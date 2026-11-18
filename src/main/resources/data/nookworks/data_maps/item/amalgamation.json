@@ -1,0 +1,79 @@
+{
+  "values": {
+    "minecraft:gold_ore": {
+      "result": "nookworks:gold_amalgam",
+      "count": 2,
+      "mercury": 200
+    },
+    "minecraft:deepslate_gold_ore": {
+      "result": "nookworks:gold_amalgam",
+      "count": 2,
+      "mercury": 200
+    },
+    "minecraft:raw_gold": {
+      "result": "nookworks:gold_amalgam",
+      "count": 1,
+      "mercury": 100
+    },
+    "minecraft:nether_gold_ore": {
+      "result": "nookworks:gold_amalgam",
+      "count": 1,
+      "mercury": 100
+    },
+    "minecraft:iron_ore": {
+      "result": "nookworks:iron_amalgam",
+      "count": 2,
+      "mercury": 200
+    },
+    "minecraft:deepslate_iron_ore": {
+      "result": "nookworks:iron_amalgam",
+      "count": 2,
+      "mercury": 200
+    },
+    "minecraft:raw_iron": {
+      "result": "nookworks:iron_amalgam",
+      "count": 1,
+      "mercury": 100
+    },
+    "minecraft:copper_ore": {
+      "result": "nookworks:copper_amalgam",
+      "count": 8,
+      "mercury": 800
+    },
+    "minecraft:deepslate_copper_ore": {
+      "result": "nookworks:copper_amalgam",
+      "count": 8,
+      "mercury": 800
+    },
+    "minecraft:raw_copper": {
+      "result": "nookworks:copper_amalgam",
+      "count": 1,
+      "mercury": 100
+    },
+    "minecraft:cobblestone": {
+      "result": "nookworks:mixed_amalgam",
+      "count": 1,
+      "mercury": 50
+    },
+    "minecraft:cobbled_deepslate": {
+      "result": "nookworks:mixed_amalgam",
+      "count": 1,
+      "mercury": 50
+    },
+    "minecraft:netherrack": {
+      "result": "nookworks:mixed_amalgam",
+      "count": 1,
+      "mercury": 50
+    },
+    "minecraft:stone": {
+      "result": "nookworks:mixed_amalgam",
+      "count": 1,
+      "mercury": 50
+    },
+    "minecraft:deepslate": {
+      "result": "nookworks:mixed_amalgam",
+      "count": 1,
+      "mercury": 50
+    }
+  }
+}

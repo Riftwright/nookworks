@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=south,lit=false": {
+      "model": "nookworks:block/spawner_link_sender"
+    },
+    "facing=south,lit=true": {
+      "model": "nookworks:block/spawner_link_sender_on"
+    },
+    "facing=west,lit=false": {
+      "model": "nookworks:block/spawner_link_sender",
+      "y": 90
+    },
+    "facing=west,lit=true": {
+      "model": "nookworks:block/spawner_link_sender_on",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "nookworks:block/spawner_link_sender",
+      "y": 180
+    },
+    "facing=north,lit=true": {
+      "model": "nookworks:block/spawner_link_sender_on",
+      "y": 180
+    },
+    "facing=east,lit=false": {
+      "model": "nookworks:block/spawner_link_sender",
+      "y": 270
+    },
+    "facing=east,lit=true": {
+      "model": "nookworks:block/spawner_link_sender_on",
+      "y": 270
+    }
+  }
+}

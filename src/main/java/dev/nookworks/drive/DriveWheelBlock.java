@@ -1,0 +1,150 @@
+package dev.nookworks.drive;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+import org.jspecify.annotations.Nullable;
+
+import dev.nookworks.block.Clicks;
+import dev.nookworks.feature.Permission;
+import dev.nookworks.registry.ModBlockEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import dev.nookworks.port.core.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import dev.nookworks.port.core.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.ItemInteractionResult;
+import dev.nookworks.port.core.BlockRemoval;
+import dev.nookworks.port.core.RemovalHooks;
+import com.mojang.serialization.MapCodec;
+import dev.nookworks.port.core.BlockCodecs;
+
+/**
+ * Drive Wheel: a toothed iron wheel on an axle, placed as a Motor is (facing away from the face clicked). On a Motor's
+ * shaft the motor turns it; set against a hand-worked machine, on the line it is driven by, it turns the machine as a
+ * motor would; and a belt - Rope or Thin Chain - from wheel to wheel carries the turning between them, so one motor
+ * turns several machines (the user, 2026-10-10). Use the belt on one wheel and then on another; sneak-use with an empty
+ * hand to take its belts off. TURNING is the look and the sound alone: the wheel and its belts go round while a motor
+ * drives them, with a small clatter held on for as long (client/WheelClatter).
+ */
+public class DriveWheelBlock extends BaseEntityBlock implements RemovalHooks {
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty TURNING = BooleanProperty.create("turning");
+
+    /** The axle through the block and the wheel at its middle, for each axis. */
+    private static final Map<Direction.Axis, VoxelShape> SHAPES = new EnumMap<>(Direction.Axis.class);
+
+    static {
+        SHAPES.put(Direction.Axis.Z, Shapes.or(Block.box(7, 7, 0, 9, 9, 16), Block.box(2.5, 2.5, 7, 13.5, 13.5, 9)));
+        SHAPES.put(Direction.Axis.X, Shapes.or(Block.box(0, 7, 7, 16, 9, 9), Block.box(7, 2.5, 2.5, 9, 13.5, 13.5)));
+        SHAPES.put(Direction.Axis.Y, Shapes.or(Block.box(7, 0, 7, 9, 16, 9), Block.box(2.5, 7, 2.5, 13.5, 9, 13.5)));
+    }
+
+    public DriveWheelBlock(Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TURNING, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, TURNING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getClickedFace().getOpposite());
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPES.get(state.getValue(FACING).getAxis());
+    }
+
+    /** A belt in hand: tied on here, or tied off here to the wheel it was tied on at. */
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        if (BeltKind.of(stack) == null) {
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
+        }
+        if (!level.isClientSide()) {
+            Belts.use(level, pos, player, stack);
+        }
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    /**
+     * Sneaking with an empty hand: its belts come off, back into the hand - by one who may build, and break there, as a
+     * rope is pulled up or a knot cut (r21: an adventure player stopped a map's machinery so).
+     */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.isShiftKeyDown() || !player.mayBuild() || !(level.getBlockEntity(pos) instanceof DriveWheelBlockEntity wheel)
+                || wheel.belts().isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        if (level instanceof ServerLevel server) {
+            if (!Permission.mayBreak(server, pos, player)) {
+                return Clicks.REFUSED;
+            }
+            wheel.takeOff(player);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new DriveWheelBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, ModBlockEntities.DRIVE_WHEEL.get(),
+                level.isClientSide() ? DriveWheelBlockEntity::clientTick : DriveWheelBlockEntity::serverTick);
+    }
+
+    // PORT: 1.21.1 calls only onRemove where 26.3 calls the old block entity's preRemoveSideEffects and this
+    // block's affectNeighborsAfterRemoval: BlockRemoval runs them in 26.3's order
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        BlockRemoval.onRemove(this, state, level, pos, newState, movedByPiston,
+                () -> super.onRemove(state, level, pos, newState, movedByPiston));
+    }
+
+    // PORT: 1.21.1 asks every block for a codec (26.3 has none); only the block-list data report reads it
+    @Override
+    protected MapCodec<? extends DriveWheelBlock> codec() {
+        return BlockCodecs.of(this);
+    }
+}

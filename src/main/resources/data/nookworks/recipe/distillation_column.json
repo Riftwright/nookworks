@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:distillation_column"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "BGB",
+    "IGI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "B": {
+      "tag": "c:ingots/brass"
+    }
+  },
+  "result": {
+    "id": "nookworks:distillation_column",
+    "count": 2
+  }
+}

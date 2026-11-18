@@ -1,0 +1,8 @@
+{
+  "values": [
+    "minecraft:spawner",
+    "minecraft:trial_spawner",
+    "nookworks:if_mirror",
+    "nookworks:warp_anchor"
+  ]
+}

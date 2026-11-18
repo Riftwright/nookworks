@@ -1,0 +1,74 @@
+{
+  "replace": false,
+  "values": {
+    "nookworks:dawnwood_leaves": {
+      "chance": 0.3
+    },
+    "nookworks:rare_seed": {
+      "chance": 0.3
+    },
+    "nookworks:brown_rice": {
+      "chance": 0.3
+    },
+    "nookworks:white_rice": {
+      "chance": 0.3
+    },
+    "nookworks:corn_kernels": {
+      "chance": 0.3
+    },
+    "nookworks:sunflower_seeds": {
+      "chance": 0.3
+    },
+    "nookworks:end_seed": {
+      "chance": 0.3
+    },
+    "nookworks:oil_cake": {
+      "chance": 0.5
+    },
+    "nookworks:rice_bran": {
+      "chance": 0.5
+    },
+    "nookworks:bread_dough": {
+      "chance": 0.5
+    },
+    "nookworks:risen_dough": {
+      "chance": 0.5
+    },
+    "nookworks:udon_dough": {
+      "chance": 0.5
+    },
+    "nookworks:raw_udon": {
+      "chance": 0.5
+    },
+    "nookworks:pancake_batter": {
+      "chance": 0.5
+    },
+    "nookworks:corn": {
+      "chance": 0.65
+    },
+    "nookworks:onion": {
+      "chance": 0.65
+    },
+    "nookworks:rice_bale": {
+      "chance": 0.85
+    },
+    "nookworks:grilled_corn": {
+      "chance": 0.85
+    },
+    "nookworks:pancake": {
+      "chance": 0.85
+    },
+    "nookworks:donut": {
+      "chance": 0.85
+    },
+    "nookworks:fried_egg": {
+      "chance": 0.85
+    },
+    "nookworks:boiled_egg": {
+      "chance": 0.85
+    },
+    "nookworks:tamagoyaki": {
+      "chance": 0.85
+    }
+  }
+}

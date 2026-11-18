@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:vegetable_soup"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:potato"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:carrot"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:crops/onion"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/salt"
+      }
+    }
+  ],
+  "liquid": "water",
+  "amount": 250,
+  "time": 300,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:vegetable_soup",
+    "count": 3
+  },
+  "color": "#c9853a"
+}

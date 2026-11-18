@@ -1,0 +1,22 @@
+{
+  "values": {
+    "nookworks:scrap_bale": {
+      "next_oxidation_stage": "nookworks:exposed_scrap_bale"
+    },
+    "nookworks:exposed_scrap_bale": {
+      "next_oxidation_stage": "nookworks:weathered_scrap_bale"
+    },
+    "nookworks:weathered_scrap_bale": {
+      "next_oxidation_stage": "nookworks:oxidized_scrap_bale"
+    },
+    "nookworks:corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:exposed_corrugated_sheet"
+    },
+    "nookworks:exposed_corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:weathered_corrugated_sheet"
+    },
+    "nookworks:weathered_corrugated_sheet": {
+      "next_oxidation_stage": "nookworks:oxidized_corrugated_sheet"
+    }
+  }
+}

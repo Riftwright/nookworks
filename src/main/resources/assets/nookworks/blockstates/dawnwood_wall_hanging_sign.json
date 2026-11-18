@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "nookworks:block/dawnwood_wall_hanging_sign",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "nookworks:block/dawnwood_wall_hanging_sign",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "nookworks:block/dawnwood_wall_hanging_sign"
+    },
+    "facing=west": {
+      "model": "nookworks:block/dawnwood_wall_hanging_sign",
+      "y": 90
+    }
+  }
+}

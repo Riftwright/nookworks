@@ -1,0 +1,944 @@
+{
+  "block.generator.run": {
+    "subtitle": "subtitles.nookworks.block.generator.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/generator_run_1",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/generator_run_2",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/generator_run_3",
+        "volume": 0.18
+      }
+    ]
+  },
+  "block.diesel_generator.run": {
+    "subtitle": "subtitles.nookworks.block.diesel_generator.run",
+    "sounds": [
+      {
+        "name": "minecraft:entity.minecart.riding",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 0.55
+      }
+    ]
+  },
+  "block.crusher.run": {
+    "subtitle": "subtitles.nookworks.block.crusher.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/crusher_run_1",
+        "volume": 0.35
+      },
+      {
+        "name": "nookworks:block/crusher_run_2",
+        "volume": 0.35
+      },
+      {
+        "name": "nookworks:block/crusher_run_3",
+        "volume": 0.35
+      }
+    ]
+  },
+  "block.stone_maker.run": {
+    "subtitle": "subtitles.nookworks.block.stone_maker.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/stone_maker_run_1",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/stone_maker_run_2",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/stone_maker_run_3",
+        "volume": 0.18
+      }
+    ]
+  },
+  "block.electric_furnace.run": {
+    "subtitle": "subtitles.nookworks.block.electric_furnace.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 1.4
+      }
+    ]
+  },
+  "block.laser.run": {
+    "subtitle": "subtitles.nookworks.block.laser.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "block.retort.run": {
+    "subtitle": "subtitles.nookworks.block.retort.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/retort_run_1",
+        "volume": 0.22
+      },
+      {
+        "name": "nookworks:block/retort_run_2",
+        "volume": 0.22
+      },
+      {
+        "name": "nookworks:block/retort_run_3",
+        "volume": 0.22
+      }
+    ]
+  },
+  "block.stirring_tank.run": {
+    "subtitle": "subtitles.nookworks.block.stirring_tank.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/stirring_tank_run_1",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/stirring_tank_run_2",
+        "volume": 0.18
+      },
+      {
+        "name": "nookworks:block/stirring_tank_run_3",
+        "volume": 0.18
+      }
+    ]
+  },
+  "block.distiller.run": {
+    "subtitle": "subtitles.nookworks.block.distiller.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/distiller_run_1",
+        "volume": 0.28
+      },
+      {
+        "name": "nookworks:block/distiller_run_2",
+        "volume": 0.28
+      },
+      {
+        "name": "nookworks:block/distiller_run_3",
+        "volume": 0.28
+      }
+    ]
+  },
+  "block.electrolytic_cell.run": {
+    "subtitle": "subtitles.nookworks.block.electrolytic_cell.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/electrolytic_cell_run_1",
+        "volume": 0.28
+      },
+      {
+        "name": "nookworks:block/electrolytic_cell_run_2",
+        "volume": 0.28
+      },
+      {
+        "name": "nookworks:block/electrolytic_cell_run_3",
+        "volume": 0.28
+      }
+    ]
+  },
+  "block.water_pump.run": {
+    "subtitle": "subtitles.nookworks.block.water_pump.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.water.ambient",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "block.printing_press.run": {
+    "subtitle": "subtitles.nookworks.block.printing_press.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/printing_press_run_1",
+        "volume": 0.32
+      },
+      {
+        "name": "nookworks:block/printing_press_run_2",
+        "volume": 0.32
+      },
+      {
+        "name": "nookworks:block/printing_press_run_3",
+        "volume": 0.32
+      }
+    ]
+  },
+  "block.barter_terminal.run": {
+    "subtitle": "subtitles.nookworks.block.barter_terminal.run",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.ambient",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.9
+      }
+    ]
+  },
+  "block.repair_box.done": {
+    "subtitle": "subtitles.nookworks.block.repair_box.done",
+    "sounds": [
+      {
+        "name": "nookworks:block/repair_box_done_1",
+        "volume": 0.8
+      },
+      {
+        "name": "nookworks:block/repair_box_done_2",
+        "volume": 0.8
+      }
+    ]
+  },
+  "block.repair_box.mend": {
+    "subtitle": "subtitles.nookworks.block.repair_box.mend",
+    "sounds": [
+      {
+        "name": "nookworks:block/repair_box_mend_1",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/repair_box_mend_2",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/repair_box_mend_3",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.rice_polisher.turn": {
+    "subtitle": "subtitles.nookworks.block.rice_polisher.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/rice_polisher_turn_1",
+        "volume": 0.32
+      },
+      {
+        "name": "nookworks:block/rice_polisher_turn_2",
+        "volume": 0.32
+      },
+      {
+        "name": "nookworks:block/rice_polisher_turn_3",
+        "volume": 0.32
+      },
+      {
+        "name": "nookworks:block/rice_polisher_turn_4",
+        "volume": 0.32
+      }
+    ]
+  },
+  "block.ventilation_fan.run": {
+    "subtitle": "subtitles.nookworks.block.ventilation_fan.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/ventilation_fan_run_1",
+        "volume": 0.11
+      },
+      {
+        "name": "nookworks:block/ventilation_fan_run_2",
+        "volume": 0.11
+      }
+    ]
+  },
+  "entity.thin_chain.tie": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.tie",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.place",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.thin_chain.untie": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.untie",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.break",
+        "type": "event",
+        "volume": 0.7,
+        "pitch": 1.25
+      }
+    ]
+  },
+  "entity.thin_chain.break": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.break",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.fall",
+        "type": "event",
+        "volume": 0.9,
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.thin_chain.rattle": {
+    "subtitle": "subtitles.nookworks.entity.thin_chain.rattle",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.step",
+        "type": "event",
+        "volume": 0.55,
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:block.chain.hit",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "block.absorption_pad.drain": {
+    "subtitle": "subtitles.nookworks.block.absorption_pad.drain",
+    "sounds": [
+      {
+        "name": "minecraft:entity.experience_orb.pickup",
+        "type": "event",
+        "volume": 0.15
+      }
+    ]
+  },
+  "item.camera.raise": {
+    "subtitle": "subtitles.nookworks.item.camera.raise",
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_leather",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 1.3
+      }
+    ]
+  },
+  "item.camera.lower": {
+    "subtitle": "subtitles.nookworks.item.camera.lower",
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_leather",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.6
+      }
+    ]
+  },
+  "item.camera.shutter": {
+    "subtitle": "subtitles.nookworks.item.camera.shutter",
+    "sounds": [
+      {
+        "name": "nookworks:item/camera_shutter_1",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:item/camera_shutter_2",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:item/camera_shutter_3",
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.motor.run": {
+    "subtitle": "subtitles.nookworks.block.motor.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/motor_run_1",
+        "volume": 0.15
+      }
+    ]
+  },
+  "block.drive_wheel.turn": {
+    "subtitle": "subtitles.nookworks.block.drive_wheel.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/drive_wheel_turn_1",
+        "volume": 0.12
+      }
+    ]
+  },
+  "block.spawner_controller.run": {
+    "subtitle": "subtitles.nookworks.block.spawner_controller.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/spawner_controller_run_1",
+        "volume": 0.17
+      },
+      {
+        "name": "nookworks:block/spawner_controller_run_2",
+        "volume": 0.17
+      },
+      {
+        "name": "nookworks:block/spawner_controller_run_3",
+        "volume": 0.17
+      }
+    ]
+  },
+  "block.trash_can.swallow": {
+    "subtitle": "subtitles.nookworks.block.trash_can.swallow",
+    "sounds": [
+      {
+        "name": "nookworks:block/trash_can_swallow",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.trash_can.burn": {
+    "subtitle": "subtitles.nookworks.block.trash_can.swallow",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.burn",
+        "type": "event",
+        "volume": 0.2
+      }
+    ]
+  },
+  "block.dice.roll": {
+    "subtitle": "subtitles.nookworks.block.dice.roll",
+    "sounds": [
+      {
+        "name": "nookworks:block/dice_roll_1",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/dice_roll_2",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/dice_roll_3",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/dice_roll_4",
+        "volume": 0.55
+      }
+    ]
+  },
+  "block.compressor.run": {
+    "subtitle": "subtitles.nookworks.block.compressor.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/compressor_run_1",
+        "volume": 0.36
+      },
+      {
+        "name": "nookworks:block/compressor_run_2",
+        "volume": 0.36
+      },
+      {
+        "name": "nookworks:block/compressor_run_3",
+        "volume": 0.36
+      }
+    ]
+  },
+  "block.recycler.run": {
+    "subtitle": "subtitles.nookworks.block.recycler.run",
+    "sounds": [
+      {
+        "name": "nookworks:block/recycler_run_1",
+        "volume": 0.35
+      },
+      {
+        "name": "nookworks:block/recycler_run_2",
+        "volume": 0.35
+      },
+      {
+        "name": "nookworks:block/recycler_run_3",
+        "volume": 0.35
+      }
+    ]
+  },
+  "block.hand_quern.turn": {
+    "subtitle": "subtitles.nookworks.block.hand_quern.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/hand_quern_turn_1",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/hand_quern_turn_2",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/hand_quern_turn_3",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/hand_quern_turn_4",
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.oil_press.turn": {
+    "subtitle": "subtitles.nookworks.block.oil_press.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/oil_press_turn_1",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/oil_press_turn_2",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/oil_press_turn_3",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/oil_press_turn_4",
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.iron_pot.fry": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.fry",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_fry_1",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/iron_pot_fry_2",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/iron_pot_fry_3",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.iron_pot.boil": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.boil",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_boil_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_boil_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_boil_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.grill.sizzle": {
+    "subtitle": "subtitles.nookworks.block.grill.sizzle",
+    "sounds": [
+      {
+        "name": "nookworks:block/grill_sizzle_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/grill_sizzle_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/grill_sizzle_3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "item.wrench.turn": {
+    "subtitle": "subtitles.nookworks.item.wrench.turn",
+    "sounds": [
+      {
+        "name": "nookworks:item/wrench_turn_1",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:item/wrench_turn_2",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:item/wrench_turn_3",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:item/wrench_turn_4",
+        "volume": 1.0
+      }
+    ]
+  },
+  "item.oil_can.squirt": {
+    "subtitle": "subtitles.nookworks.item.oil_can.squirt",
+    "sounds": [
+      {
+        "name": "minecraft:block.honey_block.slide",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 1.4
+      }
+    ]
+  },
+  "block.machine.stop": {
+    "subtitle": "subtitles.nookworks.block.machine.stop",
+    "sounds": [
+      {
+        "name": "nookworks:block/machine_stop_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/machine_stop_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/machine_stop_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.machine_bell.ring": {
+    "subtitle": "subtitles.nookworks.block.machine_bell.ring",
+    "sounds": [
+      {
+        "name": "nookworks:block/machine_bell_ring_1",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/machine_bell_ring_2",
+        "volume": 1.0
+      },
+      {
+        "name": "nookworks:block/machine_bell_ring_3",
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.sorter.sort": {
+    "subtitle": "subtitles.nookworks.block.sorter.sort",
+    "sounds": [
+      {
+        "name": "nookworks:block/sorter_sort_1",
+        "volume": 0.22
+      },
+      {
+        "name": "nookworks:block/sorter_sort_2",
+        "volume": 0.22
+      },
+      {
+        "name": "nookworks:block/sorter_sort_3",
+        "volume": 0.22
+      },
+      {
+        "name": "nookworks:block/sorter_sort_4",
+        "volume": 0.22
+      }
+    ]
+  },
+  "block.seat.sit": {
+    "subtitle": "subtitles.nookworks.block.seat.sit",
+    "sounds": [
+      {
+        "name": "nookworks:block/seat_sit_1",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:block/seat_sit_2",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:block/seat_sit_3",
+        "volume": 0.4
+      }
+    ]
+  },
+  "block.wind_chime.chime": {
+    "subtitle": "subtitles.nookworks.block.wind_chime.chime",
+    "sounds": [
+      {
+        "name": "nookworks:block/wind_chime_chime_1",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/wind_chime_chime_2",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/wind_chime_chime_3",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/wind_chime_chime_4",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/wind_chime_chime_5",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:block/wind_chime_chime_6",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.iron_pot.done": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.done",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_done_1",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_done_2",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_done_3",
+        "volume": 0.7
+      }
+    ]
+  },
+  "block.iron_pot.add": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.add",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_add_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_add_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/iron_pot_add_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.iron_pot.plop": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.plop",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_plop_1",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_plop_2",
+        "volume": 0.7
+      },
+      {
+        "name": "nookworks:block/iron_pot_plop_3",
+        "volume": 0.7
+      }
+    ]
+  },
+  "block.iron_pot.sear": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.sear",
+    "sounds": [
+      {
+        "name": "nookworks:block/iron_pot_sear_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/iron_pot_sear_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/iron_pot_sear_3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.iron_pot.serve": {
+    "subtitle": "subtitles.nookworks.block.iron_pot.serve",
+    "sounds": [
+      {
+        "name": "minecraft:item.bottle.fill",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "block.plate.clink": {
+    "subtitle": "subtitles.nookworks.block.plate.clink",
+    "sounds": [
+      {
+        "name": "nookworks:block/plate_clink_1",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_2",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_3",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/plate_clink_4",
+        "volume": 0.55
+      }
+    ]
+  },
+  "block.tray.knock": {
+    "subtitle": "subtitles.nookworks.block.tray.knock",
+    "sounds": [
+      {
+        "name": "nookworks:block/tray_knock_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_3",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_knock_4",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.tray.dough": {
+    "subtitle": "subtitles.nookworks.block.tray.dough",
+    "sounds": [
+      {
+        "name": "nookworks:block/tray_dough_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_dough_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/tray_dough_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.grill.place": {
+    "subtitle": "subtitles.nookworks.block.grill.place",
+    "sounds": [
+      {
+        "name": "nookworks:block/grill_place_1",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/grill_place_2",
+        "volume": 0.55
+      },
+      {
+        "name": "nookworks:block/grill_place_3",
+        "volume": 0.55
+      }
+    ]
+  },
+  "block.placed_bottles.clink": {
+    "subtitle": "subtitles.nookworks.block.placed_bottles.clink",
+    "sounds": [
+      {
+        "name": "nookworks:block/placed_bottles_clink_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_3",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/placed_bottles_clink_4",
+        "volume": 0.5
+      }
+    ]
+  },
+  "block.switch.click": {
+    "subtitle": "subtitles.nookworks.block.switch.click",
+    "sounds": [
+      {
+        "name": "nookworks:block/switch_click_1",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/switch_click_2",
+        "volume": 0.5
+      },
+      {
+        "name": "nookworks:block/switch_click_3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "item.building_wand.mark": {
+    "subtitle": "subtitles.nookworks.item.building_wand.mark",
+    "sounds": [
+      {
+        "name": "nookworks:item/building_wand_mark_1",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:item/building_wand_mark_2",
+        "volume": 0.45
+      },
+      {
+        "name": "nookworks:item/building_wand_mark_3",
+        "volume": 0.45
+      }
+    ]
+  },
+  "item.magnet.switch": {
+    "subtitle": "subtitles.nookworks.item.magnet.switch",
+    "sounds": [
+      {
+        "name": "nookworks:item/magnet_switch_1",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:item/magnet_switch_2",
+        "volume": 0.4
+      },
+      {
+        "name": "nookworks:item/magnet_switch_3",
+        "volume": 0.4
+      }
+    ]
+  },
+  "block.kitchen_tap.turn": {
+    "subtitle": "subtitles.nookworks.block.kitchen_tap.turn",
+    "sounds": [
+      {
+        "name": "nookworks:block/kitchen_tap_turn_1",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/kitchen_tap_turn_2",
+        "volume": 0.6
+      },
+      {
+        "name": "nookworks:block/kitchen_tap_turn_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "block.kitchen_tap.pour": {
+    "subtitle": "subtitles.nookworks.block.kitchen_tap.pour",
+    "sounds": [
+      {
+        "name": "nookworks:block/kitchen_tap_pour_1",
+        "volume": 0.22
+      }
+    ]
+  }
+}

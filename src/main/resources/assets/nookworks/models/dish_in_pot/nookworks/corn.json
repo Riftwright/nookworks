@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "c": "nookworks:block/dish/corn_raw",
+    "particle": "nookworks:block/dish/corn_raw"
+  },
+  "elements": [
+    {
+      "from": [
+        6.75,
+        0,
+        7
+      ],
+      "to": [
+        9.25,
+        2,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    }
+  ]
+}

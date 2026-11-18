@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:oil_can",
+        "nookworks:vegetable_oil_bottle",
+        "nookworks:sulfur_dust"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "nookworks:vegetable_oil_bottle"
+    },
+    {
+      "item": "nookworks:sulfur_dust"
+    }
+  ],
+  "result": {
+    "id": "nookworks:oil_can",
+    "count": 1
+  }
+}

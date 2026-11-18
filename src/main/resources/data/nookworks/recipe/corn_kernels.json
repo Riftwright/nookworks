@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:corn_kernels",
+        "nookworks:corn"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "nookworks:corn"
+    }
+  ],
+  "result": {
+    "id": "nookworks:corn_kernels",
+    "count": 4
+  }
+}

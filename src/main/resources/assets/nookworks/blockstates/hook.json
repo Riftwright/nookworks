@@ -1,0 +1,406 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_sweet_berries"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_glow_berries"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_sweet_berries",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_glow_berries",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_sweet_berries",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_glow_berries",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_sweet_berries",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_wall_glow_berries",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "sprig": "none"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "sprig": "sweet_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_sweet_berries",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "sprig": "glow_berries"
+      },
+      "apply": {
+        "model": "nookworks:block/hook_ceiling_glow_berries",
+        "x": 180,
+        "y": 90
+      }
+    }
+  ]
+}

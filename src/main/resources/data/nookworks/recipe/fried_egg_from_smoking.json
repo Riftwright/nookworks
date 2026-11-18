@@ -1,0 +1,20 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:fried_egg"
+      ]
+    }
+  ],
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 50,
+  "experience": 0.35,
+  "ingredient": {
+    "tag": "c:eggs"
+  },
+  "result": {
+    "id": "nookworks:fried_egg"
+  }
+}

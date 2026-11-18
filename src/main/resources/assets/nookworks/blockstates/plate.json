@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "nookworks:block/plate"
+    },
+    "facing=east": {
+      "model": "nookworks:block/plate",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nookworks:block/plate",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nookworks:block/plate",
+      "y": 270
+    }
+  }
+}

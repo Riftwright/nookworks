@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:valve"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:ingots/brass"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "P": {
+      "item": "nookworks:copper_pipe"
+    }
+  },
+  "pattern": [
+    " L ",
+    "BPB"
+  ],
+  "result": {
+    "id": "nookworks:valve",
+    "count": 1
+  }
+}

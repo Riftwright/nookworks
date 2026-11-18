@@ -1,0 +1,8 @@
+{
+  "parent": "nookworks:block/template_wall_shelf",
+  "textures": {
+    "particle": "minecraft:block/birch_planks",
+    "planks": "minecraft:block/birch_planks",
+    "iron": "nookworks:block/hook"
+  }
+}

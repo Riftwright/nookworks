@@ -1,0 +1,62 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:caustic_soda"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "soda": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:caustic_soda"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:caustic_soda"
+    },
+    "title": {
+      "translate": "advancements.nookworks.caustic_soda.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.caustic_soda.description"
+    }
+  },
+  "requirements": [
+    [
+      "soda"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

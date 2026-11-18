@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "tip=false": {
+      "model": "nookworks:block/hanging_planter_pink_trail"
+    },
+    "tip=true": {
+      "model": "nookworks:block/hanging_planter_pink_tip"
+    }
+  }
+}

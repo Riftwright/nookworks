@@ -1,0 +1,77 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:caustic_soda"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:biodiesel_bottle",
+        "nookworks:biodiesel_bucket"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:diesel_generator"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "engine": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:diesel_generator"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:diesel_generator"
+    },
+    "title": {
+      "translate": "advancements.nookworks.diesel_generator.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.diesel_generator.description"
+    }
+  },
+  "requirements": [
+    [
+      "engine"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:biodiesel"
+}

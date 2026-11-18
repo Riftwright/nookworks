@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:tonkatsu",
+        "nookworks:breaded_pork"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "nookworks:breaded_pork"
+      }
+    }
+  ],
+  "liquid": "oil",
+  "amount": 50,
+  "time": 240,
+  "result": {
+    "id": "nookworks:tonkatsu",
+    "count": 1
+  }
+}

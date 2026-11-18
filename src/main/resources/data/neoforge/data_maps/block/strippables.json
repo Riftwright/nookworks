@@ -1,0 +1,10 @@
+{
+  "values": {
+    "nookworks:dawnwood_log": {
+      "stripped_block": "nookworks:stripped_dawnwood_log"
+    },
+    "nookworks:dawnwood_wood": {
+      "stripped_block": "nookworks:stripped_dawnwood_wood"
+    }
+  }
+}

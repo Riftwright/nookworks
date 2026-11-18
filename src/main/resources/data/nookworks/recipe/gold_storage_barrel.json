@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:gold_storage_barrel",
+        "nookworks:iron_storage_barrel"
+      ]
+    }
+  ],
+  "type": "nookworks:crafting_transmute",
+  "category": "misc",
+  "group": "gold_storage_barrel",
+  "input": {
+    "item": "nookworks:iron_storage_barrel"
+  },
+  "material": {
+    "item": "minecraft:gold_block"
+  },
+  "result": {
+    "id": "nookworks:gold_storage_barrel"
+  }
+}

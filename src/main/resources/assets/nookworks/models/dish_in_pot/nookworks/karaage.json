@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "c": "nookworks:block/dish_karaage",
+    "particle": "nookworks:block/dish_karaage"
+  },
+  "elements": [
+    {
+      "from": [
+        6.75,
+        0,
+        6.75
+      ],
+      "to": [
+        9.25,
+        2,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    }
+  ]
+}

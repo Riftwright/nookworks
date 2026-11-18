@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "nookworks:block/magnet_chest_front",
+    "down": "nookworks:block/magnet_chest_top",
+    "up": "nookworks:block/magnet_chest_top",
+    "north": "nookworks:block/magnet_chest_front",
+    "south": "nookworks:block/magnet_chest_side",
+    "west": "nookworks:block/magnet_chest_side",
+    "east": "nookworks:block/magnet_chest_side"
+  }
+}

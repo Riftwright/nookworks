@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:scrap"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "nookworks:scrap_bales"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "nookworks:scrap"
+  }
+}

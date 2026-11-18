@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:corn_potage"
+      ]
+    }
+  ],
+  "type": "nookworks:pot",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:crops/corn"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "c:crops/onion"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:drinks/milk"
+      }
+    }
+  ],
+  "liquid": "water",
+  "amount": 250,
+  "time": 300,
+  "container": "minecraft:bowl",
+  "result": {
+    "id": "nookworks:corn_potage",
+    "count": 3
+  },
+  "color": "#efd166"
+}

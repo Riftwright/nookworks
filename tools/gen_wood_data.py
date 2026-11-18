@@ -1,0 +1,497 @@
+"""Blockstates, models, item definitions, loot tables, recipes and tags for the wood blocks.
+
+Two families:
+
+- Dawnwood, a whole wood set. Its JSON has exactly the shape of a vanilla wood's, so it is written by taking the
+  cherry set out of the game jar (JSON only, never a texture) and renaming it - signs, hanging signs, the shelf and
+  the boats with the rest - and the vanilla tags that list a wood's pieces are given Dawnwood's.
+- Supports, one per wood (every vanilla wood and Dawnwood), drawn with that wood's stripped log textures by name.
+- Chairs, stools and desks, one of each per wood, on the template models block/template_chair, template_stool and
+  template_desk (a desk's blockstate is built of its parts, so desks side by side join into one long desk): the seat
+  and the top in that wood's planks, the legs and the back's posts in its stripped log.
+- Benches, one per wood, on block/template_bench and its parts (tools/textures/gen_bench.py): the seat in that wood's
+  planks, the legs and rails in its stripped log; the blockstate leaves an end's legs out where the bench is joined to
+  another on that side (BenchBlock), and runs the rail on instead. Made of three of the wood's slabs over two sticks.
+- Turned planks and slabs, one each per wood: the planks' texture turned 90 in the model, loot tables that give the
+  planks and the slab (dev.nookworks.wood.TurnedPlanks), in the block tags #minecraft:planks and #minecraft:wooden_slabs.
+- Wall shelves, one per wood: that wood's planks on block/template_wall_shelf_board, and the black iron brackets the
+  same for all (tools/textures/gen_wall_shelf.py); the blockstate leaves a bracket out where the shelf is joined to
+  another on that side (WallShelfBlock). Made of the wood's trapdoor and two iron nuggets.
+
+Run from the repo root after a Gradle build has unpacked the game jar:  python tools/gen_wood_data.py
+"""
+import json
+import os
+import re
+import zipfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+RES = ROOT / "src/main/resources"
+ASSETS = RES / "assets/nookworks"
+DATA = RES / "data/nookworks"
+# the game jar of the version gradle.properties builds against: a build/ that has known an older one keeps it too,
+# and the first found was the old one (26.2's beside 26.3's, 2026-10-12)
+NEO_VERSION = re.search(r"^neo_version=(\S+)", (ROOT / "gradle.properties").read_text(encoding="utf-8"), re.M).group(1)
+JAR = ROOT / f"build/moddev/artifacts/minecraft-patched-{NEO_VERSION}.jar"
+if not JAR.exists():
+    # 1.21.1 port: this script writes what it writes from 26.3's vanilla files, which the port's converter
+    # (tools/port1211/convert_resources.py) then turns into 1.21.1's: it reads 26.3's vanilla client jar, which
+    # Gradle keeps in its cache
+    JAR = Path(os.environ.get("GRADLE_USER_HOME") or Path.home() / ".gradle") / "caches/neoformruntime/artifacts/minecraft_26.3_client.jar"
+
+SKIPPED = ()
+
+
+
+def write_kept(path, text):
+    """Written in the file's own line endings (the repo holds both; a new file gets LF): run on another OS, nothing changes."""
+    newline = "\r\n" if path.exists() and b"\r\n" in path.read_bytes() else "\n"
+    path.write_text(text, encoding="utf-8", newline=newline)
+
+def write(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_kept(path, json.dumps(data, indent=2) + "\n")
+
+
+# ---------------------------------------------------------------- Dawnwood
+
+def rename(text):
+    text = text.replace('"minecraft:cherry_sapling"', '"nookworks:rare_seed"')  # the item; the block's texture keeps its name
+    text = text.replace("#minecraft:cherry_logs", "#nookworks:dawnwood_logs")
+    text = re.sub(r"minecraft:(block/|item/|blocks/)?(stripped_|potted_)?cherry_", r"nookworks:\1\2dawnwood_", text)
+    return text
+
+
+def rename_path(name):
+    return re.sub(r"(stripped_|potted_)?cherry_", r"\1dawnwood_", name)
+
+
+def wanted(name):
+    stem = name.rsplit("/", 1)[-1].removesuffix(".json")
+    if "cherry" not in stem:
+        return False
+    for skip in SKIPPED:
+        if re.search(rf"cherry_{skip}(_|$)", stem) or stem.endswith("_" + skip):
+            return False
+    return True
+
+
+def dawnwood():
+    written = 0
+    with zipfile.ZipFile(JAR) as jar:
+        for name in jar.namelist():
+            if not name.endswith(".json") or not wanted(name):
+                continue
+            if name.startswith("assets/minecraft/"):
+                rel = name.removeprefix("assets/minecraft/")
+                if not rel.startswith(("blockstates/", "models/", "items/")):
+                    continue
+                out = ASSETS / rename_path(rel)
+            elif name.startswith("data/minecraft/"):
+                rel = name.removeprefix("data/minecraft/")
+                if not rel.startswith(("recipe/", "loot_table/blocks/", "advancement/recipes/")):
+                    continue
+                out = DATA / rename_path(rel)
+            else:
+                continue
+            if out.stem in ("dawnwood_boat", "dawnwood_chest_boat") and out.parent.name in ("items", "item"):
+                continue  # the boats' items are vanilla's birch boats tinted, written by textures/gen_dawnwood_extras.py
+            text = rename(jar.read(name).decode("utf-8"))
+            if out.name == "dawnwood_sapling.json" and "/items/" in out.as_posix():
+                out = out.with_name("rare_seed.json")  # the sapling's item is the seed
+                text = text.replace("nookworks:item/dawnwood_sapling", "nookworks:item/rare_seed")
+            if out.name == "dawnwood_sapling.json" and "models/item" in out.as_posix():
+                out = out.with_name("rare_seed.json")
+                text = text.replace("nookworks:block/dawnwood_sapling", "nookworks:item/rare_seed")
+            if out.parent.name == "recipe":
+                text = text.replace('"minecraft:stick"', '"#c:rods/wooden"')  # any mod's sticks, as our other recipes take
+            write(out, json.loads(text))
+            written += 1
+    write(DATA / "tags/item/dawnwood_logs.json", {"values": [f"nookworks:{n}" for n in LOGS]})
+    write(DATA / "tags/block/dawnwood_logs.json", {"values": [f"nookworks:{n}" for n in LOGS]})
+    write(DATA / "worldgen/feature/dawnwood.json", tree())
+    for kind, values in VANILLA_TAGS.items():
+        write(RES / f"data/minecraft/tags/{kind}.json", {"replace": False, "values": [f"nookworks:{v}" for v in values]})
+    return written
+
+
+# The vanilla tags a wood's pieces are listed in (the doors, fences and the rest were written by hand before these).
+VANILLA_TAGS = {
+    "block/standing_signs": ["dawnwood_sign"],
+    "block/wall_signs": ["dawnwood_wall_sign"],
+    "block/ceiling_hanging_signs": ["dawnwood_hanging_sign"],
+    "block/wall_hanging_signs": ["dawnwood_wall_hanging_sign"],
+    "block/wooden_shelves": ["dawnwood_shelf"],
+    "item/signs": ["dawnwood_sign"],
+    "item/hanging_signs": ["dawnwood_hanging_sign"],
+    "item/wooden_shelves": ["dawnwood_shelf"],
+    "item/boats": ["dawnwood_boat"],
+    "item/chest_boats": ["dawnwood_chest_boat"],
+    "entity_type/boat": ["dawnwood_boat"],
+}
+
+
+LOGS = ("dawnwood_log", "dawnwood_wood", "stripped_dawnwood_log", "stripped_dawnwood_wood")
+
+
+def tree():
+    """A tall, narrow conifer: a straight trunk under a cone of feathery foliage. Never placed by worldgen; only
+    a sapling grows one."""
+    def uniform(lo, hi):
+        return {"type": "minecraft:uniform", "min_inclusive": lo, "max_inclusive": hi}
+
+    # 26.3's form (a feature is its own config; a plain block state is written as itself): dirt under the trunk where
+    # it may go, as every vanilla tree has it (minecraft:soil_beneath_tree)
+    return {
+        "type": "minecraft:tree",
+        "below_trunk_provider": "minecraft:soil_beneath_tree",
+        "decorators": [],
+        "foliage_placer": {"type": "minecraft:spruce_foliage_placer", "offset": uniform(0, 1), "radius": uniform(2, 3),
+                           "trunk_height": uniform(2, 3)},
+        "foliage_provider": {"id": "nookworks:dawnwood_leaves",
+                             "properties": {"distance": "7", "persistent": "false", "waterlogged": "false"}},
+        "ignore_vines": True,
+        "minimum_size": {"type": "minecraft:two_layers_feature_size", "limit": 2, "upper_size": 2},
+        "trunk_placer": {"type": "minecraft:straight_trunk_placer", "base_height": 8, "height_rand_a": 3, "height_rand_b": 1},
+        "trunk_provider": {"id": "nookworks:dawnwood_log", "properties": {"axis": "y"}},
+    }
+
+
+# ---------------------------------------------------------------- Supports
+
+# wood -> (stripped log item, side texture, end texture)
+WOODS = {
+    "oak": "stripped_oak_log", "spruce": "stripped_spruce_log", "birch": "stripped_birch_log",
+    "jungle": "stripped_jungle_log", "acacia": "stripped_acacia_log", "dark_oak": "stripped_dark_oak_log",
+    "mangrove": "stripped_mangrove_log", "cherry": "stripped_cherry_log", "pale_oak": "stripped_pale_oak_log",
+    "poplar": "stripped_poplar_log",
+    "crimson": "stripped_crimson_stem", "warped": "stripped_warped_stem", "bamboo": "stripped_bamboo_block",
+    "dawnwood": "stripped_dawnwood_log",
+}
+
+
+def support_textures(wood):
+    log = WOODS[wood]
+    ns = "nookworks" if wood == "dawnwood" else "minecraft"
+    return f"{ns}:{log}", f"{ns}:block/{log}", f"{ns}:block/{log}_top"
+
+
+def timber(frm, to, along, rotation=None):
+    """A squared timber with the grain running `along` an axis ('x', 'y' or 'z'): the side faces use the log's side,
+    turned so the grain follows the timber, and the two ends show the log's end."""
+    faces = {}
+    for direction, axis in (("north", "z"), ("south", "z"), ("east", "x"), ("west", "x"), ("up", "y"), ("down", "y")):
+        if axis == along:
+            faces[direction] = {"texture": "#end"}
+        else:
+            # a side face's v runs up the block for north/south/east/west, along z for up/down
+            turned = (along == "z" and direction in ("east", "west")) or (along == "x" and direction in ("north", "south", "up", "down"))
+            if turned:
+                # the face's own size, across (u) and up (v); the texture is taken as wide as the face is high and as
+                # long as it is long, so the turn lays it on square - the default uv, the face's size before the turn,
+                # squashed the grain three to one (r21, 2026-11-06)
+                u_axis = {"north": 0, "south": 0, "east": 2, "west": 2, "up": 0, "down": 0}[direction]
+                v_axis = 2 if direction in ("up", "down") else 1
+                length, height = to[u_axis] - frm[u_axis], to[v_axis] - frm[v_axis]
+                left, top = (16 - height) / 2, (16 - length) / 2
+                faces[direction] = {"texture": "#side", "uv": [left, top, left + height, top + length], "rotation": 90}
+            else:
+                faces[direction] = {"texture": "#side"}
+    element = {"from": frm, "to": to, "faces": faces}
+    if rotation:
+        element["rotation"] = rotation
+    return element
+
+
+def support_models(wood):
+    """Four shapes, all facing north (the beam runs north-south, the bracket stands against a wall to the south):
+
+    post     an upright timber
+    beam     a timber lying along the top of the block, which is what a shelf or a floor rests on
+    bracket  a wall bracket: an upright against the wall, the beam over it, and a brace between the two
+    wall_post the bracket's upright alone, the whole height of the block, against the wall (the user, 2026-10-18)
+    """
+    _, side, end = support_textures(wood)
+    textures = {"particle": side, "side": side, "end": end}
+    post = [timber([5, 0, 5], [11, 16, 11], "y")]
+    beam = [timber([5, 11, 0], [11, 16, 16], "z")]
+    brace = timber([6, 5.5, 3], [10, 8.5, 15], "z", {"origin": [8, 7, 9], "axis": "x", "angle": 45})
+    bracket = [timber([5, 0, 12], [11, 11, 16], "y"), timber([5, 11, 0], [11, 16, 16], "z"), brace]
+    wall_post = [timber([5, 0, 12], [11, 16, 16], "y")]
+    return {shape: {"parent": "minecraft:block/block", "textures": textures, "elements": elements}
+            for shape, elements in (("post", post), ("beam", beam), ("bracket", bracket), ("wall_post", wall_post))}
+
+
+def supports():
+    names = []
+    for wood in WOODS:
+        name = f"{wood}_support"
+        names.append(name)
+        for shape, model in support_models(wood).items():
+            write(ASSETS / f"models/block/{name}_{shape}.json", model)
+        variants = {}
+        for facing, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+            for shape in ("post", "beam", "bracket", "wall_post"):
+                variant = {"model": f"nookworks:block/{name}_{shape}"}
+                if y:
+                    variant["y"] = y
+                variants[f"facing={facing},shape={shape}"] = variant
+        write(ASSETS / f"blockstates/{name}.json", {"variants": variants})
+        write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}_bracket"}})
+        write(DATA / f"loot_table/blocks/{name}.json", {
+            "type": "minecraft:block", "random_sequence": f"nookworks:blocks/{name}",
+            "pools": [{"rolls": 1, "bonus_rolls": 0.0, "entries": [{"type": "minecraft:item", "name": f"nookworks:{name}"}],
+                       "condition": {"type": "minecraft:survives_explosion"}}]})
+        log, _, _ = support_textures(wood)
+        write(DATA / f"recipe/{name}.json", {
+            "type": "minecraft:crafting_shaped", "category": "building", "group": "support",
+            "key": {"L": log}, "pattern": ["LLL", " L "], "result": {"count": 6, "id": f"nookworks:{name}"}})
+    burnable = [f"nookworks:{n}" for n in names if not n.startswith(("crimson", "warped"))]
+    write(DATA / "tags/block/supports.json", {"values": [f"nookworks:{n}" for n in names]})
+    write(DATA / "tags/item/supports.json", {"values": [f"nookworks:{n}" for n in names]})
+    write(DATA / "tags/item/burnable_supports.json", {"values": burnable})
+    return len(names)
+
+
+# ---------------------------------------------------------------- Chairs and desks
+
+def planks_of(wood):
+    ns = "nookworks" if wood == "dawnwood" else "minecraft"
+    return f"{ns}:{wood}_planks", f"{ns}:block/{wood}_planks"
+
+
+# A desk's parts, cut from block/template_desk (drawn whole, as the item shows it): the top, the north-west leg, the
+# rail under the north edge between the legs, and that rail run on to the east or the west edge - where the desk is
+# joined on that side and the leg there has gone. Turned in the blockstate for the other corners and sides.
+DESK_PARTS = {"top": "top", "leg": "leg_nw", "rail": "apron_north"}
+# how far the north rail runs on past a leg that is not there, as (part, from x, to x)
+# (part, x from, x to, its outer end): the rail run on to the corner, its outer end there kept (a desk joined on that
+# side has no leg at the corner to hide it)
+DESK_RAIL_ENDS = (("rail_east", 12, 16, "east"), ("rail_west", 0, 4, "west"))
+# (y turn, its side, the side clockwise of it, the side anticlockwise) for the north-west leg and the north rail
+DESK_TURNS = ((0, "north", "east", "west"), (90, "east", "south", "north"), (180, "south", "west", "east"),
+              (270, "west", "north", "south"))
+
+
+def desk_part_templates():
+    """block/template_desk_<part>: the parts of the whole desk's model, each alone."""
+    whole = json.loads((ASSETS / "models/block/template_desk.json").read_text(encoding="utf-8"))
+    elements = {e["name"]: e for e in whole["elements"]}
+    parts = {part: [elements[name]] for part, name in DESK_PARTS.items()}
+    for part, x0, x1, outer in DESK_RAIL_ENDS:
+        end = json.loads(json.dumps(elements["apron_north"]))
+        end["name"] = part
+        end["from"][0], end["to"][0] = x0, x1
+        # its inner end butts on the middle rail's end; the outer one meets the next desk's rail, or is seen at the
+        # corner where no leg stands
+        inner = "west" if outer == "east" else "east"
+        end["faces"] = {k: v for k, v in end["faces"].items() if k != inner}
+        parts[part] = [end]
+    for part, elems in parts.items():
+        write(ASSETS / f"models/block/template_desk_{part}.json",
+              {"parent": "minecraft:block/block", "textures": whole["textures"], "elements": elems})
+    return list(parts)
+
+
+def desk_states(name):
+    """A desk's blockstate: its top; a leg at each corner neither side of which is joined to another desk; the rail
+    along each side not joined, running on to the corner where the next side is (the user, 2026-10-05: desks side by
+    side are one long desk)."""
+    model = lambda part: f"nookworks:block/{name}_{part}"
+    multipart = [{"apply": {"model": model("top")}}]
+    for y, side, clockwise, anticlockwise in DESK_TURNS:
+        turn = {"y": y, "uvlock": True} if y else {}
+        multipart.append({"when": {side: "false", anticlockwise: "false"}, "apply": {"model": model("leg"), **turn}})
+        multipart.append({"when": {side: "false"}, "apply": {"model": model("rail"), **turn}})
+        multipart.append({"when": {side: "false", clockwise: "true"}, "apply": {"model": model("rail_east"), **turn}})
+        multipart.append({"when": {side: "false", anticlockwise: "true"}, "apply": {"model": model("rail_west"), **turn}})
+    return {"multipart": multipart}
+
+
+def furniture():
+    names = {"chair": [], "stool": [], "desk": []}
+    desk_parts = desk_part_templates()
+    for wood in WOODS:
+        planks_item, planks = planks_of(wood)
+        _, post, _ = support_textures(wood)
+        for kind in ("chair", "stool", "desk"):
+            name = f"{wood}_{kind}"
+            names[kind].append(f"nookworks:{name}")
+            write(ASSETS / f"models/block/{name}.json", {"parent": f"nookworks:block/template_{kind}",
+                                                         "textures": {"particle": planks, "planks": planks, "post": post}})
+            if kind == "desk":
+                for part in desk_parts:
+                    write(ASSETS / f"models/block/{name}_{part}.json", {"parent": f"nookworks:block/template_desk_{part}",
+                                                                        "textures": {"particle": planks, "planks": planks, "post": post}})
+            variants = {}
+            for waterlogged in ("false", "true"):
+                if kind in ("chair", "stool"):
+                    for facing, y in (("south", 0), ("west", 90), ("north", 180), ("east", 270)):
+                        variant = {"model": f"nookworks:block/{name}"}
+                        if y:
+                            variant["y"] = y
+                        variants[f"facing={facing},waterlogged={waterlogged}"] = variant
+            write(ASSETS / f"blockstates/{name}.json", {"variants": variants} if kind != "desk" else desk_states(name))
+            write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}"}})
+            write(DATA / f"loot_table/blocks/{name}.json", {
+                "type": "minecraft:block", "random_sequence": f"nookworks:blocks/{name}",
+                "pools": [{"rolls": 1, "bonus_rolls": 0.0, "entries": [{"type": "minecraft:item", "name": f"nookworks:{name}"}],
+                           "condition": {"type": "minecraft:survives_explosion"}}]})
+            pattern = {"chair": ["P  ", "PPP", "S S"], "stool": ["PPP", "S S"], "desk": ["PPP", "S S", "S S"]}[kind]
+            write(DATA / f"recipe/{name}.json", {
+                "type": "minecraft:crafting_shaped", "category": "building", "group": kind,
+                "key": {"P": planks_item, "S": "#c:rods/wooden"}, "pattern": pattern, "result": {"count": 1, "id": f"nookworks:{name}"}})
+    for kind, values in names.items():
+        write(DATA / f"tags/block/{kind}s.json", {"values": values})
+        write(DATA / f"tags/item/{kind}s.json", {"values": values})
+    return len(WOODS)
+
+
+def slab_of(wood):
+    return f"{'nookworks' if wood == 'dawnwood' else 'minecraft'}:{wood}_slab"
+
+
+# (facing, y turn): the bench's models face south, their left (to someone in front) at the west end
+BENCH_TURNS = (("south", 0), ("west", 90), ("north", 180), ("east", 270))
+BENCH_PARTS = ("seat", "rail", "end_left", "end_right", "rail_left", "rail_right")
+
+
+def benches():
+    names = []
+    for wood in WOODS:
+        planks_item, planks = planks_of(wood)
+        _, post, _ = support_textures(wood)
+        name = f"{wood}_bench"
+        names.append(f"nookworks:{name}")
+        textures = {"particle": planks, "planks": planks, "post": post}
+        write(ASSETS / f"models/block/{name}.json", {"parent": "nookworks:block/template_bench", "textures": textures})
+        for part in BENCH_PARTS:
+            write(ASSETS / f"models/block/{name}_{part}.json", {"parent": f"nookworks:block/template_bench_{part}", "textures": textures})
+        multipart = []
+        for facing, y in BENCH_TURNS:
+            turn = {"y": y} if y else {}
+            model = lambda part: {"model": f"nookworks:block/{name}_{part}", **turn}
+            multipart.append({"when": {"facing": facing}, "apply": model("seat")})
+            multipart.append({"when": {"facing": facing}, "apply": model("rail")})
+            for side in ("left", "right"):
+                multipart.append({"when": {"facing": facing, side: "false"}, "apply": model(f"end_{side}")})
+                multipart.append({"when": {"facing": facing, side: "true"}, "apply": model(f"rail_{side}")})
+        write(ASSETS / f"blockstates/{name}.json", {"multipart": multipart})
+        write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}"}})
+        write(DATA / f"loot_table/blocks/{name}.json", {
+            "type": "minecraft:block", "random_sequence": f"nookworks:blocks/{name}",
+            "pools": [{"rolls": 1, "bonus_rolls": 0.0, "entries": [{"type": "minecraft:item", "name": f"nookworks:{name}"}],
+                       "condition": {"type": "minecraft:survives_explosion"}}]})
+        write(DATA / f"recipe/{name}.json", {
+            "type": "minecraft:crafting_shaped", "category": "building", "group": "bench",
+            "key": {"L": slab_of(wood), "S": "#c:rods/wooden"}, "pattern": ["LLL", "S S"],
+            "result": {"count": 1, "id": f"nookworks:{name}"}})
+    write(DATA / "tags/block/benches.json", {"values": names})
+    write(DATA / "tags/item/benches.json", {"values": names})
+    return len(WOODS)
+
+
+def trapdoor_of(wood):
+    return f"{'nookworks' if wood == 'dawnwood' else 'minecraft'}:{wood}_trapdoor"
+
+
+# (facing, y turn): the shelf's models face north, their wall to the south
+SHELF_TURNS = (("north", 0), ("east", 90), ("south", 180), ("west", 270))
+
+
+def wall_shelves():
+    names = []
+    for wood in WOODS:
+        _, planks = planks_of(wood)
+        name = f"{wood}_wall_shelf"
+        names.append(f"nookworks:{name}")
+        textures = {"particle": planks, "planks": planks}
+        write(ASSETS / f"models/block/{name}_board.json", {"parent": "nookworks:block/template_wall_shelf_board", "textures": textures})
+        write(ASSETS / f"models/block/{name}.json", {"parent": "nookworks:block/template_wall_shelf",
+                                                     "textures": dict(textures, iron="nookworks:block/hook")})
+        multipart = []
+        for facing, y in SHELF_TURNS:
+            turn = {"y": y} if y else {}
+            multipart.append({"when": {"facing": facing}, "apply": {"model": f"nookworks:block/{name}_board", **turn}})
+            for side in ("left", "right"):
+                multipart.append({"when": {"facing": facing, side: "false"},
+                                  "apply": {"model": f"nookworks:block/wall_shelf_bracket_{side}", **turn}})
+        write(ASSETS / f"blockstates/{name}.json", {"multipart": multipart})
+        write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:block/{name}"}})
+        write(DATA / f"loot_table/blocks/{name}.json", {
+            "type": "minecraft:block", "random_sequence": f"nookworks:blocks/{name}",
+            "pools": [{"rolls": 1, "bonus_rolls": 0.0, "entries": [{"type": "minecraft:item", "name": f"nookworks:{name}"}],
+                       "condition": {"type": "minecraft:survives_explosion"}}]})
+        write(DATA / f"recipe/{name}.json", {
+            "type": "minecraft:crafting_shapeless", "category": "building", "group": "wall_shelf",
+            "ingredients": [trapdoor_of(wood), "minecraft:iron_nugget", "minecraft:iron_nugget"],
+            "result": {"count": 1, "id": f"nookworks:{name}"}})
+    write(DATA / "tags/block/wall_shelves.json", {"values": names})
+    write(DATA / "tags/item/wall_shelves.json", {"values": names})
+    return len(WOODS)
+
+
+# ---------------------------------------------------------------- Turned planks and slabs
+
+# The planks with their boards turned a quarter, and the wooden slabs (the user, 2026-11-10; dev.nookworks.wood.TurnedPlanks):
+# the wood's own planks texture by name, every face turned 90 in the model. A slab's side shows the half of the turned
+# texture the same half of a turned plank shows, so a turned slab on a turned slab, or beside turned planks, runs on.
+# No item, no recipe: the loot tables give the planks and the slab, two from a double as vanilla's do.
+
+def turned_cube(texture, y0=0, y1=16):
+    """A box y0..y1 the width of the block, every face in {@code texture} turned 90."""
+    half = None if (y0, y1) == (0, 16) else ([8, 0, 16, 16] if y0 == 0 else [0, 0, 8, 16])
+    faces = {}
+    for side in ("north", "south", "west", "east"):
+        faces[side] = {"texture": "#all", "uv": half or [0, 0, 16, 16], "rotation": 90, "cullface": side}
+    faces["up"] = {"texture": "#all", "uv": [0, 0, 16, 16], "rotation": 90}
+    faces["down"] = {"texture": "#all", "uv": [0, 0, 16, 16], "rotation": 90}
+    if y1 == 16:
+        faces["up"]["cullface"] = "up"
+    if y0 == 0:
+        faces["down"]["cullface"] = "down"
+    return {"parent": "minecraft:block/block", "textures": {"all": texture, "particle": texture},
+            "elements": [{"from": [0, y0, 0], "to": [16, y1, 16], "faces": faces}]}
+
+
+def slab_loot(block, item):
+    """Vanilla's slab loot (26.3's form): the slab, two from a double - the half read off this block's own state."""
+    return {"type": "minecraft:block", "pools": [{"entries": [{"type": "minecraft:item", "modifier": [
+        {"type": "minecraft:set_count", "condition": {"type": "minecraft:match_block", "blocks": block, "state": {"type": "double"}},
+         "count": 2}, {"type": "minecraft:explosion_decay"}], "name": item}], "rolls": 1}],
+            "random_sequence": block.replace(":", ":blocks/", 1)}
+
+
+def planks_loot(block, item):
+    """Vanilla's planks loot: the planks, unless an explosion took them."""
+    return {"type": "minecraft:block", "pools": [{"condition": {"type": "minecraft:survives_explosion"},
+                                                  "entries": [{"type": "minecraft:item", "name": item}], "rolls": 1}],
+            "random_sequence": block.replace(":", ":blocks/", 1)}
+
+
+def turned_planks():
+    planks, slabs = ["nookworks:dawnwood_planks"], ["nookworks:dawnwood_slab"]
+    for wood in WOODS:
+        item, texture = planks_of(wood)
+        name, slab = f"turned_{wood}_planks", f"turned_{wood}_slab"
+        write(ASSETS / f"models/block/{name}.json", turned_cube(texture))
+        write(ASSETS / f"models/block/{slab}.json", turned_cube(texture, 0, 8))
+        write(ASSETS / f"models/block/{slab}_top.json", turned_cube(texture, 8, 16))
+        write(ASSETS / f"blockstates/{name}.json", {"variants": {"": {"model": f"nookworks:block/{name}"}}})
+        write(ASSETS / f"blockstates/{slab}.json", {"variants": {
+            "type=bottom": {"model": f"nookworks:block/{slab}"}, "type=double": {"model": f"nookworks:block/{name}"},
+            "type=top": {"model": f"nookworks:block/{slab}_top"}}})
+        write(DATA / f"loot_table/blocks/{name}.json", planks_loot(f"nookworks:{name}", item))
+        write(DATA / f"loot_table/blocks/{slab}.json", slab_loot(f"nookworks:{slab}", slab_of(wood)))
+        planks.append(f"nookworks:{name}")
+        slabs.append(f"nookworks:{slab}")
+    # in the block tags only (never the item tags): an axe's, fire's, suffocation and the rest come from these
+    write(RES / "data/minecraft/tags/block/planks.json", {"replace": False, "values": planks})
+    write(RES / "data/minecraft/tags/block/wooden_slabs.json", {"replace": False, "values": slabs})
+    return len(WOODS)
+
+
+if __name__ == "__main__":
+    print(f"dawnwood: {dawnwood()} files; supports: {supports()} woods; chairs, stools and desks: {furniture()} woods; "
+          f"benches: {benches()} woods; wall shelves: {wall_shelves()} woods; turned planks: {turned_planks()} woods")

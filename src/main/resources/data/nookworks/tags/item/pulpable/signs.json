@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:signs"
+  ],
+  "remove": [
+    "minecraft:crimson_sign",
+    "minecraft:warped_sign"
+  ]
+}

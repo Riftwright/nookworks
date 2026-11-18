@@ -1,0 +1,55 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:crusher"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:recycler"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "recycler": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "nookworks:recycler"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:recycler"
+    },
+    "title": {
+      "translate": "advancements.nookworks.recycler.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.recycler.description"
+    }
+  },
+  "requirements": [
+    [
+      "recycler"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:crusher"
+}

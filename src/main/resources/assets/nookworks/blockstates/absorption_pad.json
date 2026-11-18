@@ -1,0 +1,63 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad"
+      }
+    },
+    {
+      "when": {
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_off"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_riser"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_riser",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_riser",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_riser",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/absorption_pad_riser_up"
+      }
+    }
+  ]
+}

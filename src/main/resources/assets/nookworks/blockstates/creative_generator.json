@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "nookworks:block/creative_generator"
+    },
+    "facing=west": {
+      "model": "nookworks:block/creative_generator",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "nookworks:block/creative_generator",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "nookworks:block/creative_generator",
+      "y": 270
+    }
+  }
+}

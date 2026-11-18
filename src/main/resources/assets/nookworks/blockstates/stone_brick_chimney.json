@@ -1,0 +1,55 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "top": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney"
+      }
+    },
+    {
+      "when": {
+        "top": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney_collar"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney_collar",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney_collar",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/stone_brick_chimney_collar",
+        "y": 270
+      }
+    }
+  ]
+}

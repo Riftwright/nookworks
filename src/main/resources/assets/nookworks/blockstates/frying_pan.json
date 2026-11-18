@@ -1,0 +1,90 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "on_grill": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan_on_grill"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan_on_grill",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan_on_grill",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "on_grill": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/frying_pan_on_grill",
+        "y": 270
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "nookworks:blocks/frying_pan",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:frying_pan"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "nookworks:frying_pan",
+          "properties": {
+            "on_grill": "true"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nookworks:grill"
+        }
+      ]
+    }
+  ]
+}

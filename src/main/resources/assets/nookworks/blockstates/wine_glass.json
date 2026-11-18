@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,count=1": {
+      "model": "nookworks:block/wine_glass_1"
+    },
+    "facing=east,count=1": {
+      "model": "nookworks:block/wine_glass_1",
+      "y": 90
+    },
+    "facing=south,count=1": {
+      "model": "nookworks:block/wine_glass_1",
+      "y": 180
+    },
+    "facing=west,count=1": {
+      "model": "nookworks:block/wine_glass_1",
+      "y": 270
+    },
+    "facing=north,count=2": {
+      "model": "nookworks:block/wine_glass_2"
+    },
+    "facing=east,count=2": {
+      "model": "nookworks:block/wine_glass_2",
+      "y": 90
+    },
+    "facing=south,count=2": {
+      "model": "nookworks:block/wine_glass_2",
+      "y": 180
+    },
+    "facing=west,count=2": {
+      "model": "nookworks:block/wine_glass_2",
+      "y": 270
+    },
+    "facing=north,count=3": {
+      "model": "nookworks:block/wine_glass_3"
+    },
+    "facing=east,count=3": {
+      "model": "nookworks:block/wine_glass_3",
+      "y": 90
+    },
+    "facing=south,count=3": {
+      "model": "nookworks:block/wine_glass_3",
+      "y": 180
+    },
+    "facing=west,count=3": {
+      "model": "nookworks:block/wine_glass_3",
+      "y": 270
+    },
+    "facing=north,count=4": {
+      "model": "nookworks:block/wine_glass_4"
+    },
+    "facing=east,count=4": {
+      "model": "nookworks:block/wine_glass_4",
+      "y": 90
+    },
+    "facing=south,count=4": {
+      "model": "nookworks:block/wine_glass_4",
+      "y": 180
+    },
+    "facing=west,count=4": {
+      "model": "nookworks:block/wine_glass_4",
+      "y": 270
+    }
+  }
+}

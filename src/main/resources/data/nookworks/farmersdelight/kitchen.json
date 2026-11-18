@@ -1,0 +1,21 @@
+{
+  "_comment": "How Nookworks' kitchen and Farmer's Delight's meet (compat/farmersdelight/KitchenSettings). twins: the same food in both mods; any recipe asking for one by id takes either. prefer: whose twin a furnace, smoker, blast furnace or campfire gives when both mods have a recipe there for the same thing (farmersdelight or nookworks). pan: Farmer's Delight Cooking Pot recipes our Frying Pan cooks in its oil, rather than the Iron Pot in water. not_crossed: recipes of either mod never brought to the other's pot. bakery_stands_down / no_wheat_bread_stands_down: its recipes that stand down while the flour bakery is on / while bread is not made from wheat - both empty: its own cake and bread stay whatever our settings are (the owner, 2026-11-17: having Nookworks installed never makes another mod less convenient); a pack that wants them gone lists them here. water and oil: mB a serving of its dishes takes in our pot or pan; experience: what ours give in its pot.",
+  "twins": [
+    ["nookworks:onion", "farmersdelight:onion"],
+    ["nookworks:brown_rice", "farmersdelight:rice"],
+    ["nookworks:cooked_rice", "farmersdelight:cooked_rice"],
+    ["nookworks:fried_rice", "farmersdelight:fried_rice"],
+    ["nookworks:vegetable_soup", "farmersdelight:vegetable_soup"],
+    ["nookworks:fried_egg", "farmersdelight:fried_egg"]
+  ],
+  "prefer": "farmersdelight",
+  "pan": [
+    "farmersdelight:cooking/fried_rice"
+  ],
+  "not_crossed": [],
+  "bakery_stands_down": [],
+  "no_wheat_bread_stands_down": [],
+  "water": 250,
+  "oil": 25,
+  "experience": 0.35
+}
