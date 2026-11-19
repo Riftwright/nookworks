@@ -6,7 +6,11 @@ import static dev.nookworks.gametest.NookworksGameTests.test;
 import dev.nookworks.feature.Squinting;
 import java.util.List;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 
 /**
@@ -19,6 +23,7 @@ final class SquintTests {
         test("squinting_is_marked_for_others_and_not_kept", SquintTests::markedAndNotKept);
         test("squinting_arithmetic", SquintTests::arithmetic);
         test("squint_stands_aside_for_another_zoom_on_its_key", SquintTests::zoomClash);
+        test("squint_stands_aside_only_for_held_things_named_for_it", SquintTests::heldThings);
     }
 
     /** Off to begin with; on and off at the player's word; not saved with the player (nor so carried through death). */
@@ -74,6 +79,25 @@ final class SquintTests {
         check(helper, Squinting.zoomClash(c, List.<String[]>of(oursNamedZoom)) == null, "a key of ours is not another mod's");
         check(helper, Squinting.zoomClash("key.keyboard.unknown:NONE", List.<String[]>of(new String[] {"zoomify.key.zoom", "key.keyboard.unknown:NONE"})) == null,
                 "Squint unbound clashes with nothing");
+        helper.succeed();
+    }
+
+    /**
+     * The tag for things that keep their holder from squinting is shipped, and empty: nothing ordinary, in either hand,
+     * stops it, here or in the server's own count. (A thing named in it by a data pack - another mod's gun - was seen
+     * in the agent's client: held, the key does nothing.)
+     */
+    private static void heldThings(GameTestHelper helper) {
+        check(helper, helper.getLevel().getServer().getResourceManager()
+                .getResource(Identifier.parse("nookworks:tags/item/no_squint.json")).isPresent(), "the tag #nookworks:no_squint is shipped");
+        check(helper, !Squinting.heldKeepsFrom(ItemStack.EMPTY, ItemStack.EMPTY), "empty hands: nothing to stand aside for");
+        check(helper, !Squinting.heldKeepsFrom(new ItemStack(Items.BOW), new ItemStack(Items.SHIELD)),
+                "ordinary things in both hands: nothing to stand aside for");
+        ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        Squinting.set(player, true);
+        check(helper, Squinting.of(player), "a bow in hand: the player's word is still taken");
+        helper.getLevel().getServer().getPlayerList().remove(player);
         helper.succeed();
     }
 }

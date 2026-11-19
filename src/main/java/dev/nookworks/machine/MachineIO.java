@@ -545,6 +545,15 @@ public final class MachineIO {
         return reach;
     }
 
+    /**
+     * The network the cable at {@code cable} is part of, as kept now: one object for every cable of it, while it lasts.
+     * For telling two networks apart ({@link EnergyCableBlock}'s guard against power coming back round), nothing more.
+     */
+    public static Object networkOf(ServerLevel level, BlockPos cable) {
+        Kept kept = KEPT.computeIfAbsent(level.dimension(), k -> new Kept());
+        return networkAt(level, kept, cable, level.getGameTime());
+    }
+
     /** The network of the cable at {@code cable}: as kept, or walked now from there. */
     private static Network networkAt(ServerLevel level, Kept kept, BlockPos cable, long now) {
         Network network = kept.byCable.get(cable);
@@ -600,6 +609,29 @@ public final class MachineIO {
     }
 
     /**
+     * A side of a cable not joined, not turned off, facing a block entity that is no cable: if that block has an energy
+     * handler now - another mod's that put it up with no block changed (a pipe set to extract by its wrench, a conduit
+     * added to a bundle already there) - the cable is set to look at its sides again on its next tick
+     * ({@link EnergyCableBlock}'s tick), and the network is walked again then. A cable joins what stands beside it when
+     * it is set down and when a neighbour's block changes, and such a side stayed unjoined for good (found by the
+     * 1.21.1 port with Pipez and EnderIO, 2026-11-17).
+     */
+    private static void lateJoin(ServerLevel level, BlockPos cable, BlockState state, Direction dir) {
+        if (PipeSides.isOff(state, dir)) {
+            return;
+        }
+        BlockPos next = cable.relative(dir);
+        LevelChunk nextChunk = loadedChunk(level, next);
+        if (nextChunk == null || nextChunk.getBlockEntity(next) == null || nextChunk.getBlockState(next).getBlock() instanceof EnergyCableBlock) {
+            return;
+        }
+        if (level.getCapability(Capabilities.Energy.BLOCK, next, dir.getOpposite()) != null && PipeSides.mayJoin(state, level, cable, dir)
+                && !level.getBlockTicks().hasScheduledTick(cable, state.getBlock())) {
+            level.scheduleTick(cable, state.getBlock(), 1);
+        }
+    }
+
+    /**
      * Looks round the cable at {@code cable}: through each side it is joined on, a cable to walk on to (unless its
      * side this way is off) or something that takes power. A cable is walked only once, but a machine is recorded with
      * each side a cable touches. Nothing in an unloaded chunk is looked at.
@@ -613,6 +645,7 @@ public final class MachineIO {
         }
         for (Direction dir : Direction.values()) {
             if (!PipeSides.joined(state, dir)) {
+                lateJoin(level, cable, state, dir);
                 continue; // a cable carries on only through the sides it is joined on
             }
             BlockPos next = cable.relative(dir);

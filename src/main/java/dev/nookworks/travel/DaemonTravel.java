@@ -40,6 +40,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -528,6 +529,9 @@ public final class DaemonTravel {
         public boolean fits(ServerLevel level, BlockPos lower, Direction out) {
             for (BlockPos cell : DaemonDoorBlock.frame(lower, out.getOpposite())) {
                 BlockState state = level.getBlockState(cell);
+                if (mayFall(level, cell)) {
+                    return false; // gravel over a hollow: it falls as the door is set beside it, and the door or its wall with it
+                }
                 if (!level.getWorldBorder().isWithinBounds(cell) || state.hasBlockEntity() && !state.isCollisionShapeFullBlock(level, cell)
                         || !state.isCollisionShapeFullBlock(level, cell) && !(state.canBeReplaced() && state.getDestroySpeed(level, cell) >= 0)) {
                     return false;
@@ -679,7 +683,8 @@ public final class DaemonTravel {
                 if (!state.isAir()) {
                     cleared.add(cell.immutable());
                 }
-            } else if (cell.getY() == start.getY() - 1 && !state.isFaceSturdy(level, cell, Direction.UP) || !state.getFluidState().isEmpty()) {
+            } else if (cell.getY() == start.getY() - 1 && (!state.isFaceSturdy(level, cell, Direction.UP) || mayFall(level, cell))
+                    || !state.getFluidState().isEmpty()) {
                 if (level.getBlockEntity(cell) == null) {
                     masonry.add(cell.immutable());
                 }
@@ -800,7 +805,24 @@ public final class DaemonTravel {
         }
         BlockState floor = level.getBlockState(pos.below());
         return floor.isFaceSturdy(level, pos.below(), Direction.UP) && !floor.getFluidState().is(FluidTags.LAVA)
-                && !floor.is(Blocks.MAGMA_BLOCK);
+                && !floor.is(Blocks.MAGMA_BLOCK) && !mayFall(level, pos.below());
+    }
+
+    /**
+     * Whether the block at {@code pos} would fall once something next to it changes: gravel, sand and the like with
+     * nothing under them, or only more of them over a hollow. A door set down on Nether gravel over a cave lost its floor
+     * as it was set down - the gravel fell, the door broke for want of it, and whoever had come through was left with no
+     * way back (found by the 1.21.1 port's test run, 2026-11-17, its test world's Nether at x -1465116, z -1845271).
+     */
+    static boolean mayFall(ServerLevel level, BlockPos pos) {
+        BlockPos.MutableBlockPos cell = pos.mutable();
+        for (int depth = 0; depth < 32 && level.getBlockState(cell).getBlock() instanceof FallingBlock; depth++) {
+            cell.move(Direction.DOWN);
+            if (cell.getY() < level.getMinY() || FallingBlock.isFree(level.getBlockState(cell))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Two blocks of open air at {@code pos}: nothing to stand inside, no lava, no water, no fire. */

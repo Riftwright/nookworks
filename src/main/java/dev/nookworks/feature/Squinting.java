@@ -5,10 +5,14 @@ import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -26,6 +30,12 @@ public final class Squinting {
     /** Whether a player squints now: not saved, gone with death, synced to them and to whoever tracks them. */
     public static final Supplier<AttachmentType<Boolean>> SQUINTING = ATTACHMENT_TYPES.register("squinting",
             () -> AttachmentType.builder(() -> false).sync(ByteBufCodecs.BOOL).build());
+    /**
+     * Things that keep their holder from squinting while in either hand (the user, 2026-11-15, of another mod's gun:
+     * its own aim brings the view nearer and takes both hands, and with the squint on top of it the view and the hands
+     * went wrong). Empty as we ship it: a mod or a pack names its things here.
+     */
+    public static final TagKey<Item> NO_SQUINT = TagKey.create(Registries.ITEM, Nookworks.id("no_squint"));
 
     private Squinting() {}
 
@@ -35,9 +45,15 @@ public final class Squinting {
 
     /** A player's word that they squint, or stop (sent as their key goes down and up). */
     public static void set(ServerPlayer player, boolean squinting) {
+        squinting &= !heldKeepsFrom(player.getMainHandItem(), player.getOffhandItem());
         if (player.getData(SQUINTING) != squinting) {
             player.setData(SQUINTING, squinting);
         }
+    }
+
+    /** Whether what is held, in either hand, keeps its holder from squinting ({@link #NO_SQUINT}). */
+    public static boolean heldKeepsFrom(ItemStack mainHand, ItemStack offHand) {
+        return mainHand.is(NO_SQUINT) || offHand.is(NO_SQUINT);
     }
 
     /** Smoothly in and out: {@code t} from 0 to 1, slow at both ends. */

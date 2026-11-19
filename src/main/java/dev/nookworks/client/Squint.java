@@ -39,7 +39,7 @@ import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEve
  * Squinting into the distance, as OptiFine's zoom did on C (the user, 2026-10-10), see {@link Squinting}: while the key
  * is held the view comes nearer - gently, two times by default, so the spyglass keeps its worth - the mouse slows to
  * match, and the off hand, with whatever it holds, comes up to the brow and shows at the top of the view. Others see
- * the arm raised. Not while the spyglass is up.
+ * the arm raised. Not while the spyglass is up, nor while a thing that asks it ({@link Squinting#NO_SQUINT}) is held.
  */
 @EventBusSubscriber(modid = Nookworks.MODID, value = Dist.CLIENT)
 public final class Squint {
@@ -68,7 +68,8 @@ public final class Squint {
     /** Whether the player in this game squints now. */
     public static boolean squinting() {
         Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.gui.screen() == null && KEY.isDown() && !mc.player.isScoping() && clash == null;
+        return mc.player != null && mc.gui.screen() == null && KEY.isDown() && !mc.player.isScoping() && clash == null
+                && !Squinting.heldKeepsFrom(mc.player.getMainHandItem(), mc.player.getOffhandItem());
     }
 
     /** Looks again for another mod's zoom on Squint's key, and says in the log when Squint stands aside. */

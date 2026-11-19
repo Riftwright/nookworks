@@ -177,6 +177,7 @@ public final class NookworksGameTests {
         ForeignBlockTests.register();
         MachineTabTests.register();
         CarryTests.register();
+        OtherModCableTests.register();
         TagPickerTests.register();
     }
 
@@ -189,6 +190,7 @@ public final class NookworksGameTests {
         FUNCTIONS.register(modEventBus);
         ForeignBlockTests.listen(modEventBus); // stand-ins for another mod's blocks, in GameTest runs only
         CarryTests.listen(modEventBus); // a stand-in block entity that wants a word in being carried
+        OtherModCableTests.listen(modEventBus); // stand-ins for another mod's cables and stores
         modEventBus.addListener(NookworksGameTests::onRegisterTests);
         NeoForge.EVENT_BUS.addListener(NookworksGameTests::watchdog);
     }

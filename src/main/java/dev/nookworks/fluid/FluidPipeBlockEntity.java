@@ -296,6 +296,11 @@ public abstract class FluidPipeBlockEntity extends BlockEntity implements Readou
             }
             pipe.turn = (pipe.turn + 1) % SIDES.length;
             pipe.ticked(server);
+            // now and then, each pipe at its own tick: a side joining nothing looks for a handler put up since
+            if (Math.floorMod(server.getGameTime() + pos.hashCode(), (long) FluidPipeBlock.LOOK) == 0
+                    && pipe.getBlockState().getBlock() instanceof FluidPipeBlock block) {
+                block.lookBeside(server, pos, pipe.getBlockState());
+            }
         }
     }
 

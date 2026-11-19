@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -126,6 +127,41 @@ public abstract class FluidPipeBlock extends PipeBlock implements EntityBlock {
             Direction side, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         return state.setValue(PROPERTY_BY_DIRECTION.get(side), this.connectsTo(state, level, neighbourPos, side)
                 && PipeSides.mayJoin(state, level, pos, side));
+    }
+
+    /** How often, in ticks, a pipe looks again at the sides it joins nothing on ({@link #lookBeside}). */
+    public static final int LOOK = 40;
+
+    /**
+     * A side not joined and not turned off, facing a block entity that is no pipe: if that block has a fluid handler
+     * now - another mod's that put it up with no block changed (a pipe set to extract by its wrench, a conduit added to
+     * a bundle already there) - the side is joined. A pipe looked at what stood beside it only when it was set down and
+     * when a neighbour's block changed, and such a side stayed unjoined for good, as an Energy Cable's did
+     * (MachineIO.lateJoin; found there by the 1.21.1 port with the real mods, 2026-11-17). Called by the pipe's own
+     * tick, every {@link #LOOK} ticks; a block with no block entity changes its block to change what it takes, and a
+     * pipe of ours is joined as it is set down or switched.
+     */
+    void lookBeside(ServerLevel level, BlockPos pos, BlockState state) {
+        BlockState now = state;
+        for (Direction side : Direction.values()) {
+            if (PipeSides.joined(state, side) || PipeSides.isOff(state, side)) {
+                continue;
+            }
+            BlockPos next = pos.relative(side);
+            if (!level.isLoaded(next)) {
+                continue; // never load a chunk to look at it
+            }
+            BlockState there = level.getBlockState(next);
+            if (!there.hasBlockEntity() || there.getBlock() instanceof FluidPipeBlock) {
+                continue;
+            }
+            if (this.connectsTo(state, level, next, side) && PipeSides.mayJoin(state, level, pos, side)) {
+                now = now.setValue(PROPERTY_BY_DIRECTION.get(side), true);
+            }
+        }
+        if (now != state) {
+            level.setBlock(pos, now, Block.UPDATE_ALL);
+        }
     }
 
     @Override

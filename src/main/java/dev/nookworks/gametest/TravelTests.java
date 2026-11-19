@@ -54,6 +54,7 @@ final class TravelTests {
         test("daemon_door_walked_into_takes_the_player_through", 100, TravelTests::walkedInto);
         test("daemon_door_return_door_stays_out_of_lava", 400, TravelTests::outOfLava);
         test("daemon_door_return_door_set_down_in_tall_grass_stands_whole", 200, TravelTests::inTallGrass);
+        test("daemon_door_return_door_keeps_off_gravel_over_a_hollow", 200, TravelTests::offFallingGravel);
         test("daemon_door_ends_first_door_faces_the_platform", TravelTests::endLanding);
         test("daemon_door_comes_out_on_a_floor", TravelTests::comesOutOnAFloor);
         test("daemon_door_goes_nowhere_unless_set_into_a_wall", 400, TravelTests::onlyInAWall);
@@ -347,6 +348,51 @@ final class TravelTests {
                     Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS));
         }
         helper.succeed();
+    }
+
+    /**
+     * The ground where a Nether trip left its traveller stranded (found by the 1.21.1 port's whole-suite run, 2026-11-17;
+     * the same code was here): the nearest spot had gravel for a floor with a hollow under it. Set down there, the door's
+     * own setting-down shook the gravel loose, it fell, the door broke for want of a floor, and the way home with it.
+     * Built by hand in the sky over the arena: a slab of stone one block thick, its middle gravel over the air under the
+     * slab. The door goes on the stone, none of its floor or wall is gravel that could fall, and twenty ticks on it
+     * stands, set into its wall.
+     */
+    private static void offFallingGravel(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos spot = helper.absolutePos(new BlockPos(3, 44, 3));
+        BlockPos.betweenClosed(spot.offset(-6, -2, -6), spot.offset(6, 4, 6)).forEach(cell -> level.setBlock(cell,
+                (cell.getY() == spot.getY() - 1 ? Blocks.STONE : Blocks.AIR).defaultBlockState(), Block.UPDATE_CLIENTS));
+        BlockPos.betweenClosed(spot.offset(-1, -1, -1), spot.offset(1, -1, 1)).forEach(cell -> level.setBlock(cell,
+                Blocks.GRAVEL.defaultBlockState(), Block.UPDATE_CLIENTS)); // gravel with nothing under it: it falls within ticks
+        Runnable clear = () -> BlockPos.betweenClosed(spot.offset(-6, -3, -6), spot.offset(6, 4, 6)).forEach(cell -> level.setBlock(cell,
+                Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS));
+        BlockPos door;
+        Direction facing;
+        try {
+            door = DaemonTravel.setDown(level, spot, false);
+            check(helper, door != null && DaemonDoors.standsAt(level, door), "a door set down: " + door);
+            facing = level.getBlockState(door).getValue(DoorBlock.FACING);
+            for (BlockPos cell : DaemonDoorBlock.frame(door, facing)) {
+                check(helper, !level.getBlockState(cell).is(Blocks.GRAVEL), "no gravel in its floor or wall, at " + cell + " (door " + door + ")");
+            }
+            check(helper, !level.getBlockState(door.relative(facing.getOpposite()).below()).is(Blocks.GRAVEL),
+                    "nor under where one stands coming through it");
+        } catch (RuntimeException | Error failed) {
+            clear.run();
+            throw failed;
+        }
+        BlockPos stands = door;
+        Direction faces = facing;
+        helper.runAfterDelay(20, () -> {
+            try {
+                check(helper, DaemonDoors.standsAt(level, stands) && DaemonDoorBlock.framed(level, stands, faces),
+                        "twenty ticks on it stands, set into its wall: " + level.getBlockState(stands));
+            } finally {
+                clear.run();
+            }
+            helper.succeed();
+        });
     }
 
     /**

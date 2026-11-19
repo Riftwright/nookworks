@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1 (2026-11-17)
+- 1.7.1: for modpacks - Squint stands aside for another mod's gun, so one key can squint and aim; Energy Cables and pipes work beside other mods' cables and pipes; a Dock-a-Daemon Door's return door is never set down on ground that falls away.
+- Modpacks: Squint (C) stands aside while a thing in the item tag #nookworks:no_squint is held, in either hand - for another mod's gun, whose own aim brings the view nearer and takes both hands. The tag is empty as shipped: the other mod, or a pack, names its things in it.
+- Fixed: two Energy Cable networks with another mod's cable between them - one that keeps nothing and passes power straight on - pass power from one to the other. The second network refused it while the first was sending.
+- Fixed: an Energy Cable joins a block of another mod's that puts its energy side up later with nothing set down or broken - a pipe set to extract with its wrench, a conduit added to a bundle already there - within a second or two. It stayed unjoined until a block beside it changed.
+- Fixed: a Copper Pipe, an Experience Pipe and their fittings join such a block the same way when it puts a liquid side up later, within two seconds.
+- Fixed: a Dock-a-Daemon Door's return door is never set down on gravel, sand or the like with a hollow under it, nor with such a block in its wall. Set there on a first trip, the gravel fell as the door went up, the door broke with its floor, and whoever had come through had no way back.
+
 ## 1.7.0 (2026-11-15)
 - 1.7.0: the kitchen - every dish in a pot cooking at once, the Frying Pan, the Electric Stove and the Kitchen Tap, dishes set out as themselves, plates holding as many as suit them, a tray carried in both hands, bowls set down; frames for posters and paintings, dark oak and brass item frames; the Stone Maker of lava and water, Basalt Gravel; the Planter a machine with its field outlined; podzol and soul soil sifted; the Hub Stone, Elevator, Item Warps, unlit lanterns and Nourished Soil redrawn; sounds of our own in place of vanilla's; the Dock-a-Daemon Door mended.
 - Changed: a dish part cooked in an Iron Pot or a Frying Pan waits where it was when the heat goes - a fire out, an Electric Stove out of power - and goes on when the heat is back (it started again from nothing).

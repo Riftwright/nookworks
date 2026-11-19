@@ -76,6 +76,25 @@ public class EnergyCableBlock extends PipeBlock {
         level.invalidateCapabilities(pos);
     }
 
+    /**
+     * Set by the network's walk ({@code MachineIO.lateJoin}) when a block beside an unjoined side has an energy handler
+     * it did not have when the cable last looked: each side is joined again by what stands beside it now.
+     */
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        BlockState joined = state;
+        for (Direction dir : Direction.values()) {
+            boolean was = state.getValue(PROPERTY_BY_DIRECTION.get(dir));
+            joined = joined.setValue(PROPERTY_BY_DIRECTION.get(dir),
+                    connectsTo(level, pos.relative(dir), dir, was) && PipeSides.mayJoin(state, level, pos, dir));
+        }
+        if (joined != state) {
+            level.setBlock(pos, joined, Block.UPDATE_ALL);
+            MachineIO.networkChanged(level, pos);
+            level.invalidateCapabilities(pos);
+        }
+    }
+
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
             Direction dir, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
@@ -113,8 +132,13 @@ public class EnergyCableBlock extends PipeBlock {
         return networkHandler(level, pos, null);
     }
 
-    /** Whether a cable's handler is inserting now: another mod's block that passes power straight on is not sent back round. */
-    private static boolean inserting;
+    /**
+     * The networks whose cable handler is inserting now: another mod's block that passes power straight on is not sent
+     * back round into the network it came from. A set of networks, not one flag for all: two networks of ours with
+     * another mod's pass-through cable between them passed nothing, the second refused while the first was sending
+     * (found by the 1.21.1 port with Pipez and EnderIO, 2026-11-17).
+     */
+    private static final java.util.Set<Object> INSERTING = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 
     /**
      * The handler a neighbour on {@code side} sees. That neighbour is where the energy comes from, so it is left out
@@ -138,10 +162,13 @@ public class EnergyCableBlock extends PipeBlock {
             /** Shared out as a Generator shares its own: evenly, then the rest to whoever takes it. */
             @Override
             public int insert(int amount, TransactionContext transaction) {
-                if (inserting || amount <= 0 || !this.stillOpen()) {
+                if (amount <= 0 || !this.stillOpen()) {
                     return 0;
                 }
-                inserting = true;
+                Object network = MachineIO.networkOf(level, pos);
+                if (!INSERTING.add(network)) {
+                    return 0;
+                }
                 try {
                     List<EnergyHandler> targets = this.targets(true);
                     if (targets.isEmpty()) {
@@ -165,7 +192,7 @@ public class EnergyCableBlock extends PipeBlock {
                     }
                     return accepted;
                 } finally {
-                    inserting = false;
+                    INSERTING.remove(network);
                 }
             }
 
