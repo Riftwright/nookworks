@@ -21,6 +21,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -232,22 +233,38 @@ def french_fries():
     return outline(img)
 
 
+# In the bowl family's size and angle (the user, 2026-11-21: of every icon checked for 配置・大きさ・余白・角度, 1 and 2
+# first): ten wide before the ring, twelve with it, as vanilla's stews and the author's own bowls are; the surface an
+# ellipse and the rim's front an arc mirroring its back; no steam, as theirs have none. Ringed from the bowl alone.
+# l/L/M/D the wooden bowl's lip, lit, middle, shade; R/r/q the broth; c carrot, p potato, e beetroot, g a green.
+VEGETABLE_SOUP_ICON = {"l": (176, 118, 72), "L": (150, 96, 56), "M": (120, 74, 40), "D": (92, 54, 28),
+                       "R": (204, 116, 60), "r": (180, 90, 44), "q": (150, 70, 34),
+                       "c": (236, 140, 40), "p": (232, 214, 150), "e": (150, 30, 60), "g": (96, 150, 60)}
+VEGETABLE_SOUP_RING = dict(VEGETABLE_SOUP_ICON, **{ch: VEGETABLE_SOUP_ICON["M"] for ch in "Rrqcpeg"})
+VEGETABLE_SOUP_ROWS = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....RRpRrr.....",
+    "...lRcRRreRqM...",
+    "...llrgrcrqMD...",
+    "...LLlllLLLDD...",
+    "....LMMMMMDD....",
+    "......MMDD......",
+    "................",
+    "................",
+    "................",
+    "................",
+]
+
+
 def vegetable_soup():
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    bowl(img, top=8)
-    for x in range(2, 14):      # the broth filling the rim
-        px(img, x, 8, BROTH[1] if x > 3 else BROTH[2])
-    for x in range(3, 13):
-        px(img, x, 7, BROTH[1])
-    for x in range(5, 11):
-        px(img, x, 6, BROTH[0] if x > 8 else BROTH[1])
-    for x, y, c in ((4, 7, (232, 140, 40)), (7, 6, (230, 214, 150)), (10, 7, (150, 30, 60)), (8, 8, (232, 140, 40)),
-                    (12, 8, (230, 214, 150)), (6, 8, (150, 30, 60))):  # carrot, potato, beetroot bits
-        px(img, x, y, c)
-    img = outline(img)
-    for x, y, a in ((9, 4, 150), (8, 3, 110), (9, 2, 80)):  # a wisp of steam, after the outline so it has none
-        px(img, x, y, (240, 240, 240, a))
-    return img
+    """Vegetable soup in a wooden bowl: carrot, potato and beetroot in a red-brown broth."""
+    return itemkit.sprite(itemkit.check(VEGETABLE_SOUP_ROWS), VEGETABLE_SOUP_ICON, lit=0.8, dark=0.55,
+                          ring_from=VEGETABLE_SOUP_RING)
 
 
 def onigiri(salmon):
@@ -613,27 +630,37 @@ def flour():
     return outline(img)
 
 
-CRUMB = [(150, 96, 36), (196, 142, 62), (230, 186, 102), (246, 216, 150)]
+
+
+# Breadcrumbs (panko): a heap of cream-white flakes with a few pale toasted bits, warm where rice and sugar are cool -
+# after the user's photo of panko (「パン粉ってもう少し白いんじゃないかな」, 2026-11-21; it was golden). The heap the size
+# of vanilla's dusts in the slot's middle, a crumb fallen at each side of its foot. h glint, L lit, m middle, s shade,
+# S deep, e a toasted flake.
+PANKO_ICON = {"h": (255, 252, 242), "L": (246, 238, 218), "m": (230, 220, 194), "s": (206, 194, 162), "S": (176, 162, 128),
+              "e": (226, 192, 124)}
+PANKO_ROWS = [
+    "................",
+    "................",
+    "................",
+    "................",
+    ".......hm.......",
+    "......LLme......",
+    ".....Lhmems.....",
+    ".....Lmmmmhs....",
+    "....Lemhmsss....",
+    "...LLmmmsesS....",
+    "....hmemssseS...",
+    "....sesshseS....",
+    "..m...sssS...s..",
+    "................",
+    "................",
+    "................",
+]
 
 
 def breadcrumbs():
-    """
-    A heap of coarse golden crumbs: lumps two pixels across in light and shade, piled close with no gaps through the
-    heap (a gap outlined would read as a hole), crumbs fallen off round its foot - lumpy, not a smooth powder.
-    """
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    rng = random.Random(8)
-    for y in range(6, 15):
-        half = [2, 3, 4, 5, 5, 6, 6, 7, 7][y - 6]
-        for x in range(8 - half, 8 + half):
-            lump = ((x // 2) * 7 + (y // 2) * 3 + rng.randrange(2)) % 4  # which lump, and how it catches the light
-            light = (x - 8) + (y - 10) * 0.8
-            base = 3 if light < -4 else 2 if light < 1 else 1
-            c = CRUMB[max(0, min(3, base + (1 if lump == 0 else -1 if lump == 3 else 0)))]
-            px(img, x, y, c)
-    for x, y in ((2, 14), (13, 14), (1, 13)):  # crumbs fallen off it
-        px(img, x, y, CRUMB[2])
-    return outline(img)
+    """Panko: a heap of cream-white flakes, a few toasted bits, crumbs fallen at its foot."""
+    return itemkit.sprite(itemkit.check(PANKO_ROWS), PANKO_ICON, lit=0.8, dark=0.6)
 
 
 CUTLET = [(128, 64, 20), (180, 108, 36), (222, 158, 64), (246, 204, 116), (255, 232, 168)]  # the crumb coat
@@ -920,9 +947,11 @@ def main():
              # after the others: each is finished by its place in this list
              "plated_fried_rice": plated_fried_rice(), "plated_stir_fried_vegetables": plated_stir_fried_vegetables()}
     finished = {"fried_fish", "carrot_nukazuke", "beetroot_nukazuke", "tonkatsu",  # ringed piece by piece already, and left smooth
+                "vegetable_soup", "breadcrumbs",  # placed by hand to vanilla's sizes, ringed as drawn
                 "fried_egg", "boiled_egg", "tamagoyaki"}  # finished with what they keep exact, and ringed, as drawn
     for i, (name, img) in enumerate(items.items()):
-        (img if name in finished else texkit.icon(img, 10 + i)).save(tex / f"item/{name}.png")
+        if not hand_finished.kept(tex / f"item/{name}.png"):  # the author's own drawings stand for some
+            (img if name in finished else texkit.icon(img, 10 + i)).save(tex / f"item/{name}.png")
         write_json(ASSETS / f"models/item/{name}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"nookworks:item/{name}"}})
         write_json(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/{name}"}})
     # trial (the cooking review, 2026-11-14): the Iron Pot's models, blockstate and item are gen_dishes_cooking.py's now -

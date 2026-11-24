@@ -1,0 +1,61 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:kitchen_tap"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "tap": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "nookworks:kitchen_tap"
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:kitchen_tap"
+    },
+    "title": {
+      "translate": "advancements.nookworks.kitchen_tap.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.kitchen_tap.description"
+    }
+  },
+  "requirements": [
+    [
+      "tap"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

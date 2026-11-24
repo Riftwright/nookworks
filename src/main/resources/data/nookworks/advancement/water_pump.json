@@ -1,0 +1,43 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:water_pump"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "pump": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:water_pump"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:water_pump"
+    },
+    "title": {
+      "translate": "advancements.nookworks.water_pump.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.water_pump.description"
+    }
+  },
+  "requirements": [
+    [
+      "pump"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:copper_pipe"
+}

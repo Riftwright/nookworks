@@ -20,9 +20,9 @@ WOOD = [(84, 56, 30), (110, 76, 42), (136, 98, 56), (160, 122, 76)]
 WOOD_SIDE = tex("bowl_wood_side", rows_by_height([(1, WOOD[0]), (3, WOOD[1])], WOOD[2]), 901)
 WOOD_RIM = mat("bowl_wood_rim", [WOOD[2], WOOD[3]], 902, weights=[40])
 GLAZE = tw.GLAZE
-BLUE = tw.BLUE
-WHITE_SIDE = tex("bowl_white_side", rows_by_height([(1, GLAZE[1]), (3, GLAZE[3])], BLUE[1]), 903, keep=[BLUE[1]])
-BLUE_RIM = mat("bowl_blue_rim", [BLUE[0], BLUE[1]], 904, weights=[35])
+# plain white china, as the Corn Potage's icon (the user, 2026-11-21: its blue rim and band dropped to match)
+WHITE_SIDE = tex("bowl_white_side", rows_by_height([(1, GLAZE[1])], GLAZE[3]), 903)
+WHITE_RIM = mat("bowl_white_rim", [GLAZE[2], GLAZE[3]], 904, weights=[35])
 
 
 def bowl(top, mound=0, side=WOOD_SIDE, rim=WOOD_RIM):
@@ -48,9 +48,10 @@ def soup(name, broth, bits, seed):
 
 
 CARROT_BIT, POTATO_BIT, GREEN_BIT, BEET_BIT = (238, 146, 46), (240, 220, 152), (96, 168, 60), (138, 28, 58)
+SOUP_CARROT, SOUP_POTATO = (225, 117, 29), (245, 234, 186)  # the Vegetable Soup icon's own
 RICE = [(222, 220, 210), (240, 238, 230), (252, 251, 246)]
 FRIED_RICE = [(196, 148, 58), (222, 178, 84), (238, 204, 116)]
-VEG_SOUP = [(170, 82, 38), (192, 104, 50), (210, 128, 66)]
+VEG_SOUP = [(212, 164, 76), (221, 181, 93), (233, 193, 105)]  # a clear golden broth, as the icon the user drew (2026-11-21)
 CREAM = [(230, 220, 194), (243, 235, 213), (252, 247, 232)]
 POTAGE = [(230, 190, 76), (243, 208, 98), (250, 224, 126)]
 
@@ -70,8 +71,9 @@ def stir_fry_top():
 
 
 def veg_soup_top():
-    return soup("fill_vegetable_soup", VEG_SOUP, {CARROT_BIT: [(6, 6), (9, 8), (7, 10)], POTATO_BIT: [(8, 6), (6, 8), (9, 10)],
-                                                  BEET_BIT: [(9, 6), (7, 8)], GREEN_BIT: [(7, 7), (8, 9), (10, 7)]}, 914)
+    # carrot and potato in the clear broth, as the icon shows them (no beet or green: the user's consomme has none)
+    return soup("fill_vegetable_soup", VEG_SOUP, {SOUP_CARROT: [(6, 6), (9, 8), (7, 10), (10, 6)],
+                                                  SOUP_POTATO: [(8, 6), (6, 8), (9, 10), (8, 9)]}, 914)
 
 
 def cream_stew_top():
@@ -103,7 +105,7 @@ def bowls():
     plated()
     put("dish/nookworks/vegetable_soup", *bowl(veg_soup_top()))
     put("dish/nookworks/cream_stew", *bowl(cream_stew_top()))
-    put("dish/nookworks/corn_potage", *bowl(potage_top(), side=WHITE_SIDE, rim=BLUE_RIM))
+    put("dish/nookworks/corn_potage", *bowl(potage_top(), side=WHITE_SIDE, rim=WHITE_RIM))
     # vanilla's stews: the same bowl
     put("dish/minecraft/mushroom_stew", *bowl(soup("fill_mushroom_stew", [(166, 124, 92), (188, 146, 110), (206, 166, 130)],
                                                     {(116, 80, 60): [(6, 6), (9, 7), (7, 9)], (234, 224, 202): [(8, 6), (6, 8), (9, 9)],

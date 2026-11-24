@@ -66,7 +66,7 @@ final class FightTasks {
      * come back to full strength - from a jump when it can, for the critical hit. Gives up if it runs off too far.
      */
     static final class Attack implements Task {
-        private final UUID target;
+        final UUID target;
         private final double giveUp;
         private @Nullable BlockPos heading;
         private int ticks;
@@ -103,6 +103,13 @@ final class FightTasks {
             if (d > this.giveUp || ++this.ticks > 2400) {
                 Bot.walker.stop(mc);
                 Bot.fail("it got away");
+                return Result.FAILED;
+            }
+            if (HallTasks.active != null && this.hits == 0 && this.ticks > 400) {
+                // digging the hall: one it cannot get at (up a hole in the ceiling, behind rock) is left - chased for two
+                // minutes, it was hit from behind and killed (2026-11-21)
+                Bot.walker.stop(mc);
+                Bot.fail("cannot get at it");
                 return Result.FAILED;
             }
             double reach = me.entityInteractionRange();

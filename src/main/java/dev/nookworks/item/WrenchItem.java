@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.Nookworks;
 import dev.nookworks.feature.JoinOverrides;
+import dev.nookworks.feature.ModAdvancements;
 import dev.nookworks.feature.WrenchRecovery;
 import dev.nookworks.registry.ModDataComponents;
 import dev.nookworks.registry.ModSounds;
@@ -20,6 +21,8 @@ import dev.nookworks.furniture.DeskBlock;
 import dev.nookworks.furniture.WallShelfBlock;
 import dev.nookworks.wood.TurnedPlanks;
 import dev.nookworks.feature.Permission;
+import dev.nookworks.ventilation.ChimneyBlock;
+import dev.nookworks.ventilation.DuctBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -224,6 +227,33 @@ public class WrenchItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
+        // Ducts and chimneys: sneak-use parts the side you point at from what it joins, or joins it back, as a pipe's (the
+        // user, 2026-11-23: 「隣にあると、どこでも繋がっちまう」); a duct or chimney on that side is set with it. A chimney
+        // parts only its four sides: a click on its top means the side facing you.
+        if (backwards && DuctBlock.partable(state)) {
+            if (player != null && (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand()))) {
+                return InteractionResult.FAIL;
+            }
+            if (level instanceof ServerLevel server) {
+                Direction side = PipeSides.sideFromHit(pos, context.getClickLocation(), context.getClickedFace());
+                if (state.getBlock() instanceof ChimneyBlock && side.getAxis() == Direction.Axis.Y) {
+                    side = player != null ? player.getDirection().getOpposite() : Direction.NORTH;
+                }
+                BlockPos next = pos.relative(side);
+                if (player != null && DuctBlock.partable(server.getBlockState(next)) && !Permission.mayPlace(server, next, side, player)) {
+                    return InteractionResult.FAIL; // the one it joins is set with it: asked as the clicked one was
+                }
+                boolean off = DuctBlock.toggleSide(level, pos, state, side);
+                level.playSound(null, pos, ModSounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.6F, off ? 0.85F : 1.12F);
+                if (player != null) {
+                    player.sendOverlayMessage(Component.translatable(off ? "message.nookworks.wrench.side_off" : "message.nookworks.wrench.side_on",
+                            Component.translatable("direction.nookworks." + side.getSerializedName())));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         // Pipes and cables: sneak-use switches the side you point at off, or back on - and a fluid pipe's side against a
         // tank or machine goes joined, pulling, off (FluidPipeBlockEntity.cycle).
         if (backwards && PipeSides.isPipe(state)) {
@@ -250,6 +280,9 @@ public class WrenchItem extends Item {
                         case JOINED -> "message.nookworks.wrench.side_on";
                     }, Component.translatable("direction.nookworks." + side.getSerializedName())));
                     context.getItemInHand().hurtAndBreak(1, player, context.getHand());
+                    if (now == FluidPipeBlockEntity.SideSetting.PULLING) {
+                        ModAdvancements.award(player, "wrench", "pull");
+                    }
                 }
             }
             return InteractionResult.SUCCESS;

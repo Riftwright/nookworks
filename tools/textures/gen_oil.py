@@ -13,6 +13,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -36,6 +37,8 @@ def mix(a, b, t):
 
 
 def save(img, path, frametime=None):
+    if hand_finished.kept(path):  # an icon drawn outside the scripts stands for it
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     img.save(path)
     if frametime:

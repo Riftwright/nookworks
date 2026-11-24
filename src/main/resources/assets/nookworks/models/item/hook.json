@@ -1,6 +1,124 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "nookworks:item/hook"
+  "parent": "nookworks:block/hook_wall",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        13.0,
+        -10.17,
+        9.14
+      ],
+      "scale": [
+        2.828,
+        2.828,
+        2.828
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        -5.06,
+        0.35,
+        -5.06
+      ],
+      "scale": [
+        1.1,
+        1.1,
+        1.1
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        5.06,
+        0.35,
+        5.06
+      ],
+      "scale": [
+        1.1,
+        1.1,
+        1.1
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        -5.52,
+        7.36,
+        -3.11
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        -5.52,
+        7.36,
+        -3.11
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0.0,
+        1.2,
+        -7.5
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        -16.25,
+        -3.9,
+        0.0
+      ],
+      "scale": [
+        2.6,
+        2.6,
+        2.6
+      ]
+    }
   }
 }

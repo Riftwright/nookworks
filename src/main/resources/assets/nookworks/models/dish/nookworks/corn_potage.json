@@ -3,7 +3,7 @@
   "textures": {
     "top": "nookworks:block/dish/fill_corn_potage",
     "side": "nookworks:block/dish/bowl_white_side",
-    "rim": "nookworks:block/dish/bowl_blue_rim",
+    "rim": "nookworks:block/dish/bowl_white_rim",
     "particle": "nookworks:block/dish/fill_corn_potage"
   },
   "elements": [

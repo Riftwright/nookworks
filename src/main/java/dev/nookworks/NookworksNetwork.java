@@ -424,8 +424,10 @@ public final class NookworksNetwork {
         // login with NeoForge's version message, not dropped at its first click on a pot (r21 fix re-check). "3" since
         // 1.5: the machine screens' tabs add slots to their menus, and the gauge click's payload is gone. "4" since 1.6:
         // the Spawner Controller's menu sends a fifteenth value (its mob sounds), which a 1.5 client's menu has no room for.
-        // "5" since 1.7: the Dock-a-Daemon Door's place is sent (DaemonDoorHere)
-        var registrar = event.registrar("5");
+        // "5" since 1.7: the Dock-a-Daemon Door's place is sent (DaemonDoorHere). "6" since 1.8: ducts, chimneys and the
+        // Motor have new block-state properties (the Wrench's parted sides, the Motor's cable sockets), so block-state ids
+        // differ between 1.7 and 1.8 and a 1.7 client on a 1.8 server would show the wrong blocks.
+        var registrar = event.registrar("6");
         registrar.playToServer(StepWandMode.TYPE, StepWandMode.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && BuildingWandItem.hasModes(player.getMainHandItem())
                     && payload.steps() != 0) {

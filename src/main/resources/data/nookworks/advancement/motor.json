@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:motor"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "motor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:motor"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:motor"
+    },
+    "title": {
+      "translate": "advancements.nookworks.motor.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.motor.description"
+    }
+  },
+  "requirements": [
+    [
+      "motor"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:machine_chassis"
+}

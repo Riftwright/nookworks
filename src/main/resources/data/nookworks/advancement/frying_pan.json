@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_pot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:frying_pan"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "pan": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:frying_pan"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:frying_pan"
+    },
+    "title": {
+      "translate": "advancements.nookworks.frying_pan.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.frying_pan.description"
+    }
+  },
+  "requirements": [
+    [
+      "pan"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:iron_pot"
+}

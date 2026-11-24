@@ -67,7 +67,8 @@ public final class PathWorld {
         long key = BlockPos.asLong(x, y, z);
         BlockState state = this.states.get(key);
         if (state == null) {
-            state = this.known(x, y, z) ? this.level.getBlockState(this.cursor.set(x, y, z)) : Blocks.BEDROCK.defaultBlockState();
+            state = this.known(x, y, z) && (this.ab.wall == null || !this.ab.wall.test(this.cursor.set(x, y, z)))
+                    ? this.level.getBlockState(this.cursor.set(x, y, z)) : Blocks.BEDROCK.defaultBlockState();
             this.states.put(key, state);
         }
         return state;

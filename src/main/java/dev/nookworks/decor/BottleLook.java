@@ -30,7 +30,7 @@ public record BottleLook(Optional<Integer> color) {
         try {
             return DataResult.success(Integer.parseInt(s.startsWith("#") ? s.substring(1) : s, 16));
         } catch (NumberFormatException e) {
-            return DataResult.error(() -> "not a colour: " + s);
+            return DataResult.error(() -> "not a color: " + s);
         }
     }, c -> String.format("#%06x", c & 0xFFFFFF));
     public static final Codec<BottleLook> CODEC = RecordCodecBuilder.create(i -> i.group(

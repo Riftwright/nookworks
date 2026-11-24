@@ -1,0 +1,1621 @@
+{
+  "version": "1.8.0",
+  "blocks": 339,
+  "places": {
+    "0,1,0": {
+      "state": "nookworks:rope[tie\u003d0,waterlogged\u003dfalse]"
+    },
+    "0,1,12": {
+      "state": "nookworks:stripped_dawnwood_wood[axis\u003dy]"
+    },
+    "0,1,15": {
+      "state": "nookworks:acacia_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "0,1,18": {
+      "state": "nookworks:birch_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "0,1,21": {
+      "state": "nookworks:cherry_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "0,1,24": {
+      "state": "nookworks:bamboo_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "0,1,27": {
+      "state": "nookworks:turned_pale_oak_planks"
+    },
+    "0,1,3": {
+      "state": "nookworks:precision_sorter[facing\u003dnorth,gear\u003dnone,swapped\u003dfalse]",
+      "entity": "nookworks:sorter",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "0,1,30": {
+      "state": "nookworks:glazed_potted_dark_oak_sapling"
+    },
+    "0,1,33": {
+      "state": "nookworks:glazed_potted_crimson_fungus"
+    },
+    "0,1,36": {
+      "state": "nookworks:corn[age\u003d0,half\u003dlower]"
+    },
+    "0,1,39": {
+      "state": "nookworks:recycler[half\u003dlower,running\u003dfalse]",
+      "entity": "nookworks:recycler",
+      "energy": 400
+    },
+    "0,1,42": {
+      "state": "nookworks:if_mirror[facing\u003dnorth,half\u003dlower]",
+      "entity": "nookworks:if_mirror"
+    },
+    "0,1,6": {
+      "state": "nookworks:unlit_exposed_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "0,1,9": {
+      "state": "nookworks:stony_dirt"
+    },
+    "0,2,36": {
+      "state": "nookworks:corn[age\u003d0,half\u003dupper]"
+    },
+    "0,2,39": {
+      "state": "nookworks:recycler[half\u003dupper,running\u003dfalse]"
+    },
+    "0,2,42": {
+      "state": "nookworks:if_mirror[facing\u003dnorth,half\u003dupper]"
+    },
+    "10,1,0": {
+      "state": "nookworks:iron_workbench[facing\u003dnorth]"
+    },
+    "10,1,12": {
+      "state": "nookworks:dawnwood_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "10,1,15": {
+      "state": "nookworks:poplar_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "10,1,18": {
+      "state": "nookworks:jungle_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "10,1,21": {
+      "state": "nookworks:pale_oak_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "10,1,24": {
+      "state": "nookworks:dawnwood_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "10,1,27": {
+      "state": "nookworks:turned_crimson_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "10,1,3": {
+      "state": "nookworks:gold_storage_barrel[facing\u003dnorth,locked\u003dfalse,open\u003dfalse]",
+      "entity": "nookworks:storage",
+      "items": [
+        "minecraft:coal 13",
+        "minecraft:cobblestone 13",
+        "minecraft:iron_ingot 13"
+      ]
+    },
+    "10,1,30": {
+      "state": "nookworks:glazed_potted_dandelion"
+    },
+    "10,1,33": {
+      "state": "nookworks:glazed_potted_flowering_azalea_bush"
+    },
+    "10,1,36": {
+      "state": "nookworks:duct[down\u003dfalse,down_off\u003dfalse,east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,up\u003dfalse,up_off\u003dfalse,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "10,1,39": {
+      "state": "nookworks:waxed_scrap_bale"
+    },
+    "10,1,6": {
+      "state": "nookworks:unlit_waxed_weathered_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "10,1,9": {
+      "state": "nookworks:copper_tank[content\u003dwater,level\u003d1,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:copper_tank",
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "12,1,0": {
+      "state": "nookworks:brass_workbench[facing\u003dnorth]"
+    },
+    "12,1,12": {
+      "state": "nookworks:dawnwood_fence[east\u003dfalse,north\u003dfalse,south\u003dfalse,waterlogged\u003dfalse,west\u003dfalse]"
+    },
+    "12,1,15": {
+      "state": "nookworks:crimson_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "12,1,18": {
+      "state": "nookworks:acacia_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "12,1,21": {
+      "state": "nookworks:pale_oak_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "12,1,24": {
+      "state": "nookworks:dawnwood_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "12,1,27": {
+      "state": "nookworks:turned_warped_planks"
+    },
+    "12,1,3": {
+      "state": "nookworks:diamond_storage_barrel[facing\u003dnorth,locked\u003dfalse,open\u003dfalse]",
+      "entity": "nookworks:storage",
+      "items": [
+        "minecraft:coal 13",
+        "minecraft:cobblestone 13",
+        "minecraft:iron_ingot 13"
+      ]
+    },
+    "12,1,30": {
+      "state": "nookworks:glazed_potted_golden_dandelion"
+    },
+    "12,1,33": {
+      "state": "nookworks:glazed_potted_open_eyeblossom"
+    },
+    "12,1,36": {
+      "state": "nookworks:chimney[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "12,1,39": {
+      "state": "nookworks:waxed_exposed_scrap_bale"
+    },
+    "12,1,6": {
+      "state": "nookworks:unlit_waxed_oxidized_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "12,1,9": {
+      "state": "nookworks:water_pump[port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse,running\u003dfalse]",
+      "entity": "nookworks:water_pump",
+      "energy": 200
+    },
+    "14,1,0": {
+      "state": "nookworks:crate",
+      "entity": "nookworks:crate",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:cobblestone 3",
+        "minecraft:iron_ingot 4"
+      ]
+    },
+    "14,1,12": {
+      "state": "nookworks:dawnwood_fence_gate[facing\u003dnorth,in_wall\u003dfalse,open\u003dfalse,powered\u003dfalse]"
+    },
+    "14,1,15": {
+      "state": "nookworks:warped_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "14,1,18": {
+      "state": "nookworks:acacia_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "14,1,21": {
+      "state": "nookworks:poplar_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "14,1,24": {
+      "state": "nookworks:dawnwood_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "14,1,27": {
+      "state": "nookworks:turned_warped_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "14,1,3": {
+      "state": "nookworks:netherite_storage_barrel[facing\u003dnorth,locked\u003dfalse,open\u003dfalse]",
+      "entity": "nookworks:storage",
+      "items": [
+        "minecraft:coal 13",
+        "minecraft:cobblestone 13",
+        "minecraft:iron_ingot 13"
+      ]
+    },
+    "14,1,30": {
+      "state": "nookworks:glazed_potted_poppy"
+    },
+    "14,1,33": {
+      "state": "nookworks:glazed_potted_closed_eyeblossom"
+    },
+    "14,1,36": {
+      "state": "nookworks:stone_brick_chimney[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "14,1,39": {
+      "state": "nookworks:waxed_weathered_scrap_bale"
+    },
+    "14,1,6": {
+      "state": "nookworks:placed_books[books\u003d2,facing\u003dnorth,mirrored\u003dfalse,standing\u003dfalse]",
+      "entity": "nookworks:placed_books",
+      "items": [
+        "minecraft:book 1",
+        "minecraft:enchanted_book 1"
+      ]
+    },
+    "14,1,9": {
+      "state": "nookworks:experience_pipe[down\u003dfalse,down_off\u003dfalse,east\u003dfalse,east_off\u003dfalse,filled\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,up\u003dfalse,up_off\u003dfalse,west\u003dfalse,west_off\u003dfalse]",
+      "entity": "nookworks:experience_pipe",
+      "fluids": [
+        "nookworks:liquid_experience 750"
+      ]
+    },
+    "14,4,49": {
+      "state": "nookworks:thin_rope[anchored\u003dtrue,tie\u003d0,waterlogged\u003dfalse]"
+    },
+    "16,1,0": {
+      "state": "nookworks:elevator"
+    },
+    "16,1,12": {
+      "state": "nookworks:dawnwood_door[facing\u003dnorth,half\u003dlower,hinge\u003dleft,open\u003dfalse,powered\u003dfalse]"
+    },
+    "16,1,15": {
+      "state": "nookworks:bamboo_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "16,1,18": {
+      "state": "nookworks:acacia_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "16,1,21": {
+      "state": "nookworks:poplar_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "16,1,24": {
+      "state": "nookworks:turned_oak_planks"
+    },
+    "16,1,27": {
+      "state": "nookworks:turned_bamboo_planks"
+    },
+    "16,1,3": {
+      "state": "nookworks:velarium_storage_barrel[facing\u003dnorth,locked\u003dfalse,open\u003dfalse]",
+      "entity": "nookworks:storage",
+      "items": [
+        "minecraft:coal 13",
+        "minecraft:cobblestone 13",
+        "minecraft:iron_ingot 13"
+      ]
+    },
+    "16,1,30": {
+      "state": "nookworks:glazed_potted_blue_orchid"
+    },
+    "16,1,33": {
+      "state": "nookworks:glazed_potted_dawnwood_sapling"
+    },
+    "16,1,36": {
+      "state": "nookworks:nether_brick_chimney[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "16,1,39": {
+      "state": "nookworks:waxed_oxidized_scrap_bale"
+    },
+    "16,1,6": {
+      "state": "nookworks:bookend[books\u003d2,facing\u003dsouth,hinge\u003dleft]",
+      "entity": "nookworks:bookend",
+      "items": [
+        "minecraft:book 1",
+        "minecraft:writable_book 1"
+      ]
+    },
+    "16,1,9": {
+      "state": "nookworks:absorption_pad[east\u003dfalse,north\u003dfalse,powered\u003dfalse,south\u003dfalse,up\u003dfalse,west\u003dfalse]",
+      "entity": "nookworks:absorption_pad"
+    },
+    "16,2,12": {
+      "state": "nookworks:dawnwood_door[facing\u003dnorth,half\u003dupper,hinge\u003dleft,open\u003dfalse,powered\u003dfalse]"
+    },
+    "18,1,0": {
+      "state": "nookworks:item_warp_sender",
+      "entity": "nookworks:item_warp_sender",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "18,1,12": {
+      "state": "nookworks:dawnwood_trapdoor[facing\u003dnorth,half\u003dbottom,open\u003dfalse,powered\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "18,1,15": {
+      "state": "nookworks:dawnwood_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "18,1,18": {
+      "state": "nookworks:acacia_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "18,1,21": {
+      "state": "nookworks:poplar_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "18,1,24": {
+      "state": "nookworks:turned_oak_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "18,1,27": {
+      "state": "nookworks:turned_bamboo_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "18,1,3": {
+      "state": "nookworks:spawner_link_sender[facing\u003dsouth,lit\u003dfalse]",
+      "entity": "nookworks:spawner_link_sender"
+    },
+    "18,1,30": {
+      "state": "nookworks:glazed_potted_allium"
+    },
+    "18,1,33": {
+      "state": "nookworks:rice[age\u003d0]"
+    },
+    "18,1,36": {
+      "state": "nookworks:cobblestone_chimney[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "18,1,39": {
+      "state": "nookworks:corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "18,1,6": {
+      "state": "nookworks:standing_mirror[facing\u003dnorth,half\u003dlower]",
+      "entity": "nookworks:standing_mirror"
+    },
+    "18,1,9": {
+      "state": "nookworks:repair_box[facing\u003dnorth,type\u003dsingle]",
+      "entity": "nookworks:repair_box",
+      "fluids": [
+        "nookworks:liquid_experience 750"
+      ],
+      "energy": 500
+    },
+    "18,2,6": {
+      "state": "nookworks:standing_mirror[facing\u003dnorth,half\u003dupper]"
+    },
+    "19,1,49": {
+      "state": "nookworks:crate",
+      "entity": "nookworks:crate",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:cobblestone 3",
+        "minecraft:iron_ingot 4"
+      ]
+    },
+    "19,1,53": {
+      "state": "nookworks:oak_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "2,1,0": {
+      "state": "nookworks:thin_rope[anchored\u003dfalse,tie\u003d0,waterlogged\u003dfalse]"
+    },
+    "2,1,12": {
+      "state": "nookworks:dawnwood_log[axis\u003dy]"
+    },
+    "2,1,15": {
+      "state": "nookworks:dark_oak_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "2,1,18": {
+      "state": "nookworks:jungle_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "2,1,21": {
+      "state": "nookworks:cherry_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "2,1,24": {
+      "state": "nookworks:bamboo_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "2,1,27": {
+      "state": "nookworks:turned_pale_oak_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "2,1,3": {
+      "state": "nookworks:gold_sorter[facing\u003dnorth,gear\u003dnone,swapped\u003dfalse]",
+      "entity": "nookworks:sorter",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "2,1,30": {
+      "state": "nookworks:glazed_potted_pale_oak_sapling"
+    },
+    "2,1,33": {
+      "state": "nookworks:glazed_potted_warped_fungus"
+    },
+    "2,1,36": {
+      "state": "nookworks:onions[age\u003d0]"
+    },
+    "2,1,39": {
+      "state": "nookworks:scrap_bale"
+    },
+    "2,1,42": {
+      "state": "nookworks:barter_terminal[facing\u003dsouth,running\u003dfalse]",
+      "entity": "nookworks:barter_terminal",
+      "items": [
+        "minecraft:gold_ingot 3"
+      ],
+      "energy": 200
+    },
+    "2,1,6": {
+      "state": "nookworks:unlit_weathered_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "2,1,9": {
+      "state": "nookworks:pebbles[pebbles\u003d1,waterlogged\u003dfalse]"
+    },
+    "20,1,0": {
+      "state": "nookworks:item_warp_receiver",
+      "entity": "nookworks:item_warp_receiver"
+    },
+    "20,1,12": {
+      "state": "nookworks:dawnwood_button[face\u003dwall,facing\u003dnorth,powered\u003dfalse]"
+    },
+    "20,1,15": {
+      "state": "nookworks:oak_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "20,1,18": {
+      "state": "nookworks:acacia_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "20,1,21": {
+      "state": "nookworks:poplar_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "20,1,24": {
+      "state": "nookworks:turned_spruce_planks"
+    },
+    "20,1,27": {
+      "state": "nookworks:turned_dawnwood_planks"
+    },
+    "20,1,3": {
+      "state": "nookworks:spawner_link_receiver[facing\u003dsouth,lit\u003dfalse]",
+      "entity": "nookworks:spawner_link_receiver",
+      "energy": 5000
+    },
+    "20,1,30": {
+      "state": "nookworks:glazed_potted_azure_bluet"
+    },
+    "20,1,33": {
+      "state": "nookworks:rice_panicles[age\u003d0]"
+    },
+    "20,1,36": {
+      "state": "nookworks:brick_flue[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "20,1,39": {
+      "state": "nookworks:exposed_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "20,1,6": {
+      "state": "nookworks:book_row[books\u003d2,facing\u003dsouth,hinge\u003dleft]",
+      "entity": "nookworks:bookend",
+      "items": [
+        "minecraft:book 1",
+        "minecraft:writable_book 1"
+      ]
+    },
+    "20,1,9": {
+      "state": "nookworks:dark_matter[darkening\u003dtrue]",
+      "entity": "nookworks:dark_matter"
+    },
+    "22,1,0": {
+      "state": "nookworks:horizontal_item_warp_sender[facing\u003dnorth]",
+      "entity": "nookworks:horizontal_item_warp_sender",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "22,1,12": {
+      "state": "nookworks:dawnwood_pressure_plate[powered\u003dfalse]"
+    },
+    "22,1,15": {
+      "state": "nookworks:oak_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "22,1,18": {
+      "state": "nookworks:dark_oak_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "22,1,21": {
+      "state": "nookworks:poplar_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "22,1,24": {
+      "state": "nookworks:turned_spruce_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "22,1,27": {
+      "state": "nookworks:turned_dawnwood_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "22,1,3": {
+      "state": "nookworks:spawner_controller[facing\u003dnorth,lit\u003dfalse]",
+      "entity": "nookworks:spawner_controller"
+    },
+    "22,1,30": {
+      "state": "nookworks:glazed_potted_red_tulip"
+    },
+    "22,1,33": {
+      "state": "nookworks:rice_polisher[drive\u003dnone,facing\u003dnorth]",
+      "entity": "nookworks:rice_polisher",
+      "items": [
+        "nookworks:brown_rice 3"
+      ]
+    },
+    "22,1,36": {
+      "state": "nookworks:stone_brick_flue[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "22,1,39": {
+      "state": "nookworks:weathered_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "22,1,6": {
+      "state": "nookworks:placed_bottles[bottles\u003d1,filled_0\u003dfalse,filled_1\u003dfalse,filled_2\u003dfalse,filled_3\u003dfalse]",
+      "entity": "nookworks:placed_bottles"
+    },
+    "22,1,9": {
+      "state": "nookworks:warp_anchor[on\u003dtrue]",
+      "entity": "nookworks:warp_anchor"
+    },
+    "24,1,0": {
+      "state": "nookworks:horizontal_item_warp_receiver[facing\u003dnorth]",
+      "entity": "nookworks:horizontal_item_warp_receiver"
+    },
+    "24,1,12": {
+      "state": "nookworks:dawnwood_leaves[distance\u003d7,persistent\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "24,1,15": {
+      "state": "nookworks:oak_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "24,1,18": {
+      "state": "nookworks:dark_oak_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "24,1,21": {
+      "state": "nookworks:crimson_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "24,1,24": {
+      "state": "nookworks:turned_birch_planks"
+    },
+    "24,1,27": {
+      "state": "nookworks:glazed_flower_pot"
+    },
+    "24,1,3": {
+      "state": "nookworks:mercury_tank[facing\u003dsouth,level\u003d0,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:mercury_tank"
+    },
+    "24,1,30": {
+      "state": "nookworks:glazed_potted_orange_tulip"
+    },
+    "24,1,33": {
+      "state": "nookworks:end_sprout[age\u003d0]"
+    },
+    "24,1,36": {
+      "state": "nookworks:nether_brick_flue[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "24,1,39": {
+      "state": "nookworks:oxidized_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "24,1,6": {
+      "state": "nookworks:vegetable_oil_cauldron[level\u003d1]"
+    },
+    "24,1,9": {
+      "state": "nookworks:wine_glass[count\u003d1,facing\u003dnorth]"
+    },
+    "26,1,0": {
+      "state": "nookworks:sifter",
+      "entity": "nookworks:sifter",
+      "items": [
+        "minecraft:dirt 3",
+        "nookworks:brass_mesh 1"
+      ]
+    },
+    "26,1,12": {
+      "state": "nookworks:dawnwood_sapling[stage\u003d0]"
+    },
+    "26,1,15": {
+      "state": "nookworks:oak_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "26,1,18": {
+      "state": "nookworks:dark_oak_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "26,1,21": {
+      "state": "nookworks:crimson_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "26,1,24": {
+      "state": "nookworks:turned_birch_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "26,1,27": {
+      "state": "nookworks:hanging_planter_green_trail[tip\u003dtrue]"
+    },
+    "26,1,3": {
+      "state": "nookworks:mercury_pipe[down\u003dfalse,down_off\u003dfalse,east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,up\u003dfalse,up_off\u003dfalse,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "26,1,30": {
+      "state": "nookworks:glazed_potted_white_tulip"
+    },
+    "26,1,33": {
+      "state": "nookworks:grill[over_fire\u003dfalse]",
+      "entity": "nookworks:grill",
+      "items": [
+        "minecraft:potato 4"
+      ]
+    },
+    "26,1,36": {
+      "state": "nookworks:cobblestone_flue[east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,top\u003dtrue,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "26,1,39": {
+      "state": "nookworks:waxed_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "26,1,6": {
+      "state": "nookworks:methanol_cauldron[level\u003d1]"
+    },
+    "26,1,9": {
+      "state": "nookworks:mug[count\u003d1,facing\u003dnorth]"
+    },
+    "27,2,48": {
+      "state": "nookworks:motor[facing\u003dsouth,powered\u003dtrue,socket_down\u003dfalse,socket_east\u003dfalse,socket_north\u003dfalse,socket_south\u003dfalse,socket_up\u003dfalse,socket_west\u003dfalse]",
+      "entity": "nookworks:motor",
+      "energy": 150
+    },
+    "27,2,49": {
+      "state": "nookworks:drive_wheel[facing\u003dsouth,turning\u003dtrue]",
+      "entity": "nookworks:drive_wheel",
+      "belts": [
+        "5,0,0 rope nookworks:rope 10"
+      ]
+    },
+    "28,1,0": {
+      "state": "nookworks:generator[facing\u003dsouth,lit\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:generator",
+      "items": [
+        "minecraft:coal 3"
+      ],
+      "fluids": [
+        "nookworks:vegetable_oil 750"
+      ]
+    },
+    "28,1,12": {
+      "state": "nookworks:potted_dawnwood_sapling"
+    },
+    "28,1,15": {
+      "state": "nookworks:oak_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "28,1,18": {
+      "state": "nookworks:dark_oak_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "28,1,21": {
+      "state": "nookworks:crimson_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "28,1,24": {
+      "state": "nookworks:turned_jungle_planks"
+    },
+    "28,1,27": {
+      "state": "nookworks:hanging_planter_pink_trail[tip\u003dtrue]"
+    },
+    "28,1,3": {
+      "state": "nookworks:retort[facing\u003dsouth,lit\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:retort",
+      "items": [
+        "minecraft:oak_log 3"
+      ],
+      "fluids": [
+        "minecraft:water 750"
+      ],
+      "energy": 500
+    },
+    "28,1,30": {
+      "state": "nookworks:glazed_potted_pink_tulip"
+    },
+    "28,1,33": {
+      "state": "nookworks:iron_pot[cooking\u003dfalse,facing\u003dnorth,liquid\u003dwater,on_grill\u003dfalse]",
+      "entity": "nookworks:iron_pot",
+      "items": [
+        "minecraft:potato 8"
+      ],
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "28,1,36": {
+      "state": "nookworks:filament_bulb[lit\u003dtrue,powered\u003dfalse]"
+    },
+    "28,1,39": {
+      "state": "nookworks:waxed_exposed_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "28,1,6": {
+      "state": "nookworks:wood_vinegar_cauldron[level\u003d1]"
+    },
+    "28,1,9": {
+      "state": "nookworks:trash_can[powered\u003dfalse]",
+      "entity": "nookworks:trash_can"
+    },
+    "30,1,0": {
+      "state": "nookworks:diesel_generator[facing\u003dsouth,lit\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:diesel_generator",
+      "fluids": [
+        "nookworks:biodiesel 750"
+      ]
+    },
+    "30,1,12": {
+      "state": "nookworks:dawnwood_sign[rotation\u003d8,waterlogged\u003dfalse]",
+      "entity": "minecraft:sign"
+    },
+    "30,1,15": {
+      "state": "nookworks:spruce_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "30,1,18": {
+      "state": "nookworks:dark_oak_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "30,1,21": {
+      "state": "nookworks:crimson_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "30,1,24": {
+      "state": "nookworks:turned_jungle_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "30,1,27": {
+      "state": "nookworks:hanging_planter_green"
+    },
+    "30,1,3": {
+      "state": "nookworks:stirring_tank[port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse,running\u003dfalse]",
+      "entity": "nookworks:stirring_tank",
+      "items": [
+        "minecraft:cobblestone 3",
+        "nookworks:caustic_soda 4"
+      ],
+      "fluids": [
+        "minecraft:water 750"
+      ],
+      "energy": 500
+    },
+    "30,1,30": {
+      "state": "nookworks:glazed_potted_oxeye_daisy"
+    },
+    "30,1,33": {
+      "state": "nookworks:frying_pan[cooking\u003dfalse,facing\u003dnorth,liquid\u003doil,on_grill\u003dfalse]",
+      "entity": "nookworks:iron_pot",
+      "items": [
+        "minecraft:potato 4"
+      ],
+      "fluids": [
+        "nookworks:vegetable_oil 250"
+      ]
+    },
+    "30,1,36": {
+      "state": "nookworks:hung_light[level\u003d15]"
+    },
+    "30,1,39": {
+      "state": "nookworks:waxed_weathered_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "30,1,6": {
+      "state": "nookworks:biodiesel_cauldron[level\u003d1]"
+    },
+    "30,1,9": {
+      "state": "nookworks:nourished_soil[moisture\u003d0,richness\u003d3,tilled\u003dfalse]"
+    },
+    "32,1,0": {
+      "state": "nookworks:creative_generator[facing\u003dsouth]",
+      "entity": "nookworks:creative_generator",
+      "energy": 9223372036854775807
+    },
+    "32,1,12": {
+      "state": "nookworks:dawnwood_wall_sign[facing\u003dnorth,waterlogged\u003dfalse]",
+      "entity": "minecraft:sign"
+    },
+    "32,1,15": {
+      "state": "nookworks:spruce_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "32,1,18": {
+      "state": "nookworks:mangrove_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "32,1,21": {
+      "state": "nookworks:crimson_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "32,1,24": {
+      "state": "nookworks:turned_acacia_planks"
+    },
+    "32,1,27": {
+      "state": "nookworks:hanging_planter_pink"
+    },
+    "32,1,3": {
+      "state": "nookworks:distiller[port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse,running\u003dfalse]",
+      "entity": "nookworks:distiller",
+      "items": [
+        "nookworks:iron_amalgam 3"
+      ],
+      "fluids": [
+        "nookworks:wood_vinegar 750"
+      ],
+      "energy": 500
+    },
+    "32,1,30": {
+      "state": "nookworks:glazed_potted_cornflower"
+    },
+    "32,1,33": {
+      "state": "nookworks:electric_stove[facing\u003dnorth,lit\u003dfalse]",
+      "entity": "nookworks:electric_stove",
+      "energy": 500
+    },
+    "32,1,36": {
+      "state": "nookworks:hook[face\u003dwall,facing\u003dnorth,sprig\u003dnone,waterlogged\u003dfalse]"
+    },
+    "32,1,39": {
+      "state": "nookworks:waxed_oxidized_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "32,1,6": {
+      "state": "nookworks:liquid_experience_cauldron[level\u003d1]"
+    },
+    "32,1,9": {
+      "state": "nookworks:laser[beam\u003d0,facing\u003dnorth]",
+      "entity": "nookworks:laser",
+      "energy": 4000
+    },
+    "32,2,49": {
+      "state": "nookworks:drive_wheel[facing\u003dsouth,turning\u003dtrue]",
+      "entity": "nookworks:drive_wheel",
+      "belts": [
+        "-5,0,0 rope nookworks:rope 10",
+        "0,4,0 chain nookworks:thin_chain 8"
+      ]
+    },
+    "32,6,49": {
+      "state": "nookworks:drive_wheel[facing\u003dsouth,turning\u003dtrue]",
+      "entity": "nookworks:drive_wheel",
+      "belts": [
+        "0,-4,0 chain nookworks:thin_chain 8"
+      ]
+    },
+    "34,1,0": {
+      "state": "nookworks:crusher[running\u003dfalse]",
+      "entity": "nookworks:crusher",
+      "items": [
+        "minecraft:cobblestone 3"
+      ],
+      "energy": 200
+    },
+    "34,1,12": {
+      "state": "nookworks:dawnwood_hanging_sign[attached\u003dfalse,rotation\u003d8,waterlogged\u003dfalse]",
+      "entity": "minecraft:hanging_sign"
+    },
+    "34,1,15": {
+      "state": "nookworks:spruce_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "34,1,18": {
+      "state": "nookworks:mangrove_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "34,1,21": {
+      "state": "nookworks:warped_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "34,1,24": {
+      "state": "nookworks:turned_acacia_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "34,1,27": {
+      "state": "nookworks:glazed_potted_torchflower"
+    },
+    "34,1,3": {
+      "state": "nookworks:distillation_column"
+    },
+    "34,1,30": {
+      "state": "nookworks:glazed_potted_lily_of_the_valley"
+    },
+    "34,1,33": {
+      "state": "nookworks:kitchen_tap[facing\u003dnorth,open\u003dfalse,pouring\u003dfalse,powered\u003dfalse]",
+      "entity": "nookworks:kitchen_tap",
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "34,1,36": {
+      "state": "nookworks:wind_chime[facing\u003dnorth]"
+    },
+    "34,1,39": {
+      "state": "nookworks:red_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "34,1,6": {
+      "state": "nookworks:mercury_cauldron[level\u003d1]"
+    },
+    "34,1,9": {
+      "state": "nookworks:planter[facing\u003dnorth,running\u003dfalse]",
+      "entity": "nookworks:planter",
+      "items": [
+        "minecraft:potato 12"
+      ],
+      "energy": 500
+    },
+    "36,1,0": {
+      "state": "nookworks:printing_press[running\u003dfalse]",
+      "entity": "nookworks:printing_press",
+      "items": [
+        "minecraft:cyan_dye 4",
+        "minecraft:magenta_dye 5",
+        "nookworks:fine_paper 3"
+      ],
+      "energy": 200
+    },
+    "36,1,12": {
+      "state": "nookworks:dawnwood_wall_hanging_sign[facing\u003dnorth,waterlogged\u003dfalse]",
+      "entity": "minecraft:hanging_sign"
+    },
+    "36,1,15": {
+      "state": "nookworks:spruce_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "36,1,18": {
+      "state": "nookworks:mangrove_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "36,1,21": {
+      "state": "nookworks:warped_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "36,1,24": {
+      "state": "nookworks:turned_dark_oak_planks"
+    },
+    "36,1,27": {
+      "state": "nookworks:glazed_potted_oak_sapling"
+    },
+    "36,1,3": {
+      "state": "nookworks:condenser[port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse]"
+    },
+    "36,1,30": {
+      "state": "nookworks:glazed_potted_wither_rose"
+    },
+    "36,1,33": {
+      "state": "nookworks:nukadoko",
+      "entity": "nookworks:nukadoko"
+    },
+    "36,1,36": {
+      "state": "nookworks:oil_press[drive\u003dnone,facing\u003dnorth,oil\u003d0,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:oil_press",
+      "items": [
+        "nookworks:corn_kernels 3"
+      ]
+    },
+    "36,1,39": {
+      "state": "nookworks:green_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "36,1,6": {
+      "state": "nookworks:velarium_block"
+    },
+    "36,1,9": {
+      "state": "nookworks:magnet_chest[facing\u003dnorth]",
+      "entity": "nookworks:magnet_chest",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:cobblestone 3",
+        "minecraft:iron_ingot 4"
+      ]
+    },
+    "38,1,0": {
+      "state": "nookworks:electrolytic_cell[facing\u003dsouth,lit\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:electrolytic_cell",
+      "fluids": [
+        "minecraft:water 750"
+      ],
+      "energy": 500
+    },
+    "38,1,12": {
+      "state": "nookworks:dawnwood_shelf[facing\u003dnorth,powered\u003dfalse,side_chain\u003dunconnected,waterlogged\u003dfalse]",
+      "entity": "minecraft:shelf",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:cobblestone 3",
+        "minecraft:iron_ingot 4"
+      ]
+    },
+    "38,1,15": {
+      "state": "nookworks:spruce_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "38,1,18": {
+      "state": "nookworks:mangrove_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "38,1,21": {
+      "state": "nookworks:warped_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "38,1,24": {
+      "state": "nookworks:turned_dark_oak_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "38,1,27": {
+      "state": "nookworks:glazed_potted_spruce_sapling"
+    },
+    "38,1,3": {
+      "state": "nookworks:machine_bell[face\u003dwall,facing\u003dnorth,inset\u003d0,powered\u003dfalse,shift\u003d3,signal\u003dtrue]"
+    },
+    "38,1,30": {
+      "state": "nookworks:glazed_potted_red_mushroom"
+    },
+    "38,1,33": {
+      "state": "nookworks:hand_quern[drive\u003dnone,facing\u003dnorth]",
+      "entity": "nookworks:hand_quern",
+      "items": [
+        "minecraft:wheat 3"
+      ]
+    },
+    "38,1,36": {
+      "state": "nookworks:motor[facing\u003dnorth,powered\u003dfalse,socket_down\u003dfalse,socket_east\u003dfalse,socket_north\u003dfalse,socket_south\u003dfalse,socket_up\u003dfalse,socket_west\u003dfalse]",
+      "entity": "nookworks:motor",
+      "energy": 200
+    },
+    "38,1,39": {
+      "state": "nookworks:blue_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "38,1,6": {
+      "state": "nookworks:experience_tank[facing\u003dnorth,level\u003d1,open\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:experience_tank",
+      "fluids": [
+        "nookworks:liquid_experience 750"
+      ]
+    },
+    "38,1,9": {
+      "state": "nookworks:hub_stone[power\u003d0]"
+    },
+    "4,1,0": {
+      "state": "nookworks:sconce[lit\u003dfalse]"
+    },
+    "4,1,12": {
+      "state": "nookworks:dawnwood_wood[axis\u003dy]"
+    },
+    "4,1,15": {
+      "state": "nookworks:mangrove_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "4,1,18": {
+      "state": "nookworks:jungle_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "4,1,21": {
+      "state": "nookworks:pale_oak_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "4,1,24": {
+      "state": "nookworks:bamboo_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "4,1,27": {
+      "state": "nookworks:turned_poplar_planks"
+    },
+    "4,1,3": {
+      "state": "nookworks:diamond_sorter[facing\u003dnorth,gear\u003dnone,swapped\u003dfalse]",
+      "entity": "nookworks:sorter",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "4,1,30": {
+      "state": "nookworks:glazed_potted_poplar_sapling"
+    },
+    "4,1,33": {
+      "state": "nookworks:glazed_potted_crimson_roots"
+    },
+    "4,1,36": {
+      "state": "nookworks:rice_bale[axis\u003dz]"
+    },
+    "4,1,39": {
+      "state": "nookworks:exposed_scrap_bale"
+    },
+    "4,1,42": {
+      "state": "nookworks:trading_counter[facing\u003dnorth]",
+      "entity": "nookworks:trading_counter",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:cobblestone 3",
+        "minecraft:iron_ingot 4"
+      ]
+    },
+    "4,1,6": {
+      "state": "nookworks:unlit_oxidized_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "4,1,9": {
+      "state": "nookworks:copper_pipe[down\u003dfalse,down_off\u003dfalse,east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,up\u003dfalse,up_off\u003dfalse,west\u003dfalse,west_off\u003dfalse]",
+      "entity": "nookworks:copper_pipe",
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "40,1,0": {
+      "state": "nookworks:electric_furnace[facing\u003dsouth,lit\u003dfalse,port_down\u003dfalse,port_east\u003dfalse,port_north\u003dfalse,port_south\u003dfalse,port_up\u003dfalse,port_west\u003dfalse]",
+      "entity": "nookworks:electric_furnace",
+      "items": [
+        "minecraft:cobblestone 3"
+      ],
+      "energy": 200
+    },
+    "40,1,12": {
+      "state": "nookworks:oak_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "40,1,15": {
+      "state": "nookworks:birch_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "40,1,18": {
+      "state": "nookworks:mangrove_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "40,1,21": {
+      "state": "nookworks:warped_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "40,1,24": {
+      "state": "nookworks:turned_mangrove_planks"
+    },
+    "40,1,27": {
+      "state": "nookworks:glazed_potted_birch_sapling"
+    },
+    "40,1,3": {
+      "state": "nookworks:machine_chassis"
+    },
+    "40,1,30": {
+      "state": "nookworks:glazed_potted_brown_mushroom"
+    },
+    "40,1,33": {
+      "state": "nookworks:noodle_maker[drive\u003dnone,facing\u003dnorth]",
+      "entity": "nookworks:noodle_maker"
+    },
+    "40,1,36": {
+      "state": "nookworks:drive_wheel[facing\u003dnorth,turning\u003dfalse]",
+      "entity": "nookworks:drive_wheel"
+    },
+    "40,1,39": {
+      "state": "nookworks:white_corrugated_sheet[axis\u003dz,centered\u003dfalse,facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "40,1,6": {
+      "state": "nookworks:deepslate_gravel"
+    },
+    "40,1,9": {
+      "state": "nookworks:spawn_egg_brewer",
+      "entity": "nookworks:spawn_egg_brewer",
+      "items": [
+        "minecraft:egg 4"
+      ]
+    },
+    "42,1,0": {
+      "state": "nookworks:stone_maker[running\u003dfalse]",
+      "entity": "nookworks:stone_maker",
+      "energy": 200
+    },
+    "42,1,12": {
+      "state": "nookworks:spruce_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "42,1,15": {
+      "state": "nookworks:birch_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "42,1,18": {
+      "state": "nookworks:cherry_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "42,1,21": {
+      "state": "nookworks:warped_wall_shelf[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "42,1,24": {
+      "state": "nookworks:turned_mangrove_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "42,1,27": {
+      "state": "nookworks:glazed_potted_jungle_sapling"
+    },
+    "42,1,3": {
+      "state": "nookworks:unlit_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "42,1,30": {
+      "state": "nookworks:glazed_potted_dead_bush"
+    },
+    "42,1,33": {
+      "state": "nookworks:wooden_tray[facing\u003dnorth]",
+      "entity": "nookworks:wooden_tray",
+      "items": [
+        "minecraft:potato 4"
+      ]
+    },
+    "42,1,36": {
+      "state": "nookworks:sunflower_crop[age\u003d0]"
+    },
+    "42,1,39": {
+      "state": "nookworks:patched_sheet_metal"
+    },
+    "42,1,6": {
+      "state": "nookworks:nether_grit"
+    },
+    "42,1,9": {
+      "state": "nookworks:nested_timer[facing\u003dnorth,interval\u003d1,powered\u003dfalse]",
+      "entity": "nookworks:nested_timer"
+    },
+    "44,1,0": {
+      "state": "nookworks:energy_cable[down\u003dfalse,down_off\u003dfalse,east\u003dfalse,east_off\u003dfalse,north\u003dfalse,north_off\u003dfalse,south\u003dfalse,south_off\u003dfalse,up\u003dfalse,up_off\u003dfalse,west\u003dfalse,west_off\u003dfalse]"
+    },
+    "44,1,12": {
+      "state": "nookworks:birch_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "44,1,15": {
+      "state": "nookworks:birch_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "44,1,18": {
+      "state": "nookworks:cherry_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "44,1,21": {
+      "state": "nookworks:bamboo_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "44,1,24": {
+      "state": "nookworks:turned_cherry_planks"
+    },
+    "44,1,27": {
+      "state": "nookworks:glazed_potted_acacia_sapling"
+    },
+    "44,1,3": {
+      "state": "nookworks:unlit_soul_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "44,1,30": {
+      "state": "nookworks:glazed_potted_cactus"
+    },
+    "44,1,33": {
+      "state": "nookworks:plate[facing\u003dnorth]",
+      "entity": "nookworks:plate"
+    },
+    "44,1,36": {
+      "state": "nookworks:baler[facing\u003dnorth]"
+    },
+    "44,1,39": {
+      "state": "nookworks:daemon_door[facing\u003dnorth,half\u003dlower,hinge\u003dleft,open\u003dfalse,powered\u003dfalse]",
+      "entity": "nookworks:daemon_door"
+    },
+    "44,1,6": {
+      "state": "nookworks:end_gravel"
+    },
+    "44,1,9": {
+      "state": "nookworks:dice[facing\u003dnorth,powered\u003dfalse,roll\u003d0,value\u003d1]",
+      "entity": "nookworks:dice"
+    },
+    "44,2,39": {
+      "state": "nookworks:daemon_door[facing\u003dnorth,half\u003dupper,hinge\u003dleft,open\u003dfalse,powered\u003dfalse]"
+    },
+    "46,1,0": {
+      "state": "nookworks:item_sorter[facing\u003dnorth,gear\u003dnone,swapped\u003dfalse]",
+      "entity": "nookworks:sorter",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "46,1,12": {
+      "state": "nookworks:jungle_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "46,1,15": {
+      "state": "nookworks:birch_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "46,1,18": {
+      "state": "nookworks:cherry_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "46,1,21": {
+      "state": "nookworks:bamboo_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "46,1,24": {
+      "state": "nookworks:turned_cherry_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "46,1,27": {
+      "state": "nookworks:glazed_potted_cherry_sapling"
+    },
+    "46,1,3": {
+      "state": "nookworks:unlit_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "46,1,30": {
+      "state": "nookworks:glazed_potted_bamboo"
+    },
+    "46,1,33": {
+      "state": "nookworks:placed_bowls[bowls\u003d1,facing\u003dnorth]",
+      "entity": "nookworks:placed_bowls"
+    },
+    "46,1,36": {
+      "state": "nookworks:compressor[running\u003dfalse]",
+      "entity": "nookworks:compressor",
+      "items": [
+        "minecraft:coal 5",
+        "minecraft:iron_ingot 3",
+        "minecraft:wheat 6"
+      ],
+      "energy": 200
+    },
+    "46,1,39": {
+      "state": "nookworks:destination_panel[facing\u003dnorth]"
+    },
+    "46,1,6": {
+      "state": "nookworks:basalt_gravel"
+    },
+    "46,1,9": {
+      "state": "nookworks:stripped_dawnwood_log[axis\u003dy]"
+    },
+    "5,3,49": {
+      "state": "nookworks:hung_light[level\u003d13]"
+    },
+    "6,1,0": {
+      "state": "nookworks:wall_sconce[facing\u003dnorth,lit\u003dfalse]"
+    },
+    "6,1,12": {
+      "state": "nookworks:dawnwood_planks"
+    },
+    "6,1,15": {
+      "state": "nookworks:cherry_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "6,1,18": {
+      "state": "nookworks:jungle_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "6,1,21": {
+      "state": "nookworks:pale_oak_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "6,1,24": {
+      "state": "nookworks:dawnwood_chair[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "6,1,27": {
+      "state": "nookworks:turned_poplar_slab[type\u003dbottom,waterlogged\u003dfalse]"
+    },
+    "6,1,3": {
+      "state": "nookworks:netherite_sorter[facing\u003dnorth,gear\u003dnone,swapped\u003dfalse]",
+      "entity": "nookworks:sorter",
+      "items": [
+        "minecraft:cobblestone 3"
+      ]
+    },
+    "6,1,30": {
+      "state": "nookworks:glazed_potted_mangrove_propagule"
+    },
+    "6,1,33": {
+      "state": "nookworks:glazed_potted_warped_roots"
+    },
+    "6,1,36": {
+      "state": "nookworks:ventilation_fan[driven\u003dfalse,facing\u003dnorth,on\u003dfalse,powered\u003dfalse,switched\u003dfalse]",
+      "entity": "nookworks:ventilation_fan"
+    },
+    "6,1,39": {
+      "state": "nookworks:weathered_scrap_bale"
+    },
+    "6,1,6": {
+      "state": "nookworks:unlit_waxed_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "6,1,9": {
+      "state": "nookworks:sight_glass[axis\u003dz,content\u003dempty,down\u003dfalse,east\u003dfalse,level\u003d0,north\u003dfalse,south\u003dfalse,up\u003dfalse,west\u003dfalse]",
+      "entity": "nookworks:sight_glass",
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "8,1,0": {
+      "state": "nookworks:oil_lamp[burnt\u003d0,facing\u003dnorth,lit\u003dfalse,oil\u003d0]"
+    },
+    "8,1,12": {
+      "state": "nookworks:dawnwood_stairs[facing\u003dnorth,half\u003dbottom,shape\u003dstraight,waterlogged\u003dfalse]"
+    },
+    "8,1,15": {
+      "state": "nookworks:pale_oak_support[facing\u003dnorth,shape\u003dpost]"
+    },
+    "8,1,18": {
+      "state": "nookworks:jungle_bench[facing\u003dnorth,left\u003dfalse,left_apart\u003dfalse,right\u003dfalse,right_apart\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "8,1,21": {
+      "state": "nookworks:pale_oak_desk[east\u003dfalse,east_apart\u003dfalse,north\u003dfalse,north_apart\u003dfalse,south\u003dfalse,south_apart\u003dfalse,waterlogged\u003dfalse,west\u003dfalse,west_apart\u003dfalse]"
+    },
+    "8,1,24": {
+      "state": "nookworks:dawnwood_stool[facing\u003dnorth,waterlogged\u003dfalse]"
+    },
+    "8,1,27": {
+      "state": "nookworks:turned_crimson_planks"
+    },
+    "8,1,3": {
+      "state": "nookworks:iron_storage_barrel[facing\u003dnorth,locked\u003dfalse,open\u003dfalse]",
+      "entity": "nookworks:storage",
+      "items": [
+        "minecraft:coal 13",
+        "minecraft:cobblestone 13",
+        "minecraft:iron_ingot 13"
+      ]
+    },
+    "8,1,30": {
+      "state": "nookworks:glazed_potted_fern"
+    },
+    "8,1,33": {
+      "state": "nookworks:glazed_potted_azalea_bush"
+    },
+    "8,1,36": {
+      "state": "nookworks:range_hood[facing\u003dnorth]"
+    },
+    "8,1,39": {
+      "state": "nookworks:oxidized_scrap_bale"
+    },
+    "8,1,6": {
+      "state": "nookworks:unlit_waxed_exposed_copper_lantern[hanging\u003dfalse,waterlogged\u003dfalse]"
+    },
+    "8,1,9": {
+      "state": "nookworks:valve[axis\u003dz,down\u003dfalse,east\u003dfalse,north\u003dfalse,open\u003dtrue,powered\u003dfalse,south\u003dfalse,up\u003dfalse,west\u003dfalse]",
+      "entity": "nookworks:valve",
+      "fluids": [
+        "minecraft:water 750"
+      ]
+    },
+    "8,3,52": {
+      "state": "nookworks:hung_light[level\u003d14]"
+    }
+  },
+  "scene": {
+    "from": "0,0,48",
+    "to": "33,6,55"
+  },
+  "entities": [
+    {
+      "type": "minecraft:painting",
+      "at": "25.97,1.5,54.5",
+      "yaw": 90.0,
+      "post": "25,1,54",
+      "facing": "west",
+      "design": "minecraft:kebab",
+      "frame": "nookworks:dark_oak_item_frame"
+    },
+    {
+      "type": "nookworks:brass_glow_item_frame",
+      "at": "25.97,2.5,53.5",
+      "yaw": 90.0,
+      "post": "25,2,53",
+      "facing": "west",
+      "holds": "minecraft:air",
+      "turned": 0
+    },
+    {
+      "type": "nookworks:brass_item_frame",
+      "at": "25.97,1.5,53.5",
+      "yaw": 90.0,
+      "post": "25,1,53",
+      "facing": "west",
+      "holds": "minecraft:diamond",
+      "turned": 3
+    },
+    {
+      "type": "nookworks:dark_oak_glow_item_frame",
+      "at": "25.97,2.5,52.5",
+      "yaw": 90.0,
+      "post": "25,2,52",
+      "facing": "west",
+      "holds": "minecraft:clock",
+      "turned": 0
+    },
+    {
+      "type": "nookworks:dark_oak_item_frame",
+      "at": "25.97,1.5,52.5",
+      "yaw": 90.0,
+      "post": "25,1,52",
+      "facing": "west",
+      "holds": "minecraft:compass",
+      "turned": 0
+    },
+    {
+      "type": "nookworks:dawnwood_boat",
+      "at": "23.5,1.0,49.5",
+      "yaw": 90.0
+    },
+    {
+      "type": "nookworks:dawnwood_chest_boat",
+      "at": "23.5,1.0,53.5",
+      "yaw": 0.0,
+      "items": [
+        "0: 5 minecraft:cod",
+        "4: 12 minecraft:oak_log {\"minecraft:custom_name\":\"Nook logs\"}",
+        "26: 3 nookworks:thin_rope"
+      ]
+    },
+    {
+      "type": "nookworks:hung_banner",
+      "at": "3.0,2.82,49.5",
+      "yaw": 0.0,
+      "item": "minecraft:red_banner {\"minecraft:banner_patterns\":[{\"pattern\":\"minecraft:stripe_top\",\"color\":\"white\"},{\"pattern\":\"minecraft:cross\",\"color\":\"black\"}]}",
+      "facing": 0.0,
+      "span": "1,4,49 to 11,4,49 at 0.15",
+      "hangs": "3.0,4.51,49.5",
+      "slope": -0.165
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "14.5,3.44,49.5",
+      "yaw": 0.0,
+      "item": "minecraft:honey_bottle",
+      "facing": 30.0,
+      "hangs": "14.5,4.0,49.5"
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "4.5,3.76,52.5",
+      "yaw": 0.0,
+      "item": "minecraft:creeper_head",
+      "facing": 180.0,
+      "span": "1,4,52 to 11,4,52 at 0.3",
+      "hangs": "4.5,4.32,52.5"
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "5.3,3.7,49.5",
+      "yaw": 0.0,
+      "item": "nookworks:filament_bulb",
+      "facing": 0.0,
+      "span": "1,4,49 to 11,4,49 at 0.38",
+      "hangs": "5.3,4.26,49.5",
+      "light": "5,3,49"
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "7.5,3.69,49.5",
+      "yaw": 0.0,
+      "item": "minecraft:glass_bottle",
+      "facing": 0.0,
+      "span": "1,4,49 to 11,4,49 at 0.6",
+      "hangs": "7.5,4.25,49.5"
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "8.5,3.76,52.5",
+      "yaw": 0.0,
+      "item": "minecraft:glow_berries",
+      "facing": 0.0,
+      "span": "1,4,52 to 11,4,52 at 0.7",
+      "hangs": "8.5,4.32,52.5",
+      "light": "8,3,52"
+    },
+    {
+      "type": "nookworks:hung_item",
+      "at": "9.7,3.91,49.5",
+      "yaw": 0.0,
+      "item": "minecraft:player_head {\"minecraft:profile\":{\"id\":[1852796779,2003792491,1929379840,1],\"name\":\"Nookling\"}}",
+      "facing": 180.0,
+      "span": "1,4,49 to 11,4,49 at 0.82",
+      "hangs": "9.7,4.46,49.5"
+    },
+    {
+      "type": "nookworks:label",
+      "at": "17.31,1.38,49.05",
+      "yaw": -180.0,
+      "post": "17,1,49",
+      "facing": "north",
+      "shows": "minecraft:red_banner {\"minecraft:banner_patterns\":[{\"pattern\":\"minecraft:stripe_top\",\"color\":\"white\"},{\"pattern\":\"minecraft:cross\",\"color\":\"black\"}]}",
+      "text": "",
+      "up": -2,
+      "box": "17.063,1.188,49.031 to 17.563,1.563,49.063"
+    },
+    {
+      "type": "nookworks:label",
+      "at": "19.75,1.69,48.98",
+      "yaw": -180.0,
+      "post": "19,1,49",
+      "facing": "north",
+      "shows": "minecraft:iron_ingot",
+      "text": "",
+      "up": 3,
+      "box": "19.5,1.5,48.969 to 20.0,1.875,49.0"
+    },
+    {
+      "type": "nookworks:label",
+      "at": "20.02,1.31,49.31",
+      "yaw": -90.0,
+      "post": "19,1,49",
+      "facing": "east",
+      "shows": "minecraft:paper",
+      "text": "NOOK",
+      "up": -3,
+      "box": "20.0,1.125,49.063 to 20.031,1.5,49.563"
+    },
+    {
+      "type": "nookworks:poster",
+      "at": "14.0,2.5,54.99",
+      "yaw": -180.0,
+      "post": "14,2,54",
+      "facing": "north",
+      "design": "nookworks:photo/43/2x1",
+      "box": "13.0,2.0,54.984 to 15.0,3.0,55.0"
+    },
+    {
+      "type": "nookworks:poster",
+      "at": "15.5,2.5,52.99",
+      "yaw": -180.0,
+      "post": "15,2,52",
+      "facing": "north",
+      "design": "nookworks:bloodstain",
+      "box": "15.0,2.0,52.984 to 16.0,3.0,53.0"
+    },
+    {
+      "type": "nookworks:poster",
+      "at": "17.0,2.0,54.99",
+      "yaw": -180.0,
+      "post": "17,1,54",
+      "facing": "north",
+      "design": "nookworks:photo/42/2x2",
+      "box": "16.0,1.0,54.984 to 18.0,3.0,55.0",
+      "frame": "nookworks:brass_glow_item_frame"
+    },
+    {
+      "type": "nookworks:rope_knot",
+      "at": "1.5,4.81,49.5",
+      "yaw": 0.0,
+      "post": "1,4,49",
+      "spans": [
+        "11,4,49"
+      ],
+      "chains": []
+    },
+    {
+      "type": "nookworks:rope_knot",
+      "at": "1.5,4.81,52.5",
+      "yaw": 0.0,
+      "post": "1,4,52",
+      "spans": [
+        "11,4,52"
+      ],
+      "chains": [
+        "11,4,52"
+      ]
+    },
+    {
+      "type": "nookworks:rope_knot",
+      "at": "11.5,4.81,49.5",
+      "yaw": 0.0,
+      "post": "11,4,49",
+      "spans": [],
+      "chains": []
+    },
+    {
+      "type": "nookworks:rope_knot",
+      "at": "11.5,4.81,52.5",
+      "yaw": 0.0,
+      "post": "11,4,52",
+      "spans": [],
+      "chains": []
+    },
+    {
+      "type": "nookworks:seat",
+      "at": "19.5,1.42,53.5",
+      "yaw": 0.0
+    },
+    {
+      "type": "nookworks:tied_load",
+      "at": "20.5,1.0,51.5",
+      "yaw": 0.0,
+      "carries": [
+        "0, 0, 0 Block{minecraft:chest}[facing\u003dsouth,type\u003dsingle,waterlogged\u003dfalse] | 0: 7 minecraft:iron_ingot | 13: 2 nookworks:thin_rope"
+      ]
+    }
+  ]
+}

@@ -77,6 +77,11 @@ CHAIRS = [f"{w}_chair" for w in ("oak", "spruce", "birch", "jungle", "acacia", "
 # the material it is made of). A thing that takes two of ours hangs from the one that comes later in play, and its
 # line or a sibling says the other (brass from the Retort, its zinc sifted out of gravel). Vanilla's own gates - the
 # Nether's quartz for a comparator, diamonds - are vanilla's to show: a thing behind only those stays off the root.
+# A thing made of vanilla's materials alone that is only of use with a thing of ours hangs from that one instead, as a
+# player meets it: the Energy Cable from the machines, the Filament Bulb from the rope it hangs on, the Spawn Egg Brewer
+# from the Mob Bottle, the Frying Pan and a dish set out from the Iron Pot, the Water Pump and the Wrench from the pipe.
+# (Reviewed 2026-11-22: the Printing Press hung from the poster it does not take, Caustic Soda from brass beside the
+# Electrolytic Cell it is made in, the Spawner Controller from the Machine Chassis it is not made of.)
 TREE = {
     # from the start
     "rope": ("root", "rope", "task", {"rope": has("rope", "thin_rope")}),
@@ -131,7 +136,7 @@ TREE = {
     "wood_chips": ("crusher", "wood_chips", "task", {"chips": has("wood_chips")}),
     "compressor": ("machine_chassis", "compressor", "task", {"compressor": has("compressor")}),
     "recycler": ("crusher", "recycler", "task", {"recycler": has("recycler")}),
-    "spawner_controller": ("machine_chassis", "spawner_controller", "task", {"controller": has("spawner_controller")}),
+    "spawner_controller": ("root", "spawner_controller", "task", {"controller": has("spawner_controller")}),
     "barter_terminal": ("machine_chassis", "barter_terminal", "task", {"terminal": has("barter_terminal")}),
     # the Sealed Retort (a powered machine), and what is made in it
     "retort": ("machine_chassis", "retort", "task", {"retort": has("retort")}),
@@ -163,15 +168,34 @@ TREE = {
     "wool_shears": ("brass", "wool_shears", "task", {"shorn": shorn("wool_shears")}),
     "daemon_door": ("dawnwood", "daemon_door", "task", {"door": placed("daemon_door")}),
     "electrolytic_cell": ("brass", "electrolytic_cell", "task", {"cell": has("electrolytic_cell")}),
-    "caustic_soda": ("brass", "caustic_soda", "task", {"soda": has("caustic_soda")}),
+    "caustic_soda": ("electrolytic_cell", "caustic_soda", "task", {"soda": has("caustic_soda")}),
     "biodiesel": ("caustic_soda", "biodiesel_bucket", "task", {"biodiesel": has("biodiesel_bottle", "biodiesel_bucket")}),
     # under the fuel it alone burns, the last of what it takes in play; its line names the Generator and tank it is built of
     "diesel_generator": ("biodiesel", "diesel_generator", "task", {"engine": has("diesel_generator")}),
     "wood_pulp": ("caustic_soda", "wood_pulp", "task", {"pulp": has("wood_pulp")}),
     "fine_paper": ("wood_pulp", "fine_paper", "goal", {"paper": has("fine_paper")}),
     "poster": ("fine_paper", "poster", "task", {"poster": has("poster")}),
-    "printing_press": ("poster", "printing_press", "task", {"press": has("printing_press")}),
+    "printing_press": ("fine_paper", "printing_press", "task", {"press": has("printing_press")}),
     "label": ("printing_press", "label", "task", {"label": has("label")}),
+    # the kitchen (1.3, 1.7): the pot, the pan, a dish set out, the tap that fills them and the stove that heats them
+    "iron_pot": ("root", "iron_pot", "task", {"pot": has("iron_pot")}),
+    "frying_pan": ("iron_pot", "frying_pan", "task", {"pan": has("frying_pan")}),
+    "set_table": ("iron_pot", "plate", "task", {"served": by_the_mod()}),  # PlateBlock.useItemOn, food set on a Plate
+    "kitchen_tap": ("brass", "kitchen_tap", "task", {"tap": placed("kitchen_tap")}),
+    "electric_stove": ("machine_chassis", "electric_stove", "task", {"stove": has("electric_stove")}),
+    # moving things, and people
+    "item_warp": ("brass", "item_warp_sender", "task", {"warp": has("item_warp_sender", "horizontal_item_warp_sender")}),
+    "elevator": ("brass", "elevator", "task", {"elevator": has("elevator")}),
+    "warp_anchor": ("dark_matter", "warp_anchor", "task", {"anchor": has("warp_anchor")}),
+    "camera": ("brass", "camera", "task", {"camera": has("camera")}),  # not a photo taken: a server may switch photos off
+    "building_wand": ("root", "building_wand", "task", {"wand": has("building_wand", "reinforced_building_wand")}),
+    # machines, and what goes with the pipes
+    "motor": ("machine_chassis", "motor", "task", {"motor": has("motor")}),
+    "planter": ("machine_chassis", "planter", "task", {"planter": has("planter")}),
+    "stone_maker": ("machine_chassis", "stone_maker", "task", {"maker": has("stone_maker")}),
+    "laser": ("machine_chassis", "laser", "task", {"laser": has("laser")}),
+    "water_pump": ("copper_pipe", "water_pump", "task", {"pump": has("water_pump")}),
+    "wrench": ("copper_pipe", "wrench", "task", {"pull": by_the_mod()}),  # WrenchItem, a pipe's side set to pull
 }
 
 # What an advancement asks for that is no item in hand stands for this item of ours: a deed done with it, a block of no
@@ -183,6 +207,8 @@ STANDS_FOR = {
     "wood_vinegar": ["wood_vinegar"],
     "if_world": ["if_mirror"],
     "too_hot": ["red_hot_velarium_ingot"],
+    "set_table": ["plate"],
+    "wrench": ["wrench"],
 }
 
 

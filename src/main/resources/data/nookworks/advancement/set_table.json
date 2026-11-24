@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:iron_pot"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "served": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:plate"
+    },
+    "title": {
+      "translate": "advancements.nookworks.set_table.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.set_table.description"
+    }
+  },
+  "requirements": [
+    [
+      "served"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:iron_pot"
+}

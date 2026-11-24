@@ -776,6 +776,17 @@ final class EarlyReviewTests {
         check(helper, !rice.canSurvive(level, helper.absolutePos(new BlockPos(4, 4, 4))), "but not on nothing");
         helper.setBlock(new BlockPos(4, 1, 4), Blocks.MUD);
         check(helper, rice.canSurvive(level, helper.absolutePos(new BlockPos(4, 2, 4))), "and on mud, as in a paddy");
+        // and on grass, podzol and mycelium too: 26.3's #dirt no longer holds them (#grass_blocks does), which left rice
+        // unplantable on a flooded field of grass (found by Nook of the Dead, 2026-11-22); not on stone
+        BlockPos[] grounds = {new BlockPos(0, 1, 0), new BlockPos(0, 1, 2), new BlockPos(0, 1, 4), new BlockPos(2, 1, 4)};
+        Block[] soils = {Blocks.GRASS_BLOCK, Blocks.PODZOL, Blocks.MYCELIUM, Blocks.STONE};
+        for (int i = 0; i < grounds.length; i++) {
+            helper.setBlock(grounds[i], soils[i]);
+            helper.setBlock(grounds[i].above(), Blocks.WATER);
+            boolean stands = rice.canSurvive(level, helper.absolutePos(grounds[i].above()));
+            check(helper, stands == (soils[i] != Blocks.STONE), "rice in water on " + soils[i] + ": " + stands);
+            helper.setBlock(grounds[i].above(), Blocks.AIR); // gone before it can flow round the plant tested below
+        }
         helper.setBlock(plant, rice);
         check(helper, helper.getBlockState(plant).getFluidState().isSource(), "and it keeps its water");
         for (int i = 0; i < 12; i++) {

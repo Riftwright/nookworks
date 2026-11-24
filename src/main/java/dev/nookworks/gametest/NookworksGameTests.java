@@ -77,6 +77,7 @@ public final class NookworksGameTests {
         BotPathTests.register();
         BotRulesTests.register();
         BotDigTests.register();
+        BotHallTests.register();
         LineTests.register();
         FeatureTests.register();
         PlayTests.register();
@@ -179,6 +180,8 @@ public final class NookworksGameTests {
         CarryTests.register();
         OtherModCableTests.register();
         TagPickerTests.register();
+        AdvancementTests.register();
+        SettingsScreenTests.register();
     }
 
     public static void register(IEventBus modEventBus) {

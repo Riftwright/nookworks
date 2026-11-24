@@ -6,6 +6,7 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
+import dev.nookworks.feature.ModAdvancements;
 import dev.nookworks.feature.Permission;
 import dev.nookworks.registry.ModKitchen;
 import net.minecraft.ChatFormatting;
@@ -136,6 +137,7 @@ public class PlateBlock extends BaseEntityBlock {
                 plate.serve(plated);
                 give(player, bowl);
                 level.playSound(null, pos, ModSounds.PLATE_CLINK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+                ModAdvancements.award(player, "set_table", "served");
             }
             return InteractionResult.SUCCESS;
         }
@@ -147,6 +149,7 @@ public class PlateBlock extends BaseEntityBlock {
                 plate.place(stack, player);
                 give(player, new ItemStack(this)); // the plate it came on: this one is its plate now
                 level.playSound(null, pos, ModSounds.PLATE_CLINK.get(), SoundSource.BLOCKS, 0.5F, 1.12F);
+                ModAdvancements.award(player, "set_table", "served");
             }
             return InteractionResult.SUCCESS;
         }
@@ -165,6 +168,7 @@ public class PlateBlock extends BaseEntityBlock {
         if (!level.isClientSide()) {
             plate.place(stack, player);
             level.playSound(null, pos, ModSounds.PLATE_CLINK.get(), SoundSource.BLOCKS, 0.5F, 1.12F);
+            ModAdvancements.award(player, "set_table", "served");
         }
         return InteractionResult.SUCCESS;
     }

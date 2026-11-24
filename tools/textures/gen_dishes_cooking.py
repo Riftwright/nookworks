@@ -14,6 +14,7 @@ import json
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 import gen_tableware as tw
@@ -185,9 +186,10 @@ def in_pot():
     inner = octagon(8, 8, -1)
     put(POT + "nookworks/cooked_rice", {"r": D + "fill_rice"},
         flat(inner, "r") + blob(disc(8, 8, 3.6), 0, 0.5, "r", step=1) + blob(disc(8, 8, 2.6), 0.5, 1, "r", step=1))
-    carrot, potato, green, beet = (238, 146, 46), (240, 220, 152), (96, 168, 60), (138, 28, 58)
-    put(POT + "nookworks/vegetable_soup", {"s": scatter("pot_vegetable_soup", [(170, 82, 38), (192, 104, 50), (210, 128, 66)],
-                                                        [carrot, potato, green, beet], 1421)}, flat(inner, "s"))
+    carrot, green = (238, 146, 46), (96, 168, 60)
+    # the clear golden broth of the user's Vegetable Soup icon (2026-11-21), carrot and potato in it
+    put(POT + "nookworks/vegetable_soup", {"s": scatter("pot_vegetable_soup", [(212, 164, 76), (221, 181, 93), (233, 193, 105)],
+                                                        [(225, 117, 29), (245, 234, 186)], 1421)}, flat(inner, "s"))
     put(POT + "nookworks/cream_stew", {"s": scatter("pot_cream_stew", [(230, 220, 194), (243, 235, 213), (252, 247, 232)],
                                                     [carrot, green, (226, 190, 146), (246, 226, 160)], 1422)}, flat(inner, "s"))
     put(POT + "nookworks/corn_potage", {"s": scatter("pot_corn_potage", [(230, 190, 76), (243, 208, 98), (250, 224, 126)],
@@ -251,32 +253,43 @@ def paler(source, ramp):
     return out
 
 
-BOWL_OF_EGG = ["................",
-               "................",
-               "................",
-               "................",
-               "....rrrrrrrr....",
-               "..rryYYYYYYyrr..",
-               ".rYYYYhhYYYYYYr.",
-               ".wyYYYYYYYhYYyw.",
-               ".wwyyYYYYYYyyww.",
-               "..wwwwyyyywwww..",
-               "..gwwwwwwwwwwg..",
-               "...gwwwwwwwwg...",
-               "....ggwwwwgg....",
-               ".....gggggg.....",
-               "................",
-               "................"]
+# Beaten Eggs in the white enamel bowl with a blue rim (the Pancake Batter's), in the bowl family's size and angle (the
+# user, 2026-11-21, after the check for 配置・大きさ・余白・角度): ten wide before the ring, twelve with it, the egg's
+# surface inside the rim's ring, the rim's front an arc mirroring its back. Ringed from the bowl alone.
+# Q/R/r the rim lit, middle, shade; W/w/v/V the enamel lit to shade; h/Y/y/o the egg from its glint to its shade.
+BOWL_OF_EGG_ICON = {"W": (250, 250, 246), "w": (226, 230, 234), "v": (186, 194, 206), "V": (146, 156, 174),
+                    "Q": (96, 134, 204), "R": (52, 86, 160), "r": (34, 58, 122),
+                    "h": (255, 236, 150), "Y": (250, 206, 70), "y": (232, 172, 44), "o": (206, 140, 30)}
+BOWL_OF_EGG_RING = dict(BOWL_OF_EGG_ICON, h=BOWL_OF_EGG_ICON["W"], Y=BOWL_OF_EGG_ICON["w"], y=BOWL_OF_EGG_ICON["v"],
+                        o=BOWL_OF_EGG_ICON["v"])
+BOWL_OF_EGG = itemkit.check([
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....QQQRRr.....",
+    "...RYhhYYYyyr...",
+    "...RRYYYyyorr...",
+    "...WWRRrrrrvV...",
+    "....WWwwwvvV....",
+    "......wvvV......",
+    "................",
+    "................",
+    "................",
+    "................",
+])
 
 
 def icons():
     floury = [(120, 90, 54), (172, 140, 92), (212, 184, 130), (236, 216, 168), (251, 242, 214)]
     doughy = [(128, 96, 56), (184, 150, 98), (222, 194, 142), (242, 224, 180), (252, 244, 220)]
     made = {"coated_chicken": paler("karaage", floury), "coated_fish": paler("fried_fish", floury), "donut_dough": paler("donut", doughy),
-            "beaten_eggs": texkit.icon(itemkit.paint(BOWL_OF_EGG, {"r": (104, 140, 192), "w": (250, 249, 244), "g": (206, 204, 194),
-                                                                    "Y": (250, 206, 70), "y": (232, 172, 44), "h": (255, 236, 150)}), 1441)}
+            "beaten_eggs": itemkit.sprite(BOWL_OF_EGG, BOWL_OF_EGG_ICON, lit=0.8, dark=0.55, ring_from=BOWL_OF_EGG_RING)}
     for name, img in made.items():
-        img.save(ASSETS / f"textures/item/{name}.png")
+        if not hand_finished.kept(ASSETS / f"textures/item/{name}.png"):  # the author's own drawing stands for some
+            img.save(ASSETS / f"textures/item/{name}.png")
         tw.write(ASSETS / f"models/item/{name}.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"nookworks:item/{name}"}})
         tw.write(ASSETS / f"items/{name}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/{name}"}})
 

@@ -12,26 +12,47 @@ import java.util.WeakHashMap;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.nookworks.block.DieselGeneratorBlock;
+import dev.nookworks.block.ElectricFurnaceBlock;
+import dev.nookworks.block.GeneratorBlock;
+import dev.nookworks.cooking.GrillBlock;
+import dev.nookworks.cooking.IronPotBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Where the smoke goes. A pot, a grill, a generator or an electric furnace working indoors sends its smoke and steam
- * up into the room; with a Range Hood over it (up to {@link #HOOD_REACH} blocks up) or a running Ventilation Fan in
- * front of it (within {@link #FAN_REACH}), the smoke is drawn off into that instead, and comes out where the air goes:
- * out of the back of the fan, or along the Ducts behind it to a duct's open end or up a Chimney and out of its pot. A
- * Chimney over a fire - a campfire, a lit furnace, a running generator - smokes from its top of itself.
+ * Where the smoke goes (the user, 2026-11-22: smoke goes in only where there is a mouth to take it). What smokes - a
+ * lit campfire, fire, a lit furnace, smoker or blast furnace, and ours: a pot or grill cooking, a running generator, a
+ * working electric furnace ({@link #smoking}) - sends it up into the room, unless a mouth draws it off:
+ * <ul>
+ * <li>a Range Hood over it, up to {@link #HOOD_REACH} blocks up with nothing between;</li>
+ * <li>a running Ventilation Fan it is in front of, within {@link #FAN_REACH};</li>
+ * <li>the open bottom of a Flue over an open fire ({@link #openFire}: a campfire, netherrack set alight), up to
+ * {@link #FLUE_REACH} blocks below with nothing between - a fireplace, with no block of its own;</li>
+ * <li>the foot of a Chimney stood straight on an open fire (the user, 2026-11-23: 「焚き火の直上の煙突や煙道は煙出ても
+ * いいよ。なんか出そうな気がする」).</li>
+ * </ul>
+ * Drawn off, it comes out where the air goes: out of the back of the fan or the hood's collar, or along the Ducts to a
+ * duct's open end or up a Chimney and out of its pot. A chimney or a flue on a furnace takes nothing: a furnace has no
+ * hole on top (「かまどの上面穴空いてないじゃん」, 「かまどとかは出たらおかしいけど」).
  * <p>
- * All of it is how the smoke looks (particles, on the client); it changes nothing else.
+ * All of it is how the smoke looks (particles, on the client: VentilationClient finds the mouths round the player
+ * and keeps their ways out smoking); it changes nothing else.
  */
 public final class Ventilation {
     public static final int FAN_REACH = 6;
     public static final int HOOD_REACH = 3;
+    public static final int FLUE_REACH = 3;
     /** How far along its ducts the smoke is followed. */
     private static final int DUCT_LIMIT = 96;
     /** How long a found way out is kept before it is looked for again, in ticks. */
@@ -70,6 +91,112 @@ public final class Ventilation {
     }
 
     private Ventilation() {}
+
+    /** An open fire, whose smoke a Flue's open bottom takes: a lit campfire (or soul campfire), or fire (or soul fire). */
+    public static boolean openFire(BlockState state) {
+        return state.is(BlockTags.CAMPFIRES) ? CampfireBlock.isLitCampfire(state) : state.is(BlockTags.FIRE);
+    }
+
+    /**
+     * An open fire at {@code pos}: one of {@link #openFire(BlockState)}, or a Grill astride a lit campfire, or a pot or
+     * pan set on that grill - the fire is right under the grate, empty or not, and smokes through it (the user,
+     * 2026-11-23: 「焼き網つかうと煙出なくなる」: an empty grill stopped a hood from seeing the fire).
+     */
+    public static boolean openFire(Level level, BlockPos pos, BlockState state) {
+        if (openFire(state)) {
+            return true;
+        }
+        boolean astride = GrillBlock.overFire(state) || state.getBlock() instanceof IronPotBlock && state.getValue(IronPotBlock.ON_GRILL);
+        return astride && CampfireBlock.isLitCampfire(level.getBlockState(pos.below()));
+    }
+
+    /**
+     * Whether smoke rises off {@code state} at {@code pos} now: an open fire, a grill or a pot on a lit campfire among
+     * them; a lit furnace, smoker or blast furnace; a pot or grill cooking; a running Generator or Diesel Generator; a
+     * working Electric Furnace.
+     */
+    public static boolean smoking(Level level, BlockPos pos, BlockState state) {
+        if (openFire(level, pos, state)) {
+            return true;
+        }
+        Block block = state.getBlock();
+        if (block instanceof AbstractFurnaceBlock || block instanceof GeneratorBlock || block instanceof DieselGeneratorBlock
+                || block instanceof ElectricFurnaceBlock) {
+            return state.getValueOrElse(BlockStateProperties.LIT, false); // another mod's furnace may have no LIT
+        }
+        if (block instanceof IronPotBlock) {
+            return state.getValue(IronPotBlock.COOKING);
+        }
+        return block instanceof GrillBlock && GrillBlock.cooking(level, pos);
+    }
+
+    /** Whether {@code state} may be a mouth smoke goes into: a hood, a fan, a flue or chimney (whose foot may be open). */
+    public static boolean mayBeIntake(BlockState state) {
+        return state.getBlock() instanceof RangeHoodBlock || state.getBlock() instanceof VentFanBlock || state.getBlock() instanceof ChimneyBlock;
+    }
+
+    /**
+     * The mouth at {@code pos}: a Range Hood (its collar the way on), a running Ventilation Fan (its back), a Flue
+     * whose bottom is open - with no more of the chimney under it - or a Chimney stood straight on an open fire (the
+     * flue or chimney itself the way on); or null.
+     */
+    public static @Nullable Intake intakeAt(Level level, BlockPos pos, BlockState state) {
+        if (state.getBlock() instanceof RangeHoodBlock) {
+            return new Intake(pos.immutable(), new Vec3(pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5), pos.above(), Direction.UP);
+        }
+        if (state.getBlock() instanceof VentFanBlock) {
+            if (!state.getValue(VentFanBlock.ON)) {
+                return null;
+            }
+            Direction front = state.getValue(VentFanBlock.FACING);
+            Vec3 mouth = Vec3.atCenterOf(pos).add(front.getUnitVec3().scale(0.55));
+            return new Intake(pos.immutable(), mouth, pos.relative(front.getOpposite()), front.getOpposite());
+        }
+        if (state.getBlock() instanceof ChimneyBlock) {
+            BlockState below = level.getBlockState(pos.below());
+            boolean open = state.getBlock() instanceof FlueBlock ? !(below.getBlock() instanceof ChimneyBlock) : openFire(level, pos.below(), below);
+            if (open) {
+                return new Intake(pos.immutable(), new Vec3(pos.getX() + 0.5, pos.getY() + 0.05, pos.getZ() + 0.5), pos.immutable(), Direction.UP);
+            }
+        }
+        return null;
+    }
+
+    /** What {@code intake} draws smoke off now: the places it takes from that are smoking. Empty: nothing to draw. */
+    public static List<BlockPos> drawing(Level level, Intake intake) {
+        BlockState state = level.getBlockState(intake.pos());
+        List<BlockPos> found = new ArrayList<>();
+        if (state.getBlock() instanceof VentFanBlock) {
+            Direction front = state.getValue(VentFanBlock.FACING);
+            BlockPos fan = intake.pos();
+            for (BlockPos at : BlockPos.betweenClosed(fan.offset(-FAN_REACH, -FAN_REACH, -FAN_REACH), fan.offset(FAN_REACH, FAN_REACH, FAN_REACH))) {
+                if (at.distSqr(fan) <= FAN_REACH * FAN_REACH && inFront(fan, front, at) && smoking(level, at, level.getBlockState(at))) {
+                    found.add(at.immutable());
+                }
+            }
+            return found;
+        }
+        boolean flue = state.getBlock() instanceof ChimneyBlock; // a flue's open bottom, or a chimney's foot on a fire
+        int reach = state.getBlock() instanceof FlueBlock ? FLUE_REACH : flue ? 1 : HOOD_REACH;
+        for (int dy = 1; dy <= reach; dy++) {
+            BlockPos at = intake.pos().below(dy);
+            BlockState there = level.getBlockState(at);
+            if (flue ? openFire(level, at, there) : smoking(level, at, there)) {
+                found.add(at);
+                break;
+            }
+            if (!there.getCollisionShape(level, at).isEmpty()) {
+                break; // a block between: the smoke stays under it
+            }
+        }
+        return found;
+    }
+
+    /** Whether {@code at} is in front of the fan at {@code fan} facing {@code front}, not behind or beside it. */
+    private static boolean inFront(BlockPos fan, Direction front, BlockPos at) {
+        Vec3 to = Vec3.atCenterOf(at).subtract(Vec3.atCenterOf(fan));
+        return to.dot(front.getUnitVec3()) > 0.25;
+    }
 
     static synchronized void fanLoaded(Level level, BlockPos pos) {
         FANS.computeIfAbsent(level, l -> new HashSet<>()).add(pos.immutable());
@@ -150,7 +277,8 @@ public final class Ventilation {
         return found;
     }
 
-    private static List<Vec3> findOutlets(Level level, Intake intake) {
+    /** Where smoke drawn into {@code intake} comes out, looked for now rather than remembered (the GameTests). */
+    public static List<Vec3> findOutlets(Level level, Intake intake) {
         BlockPos exit = intake.exit();
         BlockState first = level.getBlockState(exit);
         if (first.isAir()) {
@@ -163,8 +291,8 @@ public final class Ventilation {
             Vec3 top = chimneyTop(level, exit);
             return top == null ? List.of() : List.of(top);
         }
-        if (!(first.getBlock() instanceof DuctBlock)) {
-            return List.of(); // walled up: the smoke has nowhere to go but it is drawn off all the same
+        if (!(first.getBlock() instanceof DuctBlock) || !DuctBlock.connections(first).contains(intake.exitSide().getOpposite())) {
+            return List.of(); // walled up, or the duct parted from it with the Wrench: drawn off all the same, to nowhere
         }
         List<Vec3> out = new ArrayList<>();
         Set<BlockPos> seen = new HashSet<>();
@@ -209,8 +337,8 @@ public final class Ventilation {
 
     /**
      * Smoke rising off a pot, a grill or a machine at {@code source}, from ({@code x}, {@code y}, {@code z}) with the
-     * velocity given: drawn off towards an intake if there is one - and then, as much again, out at one of its
-     * outlets - else rising as it would.
+     * velocity given: drawn off towards an intake if there is one, else rising as it would. Where it comes out is kept
+     * smoking by VentilationClient, which finds every mouth with something smoking under it round the player.
      */
     public static void smoke(Level level, BlockPos source, ParticleOptions particle, double x, double y, double z, double vx, double vy, double vz) {
         Intake intake = intakeFor(level, source);
@@ -218,15 +346,18 @@ public final class Ventilation {
             level.addParticle(particle, x, y, z, vx, vy, vz);
             return;
         }
-        Vec3 to = intake.mouth().subtract(x, y, z);
-        Vec3 v = to.normalize().scale(Math.min(0.14, 0.03 + to.length() * 0.025));
+        Vec3 v = drawnTowards(intake.mouth(), x, y, z);
         level.addParticle(particle, x, y, z, v.x, v.y, v.z);
-        List<Vec3> outs = outlets(level, intake);
-        if (outs.isEmpty()) {
-            return;
-        }
-        for (Vec3 out : outs) { // smoking a while, as smoke keeps coming: see VentilationClient
-            markSmoking(level, out, level.getBlockState(BlockPos.containing(out).below()).getBlock() instanceof ChimneyBlock, 80);
-        }
+    }
+
+    /** The speed of smoke at ({@code x}, {@code y}, {@code z}) drawn into a mouth at {@code mouth}: faster from further off. */
+    public static Vec3 drawnTowards(Vec3 mouth, double x, double y, double z) {
+        Vec3 to = mouth.subtract(x, y, z);
+        return to.normalize().scale(Math.min(0.14, 0.03 + to.length() * 0.025));
+    }
+
+    /** Whether smoke coming out at {@code out} comes out of a chimney's pot or a flue's top (a column) or not (a stream). */
+    public static boolean chimneyOutlet(Level level, Vec3 out) {
+        return level.getBlockState(BlockPos.containing(out).below()).getBlock() instanceof ChimneyBlock;
     }
 }

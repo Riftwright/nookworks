@@ -1,0 +1,25 @@
+{
+  "criteria": {
+    "pull": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:wrench"
+    },
+    "title": {
+      "translate": "advancements.nookworks.wrench.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.wrench.description"
+    }
+  },
+  "requirements": [
+    [
+      "pull"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:copper_pipe"
+}

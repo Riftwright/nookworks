@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:stone_maker"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "maker": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:stone_maker"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:stone_maker"
+    },
+    "title": {
+      "translate": "advancements.nookworks.stone_maker.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.stone_maker.description"
+    }
+  },
+  "requirements": [
+    [
+      "maker"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:machine_chassis"
+}

@@ -24,6 +24,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -150,27 +151,29 @@ def upper(stage):
     return img
 
 
-# A low, loose heap of fourteen small grains (itemkit), placed by hand: lying, aslant and on end, a few whole ones
-# (three by two) on top and the rest half hidden, the slot showing between them. Each grain lit at its upper left (H,
-# L), its body (B) and a cool shade at its lower right (S); G is the end where brown rice keeps its germ, a shade on
-# white rice. Ringed once round the whole heap, the ring only a step under the grain's shade, as a pale thing's is.
-# (Seven big grains each ringed on its own swelled into capsules: white rice read as bone shards, brown as peanuts.)
+# A loose heap of small grains (itemkit), placed by hand: lying, aslant and half hidden, the slot showing between them.
+# Each grain lit at its upper left (H, L), its body (B) and a cool shade at its lower right (S); G is the end where brown
+# rice keeps its germ, a shade on white rice. Ringed once round the whole heap, the ring only a step under the grain's
+# shade, as a pale thing's is. (Seven big grains each ringed on its own swelled into capsules: white rice read as bone
+# shards, brown as peanuts.) Gathered into a heap the size of vanilla's dusts in the slot's middle, twelve by eleven with
+# the ring (the user, 2026-11-21, after the check for 配置・大きさ・余白・角度: it lay strewn along the slot's bottom,
+# sixteen wide); grains a heap of powder would lose - drawn as one, white rice read as sugar.
 RICE_HEAP = itemkit.check([
     "................",
     "................",
     "................",
     "................",
+    "......HLB.......",
+    ".......BG.HL....",
+    "....HS...BS.....",
+    "......HLB.......",
+    "...HLB.BG.HS....",
+    "....BGHL.HLB....",
+    ".....BS...BG....",
+    "...HS..HLB.HS...",
+    ".....HS.BG......",
     "................",
     "................",
-    ".......HLB......",
-    "....HS..BG.H....",
-    "..........HL....",
-    "..HLB.LS.BS.HLB.",
-    "...BG........BS.",
-    ".....HLB.HS...H.",
-    ".HS...BS.....HG.",
-    "...HG...HLB.BS..",
-    ".........BS.....",
     "................",
 ])
 
@@ -275,7 +278,8 @@ def main():
     tex = ASSETS / "textures/block"
     rice_item(WHITE_GRAIN, 0.82, 0.7).save(ASSETS / "textures/item/white_rice.png")  # a light cool grey ring
     rice_item(BROWN_GRAIN, 0.85, 0.7).save(ASSETS / "textures/item/brown_rice.png")
-    bran().save(ASSETS / "textures/item/rice_bran.png")
+    if not hand_finished.kept(ASSETS / "textures/item/rice_bran.png"):  # the author's own drawing stands for it
+        bran().save(ASSETS / "textures/item/rice_bran.png")
     for stage in range(4):
         for i, (name, fn) in enumerate((("rice", lower), ("rice_panicles", upper))):
             texkit.shade(fn(stage), 10 + stage * 2 + i, reach=1, **texkit.PLANT).save(tex / f"{name}_stage{stage}.png")

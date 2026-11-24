@@ -16,6 +16,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -31,6 +32,8 @@ def rgba(r, g, b, a=255):
 
 
 def save(img, path, frametime=None):
+    if hand_finished.kept(path):  # an icon drawn outside the scripts stands for it
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     img.save(path)
     if frametime:

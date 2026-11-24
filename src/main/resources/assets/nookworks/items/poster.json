@@ -33,6 +33,13 @@
         }
       },
       {
+        "when": "nookworks:blue_grotto",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/blue_grotto"
+        }
+      },
+      {
         "when": "nookworks:blue_study",
         "model": {
           "type": "minecraft:model",
@@ -72,6 +79,13 @@
         "model": {
           "type": "minecraft:model",
           "model": "nookworks:item/poster/carrot"
+        }
+      },
+      {
+        "when": "nookworks:cherry_lane",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/cherry_lane"
         }
       },
       {
@@ -250,6 +264,13 @@
         }
       },
       {
+        "when": "nookworks:lightning_strike",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/lightning_strike"
+        }
+      },
+      {
         "when": "nookworks:little_witch",
         "model": {
           "type": "minecraft:model",
@@ -310,6 +331,20 @@
         "model": {
           "type": "minecraft:model",
           "model": "nookworks:item/poster/radish"
+        }
+      },
+      {
+        "when": "nookworks:record_player",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/record_player"
+        }
+      },
+      {
+        "when": "nookworks:red_mushroom",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/red_mushroom"
         }
       },
       {
@@ -376,10 +411,24 @@
         }
       },
       {
+        "when": "nookworks:smokestack_city",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/smokestack_city"
+        }
+      },
+      {
         "when": "nookworks:snowman",
         "model": {
           "type": "minecraft:model",
           "model": "nookworks:item/poster/snowman"
+        }
+      },
+      {
+        "when": "nookworks:sparrow",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/sparrow"
         }
       },
       {
@@ -394,6 +443,27 @@
         "model": {
           "type": "minecraft:model",
           "model": "nookworks:item/poster/still_life"
+        }
+      },
+      {
+        "when": "nookworks:storm_ship",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/storm_ship"
+        }
+      },
+      {
+        "when": "nookworks:stratosphere_sunrise",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/stratosphere_sunrise"
+        }
+      },
+      {
+        "when": "nookworks:summer_cloud",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/summer_cloud"
         }
       },
       {
@@ -439,6 +509,20 @@
         }
       },
       {
+        "when": "nookworks:unit_07",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/unit_07"
+        }
+      },
+      {
+        "when": "nookworks:violin",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/violin"
+        }
+      },
+      {
         "when": "nookworks:wanted",
         "model": {
           "type": "minecraft:model",
@@ -460,6 +544,13 @@
         }
       },
       {
+        "when": "nookworks:windmill_hill",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/windmill_hill"
+        }
+      },
+      {
         "when": "nookworks:winter_lake",
         "model": {
           "type": "minecraft:model",
@@ -478,6 +569,13 @@
         "model": {
           "type": "minecraft:model",
           "model": "nookworks:item/poster/yellow_flowers"
+        }
+      },
+      {
+        "when": "nookworks:yellow_mug",
+        "model": {
+          "type": "minecraft:model",
+          "model": "nookworks:item/poster/yellow_mug"
         }
       },
       {

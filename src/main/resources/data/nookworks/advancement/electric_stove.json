@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:electric_stove"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "stove": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:electric_stove"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:electric_stove"
+    },
+    "title": {
+      "translate": "advancements.nookworks.electric_stove.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.electric_stove.description"
+    }
+  },
+  "requirements": [
+    [
+      "stove"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:machine_chassis"
+}

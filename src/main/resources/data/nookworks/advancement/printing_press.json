@@ -24,6 +24,13 @@
     {
       "type": "nookworks:available",
       "items": [
+        "nookworks:electrolytic_cell"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
         "nookworks:caustic_soda"
       ],
       "any": true
@@ -39,13 +46,6 @@
       "type": "nookworks:available",
       "items": [
         "nookworks:fine_paper"
-      ],
-      "any": true
-    },
-    {
-      "type": "nookworks:available",
-      "items": [
-        "nookworks:poster"
       ],
       "any": true
     },
@@ -88,5 +88,5 @@
     ]
   ],
   "sends_telemetry_event": false,
-  "parent": "nookworks:poster"
+  "parent": "nookworks:fine_paper"
 }

@@ -259,7 +259,7 @@ public final class AgentInput {
                 Nookworks.LOGGER.info("[agent-input] {}", line.trim());
                 write(dir.resolve("agent_output.txt"), "ok " + line.trim() + "\n", true);
             } catch (RuntimeException e) {
-                Nookworks.LOGGER.warn("[agent-input] failed: {} ({})", line.trim(), e.toString());
+                Nookworks.LOGGER.warn("[agent-input] failed: {} ({})", line.trim(), e.toString(), e);
                 write(dir.resolve("agent_output.txt"), "failed " + line.trim() + ": " + e + "\n", true);
             }
         }

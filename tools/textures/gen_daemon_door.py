@@ -9,11 +9,12 @@ slide, and stand off the wall - from one texture laid out below; the block's own
 - entity/daemon_door.png          the leaf (front, back, edges), the rail, the zinc of the handle, 64x64, laid out as
                                   DaemonDoorRenderer reads it (its LEAF_FRONT etc. must match)
 - block/daemon_door.png           the particle: a piece of the leaf
-- item/daemon_door.png            the door in the slot
+- item/daemon_door.png            the door in the slot (the author's own drawing since 2026-11-21: left as it is,
+                                  hand_finished.py)
 - block/destination_panel.png     the panel: its front (10x12 at 3,2), the side and edge strips, the knob - oiled
                                   Dawnwood framing a zinc-rimmed screen
 - block/destination_panel_screen.png   the screen lit: a short list, one entry picked (laid over it, giving off light)
-- item/destination_panel.png      the panel in the slot
+- item/destination_panel.png      the panel in the slot (the author's own drawing since 2026-11-21: left as it is)
 - misc/daemon_door_light.png      plain white, which the renderer colours pixel by pixel
 
 and the door's and panel's blockstates and models, and the item models. Run from the repo root:
@@ -27,6 +28,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -414,10 +416,12 @@ def main():
     for old in ("daemon_door_top.png", "daemon_door_bottom.png"):
         if (BLOCK / old).exists():
             (BLOCK / old).unlink()  # the hatch's leaf
-    door_item().save(ITEM / "daemon_door.png")
+    if not hand_finished.kept(ITEM / "daemon_door.png"):  # the author's own drawing stands for it (HAND_FINISHED.md)
+        door_item().save(ITEM / "daemon_door.png")
     panel().save(BLOCK / "destination_panel.png")
     panel_screen().save(BLOCK / "destination_panel_screen.png")
-    texkit.outline(panel_item()).save(ITEM / "destination_panel.png")
+    if not hand_finished.kept(ITEM / "destination_panel.png"):  # the author's own drawing stands for it
+        texkit.outline(panel_item()).save(ITEM / "destination_panel.png")
     MISC.mkdir(parents=True, exist_ok=True)
     Image.new("RGBA", (4, 4), (255, 255, 255, 255)).save(MISC / "daemon_door_light.png")
     door_models()

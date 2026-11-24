@@ -22,6 +22,7 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import gen_pipe_ports  # noqa: E402
 
+import hand_finished
 import itemkit
 import texkit
 from gen_water import pull_flange
@@ -39,6 +40,8 @@ def rgba(r, g, b, a=255):
 
 
 def save(img, path, frametime=None):
+    if hand_finished.kept(path):  # an icon drawn outside the scripts stands for it
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     img.save(path)
     if frametime:

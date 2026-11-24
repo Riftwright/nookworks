@@ -10,12 +10,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
- * Mods > Nookworks > Config: NeoForge's settings screen for the mod's configs, and, in a world, the world's choice of
- * parts (the user, 2026-10-31) - asked of the server, which says whether this player may change it.
+ * Mods > Nookworks > Config: the mod's own settings screen ({@link NookworksConfigScreen}, 2026-11-22; NeoForge's list is
+ * a button on it), and, in a world, the world's choice of parts (the user, 2026-10-31) - asked of the server, which says
+ * whether this player may change it.
  */
 public final class NookworksSettingsScreen extends Screen {
     private static final int BUTTON_WIDTH = 220;
@@ -34,7 +34,7 @@ public final class NookworksSettingsScreen extends Screen {
         this.layout.addTitleHeader(this.title, this.font);
         LinearLayout column = this.layout.addToContents(LinearLayout.vertical().spacing(8));
         column.addChild(Button.builder(Component.translatable("nookworks.settings.configs"),
-                b -> this.minecraft.gui.setScreen(new ConfigurationScreen(this.mod, this))).width(BUTTON_WIDTH).build());
+                b -> this.minecraft.gui.setScreen(new NookworksConfigScreen(this.mod, this))).width(BUTTON_WIDTH).build());
         Button parts = column.addChild(Button.builder(Component.translatable("nookworks.settings.world_parts"),
                 b -> ClientPacketDistributor.sendToServer(new NookworksNetwork.AskWorldParts())).width(BUTTON_WIDTH).build());
         boolean inWorld = this.minecraft.getConnection() != null && this.minecraft.getConnection().hasChannel(NookworksNetwork.AskWorldParts.TYPE);

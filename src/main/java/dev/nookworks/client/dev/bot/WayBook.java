@@ -55,7 +55,7 @@ final class WayBook {
     }
 
     /** The server's address (or the singleplayer world's name) and the dimension, as a file name. */
-    private static String key(Minecraft mc) {
+    static String key(Minecraft mc) {
         String world;
         if (mc.getSingleplayerServer() != null) {
             world = mc.getSingleplayerServer().getWorldData().getLevelName();

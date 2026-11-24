@@ -1,50 +1,175 @@
 {
-  "variants": {
-    "facing=north,powered=false": {
-      "model": "nookworks:block/motor"
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor"
+      }
     },
-    "facing=north,powered=true": {
-      "model": "nookworks:block/motor_on"
+    {
+      "when": {
+        "facing": "north",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on"
+      }
     },
-    "facing=east,powered=false": {
-      "model": "nookworks:block/motor",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor",
+        "y": 90
+      }
     },
-    "facing=east,powered=true": {
-      "model": "nookworks:block/motor_on",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on",
+        "y": 90
+      }
     },
-    "facing=south,powered=false": {
-      "model": "nookworks:block/motor",
-      "y": 180
+    {
+      "when": {
+        "facing": "south",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor",
+        "y": 180
+      }
     },
-    "facing=south,powered=true": {
-      "model": "nookworks:block/motor_on",
-      "y": 180
+    {
+      "when": {
+        "facing": "south",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on",
+        "y": 180
+      }
     },
-    "facing=west,powered=false": {
-      "model": "nookworks:block/motor",
-      "y": 270
+    {
+      "when": {
+        "facing": "west",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor",
+        "y": 270
+      }
     },
-    "facing=west,powered=true": {
-      "model": "nookworks:block/motor_on",
-      "y": 270
+    {
+      "when": {
+        "facing": "west",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on",
+        "y": 270
+      }
     },
-    "facing=up,powered=false": {
-      "model": "nookworks:block/motor",
-      "x": 270
+    {
+      "when": {
+        "facing": "up",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor",
+        "x": 270
+      }
     },
-    "facing=up,powered=true": {
-      "model": "nookworks:block/motor_on",
-      "x": 270
+    {
+      "when": {
+        "facing": "up",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on",
+        "x": 270
+      }
     },
-    "facing=down,powered=false": {
-      "model": "nookworks:block/motor",
-      "x": 90
+    {
+      "when": {
+        "facing": "down",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "nookworks:block/motor",
+        "x": 90
+      }
     },
-    "facing=down,powered=true": {
-      "model": "nookworks:block/motor_on",
-      "x": 90
+    {
+      "when": {
+        "facing": "down",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_on",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "socket_north": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket"
+      }
+    },
+    {
+      "when": {
+        "socket_east": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "socket_south": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "socket_west": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "socket_up": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "socket_down": "true"
+      },
+      "apply": {
+        "model": "nookworks:block/motor_cable_socket",
+        "x": 90
+      }
     }
-  }
+  ]
 }

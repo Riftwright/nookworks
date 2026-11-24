@@ -1,0 +1,66 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:retort"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:brass_ingot"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:horizontal_item_warp_sender",
+        "nookworks:item_warp_sender"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "warp": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:item_warp_sender",
+              "nookworks:horizontal_item_warp_sender"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:item_warp_sender"
+    },
+    "title": {
+      "translate": "advancements.nookworks.item_warp.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.item_warp.description"
+    }
+  },
+  "requirements": [
+    [
+      "warp"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:brass"
+}

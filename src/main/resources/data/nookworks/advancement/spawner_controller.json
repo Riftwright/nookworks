@@ -3,13 +3,6 @@
     {
       "type": "nookworks:available",
       "items": [
-        "nookworks:machine_chassis"
-      ],
-      "any": true
-    },
-    {
-      "type": "nookworks:available",
-      "items": [
         "nookworks:spawner_controller"
       ],
       "any": true
@@ -46,5 +39,5 @@
     ]
   ],
   "sends_telemetry_event": false,
-  "parent": "nookworks:machine_chassis"
+  "parent": "nookworks:root"
 }

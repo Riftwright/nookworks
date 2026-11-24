@@ -36,7 +36,9 @@ import net.neoforged.neoforge.common.Tags;
 public final class Stairs {
     private Stairs() {}
 
-    public enum Kind { STAIR, TUNNEL }
+    /** A stair's step (a block down), a tunnel's (level), a stair up's (a block up: the 3x3 over the feet's level, its
+     *  floor left - the hall's climb to the next section's top). */
+    public enum Kind { STAIR, TUNNEL, UP }
 
     /**
      * One step of a dig: {@code open} the nine cells to clear (top row first: what falls comes down into rows still to be
@@ -47,7 +49,7 @@ public final class Stairs {
 
     public static Step next(Kind kind, BlockPos feet, Direction dir) {
         BlockPos col = feet.relative(dir);
-        int low = kind == Kind.STAIR ? feet.getY() - 1 : feet.getY();
+        int low = kind == Kind.STAIR ? feet.getY() - 1 : kind == Kind.UP ? feet.getY() + 1 : feet.getY();
         Direction side = dir.getClockWise();
         List<BlockPos> open = new ArrayList<>(9);
         for (int y = low + 2; y >= low; y--) {

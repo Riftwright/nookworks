@@ -66,8 +66,10 @@ public class RiceBlock extends VegetationBlock implements BonemealableBlock, Liq
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // Mud and clay are not #dirt, but they are what a paddy is floored with.
-        return state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND) || state.is(Blocks.MUD) || state.is(Blocks.CLAY);
+        // Mud and clay are not #dirt, but they are what a paddy is floored with. Grass, podzol and mycelium are no longer
+        // #dirt in 26.3 (they are #grass_blocks), so a flooded field of grass is named apart.
+        return state.is(BlockTags.DIRT) || state.is(BlockTags.GRASS_BLOCKS) || state.is(Blocks.FARMLAND) || state.is(Blocks.MUD)
+                || state.is(Blocks.CLAY);
     }
 
     /** Only into a full block of water with open air above: rice wants its feet wet and its head dry. */

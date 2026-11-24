@@ -26,6 +26,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -429,7 +430,8 @@ def sulfur_dust():
     img = itemkit.sprite(SULFUR_HEAP, SULFUR)
     for x, y, c in ((13, 13, "4"), (14, 12, "3"), (1, 14, "3")):  # grains rolled off, not ringed
         img.putpixel((x, y), SULFUR[c] + (255,))
-    img.save(ITEM / "sulfur_dust.png")
+    if not hand_finished.kept(ITEM / "sulfur_dust.png"):  # the author's own drawing stands for it
+        img.save(ITEM / "sulfur_dust.png")
 
 
 # ---- the paper chain ----

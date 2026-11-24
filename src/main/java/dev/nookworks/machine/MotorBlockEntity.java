@@ -67,6 +67,13 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
         super(ModBlockEntities.MOTOR.get(), pos, state, 0, 10_000, 200, 0);
     }
 
+    /** A motor from before its cable sockets were drawn shows them once its chunk is in. */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        MotorBlock.socketsOnLoad(this);
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, MotorBlockEntity motor) {
         if (level instanceof ServerLevel server) {
             motor.tick(server, pos, state);

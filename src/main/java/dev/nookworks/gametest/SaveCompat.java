@@ -143,7 +143,7 @@ final class SaveCompat {
      * is 1.0's as the Minecraft 26.2 build kept it (on that branch, as {@code 1_0_0}), read here through the game's data
      * fixers: a world from 26.2 opened in 26.3.
      */
-    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0", "1_6_0", "1_7_0", "1_7_1"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
+    static final List<String> FIXTURES = List.of("0_4_0", "0_5_0", "0_5_1", "0_6_0", "0_6_1", "0_6_2", "0_7_0", "0_8_0", "0_9_0", "1_0_0", "1_0_0_mc26_2", "1_1_0", "1_2_0", "1_2_1", "1_2_2", "1_3_0", "1_3_1", "1_3_2", "1_4_0", "1_5_0", "1_6_0", "1_7_0", "1_7_1", "1_8_0"); // 0_4_0 made from 5e0cb8f, the jar uploaded as 0.4.0
     /** Where a fixture is set down: far from the tests' own plots, high over the test level's floor. */
     private static final BlockPos AT = new BlockPos(48000, 140, 48000);
     private static final int PER_ROW = 24;
@@ -431,6 +431,31 @@ final class SaveCompat {
             // 1.3: an Oil Press shows a copper port where a Copper Pipe joins its side (oil/OilPressBlock, port_*); one
             // from before loads with none, and is set right as its chunk loads, by the pipes beside it (none here)
             now.addProperty("state", state.substring(0, state.length() - 1) + ",port_east=false,port_north=false,port_south=false,port_west=false]");
+        }
+        String motor = now.get("state").getAsString();
+        if (motor.startsWith(Nookworks.MODID + ":motor[") && !motor.contains("socket_")) {
+            // after 1.7 (the user, 2026-11-23): a Motor shows a socket where a cable joins its side (block/MotorBlock,
+            // socket_*); one from before loads with none, and is set right as its chunk loads, by the cables beside it
+            // (none here)
+            now.addProperty("state", motor.substring(0, motor.length() - 1)
+                    + ",socket_down=false,socket_east=false,socket_north=false,socket_south=false,socket_up=false,socket_west=false]");
+        }
+        String vent = now.get("state").getAsString();
+        String[] parted = vent.startsWith(Nookworks.MODID + ":duct[") ? new String[] {"down", "east", "north", "south", "up", "west"}
+                : vent.matches(Nookworks.MODID + ":[a-z_]*(chimney|_flue)\\[.*") ? new String[] {"east", "north", "south", "west"} : new String[0];
+        if (parted.length > 0 && !vent.contains("_off=")) {
+            // after 1.7 (the user, 2026-11-23): a Duct's sides, and a Chimney's four, are parted with the Wrench
+            // (ventilation/DuctBlock.toggleSide: *_off, as a pipe's); one from before was parted nowhere, and loads so
+            TreeMap<String, String> properties = new TreeMap<>();
+            for (String pair : vent.substring(vent.indexOf('[') + 1, vent.length() - 1).split(",")) {
+                properties.put(pair.substring(0, pair.indexOf('=')), pair.substring(pair.indexOf('=') + 1));
+            }
+            for (String side : parted) {
+                properties.put(side + "_off", "false");
+            }
+            StringBuilder out = new StringBuilder(vent.substring(0, vent.indexOf('[') + 1));
+            properties.forEach((key, value) -> out.append(out.charAt(out.length() - 1) == '[' ? "" : ",").append(key).append('=').append(value));
+            now.addProperty("state", out.append(']').toString());
         }
         String machine = now.get("state").getAsString();
         String block = machine.contains("[") ? machine.substring(0, machine.indexOf('[')) : machine;

@@ -12,7 +12,7 @@ vanilla's cave vine itself (the user, 2026-10-16), so theirs has no rope picture
 - textures/block/hook.png                     the iron: lit, body, shade and edge, in bands for the models' faces
 - textures/block/hook_<sprig>.png             the sprig against the wall (or the first under a ceiling)
 - textures/block/hook_<sprig>_out.png         the sprig standing out, sparser
-- textures/item/hook.png                      the item: the hook on its plate
+- models/item/hook.json                       the item: the wall hook itself, seen from above in the slot
 - textures/item/hung_sweet_berries.png        the sweet berries' sprig as it hangs from a rope
 - models/block/hook_{wall,ceiling}[_<sprig>].json, items/hook.json, items/hung_sweet_berries.json, blockstates/hook.json
 - data: the loot table, the recipe, and #nookworks:rope_posts (fence posts, bars, rods, the hook and the supports, of which a
@@ -21,11 +21,11 @@ vanilla's cave vine itself (the user, 2026-10-16), so theirs has no rope picture
 Run from the repo root:  python tools/textures/gen_hook.py
 """
 import json
+import math
 from pathlib import Path
 
 from PIL import Image
 
-import itemkit
 import texkit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -214,36 +214,56 @@ def berries_out():
     return sprig(0.62, stems=((6, 8), (9, 8)), berries=((4, 10, True), (9, 10, True), (7, 13, False)), seed=92)
 
 
-# The item (itemkit): the hook's shape as it was, its iron lifted so it reads as iron in the slot, not a black stroke
-# (the same three pixels thick): the edge towards the light lit (L), the body (B), a cooler underside (S), a highlight
-# where the bend and the plate catch the light (h); the plate a rosette, its rim lighter (R, r) round a dark screw slot
-# (o). Ringed in the iron's own darkest: the slot counts as iron for it.
-ICON_COLOURS = {"o": (30, 32, 40), "S": (60, 64, 80), "B": (98, 100, 112), "L": (140, 142, 154), "h": (198, 200, 212),
-                "R": (164, 166, 178), "r": (122, 124, 136)}
-ICON_RING = {ch: ICON_COLOURS["S"] for ch in ICON_COLOURS}
-ICON = [
-    "................",
-    "................",
-    "..RRRR..........",
-    ".RhLLrS.........",
-    ".RLooBS.........",
-    ".RLBBBSLLLLL....",
-    "..SSSSBBBBBBBS..",
-    "...........LhBS.",
-    "............hBS.",
-    "............LBS.",
-    "....h.......LBS.",
-    "....LB......LBS.",
-    "....LBB....LBBS.",
-    ".....SBBBBBBBS..",
-    "......SSSSSS....",
-    "................",
-]
+# The item is the wall hook itself, not a picture of it (the user, 2026-11-21, of three views tried in the agent client:
+# 「斜め上からのやつがいいかな。もう少し小さく（引いて）」, and again 「もう少しだけ小さくてもいいかも」): in the slot from
+# above at vanilla's block angle, ten pixels across where the first try filled thirteen; in the hand, on the ground and
+# in a frame about as big as the flat icon it replaces was, the hook's middle where a full block's would be. The flat
+# icon (item/hook.png, drawn here before) is gone.
+GUI_ACROSS = 10  # of the slot's 16 pixels
+# context: (rotation, scale - None for the slot's, worked out from GUI_ACROSS -, where the hook's middle goes in pixels:
+# vanilla's block/block puts a block's middle there)
+ITEM_VIEWS = {
+    "gui": ([30, 225, 0], None, [0, 0, 0]),
+    "firstperson_righthand": ([0, 45, 0], 1.1, [0, 2, 0]),  # lifted into sight, as a held item is
+    "firstperson_lefthand": ([0, 225, 0], 1.1, [0, 2, 0]),
+    "thirdperson_righthand": ([75, 45, 0], 1.2, [0, 2.5, 0]),
+    "thirdperson_lefthand": ([75, 45, 0], 1.2, [0, 2.5, 0]),
+    "ground": ([0, 0, 0], 1.2, [0, 3, 0]),
+    "fixed": ([0, 90, 0], 2.6, [0, 0, 0]),  # side on, as it stands out from a wall
+}
 
 
-def item_icon():
-    """The hook as it is held: its round plate with the screw in it, the shank, and the bend up to the point."""
-    return itemkit.sprite(itemkit.check(ICON), ICON_COLOURS, lit=0.9, dark=0.72, ring_from=ICON_RING)
+def turned(v, rotation):
+    """A point about the block's middle as ItemTransform turns it (rotationXYZ: v' = Rx(Ry(Rz(v))))."""
+    x, y, z = v
+    rx, ry, rz = (math.radians(a) for a in rotation)
+    x, y = x * math.cos(rz) - y * math.sin(rz), x * math.sin(rz) + y * math.cos(rz)
+    x, z = x * math.cos(ry) + z * math.sin(ry), -x * math.sin(ry) + z * math.cos(ry)
+    y, z = y * math.cos(rx) - z * math.sin(rx), y * math.sin(rx) + z * math.cos(rx)
+    return x, y, z
+
+
+def item_display(elements):
+    """Each view's transform: the hook turned, scaled, and its middle (the middle of its turned bounds) put in place.
+    A left hand's view is mirrored by the game (its y and z turns and its x shift negated), so it is worked out
+    mirrored."""
+    corners = [[e["from"][i] if (k >> i) & 1 == 0 else e["to"][i] for i in range(3)]
+               for e in elements for k in range(8)]
+    display = {}
+    for context, (rotation, scale, at) in ITEM_VIEWS.items():
+        left = context.endswith("lefthand")
+        applied = [rotation[0], -rotation[1], -rotation[2]] if left else rotation
+        seen = [turned([c - 8 for c in corner], applied) for corner in corners]
+        lo = [min(s[i] for s in seen) for i in range(3)]
+        hi = [max(s[i] for s in seen) for i in range(3)]
+        if scale is None:
+            scale = GUI_ACROSS / max(hi[0] - lo[0], hi[1] - lo[1])
+        shift = [at[i] - (lo[i] + hi[i]) / 2 * scale for i in range(3)]
+        if left:
+            shift[0] = -shift[0]
+        display[context] = {"rotation": rotation, "translation": [round(v, 2) + 0.0 for v in shift],
+                            "scale": [round(scale, 3)] * 3}
+    return display
 
 
 def face(tex, uv, cull=None):
@@ -376,10 +396,11 @@ if __name__ == "__main__":
             write_json(ASSETS / f"models/item/hung_{kind}.json",
                        {"parent": "minecraft:item/generated", "textures": {"layer0": f"nookworks:item/hung_{kind}"}})
             write_json(ASSETS / f"items/hung_{kind}.json", {"model": {"type": "minecraft:model", "model": f"nookworks:item/hung_{kind}"}})
-    item_icon().save(ASSETS / "textures/item/hook.png")
+    if (ASSETS / "textures/item/hook.png").exists():
+        (ASSETS / "textures/item/hook.png").unlink()  # the flat icon the item was before 2026-11-21
     write_json(ASSETS / "models/block/hook_wall.json", hook_wall())
     write_json(ASSETS / "models/block/hook_ceiling.json", hook_ceiling())
-    write_json(ASSETS / "models/item/hook.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "nookworks:item/hook"}})
+    write_json(ASSETS / "models/item/hook.json", {"parent": "nookworks:block/hook_wall", "display": item_display(hook_wall()["elements"])})
     write_json(ASSETS / "items/hook.json", {"model": {"type": "minecraft:model", "model": "nookworks:item/hook"}})
     write_json(ASSETS / "blockstates/hook.json", states())
     write_json(DATA / "loot_table/blocks/hook.json", loot())

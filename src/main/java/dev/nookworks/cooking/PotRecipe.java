@@ -66,7 +66,7 @@ public record PotRecipe(List<Part> ingredients, Liquid liquid, int amount, int t
         try {
             return com.mojang.serialization.DataResult.success(Integer.parseInt(s.startsWith("#") ? s.substring(1) : s, 16) & 0xFFFFFF);
         } catch (NumberFormatException e) {
-            return com.mojang.serialization.DataResult.error(() -> "Not a colour (#rrggbb): " + s);
+            return com.mojang.serialization.DataResult.error(() -> "Not a color (#rrggbb): " + s);
         }
     }, c -> String.format("#%06x", c));
 

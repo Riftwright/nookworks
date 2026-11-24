@@ -40,6 +40,9 @@ public final class Abilities {
     /** The most cells in a row with the head under water (a breath's worth, with room to spare; more when the way is
      *  to air itself). */
     public int maxUnderwater = Pathfinder.MAX_UNDERWATER;
+    /** Cells to take for rock, whatever is there (null: none): the edge of a hall's section already dug out, which it
+     *  walked off again and again (2026-11-22). */
+    public java.util.function.@Nullable Predicate<BlockPos> wall;
     /** Places to keep clear of: a hostile mob, a creeper about to go off. */
     public final List<Avoid> avoid = new ArrayList<>();
 

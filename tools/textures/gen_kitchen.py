@@ -4,7 +4,7 @@ outline kept exact); the machines are vanilla textures composed in JSON, with ou
 
 - item/bread_dough, risen_dough, udon_dough, raw_udon, pancake_batter; udon, cream_stew, corn_potage (in bowls);
   donut, pancake, grilled_corn; corn (the ear), corn_kernels (planted), onion - the doughs and the raw udon placed
-  and ringed here to itemkit's bar, without the finish's grain, and so is the onion
+  and ringed here to itemkit's bar, without the finish's grain, and so are the onion, the pancakes and the batter
 - block/bread_dough.png, block/risen_dough.png: the dough's skin, for the balls set on a tray to rise
 - models/block/dough_ball[_risen].json: one ball of dough, and one risen, which the Wooden Tray draws on itself
 - models/block/wooden_tray.json and its blockstate: a board of oak with a low rim, vanilla's oak composed
@@ -21,6 +21,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -66,12 +67,6 @@ ONION_ROOT = [(168, 146, 106), (218, 202, 166)]
 DONUT = [(96, 46, 26), (138, 72, 34), (178, 106, 46), (210, 144, 66), (234, 182, 98), (248, 214, 140)]
 DONUT_SUGAR = [(214, 196, 170), (238, 228, 210), (252, 248, 240)]
 SUGAR = DONUT_SUGAR[2]
-PANCAKE = [(128, 76, 30), (180, 120, 52), (218, 166, 90), (240, 204, 140)]
-BUTTER = [(232, 196, 84), (254, 232, 140)]
-SYRUP = [(96, 44, 12), (150, 76, 20), (196, 118, 40)]
-BATTER = [(206, 176, 104), (234, 210, 144), (248, 232, 180)]
-JUG = [(150, 156, 166), (206, 212, 220), (236, 240, 244), (252, 252, 254)]   # white enamel
-JUG_RIM = (46, 70, 124)
 
 
 def px(img, x, y, c):
@@ -310,18 +305,38 @@ def cream_stew():
     return img
 
 
+# In the bowl family's size and angle (the user, 2026-11-21: of every icon checked for 配置・大きさ・余白・角度, 1 and 2
+# first): ten wide before the ring, twelve with it, as vanilla's stews and the author's own bowls are; the surface an
+# ellipse and the rim's front an arc mirroring its back; no steam, as theirs have none. Ringed from the bowl alone.
+# W/w/v/V the white china lit to shade, b/B its blue band; Y/y/d the potage, c the cream swirl, g parsley, k a kernel.
+CORN_POTAGE_ICON = {"W": (250, 250, 246), "w": (226, 230, 234), "v": (186, 194, 206), "V": (146, 156, 174),
+                    "b": (96, 134, 204), "B": (52, 86, 160), "Y": (252, 228, 150), "y": (240, 204, 104), "d": (214, 170, 64),
+                    "c": (254, 248, 226), "g": (96, 150, 60), "k": (236, 180, 40)}
+CORN_POTAGE_RING = dict(CORN_POTAGE_ICON, b=CORN_POTAGE_ICON["v"], B=CORN_POTAGE_ICON["V"],
+                        **{ch: CORN_POTAGE_ICON["w"] for ch in "Yydcgk"})
+CORN_POTAGE_ROWS = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....YYcYyy.....",
+    "...WYccYygydw...",
+    "...WWyYykydvv...",
+    "...bbWWWwwwBB...",
+    "....WbbbBBBv....",
+    "......wwvV......",
+    "................",
+    "................",
+    "................",
+    "................",
+]
+
+
 def corn_potage():
-    """Corn potage: a smooth pale-yellow soup in white china, a swirl of cream and a pinch of parsley."""
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    china_bowl(img, top=9)
-    surface(img, 9, [(214, 170, 64), (240, 204, 104), (252, 228, 150)], 6)
-    for x, y in ((6, 8), (7, 7), (8, 7), (9, 8)):
-        px(img, x, y, (254, 248, 226))
-    px(img, 10, 8, NEGI[1])
-    px(img, 5, 9, NEGI[0])
-    img = outline(img)
-    steam(img, ((7, 5, 140), (8, 4, 100), (7, 3, 70)))
-    return img
+    """Corn potage in white china with a blue band, a swirl of cream, parsley and a kernel or two."""
+    return itemkit.sprite(itemkit.check(CORN_POTAGE_ROWS), CORN_POTAGE_ICON, lit=0.8, dark=0.55, ring_from=CORN_POTAGE_RING)
 
 
 # The doughnut's shape, in pixels: the top of the ring an ellipse round the middle, the hole another, and the side
@@ -401,58 +416,80 @@ def donut():
     return img
 
 
+# The Pancakes: two thick pancakes seen from above at an angle, every edge curving as the top's does - the seam between
+# them and the bottom (the user, 2026-11-21: 「斜め上から見たような立体感のある構図にして」, 「下の方もちゃんと直して」,
+# and of the two drawn, 「bがいいね」). Each cake was laid out as a disc tested pixel by pixel (lower and flatter than a
+# cake, so the outline is the stack's own), then the butter and the syrup placed. Lit from the upper left.
+# l/L the top's pale rim lit and in shade, T its browned middle; E/e/d a cake's side lit, middle, in shade, k/K the
+# cooked underside below it; b/B/u/U the butter's lit top, top, front, shaded side; S/s the syrup deep and thin, h its glint.
+PANCAKE_ICON = {
+    "l": (238, 200, 128), "L": (226, 170, 94), "T": (206, 136, 62),
+    "E": (244, 214, 150), "e": (226, 184, 114), "d": (196, 140, 76), "k": (160, 98, 44), "K": (126, 72, 34),
+    "b": (255, 250, 206), "B": (250, 230, 140), "u": (222, 186, 88), "U": (196, 156, 66),
+    "S": (122, 50, 14), "s": (164, 78, 22), "h": (236, 150, 70),
+}
+PANCAKE_ROWS = [
+    "................",
+    "................",
+    "................",
+    "....llllllll....",
+    "..lTTTBbbBTTTl..",
+    ".llTTsuuuUsTTLL.",
+    ".ElTsSSShSSsTLd.",
+    ".EEEllllSSSLddd.",
+    ".kEEESeeeeSeddK.",
+    ".EkkEseeeeSeKKd.",
+    ".EEEkkkkkkSkddd.",
+    ".kEEEEeeeeSeddK.",
+    "..kkEEeeeeseKK..",
+    "....kkkkkkkk....",
+    "................",
+    "................",
+]
+
+
 def pancake():
-    """A stack of three pancakes, a pat of butter melting on top and syrup running down the side."""
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    for k, y0 in enumerate((11, 8, 5)):  # three cakes, the bottom one first
-        for y in range(y0, y0 + 3):
-            for x in range(2, 14):
-                edge = y == y0 + 2
-                c = PANCAKE[0] if edge else PANCAKE[1] if y == y0 + 1 else PANCAKE[2]
-                if x in (2, 13) and y == y0:
-                    continue
-                px(img, x, y, c)
-    for x in range(3, 13):  # the top cake's golden face
-        px(img, x, 5, PANCAKE[3] if x < 8 else PANCAKE[2])
-    for x in range(6, 10):  # the butter
-        px(img, x, 4, BUTTER[1])
-        px(img, x, 5, BUTTER[0])
-    for x, y0, n in ((4, 6, 5), (11, 6, 7), (8, 7, 2)):  # syrup running down
-        for y in range(y0, y0 + n):
-            px(img, x, y, SYRUP[1] if y < y0 + n - 1 else SYRUP[0])
-    for x in range(3, 13):
-        if x not in (6, 7, 8, 9):
-            px(img, x, 6, SYRUP[2])
-    return outline(img)
+    """Two thick pancakes from above at an angle, a pat of butter on top, syrup pooled round it and running down."""
+    return itemkit.sprite(itemkit.check(PANCAKE_ROWS), PANCAKE_ICON, lit=0.8, dark=0.55)
+
+
+# The Pancake Batter: a white enamel bowl with a blue rim (the jug's enamel), the batter inside, a run of it over the
+# front rim, seen from above at the Pancakes' angle (the user, 2026-11-21: of a bowl with a whisk, the bowl alone and the
+# jug, 「bがいいね」, the rim's front then drawn as the mirror of its back - 「手前だけ直線になってて、滑らかな楕円に見え
+# ない」). Centred on the slot, fourteen wide with the ring, as vanilla's foods sit.
+# Q/R/r the rim lit, middle, in shade; i/I the inside wall at the back; g/p/P/q the batter's glint, lit, middle, shade;
+# W/w/v/V the enamel body from lit to shade.
+BATTER_ICON = {
+    "W": (250, 250, 246), "w": (226, 230, 234), "v": (186, 194, 206), "V": (146, 156, 174),
+    "Q": (96, 134, 204), "R": (52, 86, 160), "r": (34, 58, 122),
+    "i": (204, 210, 218), "I": (172, 180, 196),
+    "g": (255, 248, 222), "p": (250, 234, 182), "P": (238, 214, 150), "q": (220, 190, 124),
+}
+# the ring is the bowl's own darkest: the batter, the run down the side included, counts as enamel for it
+BATTER_RING = dict(BATTER_ICON, g=BATTER_ICON["W"], p=BATTER_ICON["w"], P=BATTER_ICON["w"], q=BATTER_ICON["v"])
+BATTER_ROWS = [
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....QQQQQR.....",
+    "...QQiiiiiiRR...",
+    "..QipggpppPqir..",
+    "..RpppppppPqqr..",
+    "..WRRpppPPqrrV..",
+    "...WWPRrrrrvV...",
+    "...WWPwwwwvvV...",
+    "....WqwwwvvV....",
+    ".....vvwwvV.....",
+    "................",
+    "................",
+    "................",
+]
 
 
 def pancake_batter():
-    """Batter in a white enamel jug with a blue rim, seen a little from above so the thick pale batter shows inside,
-    a drip of it running from the lip."""
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    for y in range(6, 15):  # the jug's body, bellied a little
-        a, b = (4, 11) if 7 < y < 13 else (5, 10)
-        for x in range(a, b + 1):
-            c = JUG[3] if x < 6 else JUG[2] if x < 9 else JUG[1]
-            if x == b or y == 14:
-                c = JUG[0]
-            px(img, x, y, c)
-    for x in range(4, 12):  # the rim, seen from above: blue enamel round the batter
-        px(img, x, 4, JUG_RIM)
-        px(img, x, 6, JUG_RIM)
-    px(img, 4, 5, JUG_RIM)
-    px(img, 11, 5, JUG_RIM)
-    for x in range(5, 11):
-        px(img, x, 5, BATTER[2] if x < 8 else BATTER[1])
-    px(img, 3, 4, JUG_RIM)  # the lip, and the drip down the side
-    px(img, 3, 5, BATTER[1])
-    px(img, 4, 7, BATTER[1])
-    px(img, 4, 8, BATTER[0])
-    for y in range(7, 12):  # the handle
-        px(img, 13, y, JUG[1])
-    px(img, 12, 7, JUG[1])
-    px(img, 12, 11, JUG[1])
-    return outline(img)
+    """Batter in a white enamel bowl with a blue rim, from above at an angle, a run of it over the front rim."""
+    return itemkit.sprite(itemkit.check(BATTER_ROWS), BATTER_ICON, lit=0.8, dark=0.55, ring_from=BATTER_RING)
 
 
 def cob(img, rows, kernels, seams):
@@ -944,11 +981,12 @@ def main():
     kept = {"corn": EAR_KERNEL + EAR_SEAM, "grilled_corn": GLAZE_KERNEL + GLAZE_SEAM + CHAR,
             "corn_kernels": [SEED_CORN["C"], SEED_CORN["T"]]}
     # ringed already and left without grain, which over their smooth skins and coils would read as lumps
-    finished = {"bread_dough", "risen_dough", "udon_dough", "raw_udon", "onion", "donut"}
+    finished = {"bread_dough", "risen_dough", "udon_dough", "raw_udon", "onion", "donut", "pancake", "pancake_batter", "corn_potage"}
     for i, (name, img) in enumerate(items.items()):
         if name not in finished:
-            img = texkit.icon(img, 300 + i, keep=[FLOUR_DUST, SUGAR, JUG_RIM] + kept.get(name, []))
-        img.save(tex / f"item/{name}.png")
+            img = texkit.icon(img, 300 + i, keep=[FLOUR_DUST, SUGAR] + kept.get(name, []))
+        if not hand_finished.kept(tex / f"item/{name}.png"):  # the author's own drawings stand for some
+            img.save(tex / f"item/{name}.png")
         item_model(name)
     texkit.shade(dough_skin(DOUGH, 1), 320, tile=True, keep=[FLOUR_DUST], **texkit.SMOOTH).save(tex / "block/bread_dough.png")
     texkit.shade(dough_skin(RISEN, 2, scored=True), 321, **texkit.SMOOTH).save(tex / "block/risen_dough.png")

@@ -337,6 +337,19 @@ final class WorkTasks {
         return steady.isEmpty() ? plans(mc, t, stack, limit, assume, false) : steady;
     }
 
+    /** Whether a place to stand may be in water with a floor under it (the hall's dig, shutting off the source of the
+     *  water it stands in: from dry cells only, it never could, and the water went on flowing). */
+    private static boolean waterStands;
+
+    static List<Plan> plansFromWaterToo(Minecraft mc, Target t, ItemStack stack, int limit) {
+        waterStands = true;
+        try {
+            return plans(mc, t, stack, limit, null);
+        } finally {
+            waterStands = false;
+        }
+    }
+
     private static List<Plan> plans(Minecraft mc, Target t, ItemStack stack, int limit, @Nullable BlockPos assume, boolean steadyOnly) {
         LocalPlayer player = mc.player;
         List<Plan> plans = new ArrayList<>();
@@ -375,6 +388,9 @@ final class WorkTasks {
                         double feet;
                         if (kind == PathWorld.Kind.GROUND) {
                             feet = world.standY(cell.getX(), cell.getY(), cell.getZ(), false);
+                        } else if (kind == PathWorld.Kind.WATER && waterStands && !mc.level.getBlockState(cell.below())
+                                .getCollisionShape(mc.level, cell.below()).isEmpty() && !mc.level.getFluidState(cell.above()).is(net.minecraft.tags.FluidTags.WATER)) {
+                            feet = cell.getY(); // standing on the floor, water to the knees
                         } else if (kind == PathWorld.Kind.NONE && world.bodyFits(cell.getX(), cell.getZ(), cell.getY())
                                 && pillarable(world, cell)) {
                             feet = cell.getY();
@@ -536,6 +552,15 @@ final class WorkTasks {
         private net.minecraft.world.level.levelgen.structure.@Nullable BoundingBox box;
         private boolean tidied;
         private static final int MAX_HELPERS = 6;
+        /** Where it may stand to set a block down (null: anywhere, mid-air too - it pillars up); set, no helper blocks
+         *  either (the hall's dig fills holes from its floor only: pillared up into a hole in the ceiling, it was shut out). */
+        private java.util.function.@Nullable Predicate<BlockPos> standOk;
+
+        /** Only from cells {@code ok} allows (standing on something), and without helper blocks. */
+        Build only(java.util.function.Predicate<BlockPos> ok) {
+            this.standOk = ok;
+            return this;
+        }
 
         Build(List<Target> targets, String what) {
             this(targets, what, 0, new ArrayList<>());
@@ -666,7 +691,11 @@ final class WorkTasks {
                 return Result.FAILED;
             }
             if (this.plan == null) {
-                List<Plan> plans = plans(mc, t, wanted, 40, null);
+                List<Plan> plans = this.standOk != null ? plansFromWaterToo(mc, t, wanted, 40) : plans(mc, t, wanted, 40, null);
+                if (this.standOk != null) {
+                    plans.removeIf(p -> !this.standOk.test(p.stand()) || mc.level.getBlockState(p.stand().below()).getCollisionShape(mc.level,
+                            p.stand().below()).isEmpty());
+                }
                 if (plans.isEmpty()) {
                     this.waiting.add(t); // later, with more of the build down
                     this.target = null;
@@ -700,7 +729,10 @@ final class WorkTasks {
                 Walker.shuffleToward(player, c, here.getX() + 0.5, here.getZ() + 0.5);
                 return Result.RUNNING;
             }
-            List<Plan> now = plans(mc, t, wanted, 60, null);
+            List<Plan> now = this.standOk != null ? plansFromWaterToo(mc, t, wanted, 60) : plans(mc, t, wanted, 60, null);
+            if (this.standOk != null) {
+                now.removeIf(q -> !this.standOk.test(q.stand()));
+            }
             Plan p = this.robust(mc, t, wanted, now, here);
             if (p == null) {
                 if (++this.tries > 3) {
@@ -784,7 +816,7 @@ final class WorkTasks {
             }
             // everything left is waiting: a helper block beside one of them, a face to click - on a short column of
             // helpers from the ground when it would float - the one needing the fewest helpers first
-            if (this.depth == 0) {
+            if (this.depth == 0 && this.standOk == null) {
                 Target best = null;
                 List<BlockPos> bestColumn = null;
                 for (Target t : this.left) {

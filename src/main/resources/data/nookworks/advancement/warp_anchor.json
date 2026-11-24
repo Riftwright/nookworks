@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:dark_matter"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:warp_anchor"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "anchor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:warp_anchor"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:warp_anchor"
+    },
+    "title": {
+      "translate": "advancements.nookworks.warp_anchor.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.warp_anchor.description"
+    }
+  },
+  "requirements": [
+    [
+      "anchor"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:dark_matter"
+}

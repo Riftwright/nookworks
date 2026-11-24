@@ -74,6 +74,10 @@ import net.neoforged.neoforge.common.Tags;
  *                                time, lava and water looked for first (turns aside, or stops); a torch every 8 steps
  *   bot tunnel DIR [LEN]         a level tunnel 3x3, LEN (32) long, the same way; ores in the walls mined, vein and all
  *   bot ways [clear [NAME]]      the stairs and tunnels it dug (kept; trips up and down go by them)
+ *   bot excavate X1 Y1 Z1 X2 Y2 Z2 [FORWARD SIDE]  a hall dug out of the box, top down, for hours (HallTasks): lanes 3x3
+ *                                with its best hammer, water/lava/holes round it filled, torches every 12, hammers and
+ *                                torches made, junk thrown; kept in bot_hall/ | excavate resume | excavate plan BOX
+ *   bot protect X1 Z1 X2 Z2|list|clear  places no hall may come within 16 of (the base)
  *   bot till X Y Z [R] [dry]     hoe the grass and dirt within R (4) - only where water is within 4, unless dry
  *   bot plant ID X Y Z [R]       seeds on the bare farmland within R | bot harvest [R]: ripe crops picked, set again
  *   bot useon ID X Y Z           use an item on a block once (flint and steel, bone meal, a bucket)
@@ -89,7 +93,7 @@ import net.neoforged.neoforge.common.Tags;
  *   bot deposit X Y Z [ID|all]   put items in the container there | bot withdraw X Y Z ID [N]
  *   bot drop ID [N|all]          throw items | bot hold ID        take an item into the hand
  *   bot give NAME [ID|all] [N]   walk up to a player and throw them items (all: but tools, weapons, armour)
- *   bot look X Y Z | bot lookat NAME | bot say TEXT | bot wait TICKS
+ *   bot look X Y Z | bot lookat NAME | bot say TEXT | bot chat TEXT (at once, not queued) | bot wait TICKS
  *   bot stop | bot pause | bot resume | bot respawn | bot state | bot scan [R] | bot find ID [R] | bot path X Y Z
  *   bot set KEY VALUE            break none|natural|any, place, parkour, sprint, reflexes, defend, eat, cleanup on|off,
  *                                onfail drop|go, dusk on|off, chores on|off, nightout on|off, food N, turn N
@@ -125,6 +129,12 @@ public final class Bot {
         @Nullable BlockPos store;
         /** At night with a home it stays in (jobs wait for morning, fights are fought from inside); on: it may go out. */
         boolean nightOut = false;
+        /** Killed while digging a hall: respawned, back to where it fell for its things, and on with the hall (bot set
+         *  comeback on; for the night's dig alone, 2026-11-21). */
+        boolean comeback = false;
+        /** The hall's dig leaves water and lava be: a step with either in or beside it is passed over, and nothing next
+         *  to them is broken (bot set dry on; the user, 2026-11-21: 「水が出てきてるところは避けて、掘れるところだけ」). */
+        boolean dry = false;
         /** Meals (cooked food) the chores keep in the bag. */
         int foodStock = BotRules.FOOD_STOCK;
         /** The middle of the pen by home (bot pen X Y Z). */
@@ -208,6 +218,7 @@ public final class Bot {
         }
         tick++;
         watchHealth(player);
+        comeBack(mc, player);
         watchCompanion(mc);
         if (tick % 20 == 0) {
             watchFriendAtNight(mc);
@@ -297,6 +308,9 @@ public final class Bot {
                 event("done", task.describe());
             } else {
                 event("failed", task.describe() + ": " + lastFailure);
+                if (task instanceof FightTasks.Attack attack) {
+                    ignoredMobs.put(attack.target, tick + 1200); // left a minute, unless it comes right up
+                }
                 if (task instanceof MoveTasks.Flee || task instanceof MoveTasks.Shelter) {
                     fleeFailedAt = tick;
                 } else if (task instanceof ItemTasks.Eat) {
@@ -369,6 +383,19 @@ public final class Bot {
             if (!toldDeath) {
                 toldDeath = true;
                 event("death", "died at " + player.blockPosition().toShortString());
+                if (HallTasks.digging(current) || queue.stream().anyMatch(HallTasks::digging)) {
+                    comebacks.removeIf(at -> tick - at > 72000);
+                    if (settings.comeback && comebacks.size() < 3) {
+                        comebacks.add(tick);
+                        fellAt = player.blockPosition();
+                        respawnAt = tick + 60;
+                        event("hall", "died while digging the hall: back to " + fellAt.toShortString() + " for its things, then on with it");
+                    } else {
+                        event("hall", "died while digging the hall: bot excavate resume carries on from where it was"
+                                + (settings.comeback ? " (not by itself: died 3 times within the hour)" : ""));
+                    }
+                }
+                HallTasks.active = null;
                 queue.clear();
                 current = null;
                 walker.stop(Minecraft.getInstance());
@@ -379,6 +406,41 @@ public final class Bot {
     }
 
     private static boolean companionDown;
+    /** Mobs a fight was given up on (out of reach), and till when they are left alone. */
+    private static final java.util.Map<java.util.UUID, Long> ignoredMobs = new java.util.HashMap<>();
+    /** The comeback after a death in the hall: when to respawn, where it fell, and the deaths so far this hour. */
+    private static long respawnAt = -1;
+    private static @Nullable BlockPos fellAt;
+    private static final List<Long> comebacks = new ArrayList<>();
+
+    private static void comeBack(Minecraft mc, LocalPlayer player) {
+        if (respawnAt < 0) {
+            return;
+        }
+        if (player.isDeadOrDying()) {
+            if (tick >= respawnAt && tick % 20 == 0) {
+                player.respawn();
+            }
+            return;
+        }
+        respawnAt = -1;
+        BlockPos at = fellAt;
+        if (at == null) {
+            return;
+        }
+        // its things lie where it fell for five minutes: there first, then the hall from where it was
+        Task back = MoveTasks.travel(mc, Goal.near(at, 2.0), at, "back to where it fell at " + at.toShortString());
+        Task pick = new MoveTasks.Collect(10.0, null);
+        Task dress = new ItemTasks.Equip(); // the armour it picked up goes back on
+        queue.addLast(back);
+        queue.addLast(pick);
+        queue.addLast(dress);
+        reflexTasks.add(back); // their failing drops nothing: the hall goes on
+        reflexTasks.add(pick);
+        reflexTasks.add(dress);
+        queue.addLast(later("excavate resume", () -> HallTasks.command(mc, new String[] {"excavate", "resume"})));
+        event("hall", "respawned: back to " + at.toShortString() + ", then excavate resume");
+    }
 
     /**
      * When the companion dies, what they carried lies where they fell, for five minutes: the walker goes there and picks
@@ -437,7 +499,11 @@ public final class Bot {
         if (lowHealth(mc, player)) {
             return;
         }
+        ignoredMobs.values().removeIf(until -> until < tick);
         Entity threat = nearestHostile(player, 7.0);
+        if (threat != null && ignoredMobs.containsKey(threat.getUUID()) && player.distanceTo(threat) > 2.5) {
+            threat = null; // a fight just given up on (it could not be reached)
+        }
         // in the house at night: it stays in, and strikes only what is in the room or within reach (it went out of the
         // door after mobs and was killed there, night after night, 2026-10-22)
         boolean leashed = HomeTasks.leashed(mc);
@@ -504,6 +570,9 @@ public final class Bot {
                 return;
             }
             Entity archer = nearestOf(player, net.minecraft.world.entity.monster.skeleton.AbstractSkeleton.class, 16.0);
+            if (archer != null && ignoredMobs.containsKey(archer.getUUID())) {
+                archer = null;
+            }
             if (archer != null && settings.defend && armed && player.getHealth() > 6.0F && player.hasLineOfSight(archer)
                     && (!leashed || BotRules.strikeFromInside(HomeTasks.inside(mc, archer.blockPosition()), player.distanceTo(archer), reach))) {
                 interrupt(mc, new FightTasks.Attack(archer.getUUID(), 24.0));
@@ -523,17 +592,26 @@ public final class Bot {
     /** Ends the job under way and those queued (not to be taken up again after a retreat), saying so. */
     private static void endJobs(Minecraft mc, String why) {
         List<String> ended = new ArrayList<>();
+        Task hall = null;
+        if (HallTasks.digging(current) && !reflexTasks.contains(current)) {
+            hall = current; // a night's dig goes on after: not ended
+            current.cancel(mc);
+            current = null;
+        }
         if (current != null && !(current instanceof Companion) && !reflexTasks.contains(current)) {
             ended.add(current.describe());
             current.cancel(mc);
             current = null;
         }
         for (Task t : queue) {
-            if (!reflexTasks.contains(t)) {
+            if (!reflexTasks.contains(t) && !HallTasks.digging(t)) {
                 ended.add(t.describe());
             }
         }
-        queue.removeIf(t -> !reflexTasks.contains(t));
+        queue.removeIf(t -> !reflexTasks.contains(t) && !HallTasks.digging(t));
+        if (hall != null) {
+            queue.addLast(hall);
+        }
         if (!ended.isEmpty()) {
             lastFailure = why;
             event("dropped", why + ": " + ended.size() + " jobs ended: " + String.join(" | ", ended));
@@ -555,6 +633,9 @@ public final class Bot {
         var friend = settings.companion != null ? MoveTasks.player(mc, settings.companion) : null;
         double near = friend == null || friend.isDeadOrDying() ? Double.POSITIVE_INFINITY : player.distanceTo(friend);
         BotRules.Retreat where = BotRules.retreat(home, near, underground(mc, player));
+        if (HallTasks.active != null && (where == BotRules.Retreat.HOME || where == BotRules.Retreat.SURFACE)) {
+            where = BotRules.Retreat.FLEE; // digging the hall: away across it, not up to the surface or home at night
+        }
         if (BotRules.retreatEndsJobs(where, mc.level.getDefaultClockTime(), player.getHealth())) {
             endJobs(mc, BotRules.night(mc.level.getDefaultClockTime()) ? "night: went home" : "badly hurt: went home");
         }
@@ -599,7 +680,7 @@ public final class Bot {
      *  its own ways, lit as they were dug (the first trip home up one set 12 more down its middle). */
     private static void watchDark(Minecraft mc, LocalPlayer player) {
         if (!player.onGround() || player.isInWater() || current instanceof MoveTasks.SetTorch || current instanceof FightTasks.Attack
-                || current instanceof DigTasks.Dig || current instanceof MoveTasks.Via || running()
+                || current instanceof DigTasks.Dig || HallTasks.digging(current) || current instanceof MoveTasks.Via || running()
                 || walker.state() == Walker.State.PLANNING) {
             return;
         }
@@ -744,6 +825,9 @@ public final class Bot {
         if (!settings.dusk || day == duskDay || player.getAbilities().invulnerable) {
             return;
         }
+        if (HallTasks.digging(current) || queue.stream().anyMatch(HallTasks::digging)) {
+            return; // the hall is dug through the night, underground
+        }
         Vec3 home = settings.home != null ? Vec3.atBottomCenterOf(settings.home) : null;
         var friend = settings.companion != null ? MoveTasks.player(mc, settings.companion) : null;
         if (home == null && friend != null) {
@@ -795,6 +879,9 @@ public final class Bot {
             heldSaid = false;
             return;
         }
+        if (HallTasks.digging(current) || queue.stream().anyMatch(HallTasks::digging)) {
+            return; // digging the hall: underground, the night is no matter
+        }
         boolean inside = HomeTasks.inside(mc, Walker.feetCell(player));
         boolean reflex = current != null && reflexTasks.contains(current);
         if (!inside) {
@@ -839,6 +926,9 @@ public final class Bot {
 
     /** At night with a home: whether the next job waits for morning (one that would take it out of the house). */
     private static boolean holdForMorning(Minecraft mc) {
+        if (queue.stream().anyMatch(HallTasks::digging)) {
+            return false; // on its way back to the hall (after a death): underground all night
+        }
         Task next = queue.peekFirst();
         if (next == null || !BotRules.keepIn(mc.level.getDefaultClockTime(), settings.home != null, settings.nightOut) || indoor(mc, next)) {
             if (next == null || !BotRules.night(mc.level.getDefaultClockTime())) {
@@ -867,7 +957,8 @@ public final class Bot {
         return t instanceof MoveTasks.Say || t instanceof MoveTasks.Wait || t instanceof MoveTasks.Look || t instanceof ItemTasks.Eat
                 || t instanceof ItemTasks.Equip || t instanceof ItemTasks.Hold || t instanceof ItemTasks.Drop || t instanceof FightTasks.Sleep
                 || t instanceof Crafting.Craft || t instanceof ItemTasks.Smelt || t instanceof HomeTasks.ShutDoor || t instanceof MoveTasks.Shelter
-                || t instanceof MoveTasks.DigOut || t instanceof MoveTasks.Surface || t instanceof FightTasks.Attack;
+                || t instanceof MoveTasks.DigOut || t instanceof MoveTasks.Surface || t instanceof FightTasks.Attack
+                || HallTasks.digging(t); // underground all night: no call indoors for it
     }
 
     private static @Nullable Vec3 friendSeen;
@@ -1052,7 +1143,7 @@ public final class Bot {
         ab.canBreak = !settings.breaking.equals("none");
         ab.mayBreak = (state, pos) -> mayBreak(mc, state, pos);
         ab.breakTicks = (state, pos) -> Inv.breakTicks(player, state, pos);
-        ab.placeBlocks = settings.place ? Inv.throwawayCount(player) : 0;
+        ab.placeBlocks = settings.place && !HallTasks.inHall(mc) ? Inv.throwawayCount(player) : 0; // no pillars in the hall
         ab.parkour = settings.parkour;
         if (current instanceof MoveTasks.Surface) {
             ab.maxUnderwater = 32; // swimming for air: the nearest air, however far under (no worse than staying)
@@ -1067,6 +1158,13 @@ public final class Bot {
             if (Inv.find(player, s -> s.is(Items.WATER_BUCKET)) >= 0 && settings.reflexes) {
                 ab.maxFall = Math.max(ab.maxFall, 24.0); // the bucket landing
             }
+            if (HallTasks.inHall(mc)) {
+                var hall = HallTasks.active;
+                // the end wall's row, above the floor's layer, is rock to it: past it the section before lies dug out
+                ab.wall = p -> hall.along(p) == -1 && !hall.doorway(p) && p.getY() > hall.box.y1() + 2;
+                ab.maxFall = 3.0; // in the hall no drop is a way down: it took an 11-block one by a dug-out section, fell
+                                  // further and died (2026-11-21)
+            }
         }
         for (Entity e : Minecraft.getInstance().level.entitiesForRendering()) {
             if (e instanceof Enemy && e.isAlive() && e.distanceToSqr(player) < 32 * 32) {
@@ -1080,6 +1178,13 @@ public final class Bot {
     static boolean mayBreak(Minecraft mc, BlockState state, BlockPos pos) {
         if (state.hasBlockEntity() || state.is(BlockTags.BEDS) || state.getDestroySpeed(mc.level, pos) < 0) {
             return false;
+        }
+        var hall = HallTasks.active;
+        if (hall != null && settings.dry && HallTasks.inHall(mc) && dev.nookworks.dev.bot.Hall.wetBy(mc.level, pos)) {
+            return false; // the dry dig: nothing next to water or lava is opened, on its way either
+        }
+        if (hall != null && !hall.mayDig(pos) && HallTasks.inHall(mc)) {
+            return false; // a hall under way: its walls, ceiling and floor are kept whole (out of it, it may dig back in)
         }
         if (!settings.breaking.equals("none") && walker.scaffold.contains(pos) && state.getBlock().asItem() instanceof net.minecraft.world.item.BlockItem
                 && Inv.throwaway(new ItemStack(state.getBlock()))) {
@@ -1143,6 +1248,17 @@ public final class Bot {
             case "cleanup" -> new WorkTasks.Cleanup();
             case "stairdown" -> later(String.join(" ", args), () -> DigTasks.stairDown(args));
             case "tunnel" -> later(String.join(" ", args), () -> DigTasks.tunnel(args));
+            case "excavate" -> {
+                if (a.length > 1 && a[1].equals("plan")) {
+                    HallTasks.command(mc, args);
+                    yield null;
+                }
+                yield later(String.join(" ", args), () -> HallTasks.command(mc, args));
+            }
+            case "protect" -> {
+                HallTasks.Protect.command(mc, args);
+                yield null;
+            }
             case "ways" -> {
                 var ways = WayBook.ways(mc);
                 if (a.length > 1 && a[1].equals("clear")) {
@@ -1196,6 +1312,11 @@ public final class Bot {
             case "look" -> new MoveTasks.Look(Vec3.atCenterOf(pos(a, 1)), null);
             case "lookat" -> new MoveTasks.Look(null, a[1]);
             case "say" -> new MoveTasks.Say(String.join(" ", Arrays.copyOfRange(a, 1, a.length)));
+            case "chat" -> {
+                // said at once, not queued: a line while a long job runs (a "say" waited behind the night's dig for good)
+                player.connection.sendChat(String.join(" ", Arrays.copyOfRange(a, 1, a.length)));
+                yield null;
+            }
             case "wait" -> new MoveTasks.Wait(Integer.parseInt(a[1]));
             case "stop" -> {
                 stopAll(mc);
@@ -1326,6 +1447,7 @@ public final class Bot {
         if (current != null) {
             current.cancel(mc);
         }
+        HallTasks.active = null;
         current = null;
         queue.clear();
         reflexTasks.clear();
@@ -1355,6 +1477,8 @@ public final class Bot {
             case "dusk" -> settings.dusk = on;
             case "chores" -> settings.chores = on;
             case "nightout" -> settings.nightOut = on;
+            case "comeback" -> settings.comeback = on;
+            case "dry" -> settings.dry = on;
             case "food" -> settings.foodStock = Integer.parseInt(value);
             case "turn" -> controls.turnSpeed = Float.parseFloat(value);
             default -> throw new IllegalArgumentException("unknown setting " + key);
@@ -1486,6 +1610,7 @@ public final class Bot {
                 + " store=" + (settings.store == null ? "" : settings.store.toShortString())
                 + " home=" + (settings.home == null ? "" : settings.home.toShortString() + " plans=" + HomeTasks.plans.size())
                 + " pen=" + (settings.pen == null ? "" : settings.pen.toShortString()) + " nightout=" + settings.nightOut
+                + " comeback=" + settings.comeback + " dry=" + settings.dry
                 + " food=" + settings.foodStock + " turn=" + controls.turnSpeed);
         try {
             Path tmp = dir().resolve("bot_state.json.tmp");

@@ -10,7 +10,8 @@ block/dawnwood_planks
 block/dawnwood_leaves                                 feathery sprays with gaps between (cutout), not tinted
 block/dawnwood_sapling                                a young tree: tiers of drooping sprays on a thin stem
 block/dawnwood_door_top, dawnwood_door_bottom, dawnwood_trapdoor
-item/dawnwood_door, item/rare_seed
+item/dawnwood_door, item/rare_seed                    (the door's icon the author's own drawing since 2026-11-21:
+                                                      left as it is, hand_finished.py)
 
 Every face is drawn flat in a few shades, then finished with texkit.shade (wood, the leaves plain; which gives each shade its hue-shifted ramp and
 a little grain, as vanilla's woods are shaded); outlines and the colours that mark something are kept exact.
@@ -23,6 +24,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import itemkit
 import texkit
 
@@ -501,9 +503,11 @@ def main():
         ITEM / "rare_seed.png": rare_seed(),
     }
     for path, img in out.items():
+        if hand_finished.kept(path):  # the author's own drawing stands for it (HAND_FINISHED.md)
+            continue
         path.parent.mkdir(parents=True, exist_ok=True)
         img.save(path)
-    print(f"wrote {len(out)} dawnwood textures")
+    print(f"wrote {sum(not hand_finished.kept(p) for p in out)} dawnwood textures")
 
 
 if __name__ == "__main__":

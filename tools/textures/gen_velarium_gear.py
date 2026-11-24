@@ -8,7 +8,7 @@ Velarium is a metal - past netherite, and drawn as one: a deep violet steel with
 through it, the colours of the hand-finished Block of Velarium. The tool and armour icons are placed pixel by pixel,
 shaded as vanilla shades its metal gear: an edge catching the light on the upper left, the far side in shadow, a dark
 outline all round, and the sheen as a fleck or two of teal along the lit edge where a real blade would flash. The
-hammer's sprite lives in gen_hammers.py, which has a "velarium" palette of its own.
+hammer's sprite is drawn outside the scripts (HAND_FINISHED.md); gen_hammers.py, retired, drew it before.
 
 Run from the repo root:  python tools/textures/gen_velarium_gear.py
 """
@@ -17,6 +17,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
 import texkit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -514,7 +515,8 @@ def worn_leggings():
 def main():
     ITEM.mkdir(parents=True, exist_ok=True)
     for name, img in {**tools(), **armour_icons()}.items():
-        img.save(ITEM / f"{name}.png")
+        if not hand_finished.kept(ITEM / f"{name}.png"):  # the author's own drawings stand for some
+            img.save(ITEM / f"{name}.png")
     for folder, sheet in (("humanoid", worn_outer), ("humanoid_baby", worn_baby), ("humanoid_leggings", worn_leggings)):
         out = EQUIP / folder
         out.mkdir(parents=True, exist_ok=True)

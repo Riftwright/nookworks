@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:machine_chassis"
+      ],
+      "any": true
+    },
+    {
+      "type": "nookworks:available",
+      "items": [
+        "nookworks:laser"
+      ],
+      "any": true
+    }
+  ],
+  "criteria": {
+    "laser": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nookworks:laser"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "nookworks:laser"
+    },
+    "title": {
+      "translate": "advancements.nookworks.laser.title"
+    },
+    "description": {
+      "translate": "advancements.nookworks.laser.description"
+    }
+  },
+  "requirements": [
+    [
+      "laser"
+    ]
+  ],
+  "sends_telemetry_event": false,
+  "parent": "nookworks:machine_chassis"
+}

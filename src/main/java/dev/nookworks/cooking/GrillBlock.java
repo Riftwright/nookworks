@@ -125,6 +125,19 @@ public class GrillBlock extends BaseEntityBlock {
         return below.is(IronPotBlock.CONDUCTS_HEAT) && IronPotBlock.heatsThrough(level.getBlockState(pos.below(2)));
     }
 
+    /** Whether the grill at {@code pos} is cooking something now, and so smoking (Ventilation): hot, with food not yet done. */
+    public static boolean cooking(Level level, BlockPos pos) {
+        if (!hot(level, pos) || !(level.getBlockEntity(pos) instanceof GrillBlockEntity grill)) {
+            return false;
+        }
+        for (int slot = 0; slot < GrillBlockEntity.SLOTS; slot++) {
+            if (!grill.items().get(slot).isEmpty() && !grill.done(slot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {

@@ -18,6 +18,8 @@ from pathlib import Path
 
 from PIL import Image
 
+import hand_finished
+
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "src/main/resources/assets/nookworks/textures/item"
 
@@ -95,10 +97,12 @@ def write_json(path, data):
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    build(BOTTLE, PALETTE).save(OUT / "mob_bottle.png")
-    build(FILL, {ch: (g, g, g, 255) for ch, g in GREYS.items()}).save(OUT / "mob_bottle_contents.png")
-    build(FILL, {"S": (240, 240, 240, 255)}).save(OUT / "mob_bottle_spots.png")
-    build(FILL, {"Y": (255, 255, 255, 255)}).save(OUT / "mob_bottle_eyes.png")
+    for img, name in ((build(BOTTLE, PALETTE), "mob_bottle"),
+                      (build(FILL, {ch: (g, g, g, 255) for ch, g in GREYS.items()}), "mob_bottle_contents"),
+                      (build(FILL, {"S": (240, 240, 240, 255)}), "mob_bottle_spots"),
+                      (build(FILL, {"Y": (255, 255, 255, 255)}), "mob_bottle_eyes")):
+        if not hand_finished.kept(OUT / f"{name}.png"):  # Gemini's redraw stands for the four (HAND_FINISHED.md)
+            img.save(OUT / f"{name}.png")
     stale = OUT / "mob_bottle_filled.png"  # the glass of an earlier drawing, now mob_bottle.png's
     if stale.exists():
         stale.unlink()

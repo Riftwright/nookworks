@@ -337,10 +337,19 @@ final class Walker {
         if (this.door(mc, player, c, step.to())) {
             return;
         }
+        if (horizontal < 0.7 && step.move() == Move.WALK && !player.isInWater()) {
+            // the last of the way into a cell: the keys move the body there and the view is held - turned toward a point
+            // a hand's width off, it swung round and round as the body overshot (the user, watching NookAI's view,
+            // 2026-11-21: 「無駄にぐるぐる回るの」)
+            shuffleToward(player, c, target.x, target.z); // sneaking: it stops at an edge (it slid off one and fell 17)
+            return;
+        }
         c.headFor(player, target.x, target.z);
         c.forward = horizontal > 0.12;
         // sprint along a straight run
-        c.sprint = Bot.settings.sprint && player.getFoodData().getFoodLevel() > 6 && this.straightRun() >= 3 && !player.isInWater();
+        // never in the hall: run at a cell by a dug-out section's edge, it overshot and fell 33 blocks (2026-11-22)
+        c.sprint = Bot.settings.sprint && player.getFoodData().getFoodLevel() > 6 && this.straightRun() >= 3 && !player.isInWater()
+                && !HallTasks.inHall(Minecraft.getInstance());
         if (step.move() == Move.ASCEND) {
             c.jump = (player.onGround() || player.isInWater() || player.onClimbable()) && horizontal < 1.35;
         }

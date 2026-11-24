@@ -1,4 +1,7 @@
-"""Generate hammer item textures (16x16) for every material.
+"""RETIRED 2026-11-21: the hammers are Grok's redraw now, chosen by the author (tools/textures/HAND_FINISHED.md).
+Kept for the record; it writes nothing (run with --preview OUT.png for a sheet of what it drew).
+
+Generate hammer item textures (16x16) for every material.
 
 Colours per material follow the vanilla tool of the same material (5 shades, dark -> light), so the hammers sit
 naturally next to vanilla pickaxes; copper is copper, not the salmon it had drifted to, and Velarium is the violet
@@ -14,7 +17,7 @@ from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "src/main/resources/assets/nookworks/textures/item"
 
 # outline, dark, mid, light, highlight
@@ -97,11 +100,9 @@ def draw(palette, sheen=False):
 
 
 def main():
-    OUT.mkdir(parents=True, exist_ok=True)
     images = {}
     for name, palette in PALETTES.items():
         img = draw(palette, sheen=name == "velarium")
-        img.save(OUT / f"{name}_hammer.png")
         images[name] = img
     if "--preview" in sys.argv:
         target = Path(sys.argv[sys.argv.index("--preview") + 1])
@@ -109,7 +110,7 @@ def main():
         for i, img in enumerate(images.values()):
             sheet.paste(img, (2 + i * 18, 2), img)
         sheet.resize((sheet.width * 10, sheet.height * 10), Image.NEAREST).save(target)
-    print("wrote", len(images), "hammer textures")
+    print("drew", len(images), "hammers; wrote none into the mod")
 
 
 if __name__ == "__main__":

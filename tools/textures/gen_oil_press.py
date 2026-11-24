@@ -7,8 +7,8 @@ the press holds (its OIL state: none, some, plenty), the vegetable oil's own sti
 Motor: a housing in the machines' dark steel with cooling fins along it, and an iron shaft out of its front (north,
 like an observer's face) that turns while it runs (client/render/MotorRenderer). Through a window in each side its
 copper coil glows while it runs (motor_casing_on, and a glowing quad over the window: motor_coil_glow).
-Oil Cake: the pressed cake of seed husks left in the press.
-Ours are shaded with texkit.shade: the tray's boards wood, the screw metal, the cake plain.
+Oil Cake: the pressed cake of seed husks left in the press, a thick disc placed pixel by pixel (itemkit).
+The press's textures are shaded with texkit.shade: the tray's boards wood, the screw metal.
 
 Run from the repo root:  python tools/textures/gen_oil_press.py
 """
@@ -17,6 +17,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import itemkit
 import texkit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -219,26 +220,44 @@ def end_plate():
 
 # ---- Oil Cake ----
 
-CAKE = (150, 112, 62)
-CAKE_DARK = (104, 74, 38)
-CAKE_LIGHT = (190, 152, 92)
-OUTLINE = (58, 38, 20)
+# The user's pick of three drafts, 2026-11-24 (A: the whole cake). Grey-brown, as sunflower and rapeseed cake are,
+# to read apart from vanilla's orange cookie; a fine grain and a few pale husk flecks on the top, no dark chips (they
+# read as a cookie's). One view from the front and above: the top an ellipse whose front arc mirrors its back
+# (8, 10, 12, 12, 10, 8 wide), the foot the same arc three rows lower, and the seam between the side's pressed layers
+# halfway between them, a row higher at each edge. 14x11 with the ring, a margin of 1 at the sides as vanilla's
+# cookie and bone meal have, sitting a little low as vanilla's foods do.
+CAKE = {
+    # the top, the light a step warmer
+    "H": (172, 154, 114), "L": (152, 134, 98), "M": (134, 117, 86), "N": (116, 101, 75),
+    # the side, cooler and darker; t and u the seam between its pressed layers
+    "S": (98, 86, 66), "s": (82, 71, 56), "d": (68, 59, 48), "D": (68, 59, 48),
+    "t": (110, 97, 74), "u": (94, 82, 63),
+    "p": (190, 180, 150),  # pale husk
+}
+CAKE_RING = dict(CAKE, p=CAKE["L"])  # the ring sees a fleck as the top under it
+CAKE_ROWS = itemkit.check([
+    "................",
+    "................",
+    "................",
+    "................",
+    "....LLHLLLLM....",
+    "...LHLpLMLLMM...",
+    "..LLLMLLLLMpMN..",
+    "..HLpLLMLMMNMN..",
+    "..SHLMLLMpMNMd..",
+    "..tSHHHLLMMNdu..",
+    "..StSSsssssdud..",
+    "...SttuuuuuuD...",
+    "....Sssssddd....",
+    "................",
+    "................",
+    "................",
+])
 
 
 def oil_cake():
-    """A round pressed cake seen from above at a slant: a light top, a darker rim below, flecks of husk."""
-    img = Image.new("RGBA", (16, 16), CLEAR)
-    for y in range(16):
-        for x in range(16):
-            top = ((x - 7.5) / 6.5) ** 2 + ((y - 6.5) / 4.5) ** 2
-            side = ((x - 7.5) / 6.5) ** 2 + ((y - 9.0) / 4.5) ** 2
-            if top <= 1.0:
-                put(img, x, y, CAKE_LIGHT if top < 0.55 else CAKE)
-            elif side <= 1.0 and y > 6:
-                put(img, x, y, CAKE_DARK)
-    for x, y in ((5, 5), (9, 4), (10, 7), (6, 8), (8, 6)):
-        put(img, x, y, CAKE_DARK)
-    return texkit.icon(img, 41)  # ringed in its own browns
+    """A thick round pressed cake seen from the front and above, ringed in its own browns."""
+    return itemkit.sprite(CAKE_ROWS, CAKE, ring_from=CAKE_RING)
 
 
 # ---- Models ----
