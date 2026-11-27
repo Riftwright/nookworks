@@ -201,8 +201,11 @@ public class NookworksJeiPlugin implements IModPlugin {
                 if (pages.isEmpty()) {
                     return List.of();
                 }
-                int w = layout.gauge() == MachineLayout.Gauge.FLAME ? 16 : MachineStyle.ARROW_W;
-                return List.of(IGuiClickableArea.createBasic(layout.gaugeX(), layout.gaugeY(), w, MachineStyle.ARROW_H,
+                // the Stirring Tank crowded by an add-on's tanks points its arrow down (r23 self-review)
+                boolean down = layout.arrowDown();
+                int w = layout.gauge() == MachineLayout.Gauge.FLAME ? 16 : down ? MachineStyle.ARROW_H : MachineStyle.ARROW_W;
+                int h = down ? MachineStyle.ARROW_DOWN_H : MachineStyle.ARROW_H;
+                return List.of(IGuiClickableArea.createBasic(layout.gaugeX(), layout.gaugeY(), w, h,
                         pages.toArray(IRecipeType<?>[]::new)));
             }
         });

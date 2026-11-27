@@ -1,5 +1,6 @@
 package dev.nookworks.sorter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
@@ -81,12 +82,12 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
     /** Where what the sorter holds is shown: the right end of the inventory's caption row. */
     public static final int HELD_X = 152;
     /**
-     * What the sorter holds - one batch, waiting there while its outlet is full or blocked - after the Keep Out row: the
+     * What the sorter holds - its input's slots, waiting there while an outlet is full or blocked - after the Keep Out row: the
      * player's inventory stays the last 36 slots, as a menu's is. Shown, not clicked: the screen draws it
      * ({@code SorterScreen}).
      */
     public static final int HELD_SLOT = DENY_SLOT + SorterBlockEntity.DENY_SLOTS;
-    private static final int INVENTORY = HELD_SLOT + 1;
+    private static final int INVENTORY = HELD_SLOT + SorterBlockEntity.INPUT_SLOTS;
 
     private final Container filter;
     private final Container deny;
@@ -107,7 +108,7 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
         SorterTier tier = data.readEnum(SorterTier.class);
         BlockPos pos = data.readBlockPos();
         return new SorterMenu(containerId, inventory, new SimpleContainer(SorterBlockEntity.FILTER_SLOTS), new SimpleContainer(1),
-                new SimpleContainer(SorterBlockEntity.DENY_SLOTS), new SimpleContainer(1), pos, tier, null);
+                new SimpleContainer(SorterBlockEntity.DENY_SLOTS), new SimpleContainer(SorterBlockEntity.INPUT_SLOTS), pos, tier, null);
     }
 
     /** Where the gear slot's top sits: beside the swap button, under the filter rows. */
@@ -129,10 +130,10 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
     /** With nothing held shown, as a menu made before it was. */
     public SorterMenu(int containerId, Inventory inventory, Container filter, Container gear, Container deny, BlockPos pos,
             SorterTier tier, @Nullable SorterSettings settings) {
-        this(containerId, inventory, filter, gear, deny, new SimpleContainer(1), pos, tier, settings);
+        this(containerId, inventory, filter, gear, deny, new SimpleContainer(SorterBlockEntity.INPUT_SLOTS), pos, tier, settings);
     }
 
-    /** {@code held}: what the sorter holds, its one slot (the sorter itself, on the server). */
+    /** {@code held}: what the sorter holds, its input's slots (the sorter itself, on the server). */
     public SorterMenu(int containerId, Inventory inventory, Container filter, Container gear, Container deny, Container held,
             BlockPos pos, SorterTier tier, @Nullable SorterSettings settings) {
         super(ModMenus.SORTER.get(), containerId);
@@ -201,22 +202,24 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
                 }
             });
         }
-        this.addSlot(new Slot(held, 0, HELD_X, playerY(tier) - 17) {
-            @Override
-            public boolean mayPickup(Player player) {
-                return false;
-            }
+        for (int i = 0; i < SorterBlockEntity.INPUT_SLOTS; i++) {
+            this.addSlot(new Slot(held, i, HELD_X, playerY(tier) - 17) {
+                @Override
+                public boolean mayPickup(Player player) {
+                    return false;
+                }
 
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return false;
+                }
 
-            @Override
-            public boolean isActive() {
-                return false; // drawn by the screen, over the inventory's caption; never clicked
-            }
-        });
+                @Override
+                public boolean isActive() {
+                    return false; // drawn by the screen, over the inventory's caption; never clicked
+                }
+            });
+        }
         this.addStandardInventorySlots(inventory, 8, playerY(tier));
         for (int i = 0; i < SorterSettings.COUNT; i++) {
             int flag = i;
@@ -293,8 +296,16 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
     }
 
     /** What the sorter holds, as last sent. */
-    public ItemStack held() {
-        return this.slots.get(HELD_SLOT).getItem();
+    /** What the sorter holds, in its input's order, the empty slots left out. */
+    public List<ItemStack> held() {
+        List<ItemStack> held = new ArrayList<>();
+        for (int i = 0; i < SorterBlockEntity.INPUT_SLOTS; i++) {
+            ItemStack stack = this.slots.get(HELD_SLOT + i).getItem();
+            if (!stack.isEmpty()) {
+                held.add(stack);
+            }
+        }
+        return held;
     }
 
     public SorterTier tier() {
@@ -397,7 +408,7 @@ public class SorterMenu extends AbstractContainerMenu implements GhostSlots, dev
         if (this.picker.clicked(this, slotIndex, input)) {
             return; // the sample: a copy, as a filter entry is, the item staying in hand
         }
-        if (slotIndex == HELD_SLOT) {
+        if (slotIndex >= HELD_SLOT && slotIndex < INVENTORY) {
             return; // shown, not taken: what the sorter holds stays with it
         }
         if (slotIndex >= DENY_SLOT && slotIndex < INVENTORY) {

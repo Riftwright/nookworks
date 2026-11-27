@@ -149,7 +149,7 @@ final class MachineTests {
         test("printing_press_waits_for_redstone", MachineTests::printingPressWaitsForRedstone);
         test("spawner_controller_redstone_switches_spawners_off", MachineTests::controllerRedstoneOff);
         test("other_mods_pipes_meet_a_machine_from_any_face_but_a_sorter_keeps_its_faces", MachineTests::anyFace);
-        test("sorter_feeding_a_retort_leaves_a_reagent_until_the_charge_is_in", 300, MachineTests::sorterFeedsRetort);
+        test("sorter_feeds_a_retort_both_its_things", 300, MachineTests::sorterFeedsRetort);
         test("spawn_egg_brewer_redstone_button", MachineTests::brewerRedstoneButton);
         test("planter_plants_tall_flowers_whole", MachineTests::planterPlantsTallFlowersWhole);
         test("absorption_pad_rises_to_its_pipes", MachineTests::absorptionPadRisesToItsPipes);
@@ -909,10 +909,10 @@ final class MachineTests {
     }
 
     /**
-     * A Sorter whose outlet is an empty Retort, a chest above it holding a reagent before the charge: the sorter leaves
-     * the reagent in the chest (the Retort takes it through no face until a charge is in), sends the wood chips, then the
-     * caustic soda after them. It drew the reagent in and held it for good, sorting nothing more (1.6 review: a
-     * machine's any-face handler answered isValid by the slot's rule alone).
+     * A Sorter whose outlet is an empty Retort, a chest above it holding caustic soda and wood chips: both reach the
+     * Retort, each in a slot of its own, and the chest empties. It once drew a reagent in and held it for good, sorting
+     * nothing more (1.6 review: a machine's any-face handler answered isValid by the slot's rule alone); since 1.9 the
+     * input slots are alike and either may go first.
      */
     static void sorterFeedsRetort(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 1, 3);
@@ -926,11 +926,13 @@ final class MachineTests {
         above.setItem(1, new ItemStack(ModItems.WOOD_CHIPS.get(), 2));
         var retort = helper.getBlockEntity(pos.east(), RetortBlockEntity.class);
         helper.succeedWhen(() -> {
-            check(helper, retort.getItem(RetortBlockEntity.INPUT).is(ModItems.WOOD_CHIPS.get()), "the wood chips reach the retort");
+            boolean chips = false;
             boolean soda = false;
-            for (int slot = RetortBlockEntity.FIRST_REAGENT; slot < RetortBlockEntity.FIRST_REAGENT + RetortBlockEntity.REAGENT_SLOTS; slot++) {
+            for (int slot = RetortBlockEntity.INPUT; slot < RetortBlockEntity.INPUT + RetortBlockEntity.INPUT_SLOTS; slot++) {
+                chips |= retort.getItem(slot).is(ModItems.WOOD_CHIPS.get()) && retort.getItem(slot).getCount() == 2;
                 soda |= retort.getItem(slot).is(ModItems.CAUSTIC_SODA.get()) && retort.getItem(slot).getCount() == 2;
             }
+            check(helper, chips, "the wood chips reach the retort");
             check(helper, soda, "and the caustic soda after them");
             check(helper, above.isEmpty(), "the chest above emptied");
         });

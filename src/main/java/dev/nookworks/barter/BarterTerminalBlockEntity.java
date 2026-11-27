@@ -234,10 +234,10 @@ public class BarterTerminalBlockEntity extends MachineBlockEntity implements Mac
         if (status == null) {
             status = !powered ? MachineStatus.NO_POWER
                     : !this.allowed ? MachineStatus.ROOM_PROTECTED // nothing handed, nothing taken, on land not theirs
-                    : !outFree && !this.items.get(BOTTLE).isEmpty() ? MachineStatus.OUTPUT_BLOCKED // a bottle waits for room
+                    : !outFree && !this.items.get(BOTTLE).isEmpty() ? this.outputWaits() // a bottle waits for room
                     : this.piglins > this.room.capacity() ? MachineStatus.CROWDED
                     : inside.stream().noneMatch(BarterTerminalBlockEntity::barters) ? MachineStatus.NO_PIGLINS
-                    : !outFree ? MachineStatus.OUTPUT_BLOCKED
+                    : !outFree ? this.outputWaits()
                     : !this.redstoneAllows() ? MachineStatus.REDSTONE
                     : this.items.get(GOLD).isEmpty() && this.admiring == 0 ? MachineStatus.IDLE
                     : MachineStatus.RUNNING;
@@ -366,7 +366,7 @@ public class BarterTerminalBlockEntity extends MachineBlockEntity implements Mac
      * ({@link OutputRetry}). Whether there is a free output slot after.
      */
     private boolean flush(ServerLevel level, BlockPos pos) {
-        if (this.outputRetry.due(level)) {
+        if (!this.holdsOutput() && this.outputRetry.due(level)) {
             boolean waiting = false;
             boolean moved = false;
             for (int slot : OUT_SLOTS) {

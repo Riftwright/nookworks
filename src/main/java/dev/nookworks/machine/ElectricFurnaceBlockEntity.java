@@ -104,14 +104,14 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
         var holder = this.recipeFor(level, input);
         if (holder.isEmpty()) {
             this.progress = 0;
-            this.status = MachineStatus.IDLE;
+            this.status = this.idleOrHeld(OUTPUT_SLOTS);
             return false;
         }
         SingleRecipeInput recipeInput = new SingleRecipeInput(input);
         ItemStack result = holder.get().value().assemble(recipeInput);
         ItemStack out = this.items.get(OUTPUT);
         if (!out.isEmpty() && (!ItemStack.isSameItemSameComponents(out, result) || out.getCount() + result.getCount() > out.getMaxStackSize())) {
-            this.status = MachineStatus.OUTPUT_BLOCKED;
+            this.status = this.outputWaits();
             return false;
         }
         if (!this.redstoneAllows()) {
@@ -152,7 +152,7 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Ma
      * hopper's beat later ({@link OutputRetry}).
      */
     private void flush(ServerLevel level, BlockPos pos) {
-        if (!this.outputRetry.due(level)) {
+        if (this.holdsOutput() || !this.outputRetry.due(level)) {
             return;
         }
         boolean waiting = false;

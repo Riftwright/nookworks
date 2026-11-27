@@ -284,7 +284,7 @@ final class TagPickerTests {
                 && sorter.deny().getItem(2).is(Items.COBBLESTONE), "onto the Keep Out row");
         check(helper, GhostSlots.dropped(player, id, 0, new ItemStack(Items.EMERALD)) && sorter.filter().getItem(0).is(Items.EMERALD),
                 "onto a filter slot that holds one, it takes its place, as a click does");
-        int inventory = SorterMenu.HELD_SLOT + 1;
+        int inventory = SorterMenu.HELD_SLOT + dev.nookworks.sorter.SorterBlockEntity.INPUT_SLOTS; // past the five held
         for (int slot : new int[] {SorterMenu.GEAR_SLOT, SorterMenu.SAMPLE_SLOT, SorterMenu.HELD_SLOT, inventory, -1, menu.slots.size()}) {
             check(helper, !GhostSlots.dropped(player, id, slot, new ItemStack(Items.STICK)), "nothing lands on slot " + slot);
         }

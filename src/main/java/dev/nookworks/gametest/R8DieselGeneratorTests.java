@@ -164,7 +164,9 @@ final class R8DieselGeneratorTests {
         helper.setBlock(bottles.below(), Blocks.CHEST);
         helper.setBlock(bottles, ModBlocks.DIESEL_GENERATOR.get());
         helper.setBlock(bucket, ModBlocks.DIESEL_GENERATOR.get());
-        helper.setBlock(bottles.north(), Blocks.REDSTONE_BLOCK); // stopped: pouring in goes on, burning does not
+        // stopped: a lone bucket still pours (its empty stays in the slot), burning does not; a stack of bottles waits,
+        // as a stopped machine puts nothing out (2026-11-25), and pours once the signal is gone
+        helper.setBlock(bottles.north(), Blocks.REDSTONE_BLOCK);
         helper.setBlock(bucket.north(), Blocks.REDSTONE_BLOCK);
         DieselGeneratorBlockEntity byBottle = helper.getBlockEntity(bottles, DieselGeneratorBlockEntity.class);
         DieselGeneratorBlockEntity byBucket = helper.getBlockEntity(bucket, DieselGeneratorBlockEntity.class);
@@ -173,8 +175,14 @@ final class R8DieselGeneratorTests {
         check(helper, !byBucket.canTakeItemThroughFace(0, new ItemStack(ModOil.BIODIESEL_BUCKET.get()), Direction.DOWN),
                 "no biodiesel is drawn out from below");
 
+        helper.runAfterDelay(20, () -> {
+            check(helper, byBottle.fuelStored() == 0 && byBottle.getItem(0).getCount() == 3, "stopped, the stack of bottles waits: "
+                    + byBottle.fuelStored() + ", " + byBottle.getItem(0));
+            helper.setBlock(bottles.north(), Blocks.AIR);
+        });
         helper.succeedWhen(() -> {
-            check(helper, byBottle.fuelStored() == 750, "three bottles poured in: " + byBottle.fuelStored());
+            // running now, it burns some of what it poured: the empties say all three went in
+            check(helper, byBottle.fuelStored() > 0 && byBottle.fuelStored() <= 750, "three bottles poured in: " + byBottle.fuelStored());
             int aside = countIn(helper.getBlockEntity(bottles.below(), ChestBlockEntity.class), Items.GLASS_BOTTLE);
             check(helper, aside == 2 && byBottle.getItem(0).is(Items.GLASS_BOTTLE) && byBottle.getItem(0).getCount() == 1,
                     "two empties in the chest below, the last in the slot: " + aside + ", " + byBottle.getItem(0));

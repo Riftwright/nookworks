@@ -329,16 +329,22 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> implements
             graphics.setTooltipForNextFrame(this.font, lines, Optional.empty(), mouseX, mouseY);
             return;
         }
-        ItemStack held = this.menu.held();
-        Component holding = Component.translatable("gui.nookworks.sorter.holding");
+        List<ItemStack> heldStacks = this.menu.held();
         int heldY = SorterMenu.playerY(this.menu.tier()) - 17;
-        int heldLeft = SorterMenu.HELD_X - 3 - this.font.width(holding);
-        if (!held.isEmpty() && !this.menu.picking() && this.menu.getCarried().isEmpty()
-                && this.isHovering(heldLeft, heldY, SorterMenu.HELD_X + 16 - heldLeft, 16, mouseX, mouseY)) {
-            List<Component> lines = new ArrayList<>(getTooltipFromItem(this.minecraft, held));
-            lines.add(Component.translatable("gui.nookworks.sorter.holding.tooltip").withStyle(ChatFormatting.GRAY));
-            graphics.setTooltipForNextFrame(this.font, lines, held.getTooltipImage(), held, mouseX, mouseY);
-            return;
+        if (!heldStacks.isEmpty() && !this.menu.picking() && this.menu.getCarried().isEmpty()) {
+            // each held thing's own icon; the caption, when it is drawn, stands for the first
+            int left = heldLeft(heldStacks.size());
+            for (int i = 0; i < heldStacks.size(); i++) {
+                int x = SorterMenu.HELD_X - i * HELD_STEP;
+                int from = i == heldStacks.size() - 1 ? left : x;
+                if (this.isHovering(from, heldY, x + 16 - from, 16, mouseX, mouseY)) {
+                    ItemStack held = heldStacks.get(i);
+                    List<Component> lines = new ArrayList<>(getTooltipFromItem(this.minecraft, held));
+                    lines.add(Component.translatable("gui.nookworks.sorter.holding.tooltip").withStyle(ChatFormatting.GRAY));
+                    graphics.setTooltipForNextFrame(this.font, lines, held.getTooltipImage(), held, mouseX, mouseY);
+                    return;
+                }
+            }
         }
         Slot gear = this.menu.getSlot(SorterMenu.GEAR_SLOT);
         if (gear.isActive() && !gear.hasItem() && this.menu.getCarried().isEmpty()
@@ -351,19 +357,37 @@ public class SorterScreen extends AbstractContainerScreen<SorterMenu> implements
         super.extractTooltip(graphics, mouseX, mouseY);
     }
 
+    /** How far apart the held things' icons stand, leftwards from {@link SorterMenu#HELD_X}. */
+    private static final int HELD_STEP = 17;
+
+    /** The left edge of what shows the held things: the caption's when it is drawn, else the leftmost icon's. */
+    private int heldLeft(int count) {
+        Component holding = Component.translatable("gui.nookworks.sorter.holding");
+        int icons = SorterMenu.HELD_X - (count - 1) * HELD_STEP;
+        int captionX = icons - 3 - this.font.width(holding);
+        return captionX >= this.inventoryLabelX + this.font.width(this.playerInventoryTitle) + 6 ? captionX : icons;
+    }
+
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
         MachineStyle.fitText(graphics, this.font, this.title, this.titleLabelX, this.titleLabelY, this.imageWidth - 16, MachineStyle.TITLE, true);
         graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, MachineStyle.DIM, false);
-        ItemStack held = this.menu.held();
-        if (!held.isEmpty()) {
-            // what it holds, at the caption row's right end: one batch, waiting there while its outlet is full or blocked
-            // - a sorter that stopped says why without Jade (the 1.1 low items, 48)
+        List<ItemStack> heldStacks = this.menu.held();
+        if (!heldStacks.isEmpty()) {
+            // what it holds, at the caption row's right end, from the right: what waits there while an outlet is full or
+            // blocked - a sorter that stopped says why without Jade (the 1.1 low items, 48). The caption goes before
+            // the icons while it clears the inventory's own.
             int y = SorterMenu.playerY(this.menu.tier()) - 17;
             Component holding = Component.translatable("gui.nookworks.sorter.holding");
-            graphics.text(this.font, holding, SorterMenu.HELD_X - 3 - this.font.width(holding), this.inventoryLabelY, MachineStyle.DIM, false);
-            graphics.item(held, SorterMenu.HELD_X, y);
-            graphics.itemDecorations(this.font, held, SorterMenu.HELD_X, y);
+            int captionX = SorterMenu.HELD_X - (heldStacks.size() - 1) * HELD_STEP - 3 - this.font.width(holding);
+            if (captionX >= this.inventoryLabelX + this.font.width(this.playerInventoryTitle) + 6) {
+                graphics.text(this.font, holding, captionX, this.inventoryLabelY, MachineStyle.DIM, false);
+            }
+            for (int i = 0; i < heldStacks.size(); i++) {
+                int x = SorterMenu.HELD_X - i * HELD_STEP;
+                graphics.item(heldStacks.get(i), x, y);
+                graphics.itemDecorations(this.font, heldStacks.get(i), x, y);
+            }
         }
         if (this.menu.picking()) {
             if (this.picker != null) {

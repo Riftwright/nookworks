@@ -1,6 +1,7 @@
 package dev.nookworks.mercury;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -53,15 +54,16 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
  * the sulfur stays behind as sulfur dust. Mercury leaves through Mercury Pipes (or into an adjacent tank),
  * the dust into the container below. It also boils sea water down to crude salt, which frees no mercury at all.
  * <p>
- * The second slot holds a reagent for entries that cook with one. A kraft digester is a heated sealed vessel
- * like any other, so pulping wood chips in caustic soda belongs here rather than on a crafting table.
+ * Its three input slots are all alike (since 1.9): an entry cooks once they hold its key and its reagents between
+ * them, in any slot - brass's two copper as one stack beside the zinc ({@link #charges}). A kraft digester is a heated
+ * sealed vessel like any other, so pulping wood chips in caustic soda belongs here rather than on a crafting table.
  * <p>
  * Like a furnace, every charge leaves a little experience behind. The Retort keeps it as Liquid Experience (up to
  * {@link #EXPERIENCE_CAPACITY} mB) and pushes it into an Experience Pipe or tank beside it - ours or another mod's -
  * which may also draw it out. Broken, it pours what it held out as orbs.
  * <p>
  * Water can come in by pipe as well as by the bucket: a Copper Pipe (or another mod's) fills a tank of
- * {@link #WATER_TANK} mB, and with nothing in the charge slot, each bucket's worth of it is boiled down just as a
+ * {@link #WATER_TANK} mB, and with nothing to cook in its slots, each bucket's worth of it is boiled down just as a
  * water bucket would be.
  * <p>
  * Logs give their wood vinegar as a liquid since 1.5 (the user, 2026-11-10: 「木酢液も液体として作って欲しい」; and their
@@ -78,10 +80,9 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 public class RetortBlockEntity extends MercuryMachineBlockEntity implements MachineInfo {
     public static final int FE_PER_TICK = 30;
     public static final int TICKS = 100;
-    /** Cinnabar or wood chips go in slot 0; anything the entry cooks them with goes in slots 1 and 2. */
-    public static final int FIRST_REAGENT = 1;
-    public static final int REAGENT_SLOTS = 2;
-    private static final int INPUTS = 1 + REAGENT_SLOTS;
+    /** The three input slots, all alike: whatever goes into a charge goes in any of them ({@link #charges}). */
+    public static final int INPUT_SLOTS = 3;
+    private static final int INPUTS = INPUT_SLOTS;
     /** The by-product, plus room for an emptied container. */
     private static final int OUTPUTS = 2;
 
@@ -165,9 +166,11 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         if (this.liquidStored() > 0) {
             this.outlet.push(level, pos, this, this.liquid);
         }
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
-        // With the charge slot empty, piped water is boiled as if it had come in a bucket.
-        boolean fromTank = recipe == null && this.items.get(INPUT).isEmpty() && this.waterStored() >= BUCKET
+        List<Charge> charges = charges(this.inputs());
+        Charge charge = charges.isEmpty() ? null : charges.getFirst();
+        MercuryRecipes.Retorting recipe = charge == null ? null : charge.recipe();
+        // With nothing in the slots to cook, piped water is boiled as if it had come in a bucket.
+        boolean fromTank = charge == null && this.waterStored() >= BUCKET
                 && (recipe = MercuryRecipes.retorting(new ItemStack(Items.WATER_BUCKET))) != null;
         // The work done belongs to what it was done on: a charge of cinnabar taken out halfway leaves none of it for the
         // tank's water to start from, nor the water's for a charge put back in.
@@ -178,11 +181,11 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
             this.workingOn = recipe;
             this.workingFromTank = fromTank;
         }
-        MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
-                : recipe == null ? MachineStatus.IDLE
+        MachineStatus blocked = !this.flush(level, pos) ? this.outputWaits()
+                : recipe == null ? (named(this.inputs()).isEmpty() ? MachineStatus.IDLE : MachineStatus.NO_REAGENT)
                 : this.mercury.space() < recipe.mercury() ? MachineStatus.MERCURY_FULL
                 : !this.roomFor(recipe) ? MachineStatus.TANK_FULL
-                : !this.hasReagents(recipe) ? MachineStatus.NO_REAGENT : null;
+                : !fromTank && !charge.complete() ? MachineStatus.NO_REAGENT : null;
         if (blocked != null) {
             // Nothing to work on - even while it waits for room - and what it had done went with what was in it;
             // stopped for room or a reagent with the charge still in it, it keeps what it had done.
@@ -206,9 +209,10 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
             if (fromTank) {
                 this.water.set(0, this.water.getResource(0), this.waterStored() - BUCKET);
             } else {
-                this.items.get(INPUT).shrink(1);
+                for (int s = 0; s < INPUT_SLOTS; s++) {
+                    this.items.get(INPUT + s).shrink(charge.used()[s]);
+                }
             }
-            this.spendReagents(recipe);
             this.mercury.fill(recipe.mercury(), false);
             if (recipe.count() > 0) {
                 this.addOutput(new ItemStack(recipe.byproduct(), Math.min(recipe.count(), new ItemStack(recipe.byproduct()).getMaxStackSize())));
@@ -237,90 +241,221 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
     }
 
     /**
-     * How many of each reagent slot one charge takes - each reagent from the first slot that still has one to give -
-     * or null when a reagent is missing.
+     * A charge the input slots name: an entry keyed by one slot's item, what it would take from each slot - its key and
+     * every reagent, each from the first slot that still has one to give - and what it still lacks.
      */
-    private int @Nullable [] reagentUse(MercuryRecipes.Retorting recipe) {
-        List<ItemStack> held = this.items.subList(FIRST_REAGENT, FIRST_REAGENT + REAGENT_SLOTS);
-        return reagentUse(recipe, held, null);
+    public record Charge(MercuryRecipes.Retorting recipe, int[] used, List<HolderSet<Item>> missing) {
+        public boolean complete() {
+            return this.missing.isEmpty();
+        }
+
+        /** Its key and reagents: how many things go into one charge. */
+        int size() {
+            return 1 + this.recipe.reagents().size();
+        }
     }
 
     /**
-     * The reagents {@code recipe} still lacks with {@code held} in the reagent slots, as a charge takes them; empty when
-     * it has them all. What the screen names under "Missing a reagent", which said nothing of which (r15 playthrough).
+     * Every entry {@code held} (the three input slots) names - each slot's item read as an entry's key - the best first:
+     * those the slots hold all of before the rest, among them the one of the most things (brass and pulp before a lone
+     * cinnabar, so the copper is not taken for something else), and among those short, the one lacking least; then by
+     * slot. The slots are all alike (the user, 2026-11-25, of a charge slot and two reagent slots with brass's copper
+     * split between them: 「もう主材料・副材料みたな括りで入力欄あるの不自然じゃない？」).
      */
-    public static List<HolderSet<Item>> missingReagents(MercuryRecipes.Retorting recipe, List<ItemStack> held) {
+    public static List<Charge> charges(List<ItemStack> held) {
+        List<Charge> found = new ArrayList<>();
+        for (int i = 0; i < held.size(); i++) {
+            MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(held.get(i));
+            if (recipe == null || found.stream().anyMatch(c -> c.recipe().equals(recipe))) {
+                continue;
+            }
+            found.add(charge(recipe, held.get(i).typeHolder(), held));
+        }
+        return sorted(found);
+    }
+
+    private static List<Charge> sorted(List<Charge> found) {
+        found.sort(Comparator.comparing((Charge c) -> !c.complete())
+                .thenComparingInt(c -> c.complete() ? -c.size() : c.missing().size()));
+        return found;
+    }
+
+    /**
+     * The charge of {@code recipe} keyed by {@code key}: what it takes from each slot, its key and every reagent. Each
+     * need is matched to a slot so that as few as can be go short: a tag that an iron ingot and a gold one both fill, and
+     * an iron ingot named after it, took the iron for the tag and found none left for the iron (r24 CX-05); the slots
+     * are tried in order, so where several ways serve, it is the first.
+     */
+    public static Charge charge(MercuryRecipes.Retorting recipe, Holder<Item> key, List<ItemStack> held) {
+        List<HolderSet<Item>> needs = new ArrayList<>();
+        needs.add(HolderSet.direct(key));
+        needs.addAll(recipe.reagents());
+        int[] used = new int[held.size()];
+        int[] best = new int[held.size()];
+        boolean[] got = new boolean[needs.size()];
+        boolean[] bestGot = new boolean[needs.size()];
+        int[] fewest = {Integer.MAX_VALUE};
+        match(needs, held, 0, used, got, 0, best, bestGot, fewest);
         List<HolderSet<Item>> missing = new ArrayList<>();
-        reagentUse(recipe, held, missing);
-        return missing;
+        for (int n = 0; n < needs.size(); n++) {
+            if (!bestGot[n]) {
+                missing.add(needs.get(n));
+            }
+        }
+        return new Charge(recipe, best, missing);
+    }
+
+    /** {@link #charge}'s search: needs from {@code n} on matched to the slots, keeping the way with the fewest short. */
+    private static void match(List<HolderSet<Item>> needs, List<ItemStack> held, int n, int[] used, boolean[] got, int short_,
+            int[] best, boolean[] bestGot, int[] fewest) {
+        if (short_ >= fewest[0]) {
+            return;
+        }
+        if (n == needs.size()) {
+            fewest[0] = short_;
+            System.arraycopy(used, 0, best, 0, used.length);
+            System.arraycopy(got, 0, bestGot, 0, got.length);
+            return;
+        }
+        for (int s = 0; s < held.size(); s++) {
+            if (held.get(s).is(needs.get(n)) && held.get(s).getCount() > used[s]) {
+                used[s]++;
+                got[n] = true;
+                match(needs, held, n + 1, used, got, short_, best, bestGot, fewest);
+                used[s]--;
+                got[n] = false;
+                if (fewest[0] == 0) {
+                    return;
+                }
+            }
+        }
+        match(needs, held, n + 1, used, got, short_ + 1, best, bestGot, fewest);
     }
 
     /**
-     * The names of what a charge of {@code charge} still lacks with {@code held} in the reagent slots, one after another
-     * ("Copper Ingot, Zinc Ingot"); null when nothing is lacking or {@code charge} is nothing the Retort takes. A
-     * reagent given as a tag is named by its first item.
+     * As {@link #charges}; and with no key in the slots, the entries what is in them would go into, each lacking its key:
+     * what the screen names and shows in the empty slots when only a charge's other things are in - a zinc ingot left
+     * after the copper ran out said only "Idle" (r23 self-review). Never cooked from: the tick reads {@link #charges}.
      */
-    public static @Nullable Component missingReagentNames(ItemStack charge, List<ItemStack> held) {
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(charge);
-        if (recipe == null) {
+    private static List<Charge> named(List<ItemStack> held) {
+        List<Charge> found = charges(held);
+        List<ItemStack> in = held.stream().filter(stack -> !stack.isEmpty() && isReagent(stack)).toList();
+        if (!found.isEmpty() || in.isEmpty()) {
+            return found;
+        }
+        for (var key : BuiltInRegistries.ITEM.getDataMap(MercuryRecipes.RETORTING).keySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.identifier().toString())).toList()) {
+            Item item = BuiltInRegistries.ITEM.getValue(key);
+            Holder<Item> holder = item == null ? null : item.builtInRegistryHolder();
+            MercuryRecipes.Retorting recipe = holder == null ? null : MercuryRecipes.retorting(new ItemStack(holder));
+            if (recipe != null && in.stream().allMatch(stack -> recipe.reagents().stream().anyMatch(stack::is))) {
+                found.add(charge(recipe, holder, held));
+            }
+        }
+        return sorted(found);
+    }
+
+    /**
+     * What {@code charges} lack that needs a slot of its own: not more of a thing a slot holds already (brass's second
+     * copper goes onto the first), and one slot for what two of them both want.
+     */
+    private static List<HolderSet<Item>> newSlots(List<Charge> charges, List<ItemStack> held) {
+        List<HolderSet<Item>> wanted = new ArrayList<>();
+        for (Charge charge : charges) {
+            for (HolderSet<Item> need : charge.missing()) {
+                if (held.stream().noneMatch(stack -> !stack.isEmpty() && stack.is(need))
+                        && wanted.stream().noneMatch(other -> need.stream().anyMatch(other::contains))) {
+                    wanted.add(need);
+                }
+            }
+        }
+        return wanted;
+    }
+
+    /** What the empty input slots are wanted for, in turn: the best charge's things that need a slot of their own. */
+    public static List<HolderSet<Item>> slotNeeds(List<ItemStack> held) {
+        List<Charge> charges = named(held);
+        return charges.isEmpty() ? List.of() : newSlots(List.of(charges.getFirst()), held);
+    }
+
+    /**
+     * The names of what the best charge the slots name still lacks, one after another ("Copper Ingot, Zinc Ingot"); null
+     * when one is whole or nothing in them is a charge. What the screen names under its status, which said nothing of
+     * which (r15 playthrough). A thing given as a tag is named by its first item.
+     */
+    public static @Nullable Component missingNames(List<ItemStack> held) {
+        List<Charge> charges = named(held);
+        if (charges.isEmpty() || charges.getFirst().complete()) {
             return null;
         }
+        // the same thing twice once, counted: brass with only its zinc in lacks "Copper Ingot ×2"
+        java.util.LinkedHashMap<String, Integer> counts = new java.util.LinkedHashMap<>();
+        java.util.Map<String, Component> shown = new java.util.HashMap<>();
+        for (HolderSet<Item> need : charges.getFirst().missing()) {
+            Component name = need.stream().findFirst().map(item -> new ItemStack(item).getHoverName())
+                    .orElseGet(() -> Component.literal(need.unwrapKey().map(tag -> "#" + tag.location()).orElse("?")));
+            counts.merge(name.getString(), 1, Integer::sum);
+            shown.putIfAbsent(name.getString(), name);
+        }
         MutableComponent names = null;
-        for (HolderSet<Item> reagent : missingReagents(recipe, held)) {
-            Component name = reagent.stream().findFirst().map(item -> new ItemStack(item).getHoverName())
-                    .orElseGet(() -> Component.literal(reagent.unwrapKey().map(tag -> "#" + tag.location()).orElse("?")));
-            names = names == null ? name.copy()
-                    : names.append(Component.translatable("nookworks.list.separator")).append(name);
+        for (var entry : counts.entrySet()) {
+            MutableComponent name = shown.get(entry.getKey()).copy();
+            if (entry.getValue() > 1) {
+                name.append(" \u00d7" + entry.getValue());
+            }
+            names = names == null ? name : names.append(Component.translatable("nookworks.list.separator")).append(name);
         }
         return names;
     }
 
-    /** {@link #reagentUse(MercuryRecipes.Retorting)} over {@code held}; with {@code missing}, it lists what is lacking and goes on. */
-    private static int @Nullable [] reagentUse(MercuryRecipes.Retorting recipe, List<ItemStack> held,
-            @Nullable List<HolderSet<Item>> missing) {
-        int[] used = new int[held.size()];
-        for (var reagent : recipe.reagents()) {
-            boolean found = false;
-            for (int i = 0; i < held.size() && !found; i++) {
-                if (held.get(i).is(reagent) && held.get(i).getCount() > used[i]) {
-                    used[i]++;
-                    found = true;
-                }
-            }
-            if (!found) {
-                if (missing == null) {
-                    return null;
-                }
-                missing.add(reagent);
-            }
-        }
-        return used;
-    }
-
-    private boolean hasReagents(MercuryRecipes.Retorting recipe) {
-        return !recipe.needsReagents() || this.reagentUse(recipe) != null;
-    }
-
-    private void spendReagents(MercuryRecipes.Retorting recipe) {
-        int[] used = this.reagentUse(recipe);
-        for (int i = 0; used != null && i < REAGENT_SLOTS; i++) {
-            this.items.get(FIRST_REAGENT + i).shrink(used[i]);
-        }
+    private List<ItemStack> inputs() {
+        return this.items.subList(INPUT, INPUT + INPUT_SLOTS);
     }
 
     /**
-     * Through a face - a hopper, a pipe - a reagent goes in only for a charge already loaded, and only one that cooks
-     * with it. Glass bottles sent down for the fill box (bottles are also what logs are charred with) went into a
-     * reagent slot of an empty retort: no bottling started, and brass or pulp then had no slot left for its second
-     * reagent. By hand a reagent may still go in first.
+     * Through a face - a hopper, a pipe - into an input slot only what {@link #goesWith} what the slots already hold. A
+     * hopper's cinnabar after the copper waits, instead of taking the slot the zinc needs. By hand anything the Retort
+     * takes goes in.
      */
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
-        boolean reagentSlot = slot >= FIRST_REAGENT && slot < FIRST_REAGENT + REAGENT_SLOTS;
-        if (reagentSlot && MercuryRecipes.retorting(this.items.get(INPUT)) == null) {
+        if (slot >= INPUT && slot < INPUT + INPUT_SLOTS && !goesWith(this.inputs(), stack)) {
             return false;
         }
         return super.canPlaceItemThroughFace(slot, stack, side);
+    }
+
+    /**
+     * Whether a hopper or a pipe may put {@code stack} into input slots holding {@code held}: more of what a slot holds;
+     * else a key, or a thing a charge keyed in the slots still lacks, when every charge the slots then name can still be
+     * made whole in the slots left over. One entry taking all that was in (until r23) let a lone reagent in first:
+     * nookTechnology's Fine Glass and pulp both take caustic soda, so a mixed hopper's soda and then limestone powder
+     * held the Retort for a quartz that never came, its chips and sulfur waiting behind; and a thing no charge takes,
+     * left in a slot from an old world, shut it to every hopper (r23 self-review).
+     */
+    public static boolean goesWith(List<ItemStack> held, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+        int first = -1;
+        for (int s = 0; s < held.size(); s++) {
+            if (held.get(s).isEmpty()) {
+                first = first < 0 ? s : first;
+            } else if (held.get(s).is(stack.getItem())) {
+                return true; // more of it, onto its own slot
+            }
+        }
+        if (first < 0) {
+            return false;
+        }
+        if (MercuryRecipes.retorting(stack) == null
+                && newSlots(charges(held), held).stream().noneMatch(stack::is)) {
+            return false; // no key, nor wanted by a charge begun
+        }
+        List<ItemStack> after = new ArrayList<>(held);
+        after.set(first, stack.copyWithCount(1));
+        long room = after.stream().filter(ItemStack::isEmpty).count();
+        return newSlots(charges(after), after).size() <= room;
     }
 
     @Override
@@ -330,25 +465,20 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
 
     /**
      * What slot {@code slot} of a Retort holding {@code items} takes: the machine's rule, and its screen's on the client,
-     * which holds the slots the server sent (MachineMenu), so a shift-click lands there as it will on the server.
+     * which holds the slots the server sent (MachineMenu), so a shift-click lands there as it will on the server. Any
+     * input slot takes anything some entry cooks, as its key or with it - one kind to a slot, so a hopper of copper goes
+     * onto the copper there and leaves the other slots for the zinc.
      */
     public static boolean takes(Container items, int slot, ItemStack stack) {
-        if (slot == INPUT) {
-            return MercuryRecipes.retorting(stack) != null;
-        }
-        if (slot < FIRST_REAGENT || slot >= FIRST_REAGENT + REAGENT_SLOTS || !isReagent(stack)) {
+        if (slot < INPUT || slot >= INPUT + INPUT_SLOTS || MercuryRecipes.retorting(stack) == null && !isReagent(stack)) {
             return false;
         }
-        // One kind of reagent to a slot. Copper is both the brass charge and one of its reagents, so a hopper of copper
-        // would otherwise fill both reagent slots before the zinc arrived, and the zinc could never get in.
-        for (int other = FIRST_REAGENT; other < FIRST_REAGENT + REAGENT_SLOTS; other++) {
+        for (int other = INPUT; other < INPUT + INPUT_SLOTS; other++) {
             if (other != slot && items.getItem(other).is(stack.getItem())) {
                 return false;
             }
         }
-        // With a charge loaded, only what its entry cooks with.
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(items.getItem(INPUT));
-        return recipe == null || recipe.reagents().stream().anyMatch(stack::is);
+        return true;
     }
 
     private static volatile @Nullable Set<Item> reagents;
@@ -470,8 +600,14 @@ public class RetortBlockEntity extends MercuryMachineBlockEntity implements Mach
         if (this.liquidStored() > 0) {
             return true;
         }
-        MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(this.items.get(INPUT));
-        return recipe != null && recipe.liquid().isPresent();
+        // any of the three slots: logs shift-clicked in beside a cinnabar charge land in the second (r23 self-review)
+        for (ItemStack in : this.inputs()) {
+            MercuryRecipes.Retorting recipe = MercuryRecipes.retorting(in);
+            if (recipe != null && recipe.liquid().isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** That tank alone: drawn from, never filled. */

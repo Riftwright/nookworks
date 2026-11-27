@@ -133,8 +133,8 @@ public abstract class HandMachineBlockEntity extends MachineBlockEntity implemen
 
     private void pushOut(ServerLevel level) {
         ItemStack stack = this.items.get(OUTPUT);
-        if (stack.isEmpty()) {
-            return;
+        if (stack.isEmpty() || dev.nookworks.machine.MotorBlockEntity.holdsHandOut(this)) {
+            return; // nothing made, or a motor stopped by redstone holds it in
         }
         int before = stack.getCount();
         Direction front = this.getBlockState().getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);

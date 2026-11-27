@@ -184,6 +184,34 @@ public abstract class MachineBlockEntity extends BlockEntity implements WorldlyC
         return this.level != null && this.redstone.allows(this.level.hasNeighborSignal(this.worldPosition));
     }
 
+    /**
+     * Whether what it has made waits inside: a machine stopped by redstone puts nothing out - into a container, a cart or
+     * onto the ground - as a locked hopper (the user, 2026-11-25: 「機械を止めたら落とすのも止める」; a chest minecart
+     * loaded under a Sifter while it stood on a detector rail had the rest dropped on the rail as it left). A pipe may
+     * still draw it out. Each machine's own way out asks this, not MachineIO, which also carries what is not made
+     * (an add-on's ropeway station unloading).
+     */
+    protected boolean holdsOutput() {
+        return !this.redstoneAllows();
+    }
+
+    /** Idle - or, stopped by redstone with something made still in {@code slots}, held: the screen says why it waits. */
+    protected MachineStatus idleOrHeld(int... slots) {
+        if (this.holdsOutput()) {
+            for (int slot : slots) {
+                if (!this.items.get(slot).isEmpty()) {
+                    return MachineStatus.REDSTONE;
+                }
+            }
+        }
+        return MachineStatus.IDLE;
+    }
+
+    /** Why what is made waits in it: held by redstone ({@link #holdsOutput}), or no room where it goes. */
+    protected MachineStatus outputWaits() {
+        return this.holdsOutput() ? MachineStatus.REDSTONE : MachineStatus.OUTPUT_BLOCKED;
+    }
+
     // ---- what the machine's screen shows (see MachineInfo) ----
 
     public RedstoneMode redstoneMode() {

@@ -94,4 +94,26 @@ public class SifterBlock extends BaseEntityBlock {
         stack.consume(1, player);
         return InteractionResult.SUCCESS;
     }
+
+    /**
+     * Broken, it tells a comparator reading it through a block, as a chest does: one there kept its last reading, the
+     * block gone (r23 self-review: a removal tells comparators only when what takes its place gives a reading).
+     */
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos,
+            boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        net.minecraft.world.Containers.updateNeighboursAfterDestroy(state, level, pos);
+    }
+
+    /** A comparator reads how full its slots are, as a machine's (the 2026-11-24 audit: it gave none). */
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        return net.minecraft.world.inventory.AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    }
 }

@@ -224,7 +224,7 @@ public final class Quenching {
             ItemStack ingot = resource.toStack(1);
             boolean hot = isHot(ingot, this.level.getGameTime());
             ItemStack out = hot ? new ItemStack(ModItems.TEMPERED_VELARIUM_INGOT.get()) : cooled(ingot);
-            ResourceHandler<ItemResource> below = this.level.getCapability(Capabilities.Item.BLOCK, this.pos.below(), Direction.UP);
+            ResourceHandler<ItemResource> below = dev.nookworks.machine.MachineIO.itemsAt(this.level, this.pos.below(), Direction.UP);
             List<ItemStack> onRim = this.pending.onRim();
             if (below != null) {
                 if (below.insert(ItemResource.of(out), 1, transaction) < 1) {

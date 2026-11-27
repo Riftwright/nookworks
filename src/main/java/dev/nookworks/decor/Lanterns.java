@@ -36,6 +36,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 /**
  * Lanterns put out and lit again (the user, 2026-10-12: a lantern gone out, for builds, and for the If's ruins; the
@@ -109,6 +110,23 @@ public final class Lanterns {
                 server.playSound(null, pos, useLighter(held, player, event.getHand()), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             done(event);
+        }
+    }
+
+    /**
+     * A dispenser's flint and steel (or anything else asking a block to be lit, as NeoForge's fire-starting ability does)
+     * lights an unlit lantern, as it lights a candle or a Sconce: vanilla's dispenser asks the block for its lit state,
+     * and the unlit lanterns are vanilla's lantern class, which has none (the 2026-11-24 audit: the lantern stayed dark
+     * and the flint and steel wore all the same).
+     */
+    @SubscribeEvent
+    static void onToolModify(BlockEvent.BlockToolModificationEvent event) {
+        if (event.getItemAbility() == ItemAbilities.FIRESTARTER_LIGHT) {
+            BlockState state = event.getState();
+            Block in = lit(state.getBlock());
+            if (in != null) {
+                event.setFinalState(swap(state, in));
+            }
         }
     }
 

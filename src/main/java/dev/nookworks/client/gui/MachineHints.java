@@ -18,6 +18,7 @@ import dev.nookworks.machine.MachineLayout;
 import dev.nookworks.machine.MachineMenu;
 import dev.nookworks.machine.StoneMakerBlockEntity;
 import dev.nookworks.mercury.MercuryRecipes;
+import dev.nookworks.mercury.RetortBlockEntity;
 import dev.nookworks.mercury.StirringTankBlockEntity;
 import dev.nookworks.mobcapture.MobBottleItem;
 import dev.nookworks.recycling.Compressing;
@@ -72,8 +73,7 @@ public final class MachineHints {
                     : slot == StoneMakerBlockEntity.LAVA ? new ItemStack(Items.LAVA_BUCKET) : ItemStack.EMPTY;
             case STIRRING_TANK -> slot == StirringTankBlockEntity.CATALYST ? new ItemStack(ModItems.CAUSTIC_SODA.get())
                     : slot == 0 ? turn(charges()) : ItemStack.EMPTY;
-            case RETORT -> slot == 0 ? turn(keys(MercuryRecipes.RETORTING)) : slot == 1 || slot == 2 ? reagent(menu, slot - 1)
-                    : ItemStack.EMPTY;
+            case RETORT -> slot < RetortBlockEntity.INPUT_SLOTS ? retortInput(menu, slot) : ItemStack.EMPTY;
             case ELECTRIC_FURNACE -> slot == ElectricFurnaceBlockEntity.INPUT ? turn(SMELTED) : ItemStack.EMPTY;
             case DIESEL_GENERATOR -> turn(List.of(ModOil.BIODIESEL_BOTTLE.get(), ModOil.BIODIESEL_BUCKET.get()));
             case DISTILLER -> slot == 0 ? turn(keys(MercuryRecipes.DISTILLATION)) : ItemStack.EMPTY;
@@ -88,24 +88,29 @@ public final class MachineHints {
         return items.size() == 0 ? ItemStack.EMPTY : new ItemStack(items.get((int) (tick() % items.size())));
     }
 
-    /** The reagent the charge now in the Retort needs in this slot; with no charge, every reagent there is, in turn. */
-    private static ItemStack reagent(MachineMenu menu, int index) {
-        ItemStack charge = menu.slots.get(0).getItem();
-        MercuryRecipes.Retorting recipe = charge.isEmpty() ? null : MercuryRecipes.retorting(charge);
-        if (recipe != null) {
-            return index < recipe.reagents().size() ? any(recipe.reagents().get(index)) : ItemStack.EMPTY;
-        }
-        List<Item> all = new ArrayList<>();
-        BuiltInRegistries.ITEM.getDataMap(MercuryRecipes.RETORTING).values().forEach(r -> {
-            for (var reagent : r.reagents()) {
-                Item item = any(reagent).getItem();
-                if (!all.contains(item)) {
-                    all.add(item);
-                }
+    /**
+     * What an empty input slot of the Retort could take: what the charge begun in the other slots still lacks and needs a
+     * slot of its own for (not a second copper, which goes onto the first), the first empty slot its first such thing
+     * and so on; with nothing begun, everything the Retort cooks, in turn, the empty slots a step apart so they never
+     * show the same thing.
+     */
+    private static ItemStack retortInput(MachineMenu menu, int slot) {
+        List<ItemStack> held = new ArrayList<>();
+        int empty = 0;
+        for (int i = 0; i < RetortBlockEntity.INPUT_SLOTS; i++) {
+            held.add(menu.slots.get(i).getItem());
+            if (i < slot && held.get(i).isEmpty()) {
+                empty++;
             }
-        });
-        // The two slots take turns through the list, a step apart, so they never show the same thing.
-        return all.isEmpty() ? ItemStack.EMPTY : new ItemStack(all.get((int) ((tick() + index) % all.size())));
+        }
+        if (held.stream().anyMatch(stack -> !stack.isEmpty())) {
+            var wanted = RetortBlockEntity.slotNeeds(held);
+            if (!wanted.isEmpty() || !RetortBlockEntity.charges(held).isEmpty()) {
+                return empty < wanted.size() ? any(wanted.get(empty)) : ItemStack.EMPTY;
+            }
+        }
+        List<Item> keys = keys(MercuryRecipes.RETORTING);
+        return keys.isEmpty() ? ItemStack.EMPTY : new ItemStack(keys.get((int) ((tick() + empty) % keys.size())));
     }
 
     /** What the Stirring Tank stirs: every amalgam charge, methanol, and what it makes mud of. */

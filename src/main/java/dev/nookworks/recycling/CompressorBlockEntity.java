@@ -72,7 +72,7 @@ public class CompressorBlockEntity extends MachineBlockEntity implements Machine
             return;
         }
         if (!press.flush(server, pos)) {
-            press.status = MachineStatus.OUTPUT_BLOCKED;
+            press.status = press.outputWaits();
             return;
         }
         int slot = press.ready(server);
@@ -151,7 +151,7 @@ public class CompressorBlockEntity extends MachineBlockEntity implements Machine
         if (out.isEmpty()) {
             return true;
         }
-        if (!this.outputRetry.due(level)) {
+        if (this.holdsOutput() || !this.outputRetry.due(level)) {
             return false;
         }
         ItemStack rest = MachineIO.deliverBelow(level, pos, out);

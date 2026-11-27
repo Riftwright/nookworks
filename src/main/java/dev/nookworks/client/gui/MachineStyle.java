@@ -533,6 +533,31 @@ public final class MachineStyle {
         }
     }
 
+    /** How long {@link #arrowDown} runs: from a row of slots to the slot under it. */
+    public static final int ARROW_DOWN_H = 18;
+
+    /** {@link #arrow} turned down, {@link #ARROW_H} wide and {@link #ARROW_DOWN_H} long: from the inputs above to the output below. */
+    public static void arrowDown(GuiGraphicsExtractor g, int x, int y, float done) {
+        int filled = Math.round(ARROW_DOWN_H * Math.max(0.0F, Math.min(1.0F, done)));
+        int head = ARROW_DOWN_H - 7;
+        for (int i = 0; i < ARROW_DOWN_H; i++) {
+            int left;
+            int right;
+            if (i < head) {
+                left = x + 6;
+                right = x + 10;
+            } else {
+                int t = i - head;
+                left = x + 1 + t;
+                right = x + 15 - t;
+            }
+            g.fill(left, y + i, right, y + i + 1, i < filled ? BRASS : WELL);
+            if (i < filled) {
+                g.fill(left, y + i, left + 1, y + i + 1, BRASS_LIT);
+            }
+        }
+    }
+
     /** {@link #arrow} the other way: from the right to the left, its head at {@code x}. */
     public static void arrowLeft(GuiGraphicsExtractor g, int x, int y, float done) {
         int filled = Math.round(ARROW_W * Math.max(0.0F, Math.min(1.0F, done)));

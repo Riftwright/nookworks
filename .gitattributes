@@ -4,4 +4,5 @@
 src/generated/**/.cache/* text eol=lf
 # a shell script: sh reads a CR as part of the command ("bad interpreter" on Linux, macOS and WSL)
 gradlew text eol=lf
+*.sh text eol=lf
 src/generated/**/*.json text eol=lf

@@ -3,6 +3,8 @@ package dev.nookworks.machine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Where everything sits on a machine's screen. One entry per machine; the menu builds its slots from it and the
  * screen draws from it, so every machine screen shares one look and one set of parts:
@@ -30,11 +32,12 @@ public enum MachineLayout {
     // Input, the nine results, then the mesh fitted under the input (slot 10: SifterBlockEntity.MESH).
     SIFTER(Gauge.ARROW, 54, 36, -1, -1, concat(concat(List.of(in(30, 27)), grid(86, 20, 3, 3, true)),
             List.of(fitting(30, 49))), List.of()),
-    // The charge and its two reagents, the byproduct and the remainder (the fill box, bottle in and filled out, went in
-    // 1.5: a bottle is filled in the Liquid tab now); experience, water, the liquid it gives off (wood vinegar, since 1.5)
-    // and mercury tanks - four, a pixel closer than other machines' and the slots a little further left, as the Stirring
-    // Tank's.
-    RETORT(Gauge.ARROW, 44, 27, 84, 47, List.of(in(22, 27), in(21, 51), in(39, 51), out(70, 27), out(88, 27)),
+    // Three input slots, all alike, in a column (since 1.9: a charge slot over two reagent slots read as a main input
+    // and lesser ones, the user, 2026-11-25), the byproduct and the remainder (the fill box, bottle in and filled out,
+    // went in 1.5: a bottle is filled in the Liquid tab now); experience, water, the liquid it gives off (wood vinegar,
+    // since 1.5) and mercury tanks - four, a pixel closer than other machines' and the slots a little further left, as
+    // the Stirring Tank's.
+    RETORT(Gauge.ARROW, 44, 36, 84, 56, List.of(in(22, 18), in(22, 36), in(22, 54), out(70, 36), out(88, 36)),
             List.of(tank(106, Flow.OUT), tank(122, Flow.IN), tank(138, Flow.OUT), tank(154, Flow.OUT))),
     // The charge (ore, methanol for biodiesel, or dirt for mud), the caustic soda for biodiesel, then the output; the
     // water for mud, the biodiesel it makes (out of the top), the oil and the methanol it takes and the mercury. The
@@ -99,6 +102,66 @@ public enum MachineLayout {
     private final int belowY;
     private final List<Spot> spots;
     private final List<TankSpot> tanks;
+    /** The bay drawn closer to make room for an add-on's tanks ({@link #addTanks}); null as it stands. */
+    private volatile @Nullable Crowded crowded;
+
+    /**
+     * The bay of a machine an add-on has given tanks of its own: where its slots, arrow and mark under the output go
+     * instead, the arrow pointing down when it does, and where the add-on's tanks stand after the machine's own.
+     */
+    public record Crowded(int gaugeX, int gaugeY, boolean arrowDown, int belowX, int belowY, List<Spot> spots,
+            List<TankSpot> tanks, List<TankSpot> addOnTanks) {}
+
+    /**
+     * An add-on's tanks on this machine's screen, in the same row as its own and after them, drawn as they are
+     * (MachineScreen#addGauges on the client). Called once as the add-on is constructed, on client and server alike:
+     * the menu's slots stand where the crowded bay puts them, on both sides. The Stirring Tank alone has room for any,
+     * two at most (nookTechnology's creosote oil and liquid experience, which stood in its Extra Slots tab: the user,
+     * 2026-11-25, 「なんで攪拌槽の経験値とクレオソートだけ追加スロットに入ってるの？変だと思わなかった？」).
+     */
+    public static void addTanks(MachineLayout layout, List<Flow> flows) {
+        // after another add-on's, if one gave some (a second call took the first's place)
+        List<Flow> all = new ArrayList<>();
+        Crowded before = layout.crowded;
+        if (before != null) {
+            before.addOnTanks().forEach(tank -> all.add(tank.flow()));
+        }
+        all.addAll(flows);
+        if (layout != STIRRING_TANK || flows.isEmpty() || all.size() > 2) {
+            throw new IllegalArgumentException("no room for " + flows.size() + " more tanks on " + layout);
+        }
+        layout.crowded = crowdedStirringTank(all);
+    }
+
+    /**
+     * The Stirring Tank with an add-on's tanks: its charge and caustic soda side by side at the top, the arrow down to
+     * the output under them, and seven tanks in the row, the add-on's last.
+     */
+    public static Crowded crowdedStirringTank(List<Flow> flows) {
+        List<TankSpot> own = new ArrayList<>();
+        Flow[] ownFlows = {Flow.IN, Flow.UP, Flow.IN, Flow.IN, Flow.IN};
+        for (int i = 0; i < ownFlows.length; i++) {
+            own.add(tank(58 + i * 16, ownFlows[i]));
+        }
+        List<TankSpot> added = new ArrayList<>();
+        for (int i = 0; i < flows.size(); i++) {
+            added.add(tank(58 + (ownFlows.length + i) * 16, flows.get(i)));
+        }
+        return new Crowded(30, 38, true, 50, 63, List.of(in(21, 20), in(39, 20), out(30, 57)), List.copyOf(own),
+                List.copyOf(added));
+    }
+
+    /** The add-on's tanks after the machine's own ({@link #addTanks}); none for most. */
+    public List<TankSpot> addOnTanks() {
+        Crowded c = this.crowded;
+        return c == null ? List.of() : c.addOnTanks();
+    }
+
+    /** Whether the arrow points down, from inputs above to the output below (a crowded bay). */
+    public boolean arrowDown() {
+        Crowded c = this.crowded;
+        return c != null && c.arrowDown();
+    }
 
     MachineLayout(Gauge gauge, int gaugeX, int gaugeY, int belowX, int belowY, List<Spot> spots, List<TankSpot> tanks) {
         this.gauge = gauge;
@@ -115,29 +178,35 @@ public enum MachineLayout {
     }
 
     public int gaugeX() {
-        return this.gaugeX;
+        Crowded c = this.crowded;
+        return c == null ? this.gaugeX : c.gaugeX();
     }
 
     public int gaugeY() {
-        return this.gaugeY;
+        Crowded c = this.crowded;
+        return c == null ? this.gaugeY : c.gaugeY();
     }
 
     /** The tanks on the screen, in the order the machine's {@link MachineInfo#guiTanks()} fills them. */
     public List<TankSpot> tanks() {
-        return this.tanks;
+        Crowded c = this.crowded;
+        return c == null ? this.tanks : c.tanks();
     }
 
     /** Where the "out through the bottom" mark goes, or -1 for a machine whose outputs have none. */
     public int belowX() {
-        return this.belowX;
+        Crowded c = this.crowded;
+        return c == null ? this.belowX : c.belowX();
     }
 
     public int belowY() {
-        return this.belowY;
+        Crowded c = this.crowded;
+        return c == null ? this.belowY : c.belowY();
     }
 
     public List<Spot> spots() {
-        return this.spots;
+        Crowded c = this.crowded;
+        return c == null ? this.spots : c.spots();
     }
 
     public int slotCount() {

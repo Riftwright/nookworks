@@ -1,5 +1,6 @@
 package dev.nookworks.cooking;
 
+import net.minecraft.core.Direction;
 import org.jspecify.annotations.Nullable;
 
 import dev.nookworks.block.Clicks;
@@ -99,5 +100,27 @@ public class NukadokoBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.NUKADOKO.get(), NukadokoBlockEntity::serverTick);
+    }
+
+    /**
+     * Broken, it tells a comparator reading it through a block, as a chest does: one there kept its last reading, the
+     * block gone (r23 self-review: a removal tells comparators only when what takes its place gives a reading).
+     */
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos,
+            boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        net.minecraft.world.Containers.updateNeighboursAfterDestroy(state, level, pos);
+    }
+
+    /** A comparator reads how full it is ({@link ComparatorReading}). */
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        return level.getBlockEntity(pos) instanceof NukadokoBlockEntity be ? ComparatorReading.of(be.itemHandler()) : 0;
     }
 }

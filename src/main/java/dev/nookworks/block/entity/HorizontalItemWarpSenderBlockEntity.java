@@ -114,12 +114,20 @@ public class HorizontalItemWarpSenderBlockEntity extends ItemWarpSenderBlockEnti
         if (!level.isLoaded(target)) {
             return stack;
         }
-        var handler = level.getCapability(Capabilities.Item.BLOCK, target, out.getOpposite());
+        // a chest minecart or chest boat in front too, as a hopper finds one (r23 self-review: thrown onto the water)
+        var handler = dev.nookworks.machine.MachineIO.itemsAt(level, target, out.getOpposite());
         if (handler != null) {
             return ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
         }
+        if (!dev.nookworks.machine.MachineIO.entitiesLoaded(level, target)) {
+            return stack; // a cart there may not be in yet
+        }
         if (!level.getBlockState(target).getCollisionShape(level, target).isEmpty()) {
             return stack; // blocked and no inventory: wait
+        }
+        ItemStack onto = dev.nookworks.machine.MachineIO.ontoRail(level, target, stack);
+        if (onto != null) {
+            return onto; // landing on a rail: into a cart there, else kept for the next
         }
         if (level.getGameTime() % ItemWarpSenderBlockEntity.GROUND_BEAT != 0) {
             return stack; // onto the ground only at a hopper's beat, not an item a tick

@@ -41,7 +41,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements MachineInf
                 // what it was crushing is gone while it waited for room: the next thing put in starts from nothing
                 crusher.progress = 0;
             }
-            crusher.status = MachineStatus.OUTPUT_BLOCKED;
+            crusher.status = crusher.outputWaits();
             return;
         }
         CrushingRecipe recipe = CrushingRecipe.of(crusher.items.get(INPUT));
@@ -86,7 +86,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements MachineInf
         if (out.isEmpty()) {
             return true;
         }
-        if (!this.outputRetry.due(level)) {
+        if (this.holdsOutput() || !this.outputRetry.due(level)) {
             return false;
         }
         ItemStack rest = MachineIO.deliverBelow(level, pos, out);

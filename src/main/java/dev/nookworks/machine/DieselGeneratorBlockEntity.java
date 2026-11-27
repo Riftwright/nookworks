@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
@@ -122,7 +121,8 @@ public class DieselGeneratorBlockEntity extends MachineBlockEntity implements Ma
     private void pourSlot(ServerLevel level) {
         ItemStack held = this.items.get(0);
         int amount = mbIn(held);
-        if (amount <= 0 || !this.pour(amount)) {
+        // stopped by redstone it still pours, but only what leaves its empty in the slot: it puts nothing out (2026-11-25)
+        if (amount <= 0 || held.getCount() > 1 && !this.redstoneAllows() || !this.pour(amount)) {
             return;
         }
         ItemStack empty = new ItemStack(held.is(ModOil.BIODIESEL_BUCKET.get()) ? Items.BUCKET : Items.GLASS_BOTTLE);
@@ -151,7 +151,7 @@ public class DieselGeneratorBlockEntity extends MachineBlockEntity implements Ma
 
     /** Into whatever takes items under it, or else onto its top. */
     private void putAside(ServerLevel level, ItemStack stack) {
-        var below = level.getCapability(Capabilities.Item.BLOCK, this.worldPosition.below(), Direction.UP);
+        var below = MachineIO.itemsAt(level, this.worldPosition.below(), Direction.UP);
         if (below != null) {
             stack.shrink(Move.insert(below, ItemResource.of(stack), stack.getCount()));
         }

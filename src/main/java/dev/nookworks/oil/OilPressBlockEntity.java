@@ -213,6 +213,9 @@ public class OilPressBlockEntity extends MachineBlockEntity implements Crankable
 
     /** The cakes it holds, sent on: under it, else in front, else out of its spout. */
     private void handOutCakes(ServerLevel level) {
+        if (dev.nookworks.machine.MotorBlockEntity.holdsHandOut(this)) {
+            return; // a motor stopped by redstone holds them in
+        }
         ItemStack cakes = this.items.get(CAKE);
         int before = cakes.getCount();
         MachineIO.handOut(level, this.worldPosition, this.getBlockState().getValue(OilPressBlock.FACING), cakes);

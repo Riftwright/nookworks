@@ -1,9 +1,14 @@
 package dev.nookworks.machine;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import dev.nookworks.block.MotorBlock;
 import dev.nookworks.drive.DriveNetwork;
@@ -36,6 +41,9 @@ import net.minecraft.world.level.storage.ValueOutput;
  * motor that turned it last keeps it; another stands by, turning on its own, and takes over the tick after the first
  * stops - for want of power, or a redstone signal.
  * <p>
+ * Stopped by redstone, it holds what the machines it would turn have made, as a machine stopped by redstone does
+ * ({@link #holdsHandOut}): an Oil Press's cakes wait in it, not out of its spout.
+ * <p>
  * Across a claim's edge it turns a machine only where the machine's owner could break the motor, as power goes along a
  * cable ({@link DrawRights}): not a stranger's set against a claimed motor's shaft, or against a wheel of theirs set end
  * to end with the motor's.
@@ -51,6 +59,109 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
     private static final Map<BlockEntity, Turning> TURNED_BY = new WeakHashMap<>();
 
     private record Turning(BlockPos motor, long tick) {}
+
+    /**
+     * The motors that lately reached each machine they would turn, with work or none, stopped or running - where each
+     * stands, and the tick: {@link #holdsHandOut} reads their redstone as it stands. Kept with the machine, and gone with
+     * it, as {@link #TURNED_BY} is.
+     */
+    private static final Map<BlockEntity, Map<BlockPos, Long>> REACHED_BY = new WeakHashMap<>();
+
+    /**
+     * Finds the motors that would turn a machine, where an add-on carries a motor's turn further than Nookworks' shafts and
+     * wheels do: {@link #holdsHandOut} asks it when no motor has reached the machine yet (its chunk just in).
+     */
+    @FunctionalInterface
+    public interface MotorFinder {
+        Collection<MotorBlockEntity> motors(ServerLevel level, BlockEntity machine);
+    }
+
+    private static final List<MotorFinder> FINDERS = new CopyOnWriteArrayList<>();
+
+    /** Adds a {@link MotorFinder} (nookTechnology's for its Shafts). */
+    public static void addMotorFinder(MotorFinder finder) {
+        FINDERS.add(finder);
+    }
+
+    /**
+     * Whether a machine worked by its handle keeps what it has made in: while a motor stopped by redstone stands against
+     * it, and none that may run does - as a machine stopped by redstone puts nothing out (the user, 2026-11-26: 「おすすめで
+     * 作っていいよ」; an Oil Press loading a cart, its motor on a detector rail, went on dropping its cakes once the motor
+     * stopped). Turned by hand alone, or by a motor short of power, it never holds.
+     */
+    public static boolean holdsHandOut(BlockEntity machine) {
+        if (!(machine.getLevel() instanceof ServerLevel level)) {
+            return false;
+        }
+        long now = level.getGameTime();
+        List<MotorBlockEntity> motors = new ArrayList<>();
+        Map<BlockPos, Long> reached = REACHED_BY.get(machine);
+        if (reached != null) {
+            reached.values().removeIf(tick -> tick < now - 1);
+            for (BlockPos at : reached.keySet()) {
+                if (level.isLoaded(at) && level.getBlockEntity(at) instanceof MotorBlockEntity motor) {
+                    motors.add(motor);
+                }
+            }
+        }
+        if (motors.isEmpty()) {
+            // none reached it this tick or the last: with its chunk just in, or both just set down, the machine may tick
+            // before its motor, and a held press dropped its cakes once (nookTechnology's find): the motors around it
+            motors = motorsAround(level, machine);
+        }
+        // each read as it stands, not as it was when it ticked: stopped the tick the press would put out, it holds (r24
+        // CX-02); two on one machine, one running, it does not (r24 GM-01)
+        boolean held = false;
+        for (MotorBlockEntity motor : motors) {
+            if (motor.redstoneAllows()) {
+                return false; // one that may run turns it
+            }
+            held = true;
+        }
+        return held;
+    }
+
+    /**
+     * The motors set against {@code machine} - on its shaft, or at a wheel belted to one set against it, or as an add-on's
+     * {@link MotorFinder} finds them - as far as each may turn it: {@link #holdsHandOut} with none noted.
+     */
+    private static List<MotorBlockEntity> motorsAround(ServerLevel level, BlockEntity machine) {
+        if (!(machine instanceof Crankable crankable)) {
+            return List.of();
+        }
+        BlockPos at = machine.getBlockPos();
+        List<MotorBlockEntity> motors = new ArrayList<>();
+        for (Direction side : Direction.values()) {
+            BlockPos next = at.relative(side);
+            if (!crankable.drivenFrom(side) || !level.isLoaded(next)) {
+                continue;
+            }
+            BlockEntity there = level.getBlockEntity(next);
+            if (there instanceof MotorBlockEntity motor && motor.getBlockState().getValue(MotorBlock.FACING) == side.getOpposite()) {
+                motors.add(motor);
+            } else if (there instanceof DriveWheelBlockEntity wheel && wheel.axis() == side.getAxis()) {
+                for (DriveWheelBlockEntity each : DriveNetwork.wheels(level, wheel)) {
+                    for (Direction.AxisDirection way : Direction.AxisDirection.values()) {
+                        Direction toward = Direction.fromAxisAndDirection(each.axis(), way);
+                        BlockPos end = each.getBlockPos().relative(toward);
+                        if (level.isLoaded(end) && level.getBlockEntity(end) instanceof MotorBlockEntity motor
+                                && motor.getBlockState().getValue(MotorBlock.FACING) == toward.getOpposite()) {
+                            motors.add(motor);
+                        }
+                    }
+                }
+            }
+        }
+        for (MotorFinder finder : FINDERS) {
+            for (MotorBlockEntity motor : finder.motors(level, machine)) {
+                if (!motors.contains(motor)) {
+                    motors.add(motor);
+                }
+            }
+        }
+        motors.removeIf(motor -> !DrawRights.mayMove(level, motor.getBlockPos(), motor, at, machine));
+        return motors;
+    }
 
     private int progress;
 
@@ -150,6 +261,7 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
         // as many as it can pay for together, the fractions carried (r14 re-check: priced one by one, at under 1 FE a
         // machine it turned them all on nothing)
         boolean allowed = this.redstoneAllows();
+        this.noteReach(level, pos, machines, wheels, now);
         int affordable = 0;
         while (allowed && affordable < wanting.size() && this.workCost(FE_PER_TICK, affordable + 1) <= this.energyStored()) {
             affordable++;
@@ -192,6 +304,36 @@ public class MotorBlockEntity extends MachineBlockEntity implements DriveSource 
             }
         }
         savePower(this); // only its turn's progress to keep: nothing reads it with a comparator
+    }
+
+    /**
+     * Notes, for {@link #holdsHandOut}, that it reaches every machine it would turn - with work or none, running or
+     * stopped, as far as it may turn it: those on its shaft and its wheels' belts, those an add-on gathered for it, and
+     * those these pass a turn on to ({@link Crankable#passesTo}). It reads no signal: holdsHandOut reads each motor's as
+     * it stands, and an add-on stopping a motor for its own reasons (nookTechnology, one set against another through
+     * what they turn) holds nothing.
+     */
+    private void noteReach(ServerLevel level, BlockPos pos, List<BlockEntity> machines, List<DriveWheelBlockEntity> wheels, long now) {
+        Set<BlockEntity> reached = new LinkedHashSet<>(machines);
+        if (!wheels.isEmpty()) {
+            reached.addAll(DriveNetwork.machines(level, wheels, machine -> DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)));
+        }
+        List<BlockEntity> open = new ArrayList<>(reached);
+        for (int i = 0; i < open.size() && reached.size() < 4 * DriveNetwork.MOST_MACHINES; i++) {
+            if (open.get(i) instanceof Crankable crankable) {
+                for (BlockEntity next : crankable.passesTo()) {
+                    if (reached.add(next)) {
+                        open.add(next);
+                    }
+                }
+            }
+        }
+        BlockPos at = pos.immutable();
+        for (BlockEntity machine : reached) {
+            if (DrawRights.mayMove(level, pos, this, machine.getBlockPos(), machine)) {
+                REACHED_BY.computeIfAbsent(machine, key -> new HashMap<>()).put(at, now);
+            }
+        }
     }
 
     @Override

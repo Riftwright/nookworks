@@ -123,6 +123,16 @@ public class HubStoneBlock extends Block {
         }
     }
 
+    /**
+     * Read only as what it holds itself: a lamp or a comparator beside it reads the stone's own power, not what powers
+     * it through it - dust feeding a line's first stone was read at the dust's level, one above the stone's (r23
+     * self-review; stones beside stones, bd3269f8's {@link #getDirectSignal}). Its own reading is {@link #computePower}.
+     */
+    @Override
+    public boolean shouldCheckWeakPower(BlockState state, net.minecraft.world.level.SignalGetter level, BlockPos pos, Direction side) {
+        return false;
+    }
+
     @Override
     protected boolean isSignalSource(BlockState state) {
         return this.shouldSignal;
@@ -133,8 +143,14 @@ public class HubStoneBlock extends Block {
         return this.shouldSignal ? state.getValue(POWER) : 0;
     }
 
+    /**
+     * Not into another Hub Stone: a stone is a conductor, so what it gave a stone beside it at full strength came out of
+     * that stone too, and a lamp, comparator or machine beside a run read the next stone's power, one above the stone it
+     * touches (nookTechnology's Signal Display, 2026-11-25). The stones read each other in {@link #computePower}.
+     */
     @Override
     protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return this.getSignal(state, level, pos, direction);
+        return level.getBlockState(pos.relative(direction.getOpposite())).is(this) ? 0
+                : this.getSignal(state, level, pos, direction);
     }
 }

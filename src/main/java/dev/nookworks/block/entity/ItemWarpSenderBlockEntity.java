@@ -158,18 +158,23 @@ public class ItemWarpSenderBlockEntity extends BlockEntity implements Container,
         return null;
     }
 
-    /** Puts the stack into the container under the receiver, or drops it. Returns what did not fit. */
+    /** Puts the stack into the container (or cart) under the receiver, or drops it, never onto a rail. Returns what did not go. */
     static ItemStack deliver(ServerLevel level, BlockPos receiver, ItemStack stack) {
         BlockPos below = receiver.below();
         if (!level.isLoaded(below)) {
             return stack; // wait for the chunk rather than load it
         }
-        var handler = level.getCapability(Capabilities.Item.BLOCK, below, Direction.UP);
+        // a chest minecart or chest boat under it too, as a hopper finds one (r23 self-review: thrown onto the rail)
+        var handler = dev.nookworks.machine.MachineIO.itemsAt(level, below, Direction.UP);
         if (handler != null) {
             return ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
         }
-        if (level.getGameTime() % GROUND_BEAT != 0) {
+        if (level.getGameTime() % GROUND_BEAT != 0 || !dev.nookworks.machine.MachineIO.entitiesLoaded(level, below)) {
             return stack; // onto the ground only at a hopper's beat, as a Sorter throws: not an item a tick for the server to carry
+        }
+        ItemStack onto = dev.nookworks.machine.MachineIO.ontoRail(level, below, stack);
+        if (onto != null) {
+            return onto; // landing on a rail: into a cart there, else kept for the next
         }
         boolean openBelow = level.getBlockState(below).getCollisionShape(level, below).isEmpty();
         double y = openBelow ? receiver.getY() - 0.4 : receiver.getY() + 1.1;

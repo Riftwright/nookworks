@@ -263,7 +263,7 @@ public class DistillerBlockEntity extends MercuryMachineBlockEntity implements M
         }
         boolean flushed = this.flush(level, pos);
         MachineStatus blocked = !isFormed(level, pos) ? MachineStatus.INCOMPLETE
-                : !flushed ? MachineStatus.OUTPUT_BLOCKED
+                : !flushed ? this.outputWaits()
                 : recipe == null ? MachineStatus.IDLE
                 : this.mercury.space() < recipe.mercury() ? MachineStatus.MERCURY_FULL
                 : METHANOL_TANK - this.methanolStored() < methanolMade(recipe) ? MachineStatus.TANK_FULL : null;

@@ -26,9 +26,22 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** Magnet Chest block; see {@link MagnetChestBlockEntity}. */
 public class MagnetChestBlock extends BaseEntityBlock {
+    /**
+     * What it hides of the blocks round it: its boards sit half a pixel back from the block's sides and top, behind the
+     * iron fittings (the model, tools/textures/gen_magnet_chest.py), so only the boards' box hides a neighbour's face -
+     * a whole cube would hide the ground round its foot. Its outline and collision stay the whole block.
+     */
+    private static final VoxelShape OCCLUSION = Block.box(1, 0, 1, 15, 15, 15);
+
+    @Override
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        return OCCLUSION;
+    }
+
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public MagnetChestBlock(Properties properties) {

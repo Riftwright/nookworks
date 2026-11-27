@@ -534,17 +534,25 @@ final class EarlyReviewTests {
         helper.succeed();
     }
 
-    /** One kind of reagent to a Retort slot: a hopper of copper leaves a slot for the zinc. */
+    /**
+     * One kind to a Retort slot: a hopper of copper goes onto the copper and leaves the other slots for the zinc; and
+     * through a face nothing that would take the zinc's slot - a cinnabar beside the copper, but no log after it.
+     */
     static void retortKeepsARoomForEachReagent(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 1, 3);
         helper.setBlock(pos, ModBlocks.RETORT.get());
         var retort = helper.getBlockEntity(pos, RetortBlockEntity.class);
-        retort.setItem(0, new ItemStack(Items.COPPER_INGOT, 64));
-        int first = RetortBlockEntity.FIRST_REAGENT;
-        check(helper, retort.canPlaceItem(first, new ItemStack(Items.COPPER_INGOT)), "copper may take one reagent slot");
-        retort.setItem(first, new ItemStack(Items.COPPER_INGOT, 64));
-        check(helper, !retort.canPlaceItem(first + 1, new ItemStack(Items.COPPER_INGOT)), "but not the other as well");
-        check(helper, retort.canPlaceItem(first + 1, new ItemStack(ModItems.ZINC_INGOT.get())), "which is left for the zinc");
+        retort.setItem(0, new ItemStack(Items.COPPER_INGOT, 32));
+        check(helper, !retort.canPlaceItem(1, new ItemStack(Items.COPPER_INGOT)), "copper goes onto the copper, not into another slot");
+        check(helper, retort.canPlaceItem(1, new ItemStack(ModItems.ZINC_INGOT.get())), "which are left for the zinc");
+        check(helper, retort.canPlaceItemThroughFace(1, new ItemStack(ModItems.ZINC_INGOT.get()), Direction.UP), "a hopper's zinc too");
+        check(helper, retort.canPlaceItemThroughFace(1, new ItemStack(Items.CINNABAR), Direction.UP),
+                "a hopper's cinnabar beside the copper, a slot left for the zinc");
+        retort.setItem(1, new ItemStack(Items.CINNABAR));
+        check(helper, !retort.canPlaceItemThroughFace(2, new ItemStack(Items.OAK_LOG), Direction.UP),
+                "but no log after it, into the zinc's slot");
+        check(helper, retort.canPlaceItem(2, new ItemStack(Items.OAK_LOG)), "by hand it may");
+        check(helper, !retort.canPlaceItem(1, new ItemStack(Items.COBBLESTONE)), "nothing the Retort does not cook");
         helper.succeed();
     }
 

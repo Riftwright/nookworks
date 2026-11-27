@@ -99,6 +99,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -134,6 +135,8 @@ final class MercuryTests {
         test("laser_costs_real_power", MercuryTests::laserCostsRealPower);
         test("retort_pulps_wood_chips", MercuryTests::retortPulpsWoodChips);
         test("retort_alloys_brass", MercuryTests::retortAlloysBrass);
+        test("retort_inputs_are_alike_from_a_hopper", 900, MercuryTests::retortInputsAlike);
+        test("retort_takes_a_key_first_from_a_hopper", MercuryTests::retortFaceRule);
         test("sifter_finds_zinc", MercuryTests::sifterFindsZinc);
         test("storage_is_a_barrel", MercuryTests::storageIsABarrel);
         test("precision_sorter_filters", MercuryTests::precisionSorterFilters);
@@ -1148,7 +1151,7 @@ final class MercuryTests {
         var chest = helper.getBlockEntity(pos.below(), ChestBlockEntity.class);
         check(helper, countIn(chest, ModItems.WOOD_PULP.get()) == 0, "chips alone are not pulp");
 
-        int first = RetortBlockEntity.FIRST_REAGENT;
+        int first = RetortBlockEntity.INPUT + 1;
         retort.setItem(first, new ItemStack(ModItems.CAUSTIC_SODA.get(), 4));
         run.run();
         check(helper, countIn(chest, ModItems.WOOD_PULP.get()) == 0, "and caustic soda alone is not white liquor");
@@ -1160,30 +1163,124 @@ final class MercuryTests {
                 "one of each reagent was spent");
         check(helper, retort.mercury() == 0, "and pulping frees no mercury");
 
-        check(helper, retort.canPlaceItem(first, new ItemStack(ModItems.CAUSTIC_SODA.get())), "reagents go in the reagent slots");
+        check(helper, retort.canPlaceItem(first, new ItemStack(ModItems.CAUSTIC_SODA.get())), "a reagent goes in an input slot");
         check(helper, !retort.canPlaceItem(first, new ItemStack(Items.COBBLESTONE)), "but rubbish does not");
         helper.succeed();
     }
 
-    /** Two copper and one zinc make three brass: copper in the input slot, copper and zinc as reagents. */
+    /**
+     * Two copper and one zinc make three brass, in any of the three slots: here the zinc on top and the copper as one
+     * stack under it (until 1.9 the copper went one in the charge slot, one in a reagent slot).
+     */
     static void retortAlloysBrass(GameTestHelper helper) {
         BlockPos pos = new BlockPos(3, 2, 3);
         helper.setBlock(pos.below(), Blocks.CHEST);
         var retort = placeMercuryMachine(helper, ModBlocks.RETORT.get(), pos, RetortBlockEntity.class);
-        int first = RetortBlockEntity.FIRST_REAGENT;
-        retort.setItem(RetortBlockEntity.INPUT, new ItemStack(Items.COPPER_INGOT, 2));
-        retort.setItem(first, new ItemStack(Items.COPPER_INGOT, 2));
-        retort.setItem(first + 1, new ItemStack(ModItems.ZINC_INGOT.get(), 2));
+        int first = RetortBlockEntity.INPUT + 1;
+        retort.setItem(RetortBlockEntity.INPUT, new ItemStack(ModItems.ZINC_INGOT.get(), 2));
+        retort.setItem(first, new ItemStack(Items.COPPER_INGOT, 3));
         for (int i = 0; i < RetortBlockEntity.TICKS + 5; i++) {
             RetortBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(pos), helper.getBlockState(pos), retort);
         }
         var chest = helper.getBlockEntity(pos.below(), ChestBlockEntity.class);
         check(helper, countIn(chest, ModItems.BRASS_INGOT.get()) == 3, "three brass, got " + countIn(chest, ModItems.BRASS_INGOT.get()));
-        check(helper, retort.getItem(RetortBlockEntity.INPUT).getCount() == 1
-                && retort.getItem(first).getCount() == 1 && retort.getItem(first + 1).getCount() == 1,
-                "two copper and one zinc were spent");
+        check(helper, retort.getItem(RetortBlockEntity.INPUT).getCount() == 1 && retort.getItem(first).getCount() == 1,
+                "two copper and one zinc were spent: " + retort.getItem(RetortBlockEntity.INPUT) + ", " + retort.getItem(first));
         check(helper, retort.mercury() == 0, "and alloying frees no mercury");
         helper.succeed();
+    }
+
+    /**
+     * The Retort's three input slots are all alike (the user, 2026-11-25): a hopper over it with copper, zinc and a
+     * cinnabar in it fills them - the copper onto one stack, the zinc beside it, the cinnabar in the slot left, never in
+     * the zinc's. Two charges of brass and one of cinnabar.
+     */
+    static void retortInputsAlike(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(3, 2, 3);
+        helper.setBlock(pos.below(), Blocks.CHEST);
+        var retort = placeMercuryMachine(helper, ModBlocks.RETORT.get(), pos, RetortBlockEntity.class);
+        helper.setBlock(pos.above(), Blocks.HOPPER);
+        var hopper = helper.getBlockEntity(pos.above(), HopperBlockEntity.class);
+        hopper.setItem(0, new ItemStack(Items.COPPER_INGOT, 2));
+        hopper.setItem(1, new ItemStack(Items.CINNABAR, 1));
+        hopper.setItem(2, new ItemStack(ModItems.ZINC_INGOT.get(), 2));
+        hopper.setItem(3, new ItemStack(Items.COPPER_INGOT, 2));
+        var chest = helper.getBlockEntity(pos.below(), ChestBlockEntity.class);
+        helper.runAfterDelay(40, () -> {
+            boolean zincIn = false;
+            for (int slot = 0; slot < RetortBlockEntity.INPUT_SLOTS; slot++) {
+                zincIn |= retort.getItem(slot).is(ModItems.ZINC_INGOT.get());
+            }
+            check(helper, zincIn, "the zinc has its slot, the cinnabar before it in the hopper or not");
+        });
+        helper.succeedWhen(() -> {
+            check(helper, countIn(chest, ModItems.BRASS_INGOT.get()) == 6, "two charges of brass: " + countIn(chest, ModItems.BRASS_INGOT.get()));
+            check(helper, countIn(chest, ModItems.SULFUR_DUST.get()) == 1, "and then the cinnabar's");
+            check(helper, hopper.isEmpty(), "the hopper emptied");
+        });
+    }
+
+    private static List<ItemStack> slots(ItemStack... held) {
+        List<ItemStack> all = new java.util.ArrayList<>(Arrays.asList(held));
+        while (all.size() < RetortBlockEntity.INPUT_SLOTS) {
+            all.add(ItemStack.EMPTY);
+        }
+        return all;
+    }
+
+    /**
+     * What a hopper may put into a Retort (r23 self-review): a key first, then what a charge begun lacks, and nothing that
+     * would leave a charge begun no slot to be made whole in - two charges sharing a reagent (nookTechnology's Fine Glass
+     * and pulp, both on caustic soda) held it for a key that never came; a thing no charge takes, left in a slot from an
+     * old world, no longer shuts it; with only a charge's other things in, the screen names its key.
+     */
+    static void retortFaceRule(GameTestHelper helper) {
+        ItemStack soda = new ItemStack(ModItems.CAUSTIC_SODA.get());
+        ItemStack sulfur = new ItemStack(ModItems.SULFUR_DUST.get());
+        ItemStack chips = new ItemStack(ModItems.WOOD_CHIPS.get());
+        ItemStack zinc = new ItemStack(ModItems.ZINC_INGOT.get());
+        ItemStack copper = new ItemStack(Items.COPPER_INGOT);
+        ItemStack cinnabar = new ItemStack(Items.CINNABAR);
+        ItemStack log = new ItemStack(Items.OAK_LOG);
+        check(helper, !RetortBlockEntity.goesWith(slots(), soda) && !RetortBlockEntity.goesWith(slots(), zinc),
+                "into an empty Retort no lone reagent: it would wait for a key");
+        check(helper, RetortBlockEntity.goesWith(slots(), chips) && RetortBlockEntity.goesWith(slots(), copper)
+                && RetortBlockEntity.goesWith(slots(), cinnabar), "a key goes in");
+        check(helper, RetortBlockEntity.goesWith(slots(chips), soda) && RetortBlockEntity.goesWith(slots(chips, soda), sulfur),
+                "then what its charge lacks");
+        check(helper, !RetortBlockEntity.goesWith(slots(chips), zinc), "not what another charge would want");
+        check(helper, !RetortBlockEntity.goesWith(slots(chips), copper) && !RetortBlockEntity.goesWith(slots(chips), cinnabar),
+                "nor a key that would leave the pulp no slot for its soda and sulfur");
+        check(helper, RetortBlockEntity.goesWith(slots(copper), cinnabar),
+                "a cinnabar beside the copper, a slot still left for the zinc");
+        check(helper, !RetortBlockEntity.goesWith(slots(copper, cinnabar), log) && RetortBlockEntity.goesWith(slots(copper, cinnabar), zinc),
+                "but no log into the zinc's slot; the zinc goes in");
+        check(helper, RetortBlockEntity.goesWith(slots(copper, zinc, cinnabar), copper.copy()),
+                "more of what a slot holds always goes onto it");
+        ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
+        check(helper, RetortBlockEntity.goesWith(slots(bottle), log) && RetortBlockEntity.goesWith(slots(bottle, log), log.copy()),
+                "an old world's bottle left in a slot shuts it to nothing");
+        check(helper, RetortBlockEntity.goesWith(slots(zinc), copper) && RetortBlockEntity.goesWith(slots(zinc), log)
+                && !RetortBlockEntity.goesWith(slots(zinc), chips), "a zinc left alone: its copper, or a log beside it, not the pulp");
+        net.minecraft.network.chat.Component wants = RetortBlockEntity.missingNames(slots(zinc));
+        check(helper, wants != null && wants.getString().equals(copper.getHoverName().getString() + " \u00d72"),
+                "the zinc alone names the copper it wants: " + (wants == null ? null : wants.getString()));
+        check(helper, RetortBlockEntity.slotNeeds(slots(copper)).size() == 1 && zinc.is(RetortBlockEntity.slotNeeds(slots(copper)).getFirst()),
+                "one copper in: the empty slots show the zinc, the second copper going onto the first");
+
+        BlockPos pos = new BlockPos(1, 2, 1);
+        helper.setBlock(pos, ModBlocks.RETORT.get());
+        var retort = helper.getBlockEntity(pos, RetortBlockEntity.class);
+        retort.setItem(0, cinnabar.copy());
+        retort.setItem(1, log.copy());
+        check(helper, retort.givesOffLiquid(), "a log in the second slot gives off wood vinegar: no water piped to it");
+        retort.setItem(0, ItemStack.EMPTY);
+        retort.setItem(1, ItemStack.EMPTY);
+        retort.setItem(2, zinc.copy());
+        helper.runAfterDelay(5, () -> {
+            check(helper, retort.guiStatus() == MachineStatus.NO_REAGENT, "a zinc alone says what is missing: " + retort.guiStatus());
+            helper.succeed();
+        });
     }
 
     /** Zinc has no ore of its own; the Sifter is where it comes from. */

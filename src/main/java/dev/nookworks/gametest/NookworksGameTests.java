@@ -146,6 +146,10 @@ public final class NookworksGameTests {
         HandOutTests.register();
         SortDirectionTests.register();
         SorterAllowTests.register();
+        SorterCrafterTests.register();
+        VanillaBlockTests.register();
+        RedstoneHoldTests.register();
+        R23FixTests.register();
         GaugePouringTests.register();
         MethanolTests.register();
         WoodVinegarTests.register();

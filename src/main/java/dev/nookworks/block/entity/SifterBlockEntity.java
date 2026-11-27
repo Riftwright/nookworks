@@ -153,7 +153,7 @@ public class SifterBlockEntity extends BlockEntity implements WorldlyContainer, 
         if (!sifter.pending.isEmpty()) {
             sifter.placePending();
             if (!sifter.pending.isEmpty()) {
-                sifter.status = MachineStatus.OUTPUT_BLOCKED;
+                sifter.status = sifter.holdsOutput(level, pos) ? MachineStatus.REDSTONE : MachineStatus.OUTPUT_BLOCKED;
                 return;
             }
         }
@@ -243,7 +243,8 @@ public class SifterBlockEntity extends BlockEntity implements WorldlyContainer, 
      * ({@link OutputRetry}). Returns true when nothing is left waiting.
      */
     private boolean flushOutputs(ServerLevel level, BlockPos pos) {
-        boolean due = this.outputRetry.due(level);
+        // stopped by redstone, what it has sifted waits in it, as a machine's does (MachineBlockEntity.holdsOutput)
+        boolean due = !this.holdsOutput(level, pos) && this.outputRetry.due(level);
         boolean clear = true;
         boolean moved = false;
         for (int slot : OUTPUT_SLOTS) {
@@ -328,6 +329,10 @@ public class SifterBlockEntity extends BlockEntity implements WorldlyContainer, 
     @Override
     public MachineStatus guiStatus() {
         return this.status;
+    }
+
+    private boolean holdsOutput(Level level, BlockPos pos) {
+        return !this.redstone.allows(level.hasNeighborSignal(pos));
     }
 
     @Override

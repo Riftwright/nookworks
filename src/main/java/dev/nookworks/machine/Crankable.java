@@ -25,4 +25,13 @@ public interface Crankable {
     default boolean drivenFrom(Direction side) {
         return side.getAxis().isHorizontal();
     }
+
+    /**
+     * What turning this turns in its turn, for a piece that passes a motor's turn on (nookTechnology's Shaft, to the
+     * machine at its line's end): a motor stopped by redstone holds what those make as it holds this one's
+     * ({@code MotorBlockEntity.holdsHandOut}). None by default.
+     */
+    default java.util.List<net.minecraft.world.level.block.entity.BlockEntity> passesTo() {
+        return java.util.List.of();
+    }
 }

@@ -107,6 +107,7 @@ final class BlockTests {
         test("coated_planks_are_safe_from_lava", BlockTests::coatedSafeFromLava);
         test("breaking_a_coated_block_clears_the_coating", BlockTests::breakingClearsCoating);
         test("hub_stone_carries_redstone_both_ways", BlockTests::hubStoneCarries);
+        test("hub_stone_reads_its_own_power_beside_it", BlockTests::hubStoneReadsOwnPower);
         test("hub_stone_set_down_powered_lights_a_lamp_past_a_stone", BlockTests::hubStoneSetDownPowered);
         test("hub_stone_light_runs_from_its_source", BlockTests::hubStoneLightRuns);
         test("elevator_sounds_of_steel", BlockTests::elevatorSoundsOfSteel);
@@ -431,6 +432,26 @@ final class BlockTests {
                 check(helper, !helper.getBlockState(new BlockPos(5, 1, 3)).getValue(RedstoneLampBlock.LIT), "the lamp goes out");
                 helper.succeed();
             });
+        });
+    }
+
+    /**
+     * What is beside a Hub Stone reads that stone's power, not the next one's passed through it: a stone at 9 read 10
+     * from the stone at 10 beside it, and a lamp at a run's end stayed lit a stone too far (2026-11-25).
+     */
+    static void hubStoneReadsOwnPower(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(1, 1, 2), Blocks.REDSTONE_BLOCK);
+        for (int x = 2; x <= 4; x++) {
+            helper.setBlock(new BlockPos(x, 1, 2), ModBlocks.HUB_STONE.get());
+        }
+        helper.runAfterDelay(4, () -> {
+            var level = helper.getLevel();
+            BlockPos last = helper.absolutePos(new BlockPos(4, 1, 2));
+            check(helper, level.getBlockState(last).getValue(HubStoneBlock.POWER) == 13, "the third stone is at 13");
+            // read from above, as a lamp or display set on it would
+            int read = level.getSignal(last, Direction.DOWN);
+            check(helper, read == 13, "beside the stone at 13 the signal is 13, not the 14 of the stone before it: " + read);
+            helper.succeed();
         });
     }
 

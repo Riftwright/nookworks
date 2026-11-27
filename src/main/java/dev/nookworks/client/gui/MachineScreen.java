@@ -1,8 +1,10 @@
 package dev.nookworks.client.gui;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
 
@@ -47,6 +49,62 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
     private static final int TANK_W = 14;
     private static final int DISPLAY_X = 7;
     private static final int DISPLAY_H = 12;
+
+    /**
+     * A tank an add-on gives a machine, drawn in the bay's row after the machine's own ({@link MachineLayout#addTanks})
+     * as they are: its icon, the flow mark, the glass gauge in its liquid's colour, and on hover the same lines. What
+     * it holds comes by the add-on's own sync.
+     */
+    public interface AddOnGauge {
+        /** Its icon over the gauge, faded while empty, as the machine's own ({@code MachineStyle.icon}). */
+        void icon(GuiGraphicsExtractor g, int x, int y, boolean empty);
+
+        /** What it holds, for the tooltip's first line. */
+        Component name();
+
+        int amount(MachineMenu menu);
+
+        int capacity(MachineMenu menu);
+
+        /** The liquid's colour in the gauge, and its lighter shade along the top ({@code MachineStyle.colour}, {@code lit}). */
+        int colour();
+
+        int lit();
+
+        /** A line of its own under the tooltip's, or null. */
+        default @Nullable Component hint() {
+            return null;
+        }
+
+        /**
+         * Whether it is filled and emptied in the machine's Liquids tab, as the machine's own tanks are: the tooltip says
+         * so unless the add-on's tank is not (r23 self-review: it said so of every add-on's tank).
+         */
+        default boolean inLiquidsTab() {
+            return true;
+        }
+    }
+
+    private static final Map<MachineLayout, List<AddOnGauge>> ADD_ON_GAUGES = new EnumMap<>(MachineLayout.class);
+
+    /**
+     * How an add-on's tanks on {@code layout} are drawn, in the order {@link MachineLayout#addTanks} gave their flows;
+     * called once on the client as the add-on sets up.
+     */
+    public static void addGauges(MachineLayout layout, List<AddOnGauge> gauges) {
+        // after another add-on's, as their tanks were given (a second call took the first's place)
+        List<AddOnGauge> all = new java.util.ArrayList<>(ADD_ON_GAUGES.getOrDefault(layout, List.of()));
+        all.addAll(gauges);
+        if (all.size() > layout.addOnTanks().size()) {
+            throw new IllegalArgumentException(layout + " has room for " + layout.addOnTanks().size() + " add-on tanks, not " + all.size());
+        }
+        ADD_ON_GAUGES.put(layout, List.copyOf(all));
+    }
+
+    private static @Nullable AddOnGauge addOnGauge(MachineLayout layout, int i) {
+        List<AddOnGauge> gauges = ADD_ON_GAUGES.getOrDefault(layout, List.of());
+        return i < gauges.size() ? gauges.get(i) : null;
+    }
 
     /** Set while drawing when the status or the title had to be cut short: its tooltip shows the whole. */
     private boolean statusCut;
@@ -166,7 +224,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         switch (layout.gauge()) {
             // still while a Distiller works its tank's wood vinegar, a liquid into liquids (its extra says so)
             case ARROW -> {
-                MachineStyle.arrow(g, gx, gy, layout == MachineLayout.DISTILLER && this.menu.extra() == 1 ? 0.0F : done);
+                if (layout.arrowDown()) {
+                    MachineStyle.arrowDown(g, gx, gy, done);
+                } else {
+                    MachineStyle.arrow(g, gx, gy, layout == MachineLayout.DISTILLER && this.menu.extra() == 1 ? 0.0F : done);
+                }
                 if (layout.meets()) {
                     MachineStyle.arrowLeft(g, x + MachineLayout.WIDTH - layout.gaugeX() - MachineStyle.ARROW_W, gy, done);
                 }
@@ -183,6 +245,17 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
             MachineStyle.flowMark(g, x + spot.x() + 10, y + ICON_Y + 1, spot.flow());
             MachineStyle.tank(g, x + spot.x(), y + GAUGE_Y, GAUGE_H, amount, this.menu.tankCapacity(i), MachineStyle.colour(kind),
                     MachineStyle.lit(kind));
+        }
+        for (int i = 0; i < layout.addOnTanks().size(); i++) {
+            AddOnGauge gauge = addOnGauge(layout, i);
+            if (gauge == null) {
+                continue;
+            }
+            MachineLayout.TankSpot spot = layout.addOnTanks().get(i);
+            int amount = gauge.amount(this.menu);
+            gauge.icon(g, x + spot.x() + 1, y + ICON_Y, amount <= 0);
+            MachineStyle.flowMark(g, x + spot.x() + 10, y + ICON_Y + 1, spot.flow());
+            MachineStyle.tank(g, x + spot.x(), y + GAUGE_Y, GAUGE_H, amount, gauge.capacity(this.menu), gauge.colour(), gauge.lit());
         }
         if (layout.belowX() >= 0) {
             MachineStyle.below(g, x + layout.belowX(), y + layout.belowY());
@@ -275,9 +348,8 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
         if (this.menu.status() == MachineStatus.NO_REAGENT) {
             // which reagent, as the cell says how much mercury: "Missing a reagent" alone left it to be worked out
             Component needed = switch (this.layout()) {
-                case RETORT -> RetortBlockEntity.missingReagentNames(this.menu.slots.get(RetortBlockEntity.INPUT).getItem(),
-                        List.of(this.menu.slots.get(RetortBlockEntity.FIRST_REAGENT).getItem(),
-                                this.menu.slots.get(RetortBlockEntity.FIRST_REAGENT + 1).getItem()));
+                case RETORT -> RetortBlockEntity.missingNames(List.of(this.menu.slots.get(RetortBlockEntity.INPUT).getItem(),
+                        this.menu.slots.get(RetortBlockEntity.INPUT + 1).getItem(), this.menu.slots.get(RetortBlockEntity.INPUT + 2).getItem()));
                 case STIRRING_TANK -> new ItemStack(ModItems.CAUSTIC_SODA.get()).getHoverName();
                 default -> null;
             };
@@ -392,6 +464,24 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
                 return lines;
             }
         }
+        for (int i = 0; i < layout.addOnTanks().size(); i++) {
+            AddOnGauge gauge = addOnGauge(layout, i);
+            MachineLayout.TankSpot spot = layout.addOnTanks().get(i);
+            if (gauge != null && this.isHovering(spot.x(), ICON_Y, TANK_W, GAUGE_Y + GAUGE_H - ICON_Y, mouseX, mouseY)) {
+                lines.add(Component.translatable(k + "tank", gauge.name(), number(gauge.amount(this.menu)), number(gauge.capacity(this.menu))));
+                if (spot.flow() != MachineLayout.Flow.NONE) {
+                    lines.add(Component.translatable(k + "flow." + spot.flow().name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+                }
+                if (gauge.inLiquidsTab()) {
+                    lines.add(Component.translatable(k + "pour").withStyle(ChatFormatting.GRAY));
+                }
+                Component hint = gauge.hint();
+                if (hint != null) {
+                    lines.add(hint.copy().withStyle(ChatFormatting.GRAY));
+                }
+                return lines;
+            }
+        }
         if (layout.belowX() >= 0 && this.isHovering(layout.belowX() - 4, layout.belowY() - 2, 15, 9, mouseX, mouseY)) {
             // a machine whose results do not drop out (the Stone Maker keeps its cobblestone) says so in its own line
             String own = k + "below." + layout.name().toLowerCase(Locale.ROOT);
@@ -445,7 +535,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> implemen
 
     private boolean overGauge(MachineLayout layout, int mouseX, int mouseY) {
         return switch (layout.gauge()) {
-            case ARROW -> this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY)
+            case ARROW -> layout.arrowDown()
+                    ? this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_H, MachineStyle.ARROW_DOWN_H, mouseX, mouseY)
+                    : this.isHovering(layout.gaugeX(), layout.gaugeY(), MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY)
                     || layout.meets() && this.isHovering(MachineLayout.WIDTH - layout.gaugeX() - MachineStyle.ARROW_W, layout.gaugeY(),
                             MachineStyle.ARROW_W, MachineStyle.ARROW_H, mouseX, mouseY);
             case FLAME -> this.isHovering(layout.gaugeX(), layout.gaugeY(), 16, 16, mouseX, mouseY);

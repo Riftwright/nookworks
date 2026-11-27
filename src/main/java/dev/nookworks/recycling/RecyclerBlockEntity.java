@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.capabilities.Capabilities;
 
 /**
  * Recycler (the lower block of the two): metal junk ({@link RecyclingRecipe}) into scrap - or gold into gold nuggets -
@@ -52,11 +51,11 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
         RecyclingRecipe recipe = RecyclingRecipe.of(recycler.items.get(INPUT));
         if (recipe == null) {
             recycler.progress = 0;
-            recycler.status = MachineStatus.IDLE;
+            recycler.status = recycler.idleOrHeld(OUTPUT_SLOTS);
             return;
         }
         if (!recycler.roomFor(new ItemStack(recipe.result(), Math.min(64, (int) Math.ceil(recipe.expected()) + 1)))) {
-            recycler.status = MachineStatus.OUTPUT_BLOCKED;
+            recycler.status = recycler.outputWaits();
             return;
         }
         if (!recycler.redstoneAllows()) {
@@ -114,7 +113,7 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
 
     /** Passes what is made on below (a hopper's beat after a try that found no room, as the Crusher does). */
     private void flush(ServerLevel level, BlockPos pos) {
-        if (this.items.get(OUT_A).isEmpty() && this.items.get(OUT_B).isEmpty() || !this.outputRetry.due(level)) {
+        if (this.items.get(OUT_A).isEmpty() && this.items.get(OUT_B).isEmpty() || this.holdsOutput() || !this.outputRetry.due(level)) {
             return;
         }
         boolean moved = false;
@@ -138,29 +137,35 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MachineIn
      * Into the container below, or dropped where there is room for it: below the body, else on top of the intake (not
      * at the body's top as a one-block machine's, which is inside the intake), else - a hopper feeding the intake from
      * above - beside the body, the first side open; with none, it waits in the machine (it was set down on top all the
-     * same, inside the block there: nookTechnology's find of 2026-11-01, in MachineIO.dropOut).
+     * same, inside the block there: nookTechnology's find of 2026-11-01, in MachineIO.dropOut). Never onto a rail
+     * ({@link MachineIO#railAt}): with one under it and no cart, it waits for the next.
      */
     private static ItemStack deliver(ServerLevel level, BlockPos pos, ItemStack stack) {
         ItemStack rest = MachineIO.intoBelow(level, pos, stack);
-        if (rest.getCount() != stack.getCount() || level.getCapability(Capabilities.Item.BLOCK, pos.below(), Direction.UP) != null) {
+        if (rest.getCount() != stack.getCount() || MachineIO.itemsAt(level, pos.below(), Direction.UP) != null) {
             return rest;
+        }
+        ItemStack onto = MachineIO.ontoRail(level, pos.below(), stack);
+        if (onto != null) {
+            return onto;
         }
         if (open(level, pos.below())) {
             MachineIO.popOut(level, pos, stack.copy());
             return ItemStack.EMPTY;
         }
         BlockPos at = pos.above(2);
-        if (!open(level, at)) {
+        if (!open(level, at) || MachineIO.railAt(level, at)) {
+            at = null;
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 BlockPos beside = pos.relative(side);
                 // as MachineIO.dropOut: not into lava, fire or water beside it, nor a chunk not loaded (round two of r21)
                 if (level.isLoaded(beside) && open(level, beside) && level.getFluidState(beside).isEmpty()
-                        && !level.getBlockState(beside).is(BlockTags.FIRE)) {
+                        && !level.getBlockState(beside).is(BlockTags.FIRE) && MachineIO.railBelow(level, beside) == null) {
                     at = beside;
                     break;
                 }
             }
-            if (!open(level, at)) {
+            if (at == null) {
                 return stack;
             }
         }

@@ -140,7 +140,7 @@ final class R21FixTests {
         test("round_three_rules_hold", R21FixTests::roundThreeRules);
     }
 
-    private static ServerPlayer clicker(GameTestHelper helper) {
+    static ServerPlayer clicker(GameTestHelper helper) {
         ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
         Vec3 aside = helper.absoluteVec(new Vec3(0.5, 8, 0.5));
         player.snapTo(aside.x, aside.y, aside.z);
@@ -153,7 +153,7 @@ final class R21FixTests {
     }
 
     /** Right-clicks the middle of {@code face} of {@code pos} holding {@code stack}, as the game makes a click. */
-    private static void click(GameTestHelper helper, ServerPlayer player, ItemStack stack, BlockPos pos, Direction face) {
+    static void click(GameTestHelper helper, ServerPlayer player, ItemStack stack, BlockPos pos, Direction face) {
         player.setItemInHand(InteractionHand.MAIN_HAND, stack);
         BlockPos at = helper.absolutePos(pos);
         Vec3 point = Vec3.atCenterOf(at).relative(face, 0.5);
@@ -407,12 +407,12 @@ final class R21FixTests {
     // ---- round two ----
 
     /** An Iron Pot clicked onto a grill over a lit campfire, by {@code player}. */
-    private static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill) {
+    static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill) {
         return heatedPot(helper, player, grill, ModCooking.IRON_POT_ITEM.get());
     }
 
     /** {@code vessel} (the Iron Pot or the Frying Pan) set on a Grill over a lit campfire by a click, as a player does. */
-    private static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill, net.minecraft.world.item.Item vessel) {
+    static IronPotBlockEntity heatedPot(GameTestHelper helper, ServerPlayer player, BlockPos grill, net.minecraft.world.item.Item vessel) {
         helper.setBlock(grill.below(), Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
         helper.setBlock(grill, ModCooking.GRILL.get().defaultBlockState().setValue(GrillBlock.OVER_FIRE, true));
         click(helper, player, new ItemStack(vessel), grill, Direction.UP);

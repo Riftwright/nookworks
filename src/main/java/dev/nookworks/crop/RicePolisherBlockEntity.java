@@ -146,6 +146,10 @@ public class RicePolisherBlockEntity extends MachineBlockEntity implements Crank
 
     /** What it has made, into a container under it, else one in front of it, else out of its front. */
     private void pushOut(ServerLevel level) {
+        if (this.items.get(RICE_OUT).isEmpty() && this.items.get(BRAN_OUT).isEmpty()
+                || dev.nookworks.machine.MotorBlockEntity.holdsHandOut(this)) {
+            return; // nothing made, or a motor stopped by redstone holds it in
+        }
         Direction front = this.getBlockState().getValue(RicePolisherBlock.FACING);
         for (int slot : OUTPUT_SLOTS) {
             ItemStack stack = this.items.get(slot);

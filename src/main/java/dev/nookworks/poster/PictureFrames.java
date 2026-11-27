@@ -9,6 +9,7 @@ import dev.nookworks.Nookworks;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Prediction;
@@ -72,7 +73,8 @@ public final class PictureFrames {
 
     /**
      * A click with {@code hand} on {@code picture}, framed now with {@code current} (empty, none): an item frame frames
-     * it, one frame whatever its size, and sneaking with an empty hand takes the frame off, back to the hand. Both sides
+     * it, one frame whatever its size; a frame of another kind on a framed picture takes the old one's place, the old one
+     * dropped by the picture (kept by a player in creative, who loses none either); and sneaking with an empty hand takes the frame off, back to the hand. Both sides
      * answer alike, so the client swings the arm as the server takes the frame; only the server changes anything,
      * through {@code set}. Null: the click has nothing to do with a frame - nor for a player who may not build here (in
      * adventure mode, a map's framed pictures stay as their maker left them).
@@ -83,8 +85,13 @@ public final class PictureFrames {
             return null;
         }
         ItemStack held = player.getItemInHand(hand);
-        if (frames(held) && current.isEmpty()) {
-            if (!picture.level().isClientSide()) {
+        if (frames(held) && !ItemStack.isSameItemSameComponents(held, current)) {
+            // a frame of another kind on a framed picture changes it in place (the user, 2026-11-24: 「別の種類の額縁を
+            // 右クリックすると、古い額縁がドロップして、新しい額縁が（壁からはがさずに）つけられると快適」)
+            if (picture.level() instanceof ServerLevel level) {
+                if (!current.isEmpty() && !player.hasInfiniteMaterials()) {
+                    picture.spawnAtLocation(level, current.copy());
+                }
                 set.accept(held.copyWithCount(1));
                 held.consume(1, player);
                 picture.playSound(SoundEvents.ITEM_FRAME_PLACE, 1.0F, 1.0F);

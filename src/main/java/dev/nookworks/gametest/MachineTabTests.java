@@ -55,6 +55,7 @@ final class MachineTabTests {
 
     static void register() {
         test("liquid_tab_fills_and_empties_a_tank_over_a_second", MachineTabTests::fillsAndEmpties);
+        test("stirring_tank_has_room_for_an_add_ons_tanks", MachineTabTests::roomForAddOnTanks);
         test("liquid_tab_refuses_a_liquid_the_machine_does_not_take", MachineTabTests::refuses);
         test("liquid_tab_draws_the_liquid_chosen", MachineTabTests::chooses);
         test("liquid_tab_is_out_of_a_hoppers_reach", 100, MachineTabTests::outOfHoppersReach);
@@ -448,5 +449,56 @@ final class MachineTabTests {
         static boolean liquid(MachineLayout layout) {
             return dev.nookworks.machine.MachineLiquids.any(layout);
         }
+    }
+
+    /**
+     * An add-on's two tanks on the Stirring Tank stand in the bay's row with its own five (nookTechnology's creosote oil
+     * and liquid experience, which stood in the Extra Slots tab: the user, 2026-11-25). Drawn closer for them, nothing
+     * in the bay overlaps - the energy gauge, the three slots, the arrow down, the mark under the output, seven tanks -
+     * and all of it is inside the bay; without an add-on the screen is as it was.
+     */
+    private static void roomForAddOnTanks(GameTestHelper helper) {
+        var crowded = MachineLayout.crowdedStirringTank(List.of(MachineLayout.Flow.IN, MachineLayout.Flow.IN));
+        check(helper, crowded.spots().size() == MachineLayout.STIRRING_TANK.slotCount()
+                && !crowded.spots().get(0).output() && !crowded.spots().get(1).output() && crowded.spots().get(2).output(),
+                "the same slots in the same order: charge, caustic soda, output");
+        check(helper, crowded.tanks().size() == 5 && crowded.addOnTanks().size() == 2, "five tanks of its own, two of the add-on's");
+        for (int i = 0; i < 5; i++) {
+            check(helper, crowded.tanks().get(i).flow() == MachineLayout.STIRRING_TANK.tanks().get(i).flow(), "tank " + i + " flows as before");
+        }
+        int iconY = MachineLayout.BAY_TOP + 3;
+        int gaugeBottom = MachineLayout.BAY_BOTTOM - 3;
+        List<int[]> parts = new java.util.ArrayList<>(); // x, y, w, h
+        parts.add(new int[] {8, iconY, 10, gaugeBottom - iconY});
+        crowded.spots().forEach(spot -> parts.add(new int[] {spot.x() - 1, spot.y() - 1, 18, 18}));
+        parts.add(new int[] {crowded.gaugeX(), crowded.gaugeY(), 16, 18});
+        parts.add(new int[] {crowded.belowX(), crowded.belowY(), 7, 4});
+        java.util.stream.Stream.concat(crowded.tanks().stream(), crowded.addOnTanks().stream())
+                .forEach(tank -> parts.add(new int[] {tank.x(), iconY, 14, gaugeBottom - iconY}));
+        // each tank's flow mark, beside its icon, inside the bay too (the last one ran over its edge)
+        java.util.stream.Stream.concat(crowded.tanks().stream(), crowded.addOnTanks().stream()).forEach(tank ->
+                check(helper, tank.x() + 10 + 7 <= MachineLayout.WIDTH - 5, "the flow mark of the tank at " + tank.x() + " inside the bay"));
+        for (int a = 0; a < parts.size(); a++) {
+            int[] p = parts.get(a);
+            check(helper, p[0] >= 5 && p[0] + p[2] <= MachineLayout.WIDTH - 5 && p[1] >= MachineLayout.BAY_TOP
+                    && p[1] + p[3] <= MachineLayout.BAY_BOTTOM, "part " + a + " inside the bay");
+            for (int b = a + 1; b < parts.size(); b++) {
+                int[] q = parts.get(b);
+                // slot frames share their edge, as vanilla's grid does
+                int give = a >= 1 && a <= 3 && b >= 1 && b <= 3 ? 1 : 0;
+                boolean apart = p[0] + p[2] - give <= q[0] || q[0] + q[2] - give <= p[0] || p[1] + p[3] - give <= q[1] || q[1] + q[3] - give <= p[1];
+                check(helper, apart, "parts " + a + " and " + b + " overlap");
+            }
+        }
+        // as it was with no add-on; crowded just so with one that gave it tanks (nookTechnology, run beside us)
+        var stirring = MachineLayout.STIRRING_TANK;
+        if (stirring.addOnTanks().isEmpty()) {
+            check(helper, !stirring.arrowDown() && stirring.spots().get(0).x() == 23, "with no add-on the Stirring Tank's screen is as it was");
+        } else {
+            var flows = stirring.addOnTanks().stream().map(MachineLayout.TankSpot::flow).toList();
+            check(helper, stirring.arrowDown() && stirring.spots().equals(MachineLayout.crowdedStirringTank(flows).spots()),
+                    "an add-on's tanks crowd the screen as crowdedStirringTank lays it out");
+        }
+        helper.succeed();
     }
 }

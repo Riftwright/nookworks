@@ -32,6 +32,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -44,9 +45,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityInvalidationListener;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.item.VanillaInventoryCodeHooks;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
@@ -66,20 +70,96 @@ public final class MachineIO {
     private static boolean toldOfCut;
 
     /**
+     * What takes items at {@code pos} through {@code side}, as a hopper or a dropper finds it: the block's handler, else an
+     * entity there that holds items - a chest or hopper minecart on a rail, a chest boat, or another mod's that gives
+     * NeoForge's automation handler. Our machines looked for blocks alone, so what a hopper would have put in a chest
+     * minecart under it a Sifter dropped onto the rail (the user, 2026-11-25: 「直していいよ」). Null with neither.
+     */
+    public static @Nullable ResourceHandler<ItemResource> itemsAt(Level level, BlockPos pos, Direction side) {
+        var handler = level.getCapability(Capabilities.Item.BLOCK, pos, side);
+        if (handler != null) {
+            return handler;
+        }
+        var found = VanillaInventoryCodeHooks.getEntityContainerOrHandler(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, side);
+        return found.container() != null ? VanillaContainerWrapper.of(found.container()) : found.itemHandler();
+    }
+
+    /**
+     * Whether the entities at {@code pos} are in: a cart or a boat there is found only then. A machine ticks only once
+     * its own chunk's are, so the cell under it always is; one in front of it in the next chunk, or an Item Warp's
+     * receiver far off, may have its blocks a moment before its entities, and what went out there then went beside a
+     * cart not yet in (r23 self-review). Nothing is dropped there until they are.
+     */
+    public static boolean entitiesLoaded(Level level, BlockPos pos) {
+        return !(level instanceof ServerLevel server) || server.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.pack(pos));
+    }
+
+    /**
+     * Whether a rail lies at {@code pos}: no machine drops anything there. What would have gone onto it waits in the
+     * machine for the next cart, which it fills as a hopper would (the user, 2026-11-26: 「レール側だけ制御しとけばいいよね」).
+     * A line loading carts needs nothing but the rail's own redstone: no detector rail to stop the machine between carts,
+     * which left a tail on the rail for up to a second after a cart had gone (a detector rail looks again only every 20
+     * ticks; r23 self-review). Vanilla's rails, and another mod's tagged as rails or made as one.
+     */
+    public static boolean railAt(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.is(BlockTags.RAILS) || state.getBlock() instanceof BaseRailBlock;
+    }
+
+    /**
+     * The rail a thing let go at {@code pos} comes to rest on, falling straight down through open cells (four at most,
+     * not through a liquid); null when it lands on none. A machine set a block or two above a rail dropped onto it all
+     * the same (nookTechnology's find for its furnace ports, 2026-11-26: the rule is about where a thing lands).
+     * nookTechnology's Conveyor Belt mirrors this loop on the client: a change to its reach or its liquid rule is told to
+     * that add-on, or the belt's ends there go out of step.
+     */
+    public static @Nullable BlockPos railBelow(ServerLevel level, BlockPos pos) {
+        BlockPos at = pos;
+        for (int fall = 0; fall <= 4 && level.isLoaded(at); fall++) {
+            if (railAt(level, at)) {
+                return at;
+            }
+            if (!open(level, at) || !level.getFluidState(at).isEmpty()) {
+                return null;
+            }
+            at = at.below();
+        }
+        return null;
+    }
+
+    /**
+     * What is let go at {@code pos} when it would land on a rail ({@link #railBelow}): into a cart standing there, the
+     * rest given back to wait; all of it with no cart. Null when it lands on no rail, for the caller to drop it.
+     */
+    public static @Nullable ItemStack ontoRail(ServerLevel level, BlockPos pos, ItemStack stack) {
+        BlockPos rail = railBelow(level, pos);
+        if (rail == null) {
+            return null;
+        }
+        var cart = entitiesLoaded(level, rail) ? itemsAt(level, rail, Direction.UP) : null;
+        return cart == null ? stack : ItemUtil.insertItemReturnRemaining(cart, stack.copy(), false, null);
+    }
+
+    /**
      * Into the container below {@code pos} if there is one (returns what did not fit), otherwise dropped out where there
-     * is room ({@link #popOut}); with no room below or on top, all of it comes back and waits in the machine.
+     * is room ({@link #dropOut}); with no room, or a rail under it with no cart on it, all of it comes back and waits in
+     * the machine.
      */
     public static ItemStack deliverBelow(ServerLevel level, BlockPos pos, ItemStack stack) {
-        var handler = level.getCapability(Capabilities.Item.BLOCK, pos.below(), Direction.UP);
+        var handler = itemsAt(level, pos.below(), Direction.UP);
         if (handler != null) {
             return ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
+        }
+        ItemStack onto = ontoRail(level, pos.below(), stack);
+        if (onto != null) {
+            return onto; // into a cart on a rail further down, or waiting for one
         }
         return dropOut(level, pos, stack.copy()) ? ItemStack.EMPTY : stack;
     }
 
     /** Into the container below {@code pos} if there is one; what did not go in, or all of it with none, comes back. */
     public static ItemStack intoBelow(ServerLevel level, BlockPos pos, ItemStack stack) {
-        var handler = level.getCapability(Capabilities.Item.BLOCK, pos.below(), Direction.UP);
+        var handler = itemsAt(level, pos.below(), Direction.UP);
         return handler == null ? stack : ItemUtil.insertItemReturnRemaining(handler, stack.copy(), false, null);
     }
 
@@ -89,7 +169,8 @@ public final class MachineIO {
      * gathered): into a container under it, as before, else into one in front of it, else out of its front - the spout
      * or chute each is drawn with - dropping onto the ground just in front, for a hopper set in the floor there or a
      * Magnet Chest to gather. {@code stack} is shrunk by what went; with a block in front that is neither a container nor
-     * open where things come out, the rest waits in the machine. Nothing goes into a chunk not loaded.
+     * open where things come out, or a rail with no cart on it ({@link #railAt}), the rest waits in the machine. Nothing
+     * goes into a chunk not loaded.
      */
     public static void handOut(ServerLevel level, BlockPos pos, Direction front, ItemStack stack) {
         for (Direction side : new Direction[] {Direction.DOWN, front}) {
@@ -97,10 +178,13 @@ public final class MachineIO {
             if (stack.isEmpty() || !level.isLoaded(next)) {
                 continue;
             }
-            var target = level.getCapability(Capabilities.Item.BLOCK, next, side.getOpposite());
+            var target = itemsAt(level, next, side.getOpposite());
             if (target != null) {
                 stack.shrink(Move.insert(target, ItemResource.of(stack), stack.getCount()));
-            } else if (side == front && mouthOpen(level, next, front)) {
+            } else if (side == front && mouthOpen(level, next, front) && entitiesLoaded(level, next)
+                    && ontoRail(level, next, stack) instanceof ItemStack onto) {
+                stack.setCount(onto.getCount()); // landing on a rail: into a cart there, else it waits
+            } else if (side == front && mouthOpen(level, next, front) && entitiesLoaded(level, next)) {
                 // out of the spout, a fifth of a block up, with a little push: it drops in the block in front, not two or
                 // three blocks off as a dropper throws (seen in the game: a press on a pipe sent its cakes four blocks)
                 var random = level.getRandom();
@@ -131,7 +215,8 @@ public final class MachineIO {
     }
 
     /**
-     * Drops it out of the block where there is room ({@link #dropOut}); with none, on top all the same, as before 1.3:
+     * Drops it out of the block where there is room ({@link #dropOut}); with none, or a rail under it, on top all the
+     * same, as before 1.3:
      * for a caller that has nowhere to keep it. Kept as it was for other mods (nookTechnology 0.1.1 calls it, by this
      * signature); ours call {@link #dropOut} and keep what finds no room.
      */
@@ -146,19 +231,24 @@ public final class MachineIO {
      * open (as the Recycler does); false, and nothing dropped, with all of them closed. It was dropped on top whatever
      * stood there, so with a block on top as well (stone over a Crusher standing on stone, a Vacuum Distiller's column)
      * it came out inside that block and was pushed out of it wherever it could go (nookTechnology's find, 2026-11-01).
+     * Never onto a rail, where it would land ({@link #railBelow}): with one under it, false - kept for the next cart, not set down on top or
+     * beside instead - and one on top or beside is passed over.
      */
     public static boolean dropOut(ServerLevel level, BlockPos pos, ItemStack stack) {
+        if (railBelow(level, pos.below()) != null) {
+            return false;
+        }
         Vec3 at = null;
         if (open(level, pos.below())) {
             at = new Vec3(pos.getX() + 0.5, pos.getY() - 0.4, pos.getZ() + 0.5);
-        } else if (open(level, pos.above())) {
+        } else if (open(level, pos.above()) && !railAt(level, pos.above())) {
             at = new Vec3(pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5);
         } else {
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 BlockPos beside = pos.relative(side);
                 // not into lava, fire or water beside it, which only an open cell under it ever took before
                 if (level.isLoaded(beside) && open(level, beside) && level.getFluidState(beside).isEmpty()
-                        && !level.getBlockState(beside).is(BlockTags.FIRE)) {
+                        && !level.getBlockState(beside).is(BlockTags.FIRE) && railBelow(level, beside) == null) {
                     at = new Vec3(beside.getX() + 0.5, beside.getY() + 0.1, beside.getZ() + 0.5);
                     break;
                 }

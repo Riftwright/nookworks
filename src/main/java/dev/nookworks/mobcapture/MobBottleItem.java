@@ -416,7 +416,7 @@ public class MobBottleItem extends Item {
             return InteractionResult.FAIL;
         }
         Entity released = data == null ? type.spawn(level, null, context.getPlayer(), pos, EntitySpawnReason.BUCKET, true, false)
-                : release(level, type, data, Vec3.atBottomCenterOf(pos), context.getPlayer(),
+                : release(level, type, data, Vec3.atBottomCenterOf(pos), context.getPlayer(), false,
                         context.getPlayer() != null && context.getPlayer().hasInfiniteMaterials());
         if (released == null) {
             return InteractionResult.FAIL;
@@ -453,6 +453,14 @@ public class MobBottleItem extends Item {
      * in the block - a Trading Counter's villager on a slab or a carpet, not stood inside it.
      */
     public static @Nullable Entity letOut(ServerLevel level, ItemStack bottle, Vec3 at, boolean again) {
+        return letOut(level, bottle, at, again, false);
+    }
+
+    /**
+     * As {@link #letOut(ServerLevel, ItemStack, Vec3, boolean)}; {@code roomy}: only where the mob, at its own size, has
+     * room - none from a dispenser into a wall (r23 self-review) - and null, the mob kept, where it has not.
+     */
+    public static @Nullable Entity letOut(ServerLevel level, ItemStack bottle, Vec3 at, boolean again, boolean roomy) {
         EntityType<?> type = captured(bottle);
         CompoundTag data = capturedData(bottle);
         if (type == null || !bottleable(type) || data != null && data.sizeInBytes() > MAX_BYTES || vanishesHere(level, type)) {
@@ -461,8 +469,11 @@ public class MobBottleItem extends Item {
         if (data != null && type.onlyOpCanSetNbt()) {
             data = null;
         }
+        if (data == null && roomy && !level.noCollision(type.getSpawnAABB(at.x, at.y, at.z))) {
+            return null;
+        }
         return data == null ? type.spawn(level, null, null, BlockPos.containing(at), EntitySpawnReason.BUCKET, true, false)
-                : release(level, type, data, at, null, again);
+                : release(level, type, data, at, null, roomy, again);
     }
 
     /** Whether a {@code type} let out here would be gone at once: a monster, on Peaceful. */
@@ -484,7 +495,7 @@ public class MobBottleItem extends Item {
      * up (in creative), so the same mob may come out more than once - each time as a new one.
      */
     private static @Nullable Entity release(ServerLevel level, EntityType<?> type, CompoundTag data, Vec3 at,
-            @Nullable Player player, boolean again) {
+            @Nullable Player player, boolean roomy, boolean again) {
         Entity mob;
         try (var reporter = new ProblemReporter.ScopedCollector(() -> "mob_bottle", LOGGER)) {
             mob = EntityType.create(type, TagValueInput.create(reporter, level.registryAccess(), data),
@@ -504,6 +515,11 @@ public class MobBottleItem extends Item {
         // player online (a creative player's bottle is not used up, so its mob can come out twice, here and in the
         // Nether): the world will not hold two entities with one id, and would drop one of them later.
         // (a check of the loaded world only: from a creative bottle it is always a new id, the first copy perhaps unloaded)
+        // measured as the mob it is: a small slime's type is sized for its spawning, four times its width, and from a
+        // dispenser facing sideways that met the dispenser itself (r24 CX-03)
+        if (roomy && !level.noCollision(mob, mob.getBoundingBox())) {
+            return null;
+        }
         if (again || inUse(level.getServer(), mob.getUUID())) {
             mob.setUUID(UUID.randomUUID());
         }

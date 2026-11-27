@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jspecify.annotations.Nullable;
 
@@ -108,13 +107,13 @@ public class StoneMakerBlockEntity extends MachineBlockEntity implements Machine
         maker.flush(server, pos);
         Item product = maker.product();
         if (product == null) {
-            maker.status = MachineStatus.IDLE; // the lava, or what cools it, not in: the status line says which go in
+            maker.status = maker.idleOrHeld(OUTPUT); // the lava, or what cools it, not in: the status line says which go in
             savePower(maker);
             return;
         }
         ItemStack held = maker.items.get(OUTPUT);
         if (!held.isEmpty() && (!held.is(product) || held.getCount() >= held.getMaxStackSize())) {
-            maker.status = MachineStatus.OUTPUT_BLOCKED; // full, or holding what it made before it was switched
+            maker.status = maker.outputWaits(); // full, or holding what it made before it was switched
             return;
         }
         if (!maker.redstoneAllows()) {
@@ -145,11 +144,11 @@ public class StoneMakerBlockEntity extends MachineBlockEntity implements Machine
     /** Into the container below, if there is one - with no room at the last try, a hopper's beat later ({@link OutputRetry}). */
     private void flush(ServerLevel level, BlockPos pos) {
         ItemStack held = this.items.get(OUTPUT);
-        if (held.isEmpty() || !this.outputRetry.due(level)) {
+        if (held.isEmpty() || this.holdsOutput() || !this.outputRetry.due(level)) {
             return;
         }
         boolean moved = false;
-        var handler = level.getCapability(Capabilities.Item.BLOCK, pos.below(), Direction.UP);
+        var handler = MachineIO.itemsAt(level, pos.below(), Direction.UP);
         if (handler != null) {
             ItemStack rest = ItemUtil.insertItemReturnRemaining(handler, held.copy(), false, null);
             if (rest.getCount() != held.getCount()) { // a full chest below: nothing moved, nothing to tell anyone

@@ -94,6 +94,8 @@ final class DataTests {
         NookworksGameTests.test("startup_logs_nothing_about_us", DataTests::startupLogsNothingAboutUs);
         NookworksGameTests.test("every_language_names_everything", DataTests::everyLanguageNamesEverything);
         NookworksGameTests.test("no_lang_file_names_a_key_twice", DataTests::noLangKeyTwice);
+        NookworksGameTests.test("hints_fit_a_vanilla_tooltips_width", DataTests::hintsFitVanillasWidth);
+        NookworksGameTests.test("tooltips_keep_right_of_the_pointer", DataTests::tooltipsKeepRightOfThePointer);
         NookworksGameTests.test("every_language_keeps_englishs_placeholders", DataTests::everyLanguageKeepsPlaceholders);
         NookworksGameTests.test("every_shown_key_is_written", DataTests::everyShownKeyIsWritten);
         NookworksGameTests.test("every_item_is_in_a_creative_tab", DataTests::everyItemIsInACreativeTab);
@@ -570,6 +572,110 @@ final class DataTests {
         }
         Collections.sort(codes);
         return codes;
+    }
+
+    /**
+     * Every hint, in every language, breaks into lines no wider than vanilla's tooltips, so the tooltip stays right of
+     * the pointer (the user, 2026-11-26: it jumped from side to side); nothing of it is lost, and a line breaks within a
+     * word only where that word alone is wider. Measured as vanilla's font goes, near enough: 6 px a letter, 9 a
+     * Chinese, Japanese or Korean character.
+     */
+    private static void hintsFitVanillasWidth(GameTestHelper helper) {
+        java.util.function.ToIntFunction<String> measure = text -> text.codePoints().map(c -> c >= 0x1100 ? 9 : 6).sum();
+        List<String> problems = new ArrayList<>();
+        for (String code : ALL_LANGUAGES) {
+            Map<String, String> texts = texts(code);
+            for (String key : HintTooltips.keys()) {
+                String text = texts.get(key);
+                if (text == null) {
+                    continue; // every_language_names_everything says so
+                }
+                List<String> lines = HintTooltips.wrap(text, measure);
+                if (!String.join("", lines).replace(" ", "").equals(text.replace(" ", "").replace("\n", ""))) {
+                    problems.add(code + " " + key + " lost text: " + lines);
+                }
+                for (String line : lines) {
+                    if (measure.applyAsInt(line) > HintTooltips.WIDTH && line.contains(" ")) {
+                        problems.add(code + " " + key + " too wide: " + line);
+                    }
+                }
+            }
+        }
+        NookworksGameTests.check(helper, problems.isEmpty(), String.join(" | ", problems));
+        helper.succeed();
+    }
+
+    /**
+     * A tooltip of ours with too little room right of the pointer is broken to that room, so it stays on the right (the
+     * user, 2026-11-26: it jumped from side to side over the creative tab): a long Japanese line between words in its
+     * own style, a long English one at spaces with its styles, a picture and a short line as they were; one that fits,
+     * or a room too small, left alone. Measured 6 px a letter, 9 a Chinese, Japanese or Korean character.
+     */
+    private static void tooltipsKeepRightOfThePointer(GameTestHelper helper) {
+        var splitter = new net.minecraft.client.StringSplitter((c, style) -> c >= 0x1100 ? 9 : 6);
+        net.minecraft.world.inventory.tooltip.TooltipComponent picture = new net.minecraft.world.inventory.tooltip.TooltipComponent() {};
+        String japanese = "保存しても、データがすべて消えます。";
+        var english = net.minecraft.network.chat.Component.literal("Speed: ").withStyle(net.minecraft.ChatFormatting.GRAY)
+                .append(net.minecraft.network.chat.Component.literal("twice as fast as iron").withStyle(net.minecraft.ChatFormatting.GOLD));
+        List<com.mojang.datafixers.util.Either<net.minecraft.network.chat.FormattedText, net.minecraft.world.inventory.tooltip.TooltipComponent>> elements = List.of(
+                com.mojang.datafixers.util.Either.left(net.minecraft.network.chat.Component.literal("Gear")),
+                com.mojang.datafixers.util.Either.left(net.minecraft.network.chat.Component.literal(japanese).withStyle(net.minecraft.ChatFormatting.GRAY)),
+                com.mojang.datafixers.util.Either.left(english),
+                com.mojang.datafixers.util.Either.right(picture));
+        int room = 90;
+        var fitted = dev.nookworks.client.TooltipRoom.fit(elements, room, splitter);
+        List<String> problems = new ArrayList<>();
+        if (fitted == null) {
+            problems.add("nothing broken");
+        } else {
+            StringBuilder all = new StringBuilder();
+            for (var element : fitted) {
+                element.ifLeft(text -> {
+                    all.append(text.getString());
+                    if (splitter.stringWidth(text) > room) {
+                        problems.add("too wide: " + text.getString());
+                    }
+                });
+            }
+            String whole = all.toString().replace(" ", "");
+            if (!whole.equals(("Gear" + japanese + "Speed: twice as fast as iron").replace(" ", ""))) {
+                problems.add("text lost: " + whole);
+            }
+            if (fitted.getFirst() != elements.getFirst() || fitted.getLast() != elements.getLast()) {
+                problems.add("the short line or the picture changed");
+            }
+            for (var element : fitted) {
+                element.ifLeft(text -> {
+                    String s = text.getString();
+                    boolean jaPiece = !s.isEmpty() && japanese.contains(s.strip()) && !s.equals("Gear");
+                    var styles = new ArrayList<net.minecraft.network.chat.Style>();
+                    text.visit((style, part) -> { if (!part.isBlank()) styles.add(style); return java.util.Optional.empty(); },
+                            net.minecraft.network.chat.Style.EMPTY);
+                    if (jaPiece && styles.stream().anyMatch(st -> !java.util.Objects.equals(st.getColor(),
+                            net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.GRAY)))) {
+                        problems.add("a Japanese piece lost its grey: " + s);
+                    }
+                    if (s.contains("iron") && styles.stream().noneMatch(st -> java.util.Objects.equals(st.getColor(),
+                            net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.GOLD)))) {
+                        problems.add("the English value lost its gold: " + s);
+                    }
+                });
+            }
+            if (fitted.stream().anyMatch(e -> e.left().filter(t -> t.getString().equals("データがす")).isPresent())) {
+                problems.add("Japanese broken within a word");
+            }
+        }
+        if (dev.nookworks.client.TooltipRoom.fit(elements, 400, splitter) != null) {
+            problems.add("a tooltip that fits was changed");
+        }
+        if (dev.nookworks.client.TooltipRoom.fit(elements, dev.nookworks.client.TooltipRoom.LEAST - 1, splitter) != null) {
+            problems.add("a room too small was broken to");
+        }
+        if (fitted != null && dev.nookworks.client.TooltipRoom.fit(fitted, room, splitter) != null) {
+            problems.add("a second pass changed it again");
+        }
+        NookworksGameTests.check(helper, problems.isEmpty(), String.join(" | ", problems));
+        helper.succeed();
     }
 
     /** A lang file of ours, key by key. */

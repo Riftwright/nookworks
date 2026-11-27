@@ -226,7 +226,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
         if (this.mercury.amount() < Math.max(this.mercury.capacity() / 2, recipe == null ? 0 : recipe.mercury())) {
             MercuryNetwork.pull(level, pos, this, PIPE_RATE);
         }
-        MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
+        MachineStatus blocked = !this.flush(level, pos) ? this.outputWaits()
                 : recipe == null ? MachineStatus.IDLE
                 : this.mercury.amount() < recipe.mercury() ? MachineStatus.NO_MERCURY : null;
         if (blocked != null) {
@@ -259,7 +259,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
 
     private void stirBiodiesel(ServerLevel level, BlockPos pos) {
         boolean piped = this.fromMethanolTank();
-        MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
+        MachineStatus blocked = !this.flush(level, pos) ? this.outputWaits()
                 : piped && this.methanolStored() < METHANOL_PER_BATCH ? MachineStatus.LOW_METHANOL
                 : this.catalystLeft <= 0 && !this.items.get(CATALYST).is(ModItems.CAUSTIC_SODA.get()) ? MachineStatus.NO_REAGENT
                 : this.oilStored() < OIL_PER_BATCH ? MachineStatus.LOW_OIL
@@ -305,7 +305,7 @@ public class StirringTankBlockEntity extends MercuryMachineBlockEntity implement
     }
 
     private void stirMud(ServerLevel level, BlockPos pos) {
-        MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
+        MachineStatus blocked = !this.flush(level, pos) ? this.outputWaits()
                 : this.waterStored() < WATER_PER_MUD ? MachineStatus.LOW_WATER : null;
         if (blocked != null) {
             this.status = blocked;

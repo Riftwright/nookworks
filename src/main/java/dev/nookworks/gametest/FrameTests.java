@@ -75,7 +75,11 @@ final class FrameTests {
         return poster.interact(player, InteractionHand.MAIN_HAND, poster.position());
     }
 
-    /** One frame frames a poster three blocks wide, whatever its size; its look vanilla's birch, and each frame's look. */
+    /**
+     * One frame frames a poster three blocks wide, whatever its size; its look vanilla's birch, and each frame's look. A
+     * frame of another kind takes the old one's place on the wall, the old one dropped (none in creative); one of the same
+     * kind, or a player in adventure mode, changes nothing.
+     */
     private static void takesOneFrame(GameTestHelper helper) {
         PosterEntity poster = poster(helper);
         ServerPlayer player = MockPlayers.inLevel(helper, GameType.SURVIVAL);
@@ -95,10 +99,31 @@ final class FrameTests {
         var brassGlow = PictureFrames.look(new ItemStack(ModItems.BRASS_GLOW_ITEM_FRAME.get()));
         check(helper, brassGlow.moulded() && brassGlow.glow(), "the glowing brass frame: the moulding, the picture glowing: " + brassGlow);
         check(helper, !PictureFrames.look(new ItemStack(ModItems.DARK_OAK_ITEM_FRAME.get())).moulded(), "dark oak's rim is plain");
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_OAK_ITEM_FRAME.get(), 3));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.ITEM_FRAME, 3));
         click(poster, player);
         check(helper, poster.frame().is(Items.ITEM_FRAME) && player.getMainHandItem().getCount() == 3,
-                "a framed poster takes no second frame");
+                "a frame of the kind it has changes nothing");
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_OAK_ITEM_FRAME.get(), 3));
+        check(helper, click(poster, player).consumesAction(), "a frame of another kind is taken");
+        check(helper, poster.frame().is(ModItems.DARK_OAK_ITEM_FRAME.get()) && poster.frame().getCount() == 1,
+                "the poster is framed in dark oak now, still on the wall: " + poster.frame() + " " + poster.isAlive());
+        check(helper, player.getMainHandItem().getCount() == 2, "one dark oak frame used: " + player.getMainHandItem());
+        List<ItemEntity> dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(poster.blockPosition()).inflate(3));
+        check(helper, dropped.size() == 1 && dropped.get(0).getItem().is(Items.ITEM_FRAME) && dropped.get(0).getItem().getCount() == 1,
+                "the old frame drops, and nothing else: " + dropped);
+        dropped.forEach(ItemEntity::discard);
+        ServerPlayer builder = MockPlayers.inLevel(helper, GameType.CREATIVE);
+        builder.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.BRASS_ITEM_FRAME.get()));
+        click(poster, builder);
+        check(helper, poster.frame().is(ModItems.BRASS_ITEM_FRAME.get()) && builder.getMainHandItem().getCount() == 1,
+                "in creative the frame changes and none is used");
+        check(helper, helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(poster.blockPosition()).inflate(3)).isEmpty(),
+                "and the old one does not drop");
+        ServerPlayer visitor = MockPlayers.inLevel(helper, GameType.ADVENTURE);
+        visitor.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLOW_ITEM_FRAME));
+        click(poster, visitor);
+        check(helper, poster.frame().is(ModItems.BRASS_ITEM_FRAME.get()) && visitor.getMainHandItem().getCount() == 1,
+                "a player in adventure mode changes no frame");
         helper.succeed();
     }
 
@@ -129,7 +154,7 @@ final class FrameTests {
 
     /**
      * A vanilla painting, clicked as a player clicks it (Player#interactOn, the hook PaintingFrames listens on): framed by
-     * one frame, no second; kept through a save, a painting with none saving no frame; taken off by sneaking with an
+     * one frame, a second of its kind changing nothing and one of another kind taking its place; kept through a save, a painting with none saving no frame; taken off by sneaking with an
      * empty hand; dropped beside the painting when it comes down.
      */
     private static void paintingFramed(GameTestHelper helper) {
@@ -151,10 +176,9 @@ final class FrameTests {
         check(helper, PaintingFrames.frame(painting).is(Items.GLOW_ITEM_FRAME) && PaintingFrames.frame(painting).getCount() == 1,
                 "one glowing frame on it: " + PaintingFrames.frame(painting));
         check(helper, player.getMainHandItem().getCount() == 1, "one left in the hand");
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.BRASS_ITEM_FRAME.get()));
         player.interactOn(painting, InteractionHand.MAIN_HAND, Vec3.ZERO);
         check(helper, PaintingFrames.frame(painting).is(Items.GLOW_ITEM_FRAME) && player.getMainHandItem().getCount() == 1,
-                "a framed painting takes no second frame");
+                "a frame of the kind it has changes nothing");
         try (var reporter = new ProblemReporter.ScopedCollector(painting.problemPath(), LogUtils.getLogger())) {
             var output = TagValueOutput.createWithContext(reporter, level.registryAccess());
             painting.saveWithoutId(output);
@@ -173,10 +197,17 @@ final class FrameTests {
         player.setShiftKeyDown(false);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.BRASS_ITEM_FRAME.get()));
         player.interactOn(painting, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DARK_OAK_ITEM_FRAME.get()));
+        player.interactOn(painting, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        check(helper, PaintingFrames.frame(painting).is(ModItems.DARK_OAK_ITEM_FRAME.get()) && painting.isAlive()
+                && player.getMainHandItem().isEmpty(), "a frame of another kind takes the brass one's place: " + PaintingFrames.frame(painting));
+        List<ItemEntity> swapped = level.getEntitiesOfClass(ItemEntity.class, new AABB(painting.blockPosition()).inflate(3));
+        check(helper, swapped.size() == 1 && swapped.get(0).getItem().is(ModItems.BRASS_ITEM_FRAME.get()), "the brass one drops: " + swapped);
+        swapped.forEach(ItemEntity::discard);
         painting.dropItem(level, null);
         List<ItemEntity> dropped = level.getEntitiesOfClass(ItemEntity.class, new AABB(painting.blockPosition()).inflate(3));
         check(helper, dropped.stream().anyMatch(item -> item.getItem().is(Items.PAINTING)), "the painting drops: " + dropped);
-        check(helper, dropped.stream().anyMatch(item -> item.getItem().is(ModItems.BRASS_ITEM_FRAME.get())), "and its brass frame: " + dropped);
+        check(helper, dropped.stream().anyMatch(item -> item.getItem().is(ModItems.DARK_OAK_ITEM_FRAME.get())), "and its dark oak frame: " + dropped);
         check(helper, PaintingFrames.frame(painting).isEmpty(), "and has none left to drop twice");
         helper.succeed();
     }

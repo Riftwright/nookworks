@@ -29,7 +29,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.loot.NeoForgeLootContextParams;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -158,8 +157,7 @@ public class GeneratorBlockEntity extends MachineBlockEntity implements MachineI
 
     /** Into whatever takes items under the generator, or else onto its top. */
     private void putAside(ServerLevel level, ItemStack stack) {
-        var below = level.getCapability(Capabilities.Item.BLOCK, this.worldPosition.below(),
-                Direction.UP);
+        var below = MachineIO.itemsAt(level, this.worldPosition.below(), Direction.UP);
         if (below != null) {
             stack.shrink(Move.insert(below, ItemResource.of(stack), stack.getCount()));
         }

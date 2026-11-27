@@ -99,26 +99,27 @@ final class R15PlaythroughTests {
     }
 
     /**
-     * "Missing a reagent" goes on to say which: brass from copper wants another copper ingot and a zinc one, and once
-     * the copper is in, only the zinc; a charge with what it takes, or one the Retort does not take, has nothing to add.
+     * "Missing an ingredient" goes on to say which: one copper ingot in wants another and a zinc one for brass, two
+     * only the zinc, in whichever of the three slots; a charge with what it takes, or nothing the Retort takes, has
+     * nothing to add.
      */
     private static void missingReagentNamed(GameTestHelper helper) {
         check(helper, Language.getInstance().has("gui.nookworks.machine.status.no_reagent.detail"), "the line is translated");
         ItemStack copper = new ItemStack(Items.COPPER_INGOT);
         ItemStack zinc = new ItemStack(ModItems.ZINC_INGOT.get());
-        Component both = RetortBlockEntity.missingReagentNames(copper, List.of(ItemStack.EMPTY, ItemStack.EMPTY));
+        Component both = RetortBlockEntity.missingNames(List.of(ItemStack.EMPTY, copper, ItemStack.EMPTY));
         check(helper, both != null && keys(both).equals(List.of("item.minecraft.copper_ingot", "nookworks.list.separator",
                 zinc.getItem().getDescriptionId())), "nothing in: copper and zinc named, " + (both == null ? null : keys(both)));
-        Component zincOnly = RetortBlockEntity.missingReagentNames(copper, List.of(ItemStack.EMPTY, new ItemStack(Items.COPPER_INGOT)));
+        Component zincOnly = RetortBlockEntity.missingNames(List.of(ItemStack.EMPTY, ItemStack.EMPTY, new ItemStack(Items.COPPER_INGOT, 2)));
         check(helper, zincOnly != null && keys(zincOnly).equals(List.of(zinc.getItem().getDescriptionId())),
-                "the copper in (either slot): only the zinc, " + (zincOnly == null ? null : keys(zincOnly)));
-        check(helper, RetortBlockEntity.missingReagentNames(copper, List.of(new ItemStack(Items.COPPER_INGOT), zinc)) == null,
-                "both in: nothing missing");
-        check(helper, RetortBlockEntity.missingReagentNames(new ItemStack(Items.STONE), List.of(ItemStack.EMPTY, ItemStack.EMPTY)) == null,
-                "a charge the Retort does not take: nothing to say");
+                "two copper in one stack: only the zinc, " + (zincOnly == null ? null : keys(zincOnly)));
+        check(helper, RetortBlockEntity.missingNames(List.of(zinc, new ItemStack(Items.COPPER_INGOT, 2), ItemStack.EMPTY)) == null,
+                "both in, zinc first: nothing missing");
+        check(helper, RetortBlockEntity.missingNames(List.of(new ItemStack(Items.STONE), ItemStack.EMPTY, ItemStack.EMPTY)) == null,
+                "nothing the Retort takes: nothing to say");
         // wood chips are pulped with caustic soda and sulfur: one of them in, the other named
-        Component sulfur = RetortBlockEntity.missingReagentNames(new ItemStack(ModItems.WOOD_CHIPS.get()),
-                List.of(new ItemStack(ModItems.CAUSTIC_SODA.get()), ItemStack.EMPTY));
+        Component sulfur = RetortBlockEntity.missingNames(List.of(new ItemStack(ModItems.CAUSTIC_SODA.get()), ItemStack.EMPTY,
+                new ItemStack(ModItems.WOOD_CHIPS.get())));
         check(helper, sulfur != null && keys(sulfur).equals(List.of(ModItems.SULFUR_DUST.get().getDescriptionId())),
                 "the soda in: the sulfur named, " + (sulfur == null ? null : keys(sulfur)));
         helper.succeed();

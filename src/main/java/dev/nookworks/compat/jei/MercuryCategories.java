@@ -95,30 +95,58 @@ public final class MercuryCategories {
 
         @Override
         public void setRecipe(IRecipeLayoutBuilder builder, Retort r, IFocusGroup focuses) {
-            builder.addInputSlot(1, 5).setStandardSlotBackground().add(r.input());
-            for (int i = 0; i < r.recipe().reagents().size(); i++) { // under the charge, as the Retort's own slots go
-                builder.addInputSlot(1 + i * 18, 24).setStandardSlotBackground()
-                        .addItemStacks(r.recipe().reagents().get(i).stream().map(ItemStack::new).toList());
+            // what goes in side by side, as the Retort's slots are all alike since 1.9; a reagent that is the key itself
+            // (brass's second copper) shown as one stack of two
+            int key = 1;
+            List<List<ItemStack>> others = new ArrayList<>();
+            for (var reagent : r.recipe().reagents()) {
+                if (reagent.size() == 1 && r.input().is(reagent.get(0))) {
+                    key++;
+                } else {
+                    others.add(reagent.stream().map(ItemStack::new).toList());
+                }
             }
+            builder.addInputSlot(1, 5).setStandardSlotBackground().add(r.input().copyWithCount(key));
+            for (int i = 0; i < others.size(); i++) {
+                builder.addInputSlot(19 + i * 18, 5).setStandardSlotBackground().addItemStacks(others.get(i));
+            }
+            int x = outputsAt(r);
             if (r.recipe().count() > 0) {
-                builder.addOutputSlot(61, 5).setOutputSlotBackground().add(new ItemStack(r.recipe().byproduct(), r.recipe().count()));
+                builder.addOutputSlot(x, 5).setOutputSlotBackground().add(new ItemStack(r.recipe().byproduct(), r.recipe().count()));
+                x += 20;
             }
             if (r.recipe().mercury() > 0) {
-                builder.addOutputSlot(83, 5).setOutputSlotBackground().add(ModItems.MERCURY_BUCKET.get());
+                builder.addOutputSlot(x, 5).setOutputSlotBackground().add(ModItems.MERCURY_BUCKET.get());
+                x += 20;
             }
-            r.recipe().remainder().ifPresent(item -> builder.addOutputSlot(105, 5).setOutputSlotBackground().add(new ItemStack(item)));
+            if (r.recipe().remainder().isPresent()) {
+                builder.addOutputSlot(x, 5).setOutputSlotBackground().add(new ItemStack(r.recipe().remainder().get()));
+                x += 20;
+            }
             // a liquid it gives off into its tank, to be piped out (wood vinegar from logs, since 1.5)
-            r.recipe().liquid().ifPresent(liquid -> builder.addOutputSlot(r.recipe().mercury() > 0 ? 127 : 83, 5).setOutputSlotBackground()
-                    .add(liquid.getFluid(), liquid.getAmount()).setFluidRenderer(Math.max(liquid.getAmount(), OilFluids.BOTTLE), false, 16, 16));
+            if (r.recipe().liquid().isPresent()) {
+                var liquid = r.recipe().liquid().get();
+                builder.addOutputSlot(x, 5).setOutputSlotBackground()
+                        .add(liquid.getFluid(), liquid.getAmount()).setFluidRenderer(Math.max(liquid.getAmount(), OilFluids.BOTTLE), false, 16, 16);
+            }
         }
 
         @Override
         public void createRecipeExtras(IRecipeExtrasBuilder builder, Retort r, IFocusGroup focuses) {
-            builder.addAnimatedRecipeArrowWidget(100).setPosition(26, 5);
+            builder.addAnimatedRecipeArrowWidget(100).setPosition(outputsAt(r) - 28, 5);
             if (r.recipe().mercury() > 0) {
-                text(builder, Component.translatable("jei.nookworks.mercury_made", r.recipe().mercury()),
-                        1 + r.recipe().reagents().size() * 18 + 2, 28);
+                text(builder, Component.translatable("jei.nookworks.mercury_made", r.recipe().mercury()), 1, 28);
             }
+        }
+
+        /** How many slots its inputs take: the key (with any reagent that is the key itself) and the other reagents. */
+        private static int inputSlots(Retort r) {
+            return 1 + (int) r.recipe().reagents().stream().filter(reagent -> !(reagent.size() == 1 && r.input().is(reagent.get(0)))).count();
+        }
+
+        /** Where the outputs begin: after the inputs and the arrow. */
+        private static int outputsAt(Retort r) {
+            return 1 + inputSlots(r) * 18 + 32;
         }
     }
 

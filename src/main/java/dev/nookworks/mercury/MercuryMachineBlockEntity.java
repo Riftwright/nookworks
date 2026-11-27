@@ -99,6 +99,14 @@ public abstract class MercuryMachineBlockEntity extends MachineBlockEntity imple
      * ({@link OutputRetry}). Returns true when every output slot is free.
      */
     protected boolean flush(ServerLevel level, BlockPos pos) {
+        if (this.holdsOutput()) { // stopped by redstone: what it made waits in it
+            for (int slot : this.outputSlots) {
+                if (!this.items.get(slot).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
         boolean due = this.outputRetry.due(level);
         boolean clear = true;
         boolean moved = false;

@@ -15,8 +15,6 @@ recovered from code.
 | `block/hub_stone_plate.png` | Hub Stone top and bottom | — |
 | `block/experience_tank_side.png` | Experience Tank sides | `gen_experience.py: tank()` |
 | `block/experience_tank_end.png` | Experience Tank top and bottom | — |
-| `block/magnet_chest_front.png` | Magnet Chest sides | `gen_magnet.py` |
-| `block/magnet_chest_top.png` | Magnet Chest top and bottom | — |
 | `block/retort_*_lit.png` | Sealed Retort while it is burning | `gen_mercury.py: retort_side()` |
 | `block/retort_back/top/bottom.png` | Sealed Retort, the faces with no fire on them | - |
 | `block/mercury_tank_back/bottom/front/side/top.png` | Mercury Tank (not `mercury_tank_gauge.png`, which `gen_machine_faces.py` draws) | `gen_mercury.py: tank_side()` |
@@ -39,9 +37,8 @@ Sender's and Receiver's `*_off.png` (their lines dark, at rest) and `*_glow.png`
 the working block) are built from their faces by `gen_spawner_links.py`, the steel copied across untouched.
 `block/experience_tank_front.png`, the face the tap is on, is built from `experience_tank_side.png` by
 `gen_experience_tank_front.py`: the window closed over in the panel's own steel, every other pixel copied across.
-`block/magnet_chest_side.png` is built the same way from
-`magnet_chest_front.png` by `gen_magnet_chest_side.py`: boards where the front has its plate, every other pixel
-copied across.
+The Magnet Chest's faces were hand-finished until 2026-11-24; `gen_magnet_chest.py` draws them whole now (and its
+model), so they are no longer listed here.
 
 The Generator's, Retort's, Mercury Tank's and Experience Tank's models (`tools/gen_machine_models.py`) set each
 panel 1 px back inside the frame drawn round its edge; they lay these faces exactly where a cube would, so no pixel

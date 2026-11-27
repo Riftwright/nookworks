@@ -426,8 +426,9 @@ public final class NookworksNetwork {
         // the Spawner Controller's menu sends a fifteenth value (its mob sounds), which a 1.5 client's menu has no room for.
         // "5" since 1.7: the Dock-a-Daemon Door's place is sent (DaemonDoorHere). "6" since 1.8: ducts, chimneys and the
         // Motor have new block-state properties (the Wrench's parted sides, the Motor's cable sockets), so block-state ids
-        // differ between 1.7 and 1.8 and a 1.7 client on a 1.8 server would show the wrong blocks.
-        var registrar = event.registrar("6");
+        // differ between 1.7 and 1.8 and a 1.7 client on a 1.8 server would show the wrong blocks. "7" since 1.9: the Item
+        // Sorter's menu holds five slots, where a 1.8 client's holds one.
+        var registrar = event.registrar("7");
         registrar.playToServer(StepWandMode.TYPE, StepWandMode.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && BuildingWandItem.hasModes(player.getMainHandItem())
                     && payload.steps() != 0) {

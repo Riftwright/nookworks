@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -39,8 +40,10 @@ import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 /**
- * Item Sorter logic. One input slot (hoppers feed it from any side), which it also fills itself from the container
- * above it, as a hopper draws from the block over it. Every so often - a hopper's pace, or faster with a Sorter Gear in
+ * Item Sorter logic. Five input slots, as a hopper has (hoppers feed it from any side), which it also fills itself from
+ * the container above it, as a hopper draws from the block over it - one kind of item at a time; the other slots are
+ * for what is put in, so a crafter's result and what its recipe leaves (a sunflower's dye and its seeds) both go in
+ * (the user, 2026-11-24: one slot took the dye and the seeds fell out on the ground). Every so often - a hopper's pace, or faster with a Sorter Gear in
  * its gear slot ({@link SorterGear}) - it moves a batch to the registered or the other outlet: into the inventory on
  * that side if there is one (waiting if it is full), otherwise spat out like a dropper (waiting if the outlet is
  * blocked by a solid block). While it waits it draws nothing more in: what is still to sort stays in the chest above.
@@ -57,9 +60,11 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     public static final int DENY_SLOTS = 8;
     /** How many of an inventory's slots are asked whether they could hold an item, before it is taken to hold none. */
     private static final int ASKED_SLOTS = 64;
-    private static final int[] INPUT = {0};
+    /** The input's slots: a hopper's five. Saves from before 1.9 hold the first alone. */
+    public static final int INPUT_SLOTS = 5;
+    private static final int[] INPUT = {0, 1, 2, 3, 4};
 
-    private final NonNullList<ItemStack> input = NonNullList.withSize(1, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> input = NonNullList.withSize(INPUT_SLOTS, ItemStack.EMPTY);
     private final SimpleContainer filter = new SimpleContainer(FILTER_SLOTS) {
         @Override
         public void setChanged() {
@@ -246,16 +251,22 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
             return;
         }
         sorter.cooldown = gear.interval;
-        ItemStack stack = sorter.input.get(0);
-        if (!stack.isEmpty() && sorter.keepsOut(server, stack)) {
-            // kept out since it came in, or bound for an inventory that cannot hold it: back up where it came from (an
-            // older sorter held a bundle for a Storage Barrel for good), or held, waiting, with nowhere to put it
-            if (!sorter.giveBack(server, pos)) {
-                return;
+        // one batch a beat, from the first slot that can send one; a slot whose outlet is full or blocked waits, and
+        // while any does nothing more is drawn in
+        boolean waiting = false;
+        for (int slot = 0; slot < INPUT_SLOTS; slot++) {
+            ItemStack stack = sorter.input.get(slot);
+            if (stack.isEmpty()) {
+                continue;
             }
-            stack = sorter.input.get(0);
-        }
-        if (!stack.isEmpty()) {
+            if (sorter.keepsOut(server, stack)) {
+                // kept out since it came in, or bound for an inventory that cannot hold it: back up where it came from
+                // (an older sorter held a bundle for a Storage Barrel for good), or held, waiting, with nowhere to put it
+                if (!sorter.giveBack(server, slot)) {
+                    waiting = true;
+                }
+                continue;
+            }
             Direction side = sorter.outletFor(stack);
             int batch = gear.batch;
             if (gear.interval < THROW_INTERVAL && sorter.throwsOut(server, pos, side)) {
@@ -273,8 +284,14 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
                 sorter.clickNowAndThen(server, pos);
             }
             if (moved < offered) {
-                return; // the outlet is full or blocked: it keeps what it has, and draws nothing more in until that goes
+                waiting = true; // the outlet is full or blocked: it keeps what it has
             }
+            if (moved > 0) {
+                break; // this beat's batch
+            }
+        }
+        if (waiting) {
+            return; // draws nothing more in until that goes
         }
         // Then the next batch from the container above, at the same pace: what the gear moves in a beat of this length
         // (a thrown beat is a hopper's, and moves as many as the gear does in one).
@@ -286,7 +303,8 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
      * draws from the block over it: the first thing that container gives out, as many of it as fit in the slot - or,
      * with something left in the input, more of that alone. Any container with NeoForge's item capability: a chest, a
      * barrel, a Storage Barrel, a hopper, another mod's. A Sorter above gives nothing out (what it holds only ever goes
-     * sideways), nor does a Trash Can, which holds nothing. Claims are not asked, as a hopper does not ask: claim mods
+     * sideways), nor does a Trash Can, which holds nothing; nor is a crafter drawn from, whose grid is its recipe (one
+     * facing down crafts into the sorter). Claims are not asked, as a hopper does not ask: claim mods
      * claim whole columns, so a sorter under a claimed chest stands on that claim (docs/compat.md). What it keeps out
      * ({@link #keepsOut}) it passes over, and it stays in the container.
      */
@@ -295,11 +313,24 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         if (most <= 0 || !level.isLoaded(above)) {
             return; // over the top of the world (the rest of the column is the sorter's own chunk, loaded)
         }
+        if (level.getBlockEntity(above) instanceof CrafterBlockEntity) {
+            // A crafter's grid is its recipe, not a store: one set over a sorter, facing down, crafts into it. Drawn
+            // from, its ingredients went off to be sorted and filled the one-slot input, and what it crafted fell out
+            // on the ground (the user, 2026-11-24: 「自動作業台から搬出されたアイテム、ソーターが受け入れない」)
+            return;
+        }
         var handler = this.itemsOn(level, Direction.UP);
         if (handler == null) {
             return;
         }
+        // into the first slot, one kind at a time: with anything held, more of that alone, and only when it is all
+        // that is held (the other slots are for what is put in)
         ItemStack held = this.input.get(0);
+        for (int slot = 1; slot < INPUT_SLOTS; slot++) {
+            if (!this.input.get(slot).isEmpty()) {
+                return;
+            }
+        }
         for (int index = 0; index < handler.size(); index++) {
             ItemResource resource = handler.getResource(index);
             if (resource.isEmpty() || !held.isEmpty() && !resource.matches(held)) {
@@ -329,17 +360,20 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     }
 
     /**
-     * Puts what the input holds back into the container above, as much as it takes; true once the input is empty. With
+     * Puts what an input slot holds back into the container above, as much as it takes; true once the slot is empty. With
      * no container there, or one that takes nothing in from below, it stays. Only into one that holds what it takes, so
      * that it could be drawn back out: a Trash Can on top takes everything and keeps nothing, and what had come in by a
      * side - from a hopper, a pipe - went into it for good (r10, items going missing).
      */
-    private boolean giveBack(ServerLevel level, BlockPos pos) {
+    private boolean giveBack(ServerLevel level, int slot) {
+        if (level.getBlockEntity(this.worldPosition.above()) instanceof CrafterBlockEntity) {
+            return false; // a crafter's grid is its recipe: seeds put back there stopped its crafting (r23 self-review)
+        }
         var handler = this.itemsOn(level, Direction.UP);
         if (handler == null) {
             return false;
         }
-        ItemStack held = this.input.get(0);
+        ItemStack held = this.input.get(slot);
         ItemResource resource = ItemResource.of(held);
         try (Transaction transaction = Transaction.openRoot()) {
             int put = handler.insert(resource, held.getCount(), transaction);
@@ -352,7 +386,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
                 }
             } // only asked: what was put in stays put
             transaction.commit();
-            this.input.set(0, put < held.getCount() ? held.copyWithCount(held.getCount() - put) : ItemStack.EMPTY);
+            this.input.set(slot, put < held.getCount() ? held.copyWithCount(held.getCount() - put) : ItemStack.EMPTY);
             this.setChanged();
             return put == held.getCount();
         }
@@ -380,6 +414,11 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         int[] slots = sided != null ? sided.getSlotsForFace(side.getOpposite()) : null;
         depth[0]++;
         try {
+            if (sided instanceof SorterBlockEntity next) {
+                // the same answer for each of its five slots: asked once, not once a slot - down a line of sorters that
+                // was five to the power of the sorters after it, every beat (r23 self-review)
+                return next.keepsOut(level, stack);
+            }
             for (int index = 0; index < asked; index++) {
                 if (handler.isValid(index, resource) && (sided == null || index >= slots.length
                         || sided.canPlaceItemThroughFace(slots[index], stack, side.getOpposite()))) {
@@ -422,12 +461,23 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
     private boolean throwsOut(ServerLevel level, BlockPos pos, Direction side) {
         BlockPos target = pos.relative(side);
         return level.isLoaded(target) && this.itemsOn(level, side) == null
-                && level.getBlockState(target).getCollisionShape(level, target).isEmpty();
+                && level.getBlockState(target).getCollisionShape(level, target).isEmpty() && cartAt(level, target, side) == null;
     }
 
     /**
-     * Sends {@code stack} out through {@code side}: into the container there, or thrown onto open ground. Returns how
-     * many went out - none while the outlet is blocked or in a chunk not loaded.
+     * An entity holding items at {@code target} - a chest or hopper minecart on a rail, a chest boat, another mod's cart
+     * with NeoForge's automation handler (r23 self-review: only vanilla containers were found) - as a hopper or a dropper
+     * finds one where no block holds items (the 2026-11-24 audit: a sorter threw onto the rail what a hopper would have
+     * put in the cart).
+     */
+    private static @Nullable ResourceHandler<ItemResource> cartAt(ServerLevel level, BlockPos target, Direction side) {
+        return dev.nookworks.machine.MachineIO.itemsAt(level, target, side.getOpposite());
+    }
+
+    /**
+     * Sends {@code stack} out through {@code side}: into the container there, or a minecart or boat holding items, or
+     * thrown onto open ground. Returns how
+     * many went out - none while the outlet is blocked, a rail with no cart on it, or in a chunk not loaded.
      */
     private int output(ServerLevel level, BlockPos pos, Direction side, ItemStack stack) {
         BlockPos target = pos.relative(side);
@@ -441,6 +491,18 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         }
         if (!level.getBlockState(target).getCollisionShape(level, target).isEmpty()) {
             return 0; // blocked outlet: wait
+        }
+        var cart = cartAt(level, target, side);
+        if (cart != null) {
+            ItemStack rest = ItemUtil.insertItemReturnRemaining(cart, stack.copy(), false, null);
+            return stack.getCount() - rest.getCount(); // a full cart: wait, as for a full chest
+        }
+        if (!dev.nookworks.machine.MachineIO.entitiesLoaded(level, target)) {
+            return 0; // a cart there may not be in yet
+        }
+        ItemStack onto = dev.nookworks.machine.MachineIO.ontoRail(level, target, stack);
+        if (onto != null) {
+            return stack.getCount() - onto.getCount(); // landing on a rail: into a cart there, else wait for the next
         }
         Vec3 face = Vec3.atCenterOf(pos).add(side.getStepX() * 0.7, 0.0, side.getStepZ() * 0.7);
         DefaultDispenseItemBehavior.spawnItem(level, stack, 6, side, face);
@@ -525,7 +587,7 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
         }
     }
 
-    // ---- WorldlyContainer: the single input slot, from every side ----
+    // ---- WorldlyContainer: the input's slots, from every side ----
 
     @Override
     public int[] getSlotsForFace(Direction side) {
@@ -545,12 +607,12 @@ public class SorterBlockEntity extends BlockEntity implements WorldlyContainer, 
 
     @Override
     public int getContainerSize() {
-        return 1;
+        return INPUT_SLOTS;
     }
 
     @Override
     public boolean isEmpty() {
-        return this.input.get(0).isEmpty();
+        return this.input.stream().allMatch(ItemStack::isEmpty);
     }
 
     @Override

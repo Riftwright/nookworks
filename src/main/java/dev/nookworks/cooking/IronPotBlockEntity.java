@@ -145,6 +145,23 @@ public class IronPotBlockEntity extends BlockEntity implements Readout, DrawRigh
         return this.pan() ? BOTTLE : CAPACITY;
     }
 
+    /**
+     * A comparator's reading of it (r23 self-review: read as a hopper sees it, a dish done with no bowls in read 0 - the
+     * moment the soup was ready - and eight things of one kind read 1): 15 while a dish waits, which takes nothing
+     * more in, as a full chest; else its ingredients against the room for them, at most 14, so that done reads apart from
+     * full; 1 with only what the cooking freed.
+     */
+    public int comparatorReading() {
+        if (!this.dish.isEmpty() || !this.later.isEmpty()) {
+            return 15;
+        }
+        int count = this.count();
+        if (count > 0) {
+            return Math.min(14, net.minecraft.util.Mth.lerpDiscrete((float) count / this.limit(), 0, 15));
+        }
+        return this.freed.stream().anyMatch(stack -> !stack.isEmpty()) ? 1 : 0;
+    }
+
     /** How many ingredients it holds. */
     public int limit() {
         return this.pan() ? 4 : SLOTS;

@@ -87,7 +87,7 @@ public class ElectrolyticCellBlockEntity extends MercuryMachineBlockEntity imple
         if (this.mercury.amount() < Math.max(this.mercury.capacity() / 2, recipe == null ? 0 : Math.max(MERCURY_NEEDED, recipe.mercury()))) {
             MercuryNetwork.pull(level, pos, this, PIPE_RATE);
         }
-        MachineStatus blocked = !this.flush(level, pos) ? MachineStatus.OUTPUT_BLOCKED
+        MachineStatus blocked = !this.flush(level, pos) ? this.outputWaits()
                 : recipe == null ? MachineStatus.IDLE
                 : this.waterStored() < recipe.water() ? MachineStatus.LOW_WATER
                 : recipe.needsMercury() && this.mercury.amount() < Math.max(MERCURY_NEEDED, recipe.mercury()) ? MachineStatus.NO_MERCURY
